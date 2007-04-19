@@ -22,8 +22,8 @@
 <!ENTITY config.tabclickmode.default "タブを閉じる">
 <!ENTITY config.tabclickmode.toggle  "タブを選択する">
 
-<!ENTITY config.tabs.selectionMenu    "タブ選択後のメニュー">
-<!ENTITY config.selectionMenu.caption "タブ選択後のメニューに表示する項目">
+<!ENTITY config.tabs.selectionMenu    "タブ選択時のメニュー">
+<!ENTITY config.selectionMenu.caption "タブ選択時のメニューに表示する項目">
 
 <!ENTITY config.tabs.contextMenu    "タブのコンテキストメニュー">
 <!ENTITY config.contextMenu.caption "タブのコンテキストメニューに追加する項目">
