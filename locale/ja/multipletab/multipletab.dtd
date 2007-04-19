@@ -1,5 +1,8 @@
-<!ENTITY popup.removeTabs  "選択したタブをすべて閉じる">
-<!ENTITY popup.reloadTabs  "選択したタブをすべて再読み込み">
+<!ENTITY popup.selection.removeTabs  "選択したタブをすべて閉じる">
+<!ENTITY popup.selection.reloadTabs  "選択したタブをすべて再読み込み">
+
+<!ENTITY popup.context.removeLeftTabs  "左のタブをすべて閉じる">
+<!ENTITY popup.context.removeRightTabs "右のタブをすべて閉じる">
 
 
 
@@ -7,7 +10,14 @@
 
 <!ENTITY config.tabs.general "全般">
 
-<!ENTITY config.tabdragmode.caption "タブをドラッグした時の操作">
-<!ENTITY config.tabdragmode.default "通常（タブを移動する）">
-<!ENTITY config.tabdragmode.select  "タブを選択する">
+<!ENTITY config.tabdragmode.caption "タブをドラッグした時">
+<!ENTITY config.tabdragmode.default "タブを移動する">
+<!ENTITY config.tabdragmode.select  "タブを選択して、ポップアップメニューで動作を決定する">
 <!ENTITY config.tabdragmode.switch  "タブをダイナミックに切り換える">
+
+<!ENTITY config.tabs.selectionMenu    "タブ選択後のメニュー">
+<!ENTITY config.selectionMenu.caption "タブ選択後のメニューに表示する項目">
+
+<!ENTITY config.tabs.contextMenu    "タブのコンテキストメニュー">
+<!ENTITY config.contextMenu.caption "タブのコンテキストメニューに追加する項目">
+

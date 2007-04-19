@@ -1,5 +1,8 @@
-<!ENTITY popup.removeTabs  "Close Selected Tabs">
-<!ENTITY popup.reloadTabs  "Reload Selected Tabs">
+<!ENTITY popup.selection.removeTabs  "Close Selected Tabs">
+<!ENTITY popup.selection.reloadTabs  "Reload Selected Tabs">
+
+<!ENTITY popup.context.removeLeftTabs  "Close Left Tabs">
+<!ENTITY popup.context.removeRightTabs "Close Right Tabs">
 
 
 
@@ -11,3 +14,10 @@
 <!ENTITY config.tabdragmode.default "Default (move and rearrange tabs)">
 <!ENTITY config.tabdragmode.select  "Select tabs">
 <!ENTITY config.tabdragmode.switch  "Switch tabs dynamically">
+
+<!ENTITY config.tabs.selectionMenu    "Tab Selection Menu">
+<!ENTITY config.selectionMenu.caption "Available items of the popup menu for selected tabs">
+
+<!ENTITY config.tabs.contextMenu    "Tab Context Menu">
+<!ENTITY config.contextMenu.caption "Available items of the context menu on tabs">
+

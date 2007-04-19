@@ -11,15 +11,36 @@
 <script src="multipletab.js" type="application/x-javascript"/>
 
 <popupset id="mainPopupSet">
-	<menupopup id="multipletab-tabselect-menu"
+
+	<menupopup id="multipletab-selection-menu"
 		oncommand="this.hidePopup();"
+		onpopupshoing="MultipleTabService.showHideMenuItems(this);"
 		onpopuphidden="MultipleTabService.clearSelection();">
-		<menuitem label="&popup.reloadTabs;"
+		<menuitem id="multipletab-selection-reloadTabs"
+			label="&popup.selection.reloadTabs;"
 			oncommand="MultipleTabService.reloadTabs(MultipleTabService.getSelectedTabs());"/>
 		<menuseparator/>
-		<menuitem label="&popup.removeTabs;"
+		<menuitem id="multipletab-selection-removeTabs"
+			label="&popup.selection.removeTabs;"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getSelectedTabs());"/>
 	</menupopup>
+
+	<menupopup id="multipletab-tabcontext-menu-template">
+		<menuitem id="multipletab-context-removeLeftTabs"
+			label="&popup.context.removeLeftTabs;"
+			tbattr="tabbrowser-multiple"
+			oncommand="MultipleTabService.closeTabs(MultipleTabService.getLeftTabsOf(MultipleTabService.getTabBrowserFromChildren(this).mContextTab));"
+			multipletab-insertbefore="tabContextMenu.lastChild"/>
+		<menuitem id="multipletab-context-removeRightTabs"
+			label="&popup.context.removeRightTabs;"
+			tbattr="tabbrowser-multiple"
+			oncommand="MultipleTabService.closeTabs(MultipleTabService.getRightTabsOf(MultipleTabService.getTabBrowserFromChildren(this).mContextTab));"
+			multipletab-insertbefore="tabContextMenu.lastChild"/>
+		<menuseparator id="multipletab-context-separator-removeTabs"
+			tbattr="tabbrowser-multiple"
+			multipletab-insertbefore="tabContextMenu.lastChild"/>
+	</menupopup>
+
 </popupset>
 
 </overlay>

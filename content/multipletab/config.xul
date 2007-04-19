@@ -18,7 +18,6 @@
 			name="extensions.multipletab.tabdrag.mode"
 			type="int"/>
 	</preferences>
-
 	<groupbox>
 		<caption label="&config.tabdragmode.caption;"/>
 		<vbox>
@@ -31,7 +30,50 @@
 			</radiogroup>
 		</vbox>
 	</groupbox>
+</prefpane>
 
+<prefpane id="prefpane-selection-menu" label="&config.tabs.selectionMenu;">
+	<preferences>
+		<preference id="extensions.multipletab.show.multipletab-selection-reloadTabs"
+			name="extensions.multipletab.show.multipletab-selection-reloadTabs"
+			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-removeTabs"
+			name="extensions.multipletab.show.multipletab-selection-removeTabs"
+			type="bool"/>
+	</preferences>
+	<groupbox>
+		<caption label="&config.selectionMenu.caption;"/>
+		<vbox>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-reloadTabs-check"
+				preference="extensions.multipletab.show.multipletab-selection-reloadTabs"
+				label="&popup.selection.reloadTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-removeTabs-check"
+				preference="extensions.multipletab.show.multipletab-selection-removeTabs"
+				label="&popup.selection.removeTabs;"/>
+		</vbox>
+	</groupbox>
+</prefpane>
+
+<prefpane id="prefpane-context-menu" label="&config.tabs.contextMenu;">
+	<preferences>
+		<preference id="extensions.multipletab.show.multipletab-context-removeLeftTabs"
+			name="extensions.multipletab.show.multipletab-context-removeLeftTabs"
+			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-context-removeRightTabs"
+			name="extensions.multipletab.show.multipletab-context-removeRightTabs"
+			type="bool"/>
+	</preferences>
+	<groupbox>
+		<caption label="&config.contextMenu.caption;"/>
+		<vbox>
+			<checkbox id="extensions.multipletab.show.multipletab-context-removeLeftTabs-check"
+				preference="extensions.multipletab.show.multipletab-context-removeLeftTabs"
+				label="&popup.context.removeLeftTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-removeRightTabs"
+				preference="extensions.multipletab.show.multipletab-context-removeRightTabs"
+				label="&popup.context.removeRightTabs;"/>
+		</vbox>
+	</groupbox>
 </prefpane>
 
 

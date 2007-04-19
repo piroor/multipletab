@@ -5,34 +5,27 @@ var MultipleTabService = {
 	TAB_DRAG_MODE_DEFAULT : 0,
 	TAB_DRAG_MODE_SELECT  : 1,
 	TAB_DRAG_MODE_SWITCH  : 2,
+
+	NSResolver : {
+		lookupNamespaceURI : function(aPrefix)
+		{
+			switch (aPrefix)
+			{
+				case 'xul':
+					return 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
+				case 'html':
+				case 'xhtml':
+					return 'http://www.w3.org/1999/xhtml';
+				case 'xlink':
+					return 'http://www.w3.org/1999/xlink';
+				default:
+					return '';
+			}
+		}
+	},
 	 
 /* Utilities */ 
 	 
-	get tabSelectPopupMenu() { 
-		if (!this._tabSelectPopupMenu) {
-			this._tabSelectPopupMenu = document.getElementById('multipletab-tabselect-menu');
-		}
-		return this._tabSelectPopupMenu;
-	},
-	_tabSelectPopupMenu : null,
- 
-	isEventFiredInMenu : function(aEvent) 
-	{
-		try {
-			var xpathResult = document.evaluate(
-					'ancestor-or-self::*[local-name() = "menuitem"]',
-					aEvent.originalTarget,
-					document.createNSResolver(document.documentElement),
-					XPathResult.FIRST_ORDERED_NODE_TYPE,
-					null
-				);
-		}
-		catch(e) {
-			return false;
-		}
-		return xpathResult.singleNodeValue ? true : false ;
-	},
- 
 	isEventFiredOnTabIcon : function(aEvent) 
 	{
 		var tab = this.getTabFromEvent(aEvent);
@@ -58,9 +51,9 @@ var MultipleTabService = {
 	{
 		try {
 			var xpathResult = document.evaluate(
-					'descendant::*[@multipletab-selected = "true"]',
+					'descendant::xul:tab[@multipletab-selected = "true"]',
 					gBrowser.mTabContainer,
-					document.createNSResolver(document.documentElement),
+					this.NSResolver, // document.createNSResolver(document.documentElement),
 					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 					null
 				);
@@ -75,9 +68,43 @@ var MultipleTabService = {
 	{
 		try {
 			var xpathResult = document.evaluate(
-					'descendant::*[@multipletab-ready-to-close = "true"]',
+					'descendant::xul:tab[@multipletab-ready-to-close = "true"]',
 					gBrowser.mTabContainer,
-					document.createNSResolver(document.documentElement),
+					this.NSResolver, // document.createNSResolver(document.documentElement),
+					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+					null
+				);
+		}
+		catch(e) {
+			return { snapshotLength : 0 };
+		}
+		return xpathResult;
+	},
+ 
+	getLeftTabsOf : function(aTab) 
+	{
+		try {
+			var xpathResult = document.evaluate(
+					'preceding-sibling::xul:tab',
+					aTab,
+					this.NSResolver, // document.createNSResolver(document.documentElement),
+					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+					null
+				);
+		}
+		catch(e) {
+			return { snapshotLength : 0 };
+		}
+		return xpathResult;
+	},
+ 
+	getRightTabsOf : function(aTab) 
+	{
+		try {
+			var xpathResult = document.evaluate(
+					'following-sibling::xul:tab',
+					aTab,
+					this.NSResolver, // document.createNSResolver(document.documentElement),
 					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 					null
 				);
@@ -107,7 +134,7 @@ var MultipleTabService = {
 	},
   
 /* Initializing */ 
-	 
+	
 	init : function() 
 	{
 		if (!('gBrowser' in window)) return;
@@ -158,6 +185,17 @@ var MultipleTabService = {
 			return retVal;
 		};
 
+		eval(
+			'aTabBrowser.warnAboutClosingTabs = '+
+			aTabBrowser.warnAboutClosingTabs.toSource().replace(
+				/\)/, ', aNumTabs)'
+			).replace(
+				/var numTabs = /, 'var numTabs = aNumTabs || '
+			)
+		);
+
+		this.updateTabBrowserContextMenu(aTabBrowser);
+
 		var tabs = aTabBrowser.mTabContainer.childNodes;
 		for (var i = 0, maxi = tabs.length; i < maxi; i++)
 		{
@@ -178,7 +216,36 @@ var MultipleTabService = {
 	{
 		aTab.removeEventListener('mousemove', this, true);
 	},
-  
+	 
+	updateTabBrowserContextMenu : function(aTabBrowser) 
+	{
+		var id = parseInt(Math.random() * 65000);
+		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
+		var template = document.getElementById('multipletab-tabcontext-menu-template');
+		var items = template.childNodes;
+		var item;
+		var refNode;
+		for (var i = 0, maxi = items.length; i < maxi; i++)
+		{
+			item = items[i].cloneNode(true);
+			item.setAttribute('id', item.getAttribute('id')+'-tabbrowser'+id);
+
+			try {
+				eval('refNode = '+item.getAttribute('multipletab-insertbefore'));
+			}
+			catch(e) {
+				refNode = null;
+			}
+
+			if (refNode)
+				tabContextMenu.insertBefore(item, refNode);
+			else
+				tabContextMenu.appendChild(item);
+		}
+
+		tabContextMenu.addEventListener('popupshowing', this, false);
+	},
+   
 	destroy : function() 
 	{
 		gBrowser.mTabContainer.removeEventListener('draggesture', this, true);
@@ -196,10 +263,12 @@ var MultipleTabService = {
 			this.destroyTab(tabs[i]);
 		}
 
+		var tabContextMenu = document.getAnonymousElementByAttribute(gBrowser, 'anonid', 'tabContextMenu');
+		tabContextMenu.removeEventListener('popupshowing', this, false);
 	},
   
 /* Event Handling */ 
-	 
+	
 	handleEvent : function(aEvent) 
 	{
 		switch (aEvent.type)
@@ -226,6 +295,10 @@ var MultipleTabService = {
 
 			case 'unload':
 				this.destroy();
+				break;
+
+			case 'popupshowing':
+				this.showHideMenuItems(aEvent.target);
 				break;
 		}
 	},
@@ -272,13 +345,14 @@ var MultipleTabService = {
 				this.tabSelectPopupMenu.hidePopup();
 				this.tabSelectPopupMenu.showPopup(
 					document.documentElement,
-					aEvent.screenX/* - document.documentElement.boxObject.screenX */,
-					aEvent.screenY/* - document.documentElement.boxObject.screenY */,
+					aEvent.screenX - document.documentElement.boxObject.screenX,
+					aEvent.screenY - document.documentElement.boxObject.screenY,
 					'popup'
 				);
 			}
-			else
+			else {
 				this.clearSelection();
+			}
 		}
 
 		this.lastMouseOverTarget = null;
@@ -356,6 +430,79 @@ var MultipleTabService = {
 				tab.setAttribute('multipletab-ready-to-close', true);
 		}
 	},
+  
+/* Popup */ 
+	 
+	get tabSelectPopupMenu() { 
+		if (!this._tabSelectPopupMenu) {
+			this._tabSelectPopupMenu = document.getElementById('multipletab-selection-menu');
+		}
+		return this._tabSelectPopupMenu;
+	},
+	_tabSelectPopupMenu : null,
+
+ 
+	getSeparators : function(aPopup) 
+	{
+		try {
+			var xpathResult = document.evaluate(
+					'descendant::xul:menuseparator',
+					aPopup,
+					this.NSResolver, // document.createNSResolver(document.documentElement),
+					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+					null
+				);
+		}
+		catch(e) {
+			return { snapshotLength : 0 };
+		}
+		return xpathResult;
+	},
+ 
+	getObsoleteSeparators : function(aPopup) 
+	{
+		try {
+			var xpathResult = document.evaluate(
+					'descendant::xul:menuseparator[not(following-sibling::*[not(@hidden)]) or not(preceding-sibling::*[not(@hidden)]) or local-name(following-sibling::*[not(@hidden)]) = "menuseparator"]',
+					aPopup,
+					this.NSResolver, // document.createNSResolver(document.documentElement),
+					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+					null
+				);
+		}
+		catch(e) {
+			return { snapshotLength : 0 };
+		}
+		return xpathResult;
+	},
+ 
+	showHideMenuItems : function(aPopup) 
+	{
+		var nodes = aPopup.childNodes;
+		var pref;
+		for (var i = 0, maxi = nodes.length; i < maxi; i++)
+		{
+			pref = this.getPref('extensions.multipletab.show.'+nodes[i].getAttribute('id').replace(/-tabbrowser[0-9]+$/, ''));
+			if (pref === null) continue;
+
+			if (pref)
+				nodes[i].removeAttribute('hidden');
+			else
+				nodes[i].setAttribute('hidden', true);
+		}
+
+		var separators = this.getSeparators(aPopup);
+		for (var i = separators.snapshotLength-1; i > -1; i--)
+		{
+			separators.snapshotItem(i).removeAttribute('hidden');
+		}
+
+		separators = this.getObsoleteSeparators(aPopup);
+		for (var i = separators.snapshotLength-1; i > -1; i--)
+		{
+			separators.snapshotItem(i).setAttribute('hidden', true);
+		}
+	},
  	 
 /* Commands */ 
 	 
@@ -370,7 +517,7 @@ var MultipleTabService = {
 
 		if (
 			max > 1 &&
-			!b.warnAboutClosingTabs(false)
+			!b.warnAboutClosingTabs(true, max)
 			)
 			return;
 
