@@ -92,28 +92,35 @@ chrome://multipletab/content/multipletab.xul
 ■選択されたタブ、現在のタブよりも右にあるタブ・左にあるタブなどの抽出
 
 
-・MultipleTabService.LeftTabsOf(in DOMXULElement aTab)
+・Array MultipleTabService.LeftTabsOf(in DOMXULElement aTab)
 	左のタブを取得する
 	引数
 		aTab 基準となるタブ
 	返り値
 		与えられたタブより左（または上）にあるタブの配列
 
-・MultipleTabService.getRightTabsOf(in DOMXULElement aTab)
+・Array MultipleTabService.getRightTabsOf(in DOMXULElement aTab)
 	右のタブを取得する
 	引数
 		aTab 基準となるタブ
 	返り値
 		与えられたタブより右（または下）にあるタブの配列
 
-・MultipleTabService.getSelectedTabs()
+・Array MultipleTabService.getSelectedTabs()
 	選択されているタブを取得する
 	引数
 		なし
 	返り値
 		選択されているタブの配列
 
-・MultipleTabService.getTabBrowserFromChildren(in DOMXULElement aElement)
+・Boolean MultipleTabService.tabsSelected()
+	タブが一つでも選択されているかどうかを調べる
+	引数
+		なし
+	返り値
+		真偽値（タブが一つでも選択されている場合、true）
+
+・XULElement MultipleTabService.getTabBrowserFromChildren(in DOMXULElement aElement)
 	その要素が子孫として含まれているtabbrowser要素を取得する（メニュー項目のインスタンスから処理対象のtabbrowserを取得するために使用）
 	引数
 		aElement XUL要素
@@ -123,21 +130,44 @@ chrome://multipletab/content/multipletab.xul
 
 ■複数のタブに対する処理
 
-・MultipleTabService.closeTabs(in Array aTabs)
+・void MultipleTabService.closeTabs(in Array aTabs)
 	タブをまとめて閉じる
 	引数
 		aTabs 閉じたいタブの配列
 	返り値
 		なし
 
-・MultipleTabService.reloadTabs(in Array aTabs)
+・void MultipleTabService.reloadTabs(in Array aTabs)
 	タブをまとめて再読み込みする
 	引数
 		aTabs 再読み込みしたいタブの配列
 	返り値
 		なし
 
-・MultipleTabService.clearSelection()
+・DOMWindow MultipleTabService.splitWindowFrom(in Array aTabs)
+	ウィンドウを分割し、タブを新しいウィンドウで開く
+	引数
+		aTabs 新しいウィンドウに分割したいタブの配列
+	返り値
+		新しく開かれたChromeウィンドウ
+
+■選択状態の制御
+
+・void MultipleTabService.toggleTabSelected(in DOMXULElement aTab)
+	タブの選択状態をトグルする
+	引数
+		aTab 選択状態を変更したいタブ
+	返り値
+		なし
+
+・Boolean MultipleTabService.isTabSelected(in DOMXULElement aTab)
+	特定のタブの選択状態を調べる
+	引数
+		aTab 選択状態を調べたいタブ
+	返り値
+		真偽値（そのタブが選択されている場合、true）
+
+・void MultipleTabService.clearSelection()
 	タブの選択を解除する
 	引数
 		なし

@@ -18,6 +18,10 @@
 <!ENTITY config.tabdragmode.select  "Select tabs">
 <!ENTITY config.tabdragmode.switch  "Switch tabs dynamically">
 
+<!ENTITY config.tabclickmode.caption "Action for Ctrl(Command)-Click of tabs">
+<!ENTITY config.tabclickmode.default "Close Tab">
+<!ENTITY config.tabclickmode.toggle  "Toggle Selection of Tab">
+
 <!ENTITY config.tabs.selectionMenu    "Tab Selection Menu">
 <!ENTITY config.selectionMenu.caption "Available items of the popup menu for selected tabs">
 

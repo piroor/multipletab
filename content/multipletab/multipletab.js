@@ -6,6 +6,11 @@ var MultipleTabService = {
 	TAB_DRAG_MODE_SELECT  : 1,
 	TAB_DRAG_MODE_SWITCH  : 2,
 
+
+	tabClickMode : -1,
+	TAB_CLICK_MODE_DEFAULT : 0,
+	TAB_CLICK_MODE_TOGGLE  : 1,
+
 	NSResolver : {
 		lookupNamespaceURI : function(aPrefix)
 		{
@@ -47,6 +52,11 @@ var MultipleTabService = {
 		return (document.getElementById('cmd_CustomizeToolbars').getAttribute('disabled') == 'true');
 	},
  
+	get browser() 
+	{
+		return gBrowser;
+	},
+ 
 	getArrayFromXPathResult : function(aXPathResult) 
 	{
 		var max = aXPathResult.snapshotLength;
@@ -66,7 +76,7 @@ var MultipleTabService = {
 		try {
 			var xpathResult = document.evaluate(
 					'descendant::xul:tab[@multipletab-selected = "true"]',
-					gBrowser.mTabContainer,
+					this.browser.mTabContainer,
 					this.NSResolver, // document.createNSResolver(document.documentElement),
 					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 					null
@@ -77,13 +87,29 @@ var MultipleTabService = {
 		}
 		return [];
 	},
+	tabsSelected : function() 
+	{
+		try {
+			var xpathResult = document.evaluate(
+					'descendant::xul:tab[@multipletab-selected = "true"]',
+					this.browser.mTabContainer,
+					this.NSResolver, // document.createNSResolver(document.documentElement),
+					XPathResult.FIRST_ORDERED_NODE_TYPE,
+					null
+				);
+			return xpathResult.singleNodeValue ? true : false ;
+		}
+		catch(e) {
+		}
+		return false;
+	},
  
 	getReadyToCloseTabs : function() 
 	{
 		try {
 			var xpathResult = document.evaluate(
 					'descendant::xul:tab[@multipletab-ready-to-close = "true"]',
-					gBrowser.mTabContainer,
+					this.browser.mTabContainer,
 					this.NSResolver, // document.createNSResolver(document.documentElement),
 					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 					null
@@ -156,12 +182,14 @@ var MultipleTabService = {
 		gBrowser.mTabContainer.addEventListener('draggesture', this, true);
 		gBrowser.mTabContainer.addEventListener('mouseover',   this, true);
 		gBrowser.mTabContainer.addEventListener('mousemove',   this, true);
+		gBrowser.mTabContainer.addEventListener('mousedown',   this, true);
 		window.addEventListener('mouseup', this, true);
 
 		window.removeEventListener('load', this, false);
 
 		this.addPrefListener(this);
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabdrag.mode');
+		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.mode');
 
 		this.updateTabBrowser(gBrowser);
 	},
@@ -266,6 +294,7 @@ var MultipleTabService = {
 		gBrowser.mTabContainer.removeEventListener('draggesture', this, true);
 		gBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
 		gBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
+		gBrowser.mTabContainer.removeEventListener('mousedown',   this, true);
 		window.addEventListener('mouseup', this, true);
 
 		window.removeEventListener('unload', this, false);
@@ -288,6 +317,10 @@ var MultipleTabService = {
 	{
 		switch (aEvent.type)
 		{
+			case 'mousedown':
+				this.onTabClick(aEvent);
+				break;
+
 			case 'draggesture':
 				this.onTabDragStart(aEvent);
 				break;
@@ -316,6 +349,18 @@ var MultipleTabService = {
 				this.showHideMenuItems(aEvent.target);
 				break;
 		}
+	},
+ 
+	onTabClick : function(aEvent) 
+	{
+		if (aEvent.button != 0 || (!aEvent.ctrlKey && !aEvent.metaKey)) return;
+
+		var tab = this.getTabFromEvent(aEvent);
+		if (!tab && this.tabClickMode != this.TAB_CLICK_MODE_TOGGLE) return;
+
+		this.toggleTabSelected(tab);
+		aEvent.preventDefault();
+		aEvent.stopPropagation();
 	},
  
 	onTabDragStart : function(aEvent) 
@@ -356,7 +401,7 @@ var MultipleTabService = {
 		}
 		else if (this.tabDragging) {
 			this.tabDragging = false;
-			if (this.getSelectedTabs().snapshotLength) {
+			if (this.tabsSelected()) {
 				this.tabSelectPopupMenu.hidePopup();
 				this.tabSelectPopupMenu.showPopup(
 					document.documentElement,
@@ -413,14 +458,7 @@ var MultipleTabService = {
 			switch(this.tabDragMode)
 			{
 				case this.TAB_DRAG_MODE_SELECT:
-					if (tab.getAttribute('multipletab-selected') == 'true') {
-						tab.removeAttribute('multipletab-selected');
-						this.SessionStore.deleteTabValue(tab, 'multipletab-selected');
-					}
-					else {
-						tab.setAttribute('multipletab-selected', true);
-						this.SessionStore.setTabValue(tab, 'multipletab-selected', 'true');
-					}
+					this.toggleTabSelected(tab);
 					break;
 
 				case this.TAB_DRAG_MODE_SWITCH:
@@ -446,6 +484,31 @@ var MultipleTabService = {
 			else
 				tab.setAttribute('multipletab-ready-to-close', true);
 		}
+	},
+ 
+	toggleTabSelected : function(aTab) 
+	{
+		if (aTab.getAttribute('multipletab-selected') == 'true') {
+			aTab.removeAttribute('multipletab-selected');
+			try {
+				this.SessionStore.deleteTabValue(aTab, 'multipletab-selected');
+			}
+			catch(e) {
+			}
+		}
+		else {
+			aTab.setAttribute('multipletab-selected', true);
+			try {
+				this.SessionStore.setTabValue(aTab, 'multipletab-selected', 'true');
+			}
+			catch(e) {
+			}
+		}
+	},
+ 
+	isTabSelected : function(aTab) 
+	{
+		return aTab.getAttribute('multipletab-selected') == 'true';
 	},
   
 /* Popup */ 
@@ -498,7 +561,7 @@ var MultipleTabService = {
 		var nodes = aPopup.childNodes;
 		var pref;
 
-		var b   = this.getTabBrowserFromChildren(aPopup);
+		var b   = this.getTabBrowserFromChildren(aPopup) || this.browser;
 		var box = b.mTabContainer.mTabstrip || b.mTabContainer ;
 		var isVertical = ((box.getAttribute('orient') || window.getComputedStyle(box, '').getPropertyValue('-moz-box-orient')) == 'vertical');
 
@@ -629,9 +692,7 @@ var MultipleTabService = {
 			delete i;
 		}, 0);
 
-		this.openNewWindowWithTabs(state, max);
-
-		delete max;
+		return this.openNewWindowWithTabs(state, max);
 	},
 	openNewWindowWithTabs : function(aState, aNumTabs)
 	{
@@ -714,6 +775,8 @@ var MultipleTabService = {
 
 			delete tabs;
 		}, false);
+
+		return newWin;
 	},
 	get SessionStore() { 
 		if (!this._SessionStore) {
@@ -730,9 +793,9 @@ var MultipleTabService = {
 	},
 	clearSelectionSub : function(aTabs, aAttr)
 	{
-		if (!aTabs || !aTabs.snapshotLength) return;
+		if (!aTabs || !aTabs.length) return;
 
-		for (var i = aTabs.snapshotLength-1; i > -1; i--)
+		for (var i = aTabs.length-1; i > -1; i--)
 		{
 			aTabs[i].removeAttribute(aAttr);
 			this.SessionStore.deleteTabValue(aTabs[i], aAttr);
@@ -752,6 +815,10 @@ var MultipleTabService = {
 		{
 			case 'extensions.multipletab.tabdrag.mode':
 				this.tabDragMode = value;
+				break;
+
+			case 'extensions.multipletab.tabclick.mode':
+				this.tabClickMode = value;
 				break;
 
 			default:

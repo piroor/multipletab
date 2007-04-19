@@ -18,6 +18,10 @@
 <!ENTITY config.tabdragmode.select  "タブを選択して、ポップアップメニューで動作を決定する">
 <!ENTITY config.tabdragmode.switch  "タブをダイナミックに切り換える">
 
+<!ENTITY config.tabclickmode.caption "タブをCtrl（Command）-クリックした時">
+<!ENTITY config.tabclickmode.default "タブを閉じる">
+<!ENTITY config.tabclickmode.toggle  "タブを選択する">
+
 <!ENTITY config.tabs.selectionMenu    "タブ選択後のメニュー">
 <!ENTITY config.selectionMenu.caption "タブ選択後のメニューに表示する項目">
 
