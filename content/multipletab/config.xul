@@ -74,10 +74,10 @@
 		<vbox>
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeLeftTabs-check"
 				preference="extensions.multipletab.show.multipletab-context-removeLeftTabs"
-				label="&popup.context.removeLeftTabs;"/>
+				label="&config.contextMenu.removeLeftTabs;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeRightTabs"
 				preference="extensions.multipletab.show.multipletab-context-removeRightTabs"
-				label="&popup.context.removeRightTabs;"/>
+				label="&config.contextMenu.removeRightTabs;"/>
 		</vbox>
 	</groupbox>
 </prefpane>

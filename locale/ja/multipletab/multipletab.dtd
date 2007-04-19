@@ -2,8 +2,10 @@
 <!ENTITY popup.selection.reloadTabs  "すべて再読み込み">
 <!ENTITY popup.selection.splitWindow "新しいウィンドウで開く">
 
-<!ENTITY popup.context.removeLeftTabs  "左のタブをすべて閉じる">
-<!ENTITY popup.context.removeRightTabs "右のタブをすべて閉じる">
+<!ENTITY popup.context.removeLeftTabs.horizontal  "左のタブをすべて閉じる">
+<!ENTITY popup.context.removeLeftTabs.vertical    "上のタブをすべて閉じる">
+<!ENTITY popup.context.removeRightTabs.horizontal "右のタブをすべて閉じる">
+<!ENTITY popup.context.removeRightTabs.vertical   "下のタブをすべて閉じる">
 
 
 
@@ -21,4 +23,6 @@
 
 <!ENTITY config.tabs.contextMenu    "タブのコンテキストメニュー">
 <!ENTITY config.contextMenu.caption "タブのコンテキストメニューに追加する項目">
+<!ENTITY config.contextMenu.removeLeftTabs  "左（上）のタブをすべて閉じる">
+<!ENTITY config.contextMenu.removeRightTabs "右（下）のタブをすべて閉じる">
 

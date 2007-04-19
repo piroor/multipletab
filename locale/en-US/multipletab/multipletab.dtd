@@ -2,8 +2,10 @@
 <!ENTITY popup.selection.reloadTabs  "Reload Selected Tabs">
 <!ENTITY popup.selection.splitWindow "Open in New Window">
 
-<!ENTITY popup.context.removeLeftTabs  "Close Left Tabs">
-<!ENTITY popup.context.removeRightTabs "Close Right Tabs">
+<!ENTITY popup.context.removeLeftTabs.horizontal  "Close Left Tabs">
+<!ENTITY popup.context.removeLeftTabs.vertical    "Close Above Tabs">
+<!ENTITY popup.context.removeRightTabs.horizontal "Close Right Tabs">
+<!ENTITY popup.context.removeRightTabs.vertical   "Close Below Tabs">
 
 
 
@@ -21,4 +23,6 @@
 
 <!ENTITY config.tabs.contextMenu    "Tab Context Menu">
 <!ENTITY config.contextMenu.caption "Available items of the context menu on tabs">
+<!ENTITY config.contextMenu.removeLeftTabs  "Close Left (Above) Tabs">
+<!ENTITY config.contextMenu.removeRightTabs "Close Right (Below) Tabs">
 

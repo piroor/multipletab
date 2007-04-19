@@ -30,12 +30,14 @@
 
 	<menupopup id="multipletab-tabcontext-menu-template">
 		<menuitem id="multipletab-context-removeLeftTabs"
-			label="&popup.context.removeLeftTabs;"
+			label-horizontal="&popup.context.removeLeftTabs.horizontal;"
+			label-vertical="&popup.context.removeLeftTabs.vertical;"
 			tbattr="tabbrowser-multiple"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getLeftTabsOf(MultipleTabService.getTabBrowserFromChildren(this).mContextTab));"
 			multipletab-insertbefore="tabContextMenu.lastChild"/>
 		<menuitem id="multipletab-context-removeRightTabs"
-			label="&popup.context.removeRightTabs;"
+			label-horizontal="&popup.context.removeRightTabs.horizontal;"
+			label-vertical="&popup.context.removeRightTabs.vertical;"
 			tbattr="tabbrowser-multiple"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getRightTabsOf(MultipleTabService.getTabBrowserFromChildren(this).mContextTab));"
 			multipletab-insertbefore="tabContextMenu.lastChild"/>

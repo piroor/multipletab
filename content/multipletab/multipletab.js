@@ -482,8 +482,21 @@ var MultipleTabService = {
 	{
 		var nodes = aPopup.childNodes;
 		var pref;
+
+		var b   = this.getTabBrowserFromChildren(aPopup);
+		var box = b.mTabContainer.mTabstrip || b.mTabContainer ;
+		var isVertical = ((box.getAttribute('orient') || window.getComputedStyle(box, '').getPropertyValue('-moz-box-orient')) == 'vertical');
+
+		var label;
+
 		for (var i = 0, maxi = nodes.length; i < maxi; i++)
 		{
+			if (
+				(isVertical && (label = nodes[i].getAttribute('label-vertical'))) ||
+				(!isVertical && (label = nodes[i].getAttribute('label-horizontal')))
+				)
+				nodes[i].setAttribute('label', label);
+
 			pref = this.getPref('extensions.multipletab.show.'+nodes[i].getAttribute('id').replace(/-tabbrowser[0-9]+$/, ''));
 			if (pref === null) continue;
 
