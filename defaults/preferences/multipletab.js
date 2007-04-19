@@ -3,6 +3,7 @@ pref("extensions.multipletab.tabdrag.mode", 1);
 
 pref("extensions.multipletab.show.multipletab-selection-reloadTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-removeTabs", true);
+pref("extensions.multipletab.show.multipletab-selection-splitWindow", true);
 
 pref("extensions.multipletab.show.multipletab-context-removeLeftTabs", true);
 pref("extensions.multipletab.show.multipletab-context-removeRightTabs", true);

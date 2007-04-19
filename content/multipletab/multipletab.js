@@ -400,9 +400,11 @@ var MultipleTabService = {
 				case this.TAB_DRAG_MODE_SELECT:
 					if (tab.getAttribute('multipletab-selected') == 'true') {
 						tab.removeAttribute('multipletab-selected');
+						this.SessionStore.deleteTabValue(tab, 'multipletab-selected');
 					}
 					else {
 						tab.setAttribute('multipletab-selected', true);
+						this.SessionStore.setTabValue(tab, 'multipletab-selected', 'true');
 					}
 					break;
 
@@ -503,7 +505,7 @@ var MultipleTabService = {
 			separators.snapshotItem(i).setAttribute('hidden', true);
 		}
 	},
- 	 
+  
 /* Commands */ 
 	 
 	closeTabs : function(aTabs) 
@@ -548,6 +550,151 @@ var MultipleTabService = {
 		}
 	},
  
+	splitWindowFrom : function(aTabs) 
+	{
+		if (!aTabs) return;
+
+		var max = aTabs.snapshotLength;
+		if (!max) return;
+
+
+		// Step 1: get window state
+
+		var b = this.getTabBrowserFromChildren(aTabs.snapshotItem(0));
+		var SS = this.SessionStore;
+
+		for (var i = max-1; i > -1; i--)
+		{
+			SS.setTabValue(aTabs.snapshotItem(i), 'multipletab-selected', 'true');
+		}
+
+		var state = SS.getWindowState(window);
+		eval('state = '+state);
+		delete state.windows[0]._closedTabs;
+		state = state.toSource();
+
+
+		// Step 2: remove obsolete tabs
+
+		var tab;
+		for (var i = max-1; i > -1; i--)
+		{
+			tab = aTabs.snapshotItem(i);
+			SS.deleteTabValue(tab, 'multipletab-selected');
+			if (tab.linkedBrowser.sessionHistory)
+				tab.linkedBrowser.sessionHistory.PurgeHistory(tab.linkedBrowser.sessionHistory.count);
+			tab.linkedBrowser.contentWindow.location.replace('about:blank');
+			tab.setAttribute('collapsed', true);
+			tab.__multipletab__shouldRemove = true;
+		}
+		delete tab;
+
+		window.setTimeout(function() {
+			var tabs = b.mTabContainer.childNodes;
+			for (var i = tabs.length-1; i > -1; i--)
+			{
+				if (tabs[i].__multipletab__shouldRemove)
+					b.removeTab(tabs[i]);
+			}
+			delete tabs;
+			delete b;
+			delete i;
+		}, 0);
+
+		this.openNewWindowWithTabs(state, max);
+
+		delete max;
+	},
+	openNewWindowWithTabs : function(aState, aNumTabs)
+	{
+		// Step 3: Restore state in new window
+
+		var SS = this.SessionStore;
+
+		var newWin = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
+		newWin.addEventListener('load', function() {
+			newWin.removeEventListener('load', arguments.callee, false);
+
+			SS.setWindowState(newWin, aState, false);
+			delete aState;
+
+			newWin.gBrowser.mStrip.setAttribute('collapsed', true);
+
+
+			// Step 4: Remove obsolete tabs
+
+			newWin.setTimeout(function() {
+				var restored = false;
+				var tabs = newWin.gBrowser.mTabContainer.childNodes;
+				var count = 0;
+				for (var i = tabs.length-1; i > -1; i--)
+				{
+					if (SS.getTabValue(tabs[i], 'multipletab-selected')) count++;
+				}
+
+				// if this window is not initialized yet, continue after a while.
+				if (count < aNumTabs) {
+					newWin.setTimeout(arguments.callee, 10);
+					return;
+				}
+				delete count;
+				delete aNumTabs;
+
+
+				for (var i = tabs.length-1; i > -1; i--)
+				{
+					if (SS.getTabValue(tabs[i], 'multipletab-selected')) {
+						count++;
+						continue;
+					}
+					try {
+						if (tabs[i].linkedBrowser.sessionHistory)
+							tabs[i].linkedBrowser.sessionHistory.PurgeHistory(tabs[i].linkedBrowser.sessionHistory.count);
+					}
+					catch(e) {
+						dump(e+'\n');
+					}
+					tabs[i].linkedBrowser.contentWindow.location.replace('about:blank');
+					tabs[i].__multipletab__shouldRemove = true;
+				}
+
+				window.setTimeout(function() {
+					for (var i = tabs.length-1; i > -1; i--)
+					{
+						try {
+							SS.deleteTabValue(tabs[i], 'multipletab-selected');
+						}
+						catch(e) {
+							SS.setTabValue(tabs[i], 'multipletab-selected', false);
+						}
+
+						if (tabs[i].__multipletab__shouldRemove)
+							newWin.gBrowser.removeTab(tabs[i]);
+						else
+							tabs[i].removeAttribute('collapsed');
+					}
+
+					newWin.gBrowser.mStrip.removeAttribute('collapsed');
+					newWin.focus();
+
+					delete i;
+					delete tabs;
+					delete newWin;
+					delete SS;
+				}, 0);
+			}, 0);
+
+			delete tabs;
+		}, false);
+	},
+	get SessionStore() { 
+		if (!this._SessionStore) {
+			this._SessionStore = Components.classes['@mozilla.org/browser/sessionstore;1'].getService(Components.interfaces.nsISessionStore);
+		}
+		return this._SessionStore;
+	},
+	_SessionStore : null,
+ 	
 	clearSelection : function() 
 	{
 		this.clearSelectionSub(this.getSelectedTabs(), 'multipletab-selected');
@@ -560,6 +707,7 @@ var MultipleTabService = {
 		for (var i = aTabs.snapshotLength-1; i > -1; i--)
 		{
 			aTabs.snapshotItem(i).removeAttribute(aAttr);
+			this.SessionStore.deleteTabValue(aTabs.snapshotItem(i), aAttr);
 		}
 	},
   

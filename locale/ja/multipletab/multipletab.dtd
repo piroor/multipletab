@@ -1,5 +1,6 @@
-<!ENTITY popup.selection.removeTabs  "選択したタブをすべて閉じる">
-<!ENTITY popup.selection.reloadTabs  "選択したタブをすべて再読み込み">
+<!ENTITY popup.selection.removeTabs  "すべて閉じる">
+<!ENTITY popup.selection.reloadTabs  "すべて再読み込み">
+<!ENTITY popup.selection.splitWindow "新しいウィンドウで開く">
 
 <!ENTITY popup.context.removeLeftTabs  "左のタブをすべて閉じる">
 <!ENTITY popup.context.removeRightTabs "右のタブをすべて閉じる">

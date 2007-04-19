@@ -1,5 +1,6 @@
 <!ENTITY popup.selection.removeTabs  "Close Selected Tabs">
 <!ENTITY popup.selection.reloadTabs  "Reload Selected Tabs">
+<!ENTITY popup.selection.splitWindow "Open in New Window">
 
 <!ENTITY popup.context.removeLeftTabs  "Close Left Tabs">
 <!ENTITY popup.context.removeRightTabs "Close Right Tabs">

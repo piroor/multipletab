@@ -19,7 +19,10 @@
 		<menuitem id="multipletab-selection-reloadTabs"
 			label="&popup.selection.reloadTabs;"
 			oncommand="MultipleTabService.reloadTabs(MultipleTabService.getSelectedTabs());"/>
-		<menuseparator/>
+		<menuitem id="multipletab-selection-splitWindow"
+			label="&popup.selection.splitWindow;"
+			oncommand="MultipleTabService.splitWindowFrom(MultipleTabService.getSelectedTabs());"/>
+		<menuseparator id="multipletab-selection-remove-separator"/>
 		<menuitem id="multipletab-selection-removeTabs"
 			label="&popup.selection.removeTabs;"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getSelectedTabs());"/>

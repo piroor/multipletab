@@ -37,6 +37,9 @@
 		<preference id="extensions.multipletab.show.multipletab-selection-reloadTabs"
 			name="extensions.multipletab.show.multipletab-selection-reloadTabs"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-splitWindow"
+			name="extensions.multipletab.show.multipletab-selection-splitWindow"
+			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-selection-removeTabs"
 			name="extensions.multipletab.show.multipletab-selection-removeTabs"
 			type="bool"/>
@@ -47,6 +50,9 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-reloadTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-reloadTabs"
 				label="&popup.selection.reloadTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-splitWindow-check"
+				preference="extensions.multipletab.show.multipletab-selection-splitWindow"
+				label="&popup.selection.splitWindow;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-removeTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-removeTabs"
 				label="&popup.selection.removeTabs;"/>
