@@ -15,7 +15,11 @@
 	<menupopup id="multipletab-selection-menu"
 		oncommand="this.hidePopup();"
 		onpopupshowing="MultipleTabService.showHideMenuItems(this);"
-		onpopuphidden="MultipleTabService.clearSelection();">
+		onpopuphidden="
+			if (this.autoClearSelection)
+				MultipleTabService.clearSelection();
+			this.autoClearSelection = false;
+		">
 		<menuitem id="multipletab-selection-reloadTabs"
 			label="&popup.selection.reloadTabs;"
 			oncommand="MultipleTabService.reloadTabs(MultipleTabService.getSelectedTabs());"/>

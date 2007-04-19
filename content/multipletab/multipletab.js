@@ -318,6 +318,8 @@ var MultipleTabService = {
 		switch (aEvent.type)
 		{
 			case 'mousedown':
+				this.lastMouseDownX = aEvent.screenX;
+				this.lastMouseDownY = aEvent.screenY;
 				this.onTabClick(aEvent);
 				break;
 
@@ -346,6 +348,18 @@ var MultipleTabService = {
 				break;
 
 			case 'popupshowing':
+				if (
+					aEvent.target.id != 'multipletab-selection-menu' &&
+					this.tabsSelected()
+					) {
+					this.showSelectionPopup({
+						screenX : this.lastMouseDownX,
+						screenY : this.lastMouseDownY,
+					});
+					aEvent.preventDefault();
+					aEvent.stopPropagation();
+					return false;
+				}
 				this.showHideMenuItems(aEvent.target);
 				break;
 		}
@@ -402,13 +416,7 @@ var MultipleTabService = {
 		else if (this.tabDragging) {
 			this.tabDragging = false;
 			if (this.tabsSelected()) {
-				this.tabSelectPopupMenu.hidePopup();
-				this.tabSelectPopupMenu.showPopup(
-					document.documentElement,
-					aEvent.screenX - document.documentElement.boxObject.screenX,
-					aEvent.screenY - document.documentElement.boxObject.screenY,
-					'popup'
-				);
+				this.showSelectionPopup(aEvent, true);
 			}
 			else {
 				this.clearSelection();
@@ -513,14 +521,26 @@ var MultipleTabService = {
   
 /* Popup */ 
 	 
-	get tabSelectPopupMenu() { 
-		if (!this._tabSelectPopupMenu) {
-			this._tabSelectPopupMenu = document.getElementById('multipletab-selection-menu');
+	get tabSelectionPopup() { 
+		if (!this._tabSelectionPopup) {
+			this._tabSelectionPopup = document.getElementById('multipletab-selection-menu');
 		}
-		return this._tabSelectPopupMenu;
+		return this._tabSelectionPopup;
 	},
-	_tabSelectPopupMenu : null,
-
+	_tabSelectionPopup : null,
+ 
+	showSelectionPopup : function(aEvent, aAutoClearSelection) 
+	{
+		var popup = this.tabSelectionPopup;
+		popup.hidePopup();
+		popup.autoClearSelection = aAutoClearSelection;
+		popup.showPopup(
+			document.documentElement,
+			aEvent.screenX - document.documentElement.boxObject.screenX,
+			aEvent.screenY - document.documentElement.boxObject.screenY,
+			'popup'
+		);
+	},
  
 	getSeparators : function(aPopup) 
 	{
