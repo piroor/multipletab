@@ -47,6 +47,20 @@ var MultipleTabService = {
 		return (document.getElementById('cmd_CustomizeToolbars').getAttribute('disabled') == 'true');
 	},
  
+	getArrayFromXPathResult : function(aXPathResult) 
+	{
+		var max = aXPathResult.snapshotLength;
+		var array = new Array(max);
+		if (!max) return array;
+
+		for (var i = 0; i < max; i++)
+		{
+			array[i] = aXPathResult.snapshotItem(i);
+		}
+
+		return array;
+	},
+ 
 	getSelectedTabs : function() 
 	{
 		try {
@@ -57,11 +71,11 @@ var MultipleTabService = {
 					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 					null
 				);
+			return this.getArrayFromXPathResult(xpathResult);
 		}
 		catch(e) {
-			return { snapshotLength : 0 };
 		}
-		return xpathResult;
+		return [];
 	},
  
 	getReadyToCloseTabs : function() 
@@ -74,11 +88,11 @@ var MultipleTabService = {
 					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 					null
 				);
+			return this.getArrayFromXPathResult(xpathResult);
 		}
 		catch(e) {
-			return { snapshotLength : 0 };
 		}
-		return xpathResult;
+		return [];
 	},
  
 	getLeftTabsOf : function(aTab) 
@@ -91,11 +105,11 @@ var MultipleTabService = {
 					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 					null
 				);
+			return this.getArrayFromXPathResult(xpathResult);
 		}
 		catch(e) {
-			return { snapshotLength : 0 };
 		}
-		return xpathResult;
+		return [];
 	},
  
 	getRightTabsOf : function(aTab) 
@@ -108,11 +122,11 @@ var MultipleTabService = {
 					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 					null
 				);
+			return this.getArrayFromXPathResult(xpathResult);
 		}
 		catch(e) {
-			return { snapshotLength : 0 };
 		}
-		return xpathResult;
+		return [];
 	},
  
 	getTabFromEvent : function(aEvent) 
@@ -228,7 +242,8 @@ var MultipleTabService = {
 		for (var i = 0, maxi = items.length; i < maxi; i++)
 		{
 			item = items[i].cloneNode(true);
-			item.setAttribute('id', item.getAttribute('id')+'-tabbrowser'+id);
+			if (item.getAttribute('id'))
+				item.setAttribute('id', item.getAttribute('id')+'-tabbrowser'+id);
 
 			try {
 				eval('refNode = '+item.getAttribute('multipletab-insertbefore'));
@@ -525,10 +540,10 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return;
 
-		var max = aTabs.snapshotLength;
+		var max = aTabs.length;
 		if (!max) return;
 
-		var b = this.getTabBrowserFromChildren(aTabs.snapshotItem(0));
+		var b = this.getTabBrowserFromChildren(aTabs[0]);
 
 		if (
 			max > 1 &&
@@ -538,7 +553,7 @@ var MultipleTabService = {
 
 		for (var i = max-1; i > -1; i--)
 		{
-			b.removeTab(aTabs.snapshotItem(i));
+			b.removeTab(aTabs[i]);
 		}
 	},
  
@@ -546,10 +561,10 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return;
 
-		var max = aTabs.snapshotLength;
+		var max = aTabs.length;
 		if (!max) return;
 
-		var b = this.getTabBrowserFromChildren(aTabs.snapshotItem(0));
+		var b = this.getTabBrowserFromChildren(aTabs[0]);
 
 		if (
 			max > 1 &&
@@ -559,7 +574,7 @@ var MultipleTabService = {
 
 		for (var i = max-1; i > -1; i--)
 		{
-			b.reloadTab(aTabs.snapshotItem(i));
+			b.reloadTab(aTabs[i]);
 		}
 	},
  
@@ -567,18 +582,18 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return;
 
-		var max = aTabs.snapshotLength;
+		var max = aTabs.length;
 		if (!max) return;
 
 
 		// Step 1: get window state
 
-		var b = this.getTabBrowserFromChildren(aTabs.snapshotItem(0));
+		var b = this.getTabBrowserFromChildren(aTabs[0]);
 		var SS = this.SessionStore;
 
 		for (var i = max-1; i > -1; i--)
 		{
-			SS.setTabValue(aTabs.snapshotItem(i), 'multipletab-selected', 'true');
+			SS.setTabValue(aTabs[i], 'multipletab-selected', 'true');
 		}
 
 		var state = SS.getWindowState(window);
@@ -592,7 +607,7 @@ var MultipleTabService = {
 		var tab;
 		for (var i = max-1; i > -1; i--)
 		{
-			tab = aTabs.snapshotItem(i);
+			tab = aTabs[i];
 			SS.deleteTabValue(tab, 'multipletab-selected');
 			if (tab.linkedBrowser.sessionHistory)
 				tab.linkedBrowser.sessionHistory.PurgeHistory(tab.linkedBrowser.sessionHistory.count);
@@ -719,8 +734,8 @@ var MultipleTabService = {
 
 		for (var i = aTabs.snapshotLength-1; i > -1; i--)
 		{
-			aTabs.snapshotItem(i).removeAttribute(aAttr);
-			this.SessionStore.deleteTabValue(aTabs.snapshotItem(i), aAttr);
+			aTabs[i].removeAttribute(aAttr);
+			this.SessionStore.deleteTabValue(aTabs[i], aAttr);
 		}
 	},
   

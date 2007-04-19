@@ -1,0 +1,146 @@
+■タブを選択した後のポップアップメニューへの項目の追加
+
+chrome://multipletab/content/multipletab.xul
+
+に対して
+
+	<menupopup id="multipletab-selection-menu">
+		<menuitem id="selection-feature1"
+			insertbefore="multipletab-selection-remove-separator"
+			label="Feature 1"
+			oncommand="Feature1(MultipleTabService.getSelectedTabs());"/>
+		<menuitem id="selection-feature2"
+			insertbefore="multipletab-selection-remove-separator"
+			label="Feature 2"
+			oncommand="Feature2(MultipleTabService.getSelectedTabs());"/>
+	</menupopup>
+
+のようなオーバーレイを適用する。
+
+
+
+
+■タブのコンテキストメニューへの項目の追加
+
+
+chrome://multipletab/content/multipletab.xul
+
+に対して
+
+	<menupopup id="multipletab-tabcontext-menu-template">
+		<menuitem id="context-item-feature3"
+			oncommand="Feature3(MultipleTabService.getTabBrowserFromChildren(this).mContextTab);"
+			multipletab-insertbefore="tabContextMenu.lastChild"/>
+		<menuitem id="context-item-feature4"
+			label-horizontal="Feature 4 for Right Tabs"
+			label-vertical="Feature 4 for Below Tabs"
+			tbattr="tabbrowser-multiple"
+			oncommand="Feature3(
+				MultipleTabService.getRightTabsOf(
+					MultipleTabService.getTabBrowserFromChildren(this).mContextTab
+				)
+			);"
+			multipletab-insertbefore="tabContextMenu.lastChild"/>
+		<menuseparator id="context-separator"
+			multipletab-insertbefore="tabContextMenu.lastChild"/>
+	</menupopup>
+
+のようなオーバーレイを適用する。
+
+タブのコンテキストメニューは、このテンプレートを元にブラウザ起動時に自動的に初期化される。
+動的にテンプレートを改変した場合は変更は反映されないので、注意すること。
+
+テンプレート内のメニュー項目にIDが指定されていた場合、ブラウザ起動時に初期化されtabbrowser要素のポップアップへ挿入されたインスタンスについては、
+「<元のID>-tabbrowser0123456」
+という風なIDが自動的に設定される。
+CSSのスタイル指定についてIDセレクタを使っている場合はインスタンスには指定が適用されないので、
+
+#<元のID> { /* style rules */ }
+
+という書き方ではなく
+
+menuitem[id^="<元のID>"] { /* style rules */ }
+
+という風な書き方にする、もしくはclass属性とクラスセレクタを使うことを推奨する。
+
+
+
+
+■項目の表示･非表示切り換え
+
+真偽値として
+
+user_pref("extensions.multipletab.show.<要素のID>", false);
+
+という設定を設けておくことで、タブ選択時のメニュー、タブのコンテキストメニューのどちらについても、項目を非表示にすることができる。
+設定UIが必要な場合は
+
+chrome://multipletab/content/multipletab.xul
+
+に対して適宜オーバーレイで項目を組み込む。
+
+
+
+
+■項目のラベルの切り換え
+
+各メニューに組み込まれる項目について、「label-vertical」属性および「label-horizontal」属性によって垂直配置用・水平配置用のラベル文字列が指定されている場合、タブバーの表示に合わせてそれぞれ適切な物が自動的に選択される。通常は「label-horizontal」、タブバーを画面横に縦型で表示している場合は「label-vertical」の指定が用いられる。
+
+
+
+
+■選択されたタブ、現在のタブよりも右にあるタブ・左にあるタブなどの抽出
+
+
+・MultipleTabService.LeftTabsOf(in DOMXULElement aTab)
+	左のタブを取得する
+	引数
+		aTab 基準となるタブ
+	返り値
+		与えられたタブより左（または上）にあるタブの配列
+
+・MultipleTabService.getRightTabsOf(in DOMXULElement aTab)
+	右のタブを取得する
+	引数
+		aTab 基準となるタブ
+	返り値
+		与えられたタブより右（または下）にあるタブの配列
+
+・MultipleTabService.getSelectedTabs()
+	選択されているタブを取得する
+	引数
+		なし
+	返り値
+		選択されているタブの配列
+
+・MultipleTabService.getTabBrowserFromChildren(in DOMXULElement aElement)
+	その要素が子孫として含まれているtabbrowser要素を取得する（メニュー項目のインスタンスから処理対象のtabbrowserを取得するために使用）
+	引数
+		aElement XUL要素
+	返り値
+		与えられた要素が含まれているtabbrowser要素
+
+
+■複数のタブに対する処理
+
+・MultipleTabService.closeTabs(in Array aTabs)
+	タブをまとめて閉じる
+	引数
+		aTabs 閉じたいタブの配列
+	返り値
+		なし
+
+・MultipleTabService.reloadTabs(in Array aTabs)
+	タブをまとめて再読み込みする
+	引数
+		aTabs 再読み込みしたいタブの配列
+	返り値
+		なし
+
+・MultipleTabService.clearSelection()
+	タブの選択を解除する
+	引数
+		なし
+	返り値
+		なし
+

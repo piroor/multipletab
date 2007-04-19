@@ -33,7 +33,7 @@
 </prefpane>
 
 <prefpane id="prefpane-selection-menu" label="&config.tabs.selectionMenu;">
-	<preferences>
+	<preferences id="prefpane-selection-menu-preferences">
 		<preference id="extensions.multipletab.show.multipletab-selection-reloadTabs"
 			name="extensions.multipletab.show.multipletab-selection-reloadTabs"
 			type="bool"/>
@@ -46,7 +46,7 @@
 	</preferences>
 	<groupbox>
 		<caption label="&config.selectionMenu.caption;"/>
-		<vbox>
+		<vbox id="prefpane-selection-menu-items">
 			<checkbox id="extensions.multipletab.show.multipletab-selection-reloadTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-reloadTabs"
 				label="&popup.selection.reloadTabs;"/>
@@ -61,7 +61,7 @@
 </prefpane>
 
 <prefpane id="prefpane-context-menu" label="&config.tabs.contextMenu;">
-	<preferences>
+	<preferences id="prefpane-context-menu-preferences">
 		<preference id="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 			name="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 			type="bool"/>
@@ -71,7 +71,7 @@
 	</preferences>
 	<groupbox>
 		<caption label="&config.contextMenu.caption;"/>
-		<vbox>
+		<vbox id="prefpane-context-menu-items">
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeLeftTabs-check"
 				preference="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 				label="&config.contextMenu.removeLeftTabs;"/>
