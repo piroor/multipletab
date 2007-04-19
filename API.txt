@@ -64,6 +64,8 @@ menuitem[id^="<元のID>"] { /* style rules */ }
 という風な書き方にする、もしくはclass属性とクラスセレクタを使うことを推奨する。
 
 
+multipletab-insertbefore属性にJavaScriptの式を書くと、その式の評価結果となる要素ノードの前にその項目が挿入される。tabContextMenuが、項目が挿入されるポップアップの要素ノードの参照になっている。
+
 
 
 ■項目の表示･非表示切り換え
