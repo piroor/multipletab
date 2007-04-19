@@ -94,7 +94,7 @@ chrome://multipletab/content/multipletab.xul
 ■選択されたタブ、現在のタブよりも右にあるタブ・左にあるタブなどの抽出
 
 
-・Array MultipleTabService.LeftTabsOf(in DOMXULElement aTab)
+・Array MultipleTabService.getLeftTabsOf(in DOMXULElement aTab)
 	左のタブを取得する
 	引数
 		aTab 基準となるタブ
