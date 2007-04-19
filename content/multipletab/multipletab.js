@@ -87,22 +87,6 @@ var MultipleTabService = {
 		}
 		return [];
 	},
-	tabsSelected : function() 
-	{
-		try {
-			var xpathResult = document.evaluate(
-					'descendant::xul:tab[@multipletab-selected = "true"]',
-					this.browser.mTabContainer,
-					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.FIRST_ORDERED_NODE_TYPE,
-					null
-				);
-			return xpathResult.singleNodeValue ? true : false ;
-		}
-		catch(e) {
-		}
-		return false;
-	},
  
 	getReadyToCloseTabs : function() 
 	{
@@ -256,6 +240,10 @@ var MultipleTabService = {
 	},
 	destroyTab : function(aTab)
 	{
+		this.setSelection(aTab, false);
+		if (!this.hasSelection())
+			this.selectionModified = false;
+
 		aTab.removeEventListener('mousemove', this, true);
 	},
 	 
@@ -350,7 +338,7 @@ var MultipleTabService = {
 			case 'popupshowing':
 				if (
 					aEvent.target.id != 'multipletab-selection-menu' &&
-					this.tabsSelected()
+					this.hasSelection()
 					) {
 					this.showSelectionPopup({
 						screenX : this.lastMouseDownX,
@@ -367,14 +355,45 @@ var MultipleTabService = {
  
 	onTabClick : function(aEvent) 
 	{
-		if (aEvent.button != 0 || (!aEvent.ctrlKey && !aEvent.metaKey)) return;
+		if (aEvent.button != 0) return;
 
 		var tab = this.getTabFromEvent(aEvent);
-		if (!tab && this.tabClickMode != this.TAB_CLICK_MODE_TOGGLE) return;
+		if (tab) {
+			var b = this.getTabBrowserFromChildren(tab);
+			if (aEvent.shiftKey) {
+				var tabs = b.mTabContainer.childNodes;
+				var inSelection = false;
+				for (var i = 0, maxi = tabs.length; i < maxi; i++)
+				{
+					if (tabs[i] == b.selectedTab ||
+						tabs[i] == tab) {
+						inSelection = !inSelection;
+						this.setSelection(tabs[i], true);
+					}
+					else {
+						this.setSelection(tabs[i], inSelection);
+					}
+				}
+				aEvent.preventDefault();
+				aEvent.stopPropagation();
+				return;
+			}
+			else if (aEvent.ctrlKey || aEvent.metaKey) {
+				if (this.tabClickMode != this.TAB_CLICK_MODE_TOGGLE) return;
 
-		this.toggleTabSelected(tab);
-		aEvent.preventDefault();
-		aEvent.stopPropagation();
+				if (!this.selectionModified && !this.hasSelection())
+					this.setSelection(b.selectedTab, true);
+
+				this.toggleSelection(tab);
+				aEvent.preventDefault();
+				aEvent.stopPropagation();
+				return;
+			}
+		}
+		if (this.selectionModified && !this.hasSelection())
+			this.selectionModified = false;
+
+		this.clearSelection();
 	},
  
 	onTabDragStart : function(aEvent) 
@@ -396,7 +415,7 @@ var MultipleTabService = {
 			this.tabDragging = true;
 			this.lastMouseOverTarget = tab;
 			if (this.tabDragMode == this.TAB_DRAG_MODE_SELECT)
-				tab.setAttribute('multipletab-selected', true);
+				this.setSelection(tab, true);
 		}
 
 		aEvent.preventDefault();
@@ -415,8 +434,8 @@ var MultipleTabService = {
 		}
 		else if (this.tabDragging) {
 			this.tabDragging = false;
-			if (this.tabsSelected()) {
-				this.showSelectionPopup(aEvent, true);
+			if (this.hasSelection()) {
+				this.showSelectionPopup(aEvent, this.getPref('extensions.multipletab.tabdrag.autoclear'));
 			}
 			else {
 				this.clearSelection();
@@ -466,7 +485,7 @@ var MultipleTabService = {
 			switch(this.tabDragMode)
 			{
 				case this.TAB_DRAG_MODE_SELECT:
-					this.toggleTabSelected(tab);
+					this.toggleSelection(tab);
 					break;
 
 				case this.TAB_DRAG_MODE_SWITCH:
@@ -492,31 +511,6 @@ var MultipleTabService = {
 			else
 				tab.setAttribute('multipletab-ready-to-close', true);
 		}
-	},
- 
-	toggleTabSelected : function(aTab) 
-	{
-		if (aTab.getAttribute('multipletab-selected') == 'true') {
-			aTab.removeAttribute('multipletab-selected');
-			try {
-				this.SessionStore.deleteTabValue(aTab, 'multipletab-selected');
-			}
-			catch(e) {
-			}
-		}
-		else {
-			aTab.setAttribute('multipletab-selected', true);
-			try {
-				this.SessionStore.setTabValue(aTab, 'multipletab-selected', 'true');
-			}
-			catch(e) {
-			}
-		}
-	},
- 
-	isTabSelected : function(aTab) 
-	{
-		return aTab.getAttribute('multipletab-selected') == 'true';
 	},
   
 /* Popup */ 
@@ -774,7 +768,6 @@ var MultipleTabService = {
 							SS.deleteTabValue(tabs[i], 'multipletab-selected');
 						}
 						catch(e) {
-							SS.setTabValue(tabs[i], 'multipletab-selected', false);
 						}
 
 						if (tabs[i].__multipletab__shouldRemove)
@@ -806,10 +799,60 @@ var MultipleTabService = {
 	},
 	_SessionStore : null,
  	
+	toggleSelection : function(aTab) 
+	{
+		return this.setSelection(aTab, aTab.getAttribute('multipletab-selected') != 'true');
+	},
+ 
+	setSelection : function(aTab, aState) 
+	{
+		if (!aState) {
+			aTab.removeAttribute('multipletab-selected');
+			try {
+				this.SessionStore.deleteTabValue(aTab, 'multipletab-selected');
+			}
+			catch(e) {
+			}
+		}
+		else {
+			aTab.setAttribute('multipletab-selected', true);
+			try {
+				this.SessionStore.setTabValue(aTab, 'multipletab-selected', 'true');
+			}
+			catch(e) {
+			}
+		}
+		this.selectionModified = true;
+		return aState;
+	},
+ 
+	isSelected : function(aTab) 
+	{
+		return aTab.getAttribute('multipletab-selected') == 'true';
+	},
+ 
+	hasSelection : function() 
+	{
+		try {
+			var xpathResult = document.evaluate(
+					'descendant::xul:tab[@multipletab-selected = "true"]',
+					this.browser.mTabContainer,
+					this.NSResolver, // document.createNSResolver(document.documentElement),
+					XPathResult.FIRST_ORDERED_NODE_TYPE,
+					null
+				);
+			return xpathResult.singleNodeValue ? true : false ;
+		}
+		catch(e) {
+		}
+		return false;
+	},
+ 
 	clearSelection : function() 
 	{
 		this.clearSelectionSub(this.getSelectedTabs(), 'multipletab-selected');
 		this.clearSelectionSub(this.getReadyToCloseTabs(), 'multipletab-ready-to-close');
+		this.selectionModified = false;
 	},
 	clearSelectionSub : function(aTabs, aAttr)
 	{
@@ -818,9 +861,14 @@ var MultipleTabService = {
 		for (var i = aTabs.length-1; i > -1; i--)
 		{
 			aTabs[i].removeAttribute(aAttr);
-			this.SessionStore.deleteTabValue(aTabs[i], aAttr);
+			try {
+				this.SessionStore.deleteTabValue(aTabs[i], aAttr);
+			}
+			catch(e) {
+			}
 		}
 	},
+	selectionModified : false,
   
 /* Pref Listener */ 
 	 

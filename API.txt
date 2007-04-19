@@ -113,13 +113,6 @@ chrome://multipletab/content/multipletab.xul
 	返り値
 		選択されているタブの配列
 
-・Boolean MultipleTabService.tabsSelected()
-	タブが一つでも選択されているかどうかを調べる
-	引数
-		なし
-	返り値
-		真偽値（タブが一つでも選択されている場合、true）
-
 ・XULElement MultipleTabService.getTabBrowserFromChildren(in DOMXULElement aElement)
 	その要素が子孫として含まれているtabbrowser要素を取得する（メニュー項目のインスタンスから処理対象のtabbrowserを取得するために使用）
 	引数
@@ -153,14 +146,29 @@ chrome://multipletab/content/multipletab.xul
 
 ■選択状態の制御
 
-・void MultipleTabService.toggleTabSelected(in DOMXULElement aTab)
+・Boolean MultipleTabService.hasSelection()
+	タブが一つでも選択されているかどうかを調べる
+	引数
+		なし
+	返り値
+		真偽値（タブが一つでも選択されている場合、true）
+
+・Boolean MultipleTabService.setSelection(in DOMXULElement aTab, in Boolean aNewState)
+	タブの選択状態を指定する
+	引数
+		aTab 選択状態を変更したいタブ
+		aNewState 選択状態（真偽値）
+	返り値
+		真偽値（新しい選択状態。タブが選択された場合、true）
+
+・Boolean MultipleTabService.toggleSelection(in DOMXULElement aTab)
 	タブの選択状態をトグルする
 	引数
 		aTab 選択状態を変更したいタブ
 	返り値
-		なし
+		真偽値（新しい選択状態。タブが選択された場合、true）
 
-・Boolean MultipleTabService.isTabSelected(in DOMXULElement aTab)
+・Boolean MultipleTabService.isSelected(in DOMXULElement aTab)
 	特定のタブの選択状態を調べる
 	引数
 		aTab 選択状態を調べたいタブ
