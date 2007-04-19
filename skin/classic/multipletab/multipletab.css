@@ -1,0 +1,15 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+tab[multipletab-selected="true"] .tab-image-left,
+tab[multipletab-selected="true"] .tab-image-middle,
+tab[multipletab-selected="true"] .tab-image-right,
+tab[multipletab-selected="true"] .tab-middle,
+tab[multipletab-selected="true"] .tab-close-button {
+	background-color: Highlight !important;
+	color: HighlightText !important;
+}
+
+tab[multipletab-ready-to-close="true"] .tab-close-button image {
+	outline: 2px solid invert;
+	background-color: Highlight !important;
+}

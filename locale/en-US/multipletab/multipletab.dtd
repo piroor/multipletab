@@ -1,0 +1,13 @@
+<!ENTITY popup.removeTabs  "Close Selected Tabs">
+<!ENTITY popup.reloadTabs  "Reload Selected Tabs">
+
+
+
+<!ENTITY config.title        "Configuration of Multiple Tab Handler">
+
+<!ENTITY config.tabs.general "General">
+
+<!ENTITY config.tabdragmode.caption "Action for dragging of tabs">
+<!ENTITY config.tabdragmode.default "Default (move and rearrange tabs)">
+<!ENTITY config.tabdragmode.select  "Select tabs">
+<!ENTITY config.tabdragmode.switch  "Switch tabs dynamically">

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<?xml-stylesheet href="chrome://multipletab/skin/multipletab.css" type="text/css"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://multipletab/locale/multipletab.dtd">
+
+<overlay id="multipletab-overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+         xmlns:html="http://www.w3.org/1999/xhtml">
+
+<script src="multipletab.js" type="application/x-javascript"/>
+
+<popupset id="mainPopupSet">
+	<menupopup id="multipletab-tabselect-menu"
+		oncommand="this.hidePopup();"
+		onpopuphidden="MultipleTabService.clearSelection();">
+		<menuitem label="&popup.reloadTabs;"
+			oncommand="MultipleTabService.reloadTabs(MultipleTabService.getSelectedTabs());"/>
+		<menuseparator/>
+		<menuitem label="&popup.removeTabs;"
+			oncommand="MultipleTabService.closeTabs(MultipleTabService.getSelectedTabs());"/>
+	</menupopup>
+</popupset>
+
+</overlay>

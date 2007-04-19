@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<RDF:RDF xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+         xmlns:NC="http://home.netscape.com/NC-rdf#"
+         xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <RDF:Description RDF:about="urn:mozilla:install-manifest"
+                   em:id="multipletab@piro.sakura.ne.jp"
+                   em:name="Multiple Tab Handler"
+                   em:version="0.1.2007041901"
+                   em:creator="SHIMODA Hiroshi"
+                   em:description="Provides feature to close multiple tabs."
+                   em:homepageURL="http://piro.sakura.ne.jp/xul/multipletab/"
+                   em:iconURL=""
+                   em:optionsURL="chrome://multipletab/content/config.xul"
+                   em:updateURL="http://piro.sakura.ne.jp/xul/xul.rdf.en">
+    <em:targetApplication>
+      <RDF:Description em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
+                       em:minVersion="2.0"
+                       em:maxVersion="2.0.0.*" />
+    </em:targetApplication>
+  </RDF:Description>
+</RDF:RDF>

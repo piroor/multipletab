@@ -1,0 +1,8 @@
+content	multipletab	jar:chrome/multipletab.jar!/content/multipletab/
+
+overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/multipletab.xul
+
+locale	multipletab	en-US	jar:chrome/multipletab.jar!/locale/en-US/multipletab/
+locale	multipletab	ja	jar:chrome/multipletab.jar!/locale/ja/multipletab/
+
+skin	multipletab	classic/1.0	jar:chrome/multipletab.jar!/skin/classic/multipletab/

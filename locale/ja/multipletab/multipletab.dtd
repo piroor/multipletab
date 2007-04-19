@@ -1,0 +1,13 @@
+<!ENTITY popup.removeTabs  "選択したタブをすべて閉じる">
+<!ENTITY popup.reloadTabs  "選択したタブをすべて再読み込み">
+
+
+
+<!ENTITY config.title        "マルチタブハンドラの設定">
+
+<!ENTITY config.tabs.general "全般">
+
+<!ENTITY config.tabdragmode.caption "タブをドラッグした時の操作">
+<!ENTITY config.tabdragmode.default "通常（タブを移動する）">
+<!ENTITY config.tabdragmode.select  "タブを選択する">
+<!ENTITY config.tabdragmode.switch  "タブをダイナミックに切り換える">
