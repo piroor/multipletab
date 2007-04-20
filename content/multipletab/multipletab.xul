@@ -23,6 +23,9 @@
 		<menuitem id="multipletab-selection-reloadTabs"
 			label="&popup.selection.reloadTabs;"
 			oncommand="MultipleTabService.reloadTabs(MultipleTabService.getSelectedTabs());"/>
+		<menuitem id="multipletab-selection-addBookmark"
+			label="&popup.selection.addBookmark;"
+			oncommand="MultipleTabService.addBookmarkFor(MultipleTabService.getSelectedTabs());"/>
 		<menuitem id="multipletab-selection-splitWindow"
 			label="&popup.selection.splitWindow;"
 			oncommand="MultipleTabService.splitWindowFrom(MultipleTabService.getSelectedTabs());"/>

@@ -659,6 +659,52 @@ var MultipleTabService = {
 		}
 	},
  
+	addBookmarkFor : function(aTabs) 
+	{
+		if (!aTabs) return;
+
+		var b = this.getTabBrowserFromChildren(aTabs[0]);
+
+		var currentTabInfo,
+			tabsInfo = [];
+		for (var i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			var webNav = aTabs[i].linkedBrowser.webNavigation;
+			var url    = webNav.currentURI.spec;
+			var name   = '';
+			var charSet, description;
+			try {
+				var doc = webNav.document;
+				name = doc.title || url;
+				charSet = doc.characterSet;
+				description = BookmarksUtils.getDescriptionFromDocument(doc);
+			}
+			catch (e) {
+				name = url;
+			}
+			tabsInfo[i] = {
+				name        : name,
+				url         : url,
+				charset     : charSet,
+				description : description
+			};
+		}
+
+		window.openDialog(
+			'chrome://browser/content/bookmarks/addBookmark2.xul',
+			'',
+			BROWSER_ADD_BM_FEATURES,
+			(aTabs.length == 1 ?
+				tabsInfo[0] :
+				{
+					name             : gNavigatorBundle.getString('bookmarkAllTabsDefault'),
+					bBookmarkAllTabs : true,
+					objGroup         : tabsInfo
+				}
+			)
+		);
+	},
+ 
 	splitWindowFrom : function(aTabs) 
 	{
 		if (!aTabs) return;

@@ -1,5 +1,6 @@
 <!ENTITY popup.selection.removeTabs  "すべて閉じる">
 <!ENTITY popup.selection.reloadTabs  "すべて再読み込み">
+<!ENTITY popup.selection.addBookmark "フォルダにまとめてブックマーク">
 <!ENTITY popup.selection.splitWindow "新しいウィンドウで開く">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "左のタブをすべて閉じる">

@@ -51,6 +51,9 @@
 		<preference id="extensions.multipletab.show.multipletab-selection-reloadTabs"
 			name="extensions.multipletab.show.multipletab-selection-reloadTabs"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-addBookmark"
+			name="extensions.multipletab.show.multipletab-selection-addBookmark"
+			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-selection-splitWindow"
 			name="extensions.multipletab.show.multipletab-selection-splitWindow"
 			type="bool"/>
@@ -67,6 +70,9 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-splitWindow-check"
 				preference="extensions.multipletab.show.multipletab-selection-splitWindow"
 				label="&popup.selection.splitWindow;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-addBookmark-check"
+				preference="extensions.multipletab.show.multipletab-selection-addBookmark"
+				label="&popup.selection.addBookmark;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-removeTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-removeTabs"
 				label="&popup.selection.removeTabs;"/>

@@ -6,6 +6,7 @@ pref("extensions.multipletab.tabclick.mode", 1);
 
 pref("extensions.multipletab.show.multipletab-selection-reloadTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-removeTabs", true);
+pref("extensions.multipletab.show.multipletab-selection-addBookmark", true);
 pref("extensions.multipletab.show.multipletab-selection-splitWindow", true);
 
 pref("extensions.multipletab.show.multipletab-context-removeLeftTabs", true);
