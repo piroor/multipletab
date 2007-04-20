@@ -7,6 +7,7 @@
 <!ENTITY popup.context.removeLeftTabs.vertical    "上のタブをすべて閉じる">
 <!ENTITY popup.context.removeRightTabs.horizontal "右のタブをすべて閉じる">
 <!ENTITY popup.context.removeRightTabs.vertical   "下のタブをすべて閉じる">
+<!ENTITY popup.context.removeAll                  "すべてのタブを閉じる">
 
 
 

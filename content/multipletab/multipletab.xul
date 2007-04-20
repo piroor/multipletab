@@ -36,6 +36,12 @@
 	</menupopup>
 
 	<menupopup id="multipletab-tabcontext-menu-template">
+		<menuitem id="multipletab-context-removeAll"
+			label="&popup.context.removeAll;"
+			tbattr="tabbrowser-multiple"
+			oncommand="MultipleTabService.closeTabs(MultipleTabService.getTabBrowserFromChildren(this).mTabContainer.childNodes);"
+			multipletab-insertbefore="tabContextMenu.lastChild.previousSibling"/>
+
 		<menuitem id="multipletab-context-removeLeftTabs"
 			label-horizontal="&popup.context.removeLeftTabs.horizontal;"
 			label-vertical="&popup.context.removeLeftTabs.vertical;"

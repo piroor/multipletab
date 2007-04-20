@@ -7,6 +7,7 @@
 <!ENTITY popup.context.removeLeftTabs.vertical    "Close Above Tabs">
 <!ENTITY popup.context.removeRightTabs.horizontal "Close Right Tabs">
 <!ENTITY popup.context.removeRightTabs.vertical   "Close Below Tabs">
+<!ENTITY popup.context.removeAll                  "Close All Tabs">
 
 
 

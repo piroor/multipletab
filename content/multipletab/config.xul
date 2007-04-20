@@ -82,6 +82,9 @@
 
 <prefpane id="prefpane-context-menu" label="&config.tabs.contextMenu;">
 	<preferences id="prefpane-context-menu-preferences">
+		<preference id="extensions.multipletab.show.multipletab-context-removeAll"
+			name="extensions.multipletab.show.multipletab-context-removeAll"
+			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 			name="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 			type="bool"/>
@@ -92,6 +95,9 @@
 	<groupbox>
 		<caption label="&config.contextMenu.caption;"/>
 		<vbox id="prefpane-context-menu-items">
+			<checkbox id="extensions.multipletab.show.multipletab-context-removeAll"
+				preference="extensions.multipletab.show.multipletab-context-removeAll"
+				label="&popup.context.removeAll;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeLeftTabs-check"
 				preference="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 				label="&config.contextMenu.removeLeftTabs;"/>
