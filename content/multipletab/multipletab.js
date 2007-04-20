@@ -28,6 +28,14 @@ var MultipleTabService = {
 			}
 		}
 	},
+
+	get SessionStore() {
+		if (!this._SessionStore) {
+			this._SessionStore = Components.classes['@mozilla.org/browser/sessionstore;1'].getService(Components.interfaces.nsISessionStore);
+		}
+		return this._SessionStore;
+	},
+	_SessionStore : null,
 	 
 /* Utilities */ 
 	 
@@ -705,6 +713,57 @@ var MultipleTabService = {
 		);
 	},
  
+	duplicateTabs : function(aTabs) 
+	{
+		if (!aTabs) return;
+
+		var max = aTabs.length;
+		if (!max) return;
+
+		var b  = this.getTabBrowserFromChildren(aTabs[0]);
+		var SS = this.SessionStore;
+
+		var selectedIndex = -1;
+		for (var i = max-1; i > -1; i--)
+		{
+			SS.setTabValue(aTabs[i], 'multipletab-selected', 'true');
+			if (aTabs[i] == b.selectedTab)
+				selectedIndex = i;
+		}
+		if (selectedIndex > -1) {
+			selectedIndex += b.mTabContainer.childNodes.length;
+		}
+
+		var state = SS.getWindowState(window);
+
+		// delete obsolete data
+		eval('state = '+state);
+		delete state.windows[0]._closedTabs;
+		for (var i = state.windows[0].tabs.length-1; i > -1; i--)
+		{
+			if (!state.windows[0].tabs[i].extData ||
+				state.windows[0].tabs[i].extData['multipletab-selected'] != 'true') {
+				state.windows[0].tabs.splice(i, 1);
+				if (i < state.windows[0].selected)
+					state.windows[0].selected--;
+			}
+			else {
+				delete state.windows[0].tabs[i].extData['multipletab-selected'];
+			}
+		}
+		state = state.toSource();
+
+		for (var i = max-1; i > -1; i--)
+		{
+			SS.deleteTabValue(aTabs[i], 'multipletab-selected');
+		}
+
+		SS.setWindowState(window, state, false);
+
+		if (selectedIndex > -1)
+			b.selectedTab = b.mTabContainer.childNodes[selectedIndex];
+	},
+ 	
 	splitWindowFrom : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -715,7 +774,7 @@ var MultipleTabService = {
 
 		// Step 1: get window state
 
-		var b = this.getTabBrowserFromChildren(aTabs[0]);
+		var b  = this.getTabBrowserFromChildren(aTabs[0]);
 		var SS = this.SessionStore;
 
 		for (var i = max-1; i > -1; i--)
@@ -724,8 +783,19 @@ var MultipleTabService = {
 		}
 
 		var state = SS.getWindowState(window);
+
+		// delete obsolete data
 		eval('state = '+state);
 		delete state.windows[0]._closedTabs;
+		for (var i = state.windows[0].tabs.length-1; i > -1; i--)
+		{
+			if (!state.windows[0].tabs[i].extData ||
+				state.windows[0].tabs[i].extData['multipletab-selected'] != 'true') {
+				state.windows[0].tabs.splice(i, 1);
+				if (i < state.windows[0].selected)
+					state.windows[0].selected--;
+			}
+		}
 		state = state.toSource();
 
 
@@ -758,7 +828,8 @@ var MultipleTabService = {
 
 		return this.openNewWindowWithTabs(state, max);
 	},
-	openNewWindowWithTabs : function(aState, aNumTabs)
+	 
+	openNewWindowWithTabs : function(aState, aNumTabs) 
 	{
 		// Step 3: Restore state in new window
 
@@ -841,14 +912,7 @@ var MultipleTabService = {
 
 		return newWin;
 	},
-	get SessionStore() {
-		if (!this._SessionStore) {
-			this._SessionStore = Components.classes['@mozilla.org/browser/sessionstore;1'].getService(Components.interfaces.nsISessionStore);
-		}
-		return this._SessionStore;
-	},
-	_SessionStore : null,
-  
+   
 /* Tab Selection */ 
 	 
 	hasSelection : function() 
@@ -921,9 +985,9 @@ var MultipleTabService = {
 		}
 	},
 	selectionModified : false,
- 	 
+  
 /* Pref Listener */ 
-	 
+	
 	domain : 'extensions.multipletab', 
  
 	observe : function(aSubject, aTopic, aPrefName) 

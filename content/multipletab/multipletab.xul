@@ -26,6 +26,10 @@
 		<menuitem id="multipletab-selection-addBookmark"
 			label="&popup.selection.addBookmark;"
 			oncommand="MultipleTabService.addBookmarkFor(MultipleTabService.getSelectedTabs());"/>
+		<menuseparator id="multipletab-selection-duplicate-separator"/>
+		<menuitem id="multipletab-selection-duplicateTabs"
+			label="&popup.selection.duplicateTabs;"
+			oncommand="MultipleTabService.duplicateTabs(MultipleTabService.getSelectedTabs());"/>
 		<menuitem id="multipletab-selection-splitWindow"
 			label="&popup.selection.splitWindow;"
 			oncommand="MultipleTabService.splitWindowFrom(MultipleTabService.getSelectedTabs());"/>
@@ -36,6 +40,11 @@
 	</menupopup>
 
 	<menupopup id="multipletab-tabcontext-menu-template">
+		<menuitem id="multipletab-context-duplicate"
+			label="&popup.context.duplicate;"
+			oncommand="MultipleTabService.duplicateTabs([MultipleTabService.getTabBrowserFromChildren(this).mContextTab]);"
+			multipletab-insertbefore="tabContextMenu.childNodes[1]"/>
+
 		<menuitem id="multipletab-context-removeAll"
 			label="&popup.context.removeAll;"
 			tbattr="tabbrowser-multiple"

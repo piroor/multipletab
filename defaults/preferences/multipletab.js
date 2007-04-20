@@ -7,11 +7,13 @@ pref("extensions.multipletab.tabclick.mode", 1);
 pref("extensions.multipletab.show.multipletab-selection-reloadTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-removeTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-addBookmark", true);
+pref("extensions.multipletab.show.multipletab-selection-duplicateTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-splitWindow", true);
 
 pref("extensions.multipletab.show.multipletab-context-removeLeftTabs",  true);
 pref("extensions.multipletab.show.multipletab-context-removeRightTabs", true);
 pref("extensions.multipletab.show.multipletab-context-removeAll",       true);
+pref("extensions.multipletab.show.multipletab-context-duplicate",       true);
 
 
 pref("extensions.multipletab@piro.sakura.ne.jp.name", "chrome://multipletab/locale/multipletab.properties");

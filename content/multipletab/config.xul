@@ -54,6 +54,9 @@
 		<preference id="extensions.multipletab.show.multipletab-selection-addBookmark"
 			name="extensions.multipletab.show.multipletab-selection-addBookmark"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-duplicateTabs"
+			name="extensions.multipletab.show.multipletab-selection-duplicateTabs"
+			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-selection-splitWindow"
 			name="extensions.multipletab.show.multipletab-selection-splitWindow"
 			type="bool"/>
@@ -67,12 +70,15 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-reloadTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-reloadTabs"
 				label="&popup.selection.reloadTabs;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-selection-splitWindow-check"
-				preference="extensions.multipletab.show.multipletab-selection-splitWindow"
-				label="&popup.selection.splitWindow;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-addBookmark-check"
 				preference="extensions.multipletab.show.multipletab-selection-addBookmark"
 				label="&popup.selection.addBookmark;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-duplicateTabs-check"
+				preference="extensions.multipletab.show.multipletab-selection-duplicateTabs"
+				label="&popup.selection.duplicateTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-splitWindow-check"
+				preference="extensions.multipletab.show.multipletab-selection-splitWindow"
+				label="&popup.selection.splitWindow;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-removeTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-removeTabs"
 				label="&popup.selection.removeTabs;"/>
@@ -82,6 +88,9 @@
 
 <prefpane id="prefpane-context-menu" label="&config.tabs.contextMenu;">
 	<preferences id="prefpane-context-menu-preferences">
+		<preference id="extensions.multipletab.show.multipletab-context-duplicate"
+			name="extensions.multipletab.show.multipletab-context-duplicate"
+			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-context-removeAll"
 			name="extensions.multipletab.show.multipletab-context-removeAll"
 			type="bool"/>
@@ -95,6 +104,9 @@
 	<groupbox>
 		<caption label="&config.contextMenu.caption;"/>
 		<vbox id="prefpane-context-menu-items">
+			<checkbox id="extensions.multipletab.show.multipletab-context-duplicate"
+				preference="extensions.multipletab.show.multipletab-context-duplicate"
+				label="&popup.context.duplicate;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeAll"
 				preference="extensions.multipletab.show.multipletab-context-removeAll"
 				label="&popup.context.removeAll;"/>

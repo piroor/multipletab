@@ -1,13 +1,15 @@
-<!ENTITY popup.selection.removeTabs  "すべて閉じる">
-<!ENTITY popup.selection.reloadTabs  "すべて再読み込み">
-<!ENTITY popup.selection.addBookmark "フォルダにまとめてブックマーク">
-<!ENTITY popup.selection.splitWindow "新しいウィンドウで開く">
+<!ENTITY popup.selection.removeTabs    "すべて閉じる">
+<!ENTITY popup.selection.reloadTabs    "すべて再読み込み">
+<!ENTITY popup.selection.addBookmark   "フォルダにまとめてブックマーク">
+<!ENTITY popup.selection.duplicateTabs "すべて複製">
+<!ENTITY popup.selection.splitWindow   "新しいウィンドウで開く">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "左のタブをすべて閉じる">
 <!ENTITY popup.context.removeLeftTabs.vertical    "上のタブをすべて閉じる">
 <!ENTITY popup.context.removeRightTabs.horizontal "右のタブをすべて閉じる">
 <!ENTITY popup.context.removeRightTabs.vertical   "下のタブをすべて閉じる">
 <!ENTITY popup.context.removeAll                  "すべてのタブを閉じる">
+<!ENTITY popup.context.duplicate                  "タブを複製">
 
 
 
