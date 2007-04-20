@@ -163,10 +163,6 @@ var MultipleTabService = {
 	{
 		if (!('gBrowser' in window)) return;
 
-		gBrowser.mTabContainer.addEventListener('draggesture', this, true);
-		gBrowser.mTabContainer.addEventListener('mouseover',   this, true);
-		gBrowser.mTabContainer.addEventListener('mousemove',   this, true);
-		gBrowser.mTabContainer.addEventListener('mousedown',   this, true);
 		window.addEventListener('mouseup', this, true);
 
 		window.removeEventListener('load', this, false);
@@ -175,11 +171,16 @@ var MultipleTabService = {
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabdrag.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.mode');
 
-		this.updateTabBrowser(gBrowser);
+		this.initTabBrowser(gBrowser);
 	},
 	 
-	updateTabBrowser : function(aTabBrowser) 
+	initTabBrowser : function(aTabBrowser) 
 	{
+		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
+		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
+		aTabBrowser.mTabContainer.addEventListener('mousemove',   this, true);
+		aTabBrowser.mTabContainer.addEventListener('mousedown',   this, true);
+
 		var addTabMethod = 'addTab';
 		var removeTabMethod = 'removeTab';
 		if (aTabBrowser.__tabextensions__addTab) {
@@ -220,7 +221,7 @@ var MultipleTabService = {
 			)
 		);
 
-		this.updateTabBrowserContextMenu(aTabBrowser);
+		this.initTabBrowserContextMenu(aTabBrowser);
 
 		var tabs = aTabBrowser.mTabContainer.childNodes;
 		for (var i = 0, maxi = tabs.length; i < maxi; i++)
@@ -247,7 +248,7 @@ var MultipleTabService = {
 		aTab.removeEventListener('mousemove', this, true);
 	},
 	 
-	updateTabBrowserContextMenu : function(aTabBrowser) 
+	initTabBrowserContextMenu : function(aTabBrowser) 
 	{
 		var id = parseInt(Math.random() * 65000);
 		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
@@ -279,10 +280,7 @@ var MultipleTabService = {
    
 	destroy : function() 
 	{
-		gBrowser.mTabContainer.removeEventListener('draggesture', this, true);
-		gBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
-		gBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
-		gBrowser.mTabContainer.removeEventListener('mousedown',   this, true);
+		this.destroyTabBrowser(gBrowser);
 		window.addEventListener('mouseup', this, true);
 
 		window.removeEventListener('unload', this, false);
@@ -296,6 +294,17 @@ var MultipleTabService = {
 		}
 
 		var tabContextMenu = document.getAnonymousElementByAttribute(gBrowser, 'anonid', 'tabContextMenu');
+		tabContextMenu.removeEventListener('popupshowing', this, false);
+	},
+ 
+	destroyTabBrowser : function(aTabBrowser) 
+	{
+		aTabBrowser.mTabContainer.removeEventListener('draggesture', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
+		aTabBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
+		aTabBrowser.mTabContainer.removeEventListener('mousedown',   this, true);
+
+		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		tabContextMenu.removeEventListener('popupshowing', this, false);
 	},
   
@@ -642,13 +651,6 @@ var MultipleTabService = {
 		if (!max) return;
 
 		var b = this.getTabBrowserFromChildren(aTabs[0]);
-
-		if (
-			max > 1 &&
-			!b.warnAboutClosingTabs(false)
-			)
-			return;
-
 		for (var i = max-1; i > -1; i--)
 		{
 			b.reloadTab(aTabs[i]);
