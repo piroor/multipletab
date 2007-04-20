@@ -173,7 +173,7 @@ var MultipleTabService = {
 
 		this.initTabBrowser(gBrowser);
 	},
-	 
+	
 	initTabBrowser : function(aTabBrowser) 
 	{
 		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
@@ -235,18 +235,6 @@ var MultipleTabService = {
 		delete maxi;
 		delete tabs;
 	},
-	initTab : function(aTab)
-	{
-		aTab.addEventListener('mousemove', this, true);
-	},
-	destroyTab : function(aTab)
-	{
-		this.setSelection(aTab, false);
-		if (!this.hasSelection())
-			this.selectionModified = false;
-
-		aTab.removeEventListener('mousemove', this, true);
-	},
 	 
 	initTabBrowserContextMenu : function(aTabBrowser) 
 	{
@@ -277,7 +265,12 @@ var MultipleTabService = {
 
 		tabContextMenu.addEventListener('popupshowing', this, false);
 	},
-   
+  
+	initTab : function(aTab) 
+	{
+		aTab.addEventListener('mousemove', this, true);
+	},
+  
 	destroy : function() 
 	{
 		this.destroyTabBrowser(gBrowser);
@@ -296,7 +289,7 @@ var MultipleTabService = {
 		var tabContextMenu = document.getAnonymousElementByAttribute(gBrowser, 'anonid', 'tabContextMenu');
 		tabContextMenu.removeEventListener('popupshowing', this, false);
 	},
- 
+	
 	destroyTabBrowser : function(aTabBrowser) 
 	{
 		aTabBrowser.mTabContainer.removeEventListener('draggesture', this, true);
@@ -307,7 +300,16 @@ var MultipleTabService = {
 		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		tabContextMenu.removeEventListener('popupshowing', this, false);
 	},
-  
+ 
+	destroyTab : function(aTab) 
+	{
+		this.setSelection(aTab, false);
+		if (!this.hasSelection())
+			this.selectionModified = false;
+
+		aTab.removeEventListener('mousemove', this, true);
+	},
+   
 /* Event Handling */ 
 	
 	handleEvent : function(aEvent) 
@@ -523,7 +525,7 @@ var MultipleTabService = {
 	},
   
 /* Popup */ 
-	 
+	
 	get tabSelectionPopup() { 
 		if (!this._tabSelectionPopup) {
 			this._tabSelectionPopup = document.getElementById('multipletab-selection-menu');
@@ -543,40 +545,6 @@ var MultipleTabService = {
 			aEvent.screenY - document.documentElement.boxObject.screenY,
 			'popup'
 		);
-	},
- 
-	getSeparators : function(aPopup) 
-	{
-		try {
-			var xpathResult = document.evaluate(
-					'descendant::xul:menuseparator',
-					aPopup,
-					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-					null
-				);
-		}
-		catch(e) {
-			return { snapshotLength : 0 };
-		}
-		return xpathResult;
-	},
- 
-	getObsoleteSeparators : function(aPopup) 
-	{
-		try {
-			var xpathResult = document.evaluate(
-					'descendant::xul:menuseparator[not(following-sibling::*[not(@hidden)]) or not(preceding-sibling::*[not(@hidden)]) or local-name(following-sibling::*[not(@hidden)]) = "menuseparator"]',
-					aPopup,
-					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-					null
-				);
-		}
-		catch(e) {
-			return { snapshotLength : 0 };
-		}
-		return xpathResult;
 	},
  
 	showHideMenuItems : function(aPopup) 
@@ -619,7 +587,41 @@ var MultipleTabService = {
 			separators.snapshotItem(i).setAttribute('hidden', true);
 		}
 	},
-  
+	
+	getSeparators : function(aPopup) 
+	{
+		try {
+			var xpathResult = document.evaluate(
+					'descendant::xul:menuseparator',
+					aPopup,
+					this.NSResolver, // document.createNSResolver(document.documentElement),
+					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+					null
+				);
+		}
+		catch(e) {
+			return { snapshotLength : 0 };
+		}
+		return xpathResult;
+	},
+ 
+	getObsoleteSeparators : function(aPopup) 
+	{
+		try {
+			var xpathResult = document.evaluate(
+					'descendant::xul:menuseparator[not(following-sibling::*[not(@hidden)]) or not(preceding-sibling::*[not(@hidden)]) or local-name(following-sibling::*[not(@hidden)]) = "menuseparator"]',
+					aPopup,
+					this.NSResolver, // document.createNSResolver(document.documentElement),
+					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+					null
+				);
+		}
+		catch(e) {
+			return { snapshotLength : 0 };
+		}
+		return xpathResult;
+	},
+   
 /* Commands */ 
 	 
 	closeTabs : function(aTabs) 
@@ -793,17 +795,36 @@ var MultipleTabService = {
 
 		return newWin;
 	},
-	get SessionStore() { 
+	get SessionStore() {
 		if (!this._SessionStore) {
 			this._SessionStore = Components.classes['@mozilla.org/browser/sessionstore;1'].getService(Components.interfaces.nsISessionStore);
 		}
 		return this._SessionStore;
 	},
 	_SessionStore : null,
- 	
-	toggleSelection : function(aTab) 
+  
+/* Tab Selection */ 
+	 
+	hasSelection : function() 
 	{
-		return this.setSelection(aTab, aTab.getAttribute('multipletab-selected') != 'true');
+		try {
+			var xpathResult = document.evaluate(
+					'descendant::xul:tab[@multipletab-selected = "true"]',
+					this.browser.mTabContainer,
+					this.NSResolver, // document.createNSResolver(document.documentElement),
+					XPathResult.FIRST_ORDERED_NODE_TYPE,
+					null
+				);
+			return xpathResult.singleNodeValue ? true : false ;
+		}
+		catch(e) {
+		}
+		return false;
+	},
+ 
+	isSelected : function(aTab) 
+	{
+		return aTab.getAttribute('multipletab-selected') == 'true';
 	},
  
 	setSelection : function(aTab, aState) 
@@ -828,26 +849,9 @@ var MultipleTabService = {
 		return aState;
 	},
  
-	isSelected : function(aTab) 
+	toggleSelection : function(aTab) 
 	{
-		return aTab.getAttribute('multipletab-selected') == 'true';
-	},
- 
-	hasSelection : function() 
-	{
-		try {
-			var xpathResult = document.evaluate(
-					'descendant::xul:tab[@multipletab-selected = "true"]',
-					this.browser.mTabContainer,
-					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.FIRST_ORDERED_NODE_TYPE,
-					null
-				);
-			return xpathResult.singleNodeValue ? true : false ;
-		}
-		catch(e) {
-		}
-		return false;
+		return this.setSelection(aTab, aTab.getAttribute('multipletab-selected') != 'true');
 	},
  
 	clearSelection : function() 
@@ -871,7 +875,7 @@ var MultipleTabService = {
 		}
 	},
 	selectionModified : false,
-  
+ 	 
 /* Pref Listener */ 
 	 
 	domain : 'extensions.multipletab', 
