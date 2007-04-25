@@ -196,9 +196,9 @@ var MultipleTabService = {
 			removeTabMethod = '__tabextensions__removeTab';
 		}
 
-		var originalAddTab = aTabBrowser[addTabMethod];
+		aTabBrowser.__multipletab__originalAddTab = aTabBrowser[addTabMethod];
 		aTabBrowser[addTabMethod] = function() {
-			var tab = originalAddTab.apply(this, arguments);
+			var tab = this.__multipletab__originalAddTab.apply(this, arguments);
 			try {
 				MultipleTabService.initTab(tab);
 			}
@@ -207,10 +207,10 @@ var MultipleTabService = {
 			return tab;
 		};
 
-		var originalRemoveTab = aTabBrowser[removeTabMethod];
+		aTabBrowser.__multipletab__originalRemoveTab = aTabBrowser[removeTabMethod];
 		aTabBrowser[removeTabMethod] = function(aTab) {
 			MultipleTabService.destroyTab(aTab);
-			var retVal = originalRemoveTab.apply(this, arguments);
+			var retVal = this.__multipletab__originalRemoveTab.apply(this, arguments);
 			try {
 				if (aTab.parentNode)
 					MultipleTabService.initTab(aTab);
