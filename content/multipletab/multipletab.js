@@ -547,6 +547,7 @@ var MultipleTabService = {
 		var popup = this.tabSelectionPopup;
 		popup.hidePopup();
 		popup.autoClearSelection = aAutoClearSelection;
+		document.popupNode = gBrowser.mTabContainer;
 		popup.showPopup(
 			document.documentElement,
 			aEvent.screenX - document.documentElement.boxObject.screenX,
