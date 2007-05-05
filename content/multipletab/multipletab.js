@@ -916,12 +916,12 @@ var MultipleTabService = {
    
 /* Tab Selection */ 
 	 
-	hasSelection : function() 
+	hasSelection : function(aTabBrowser) 
 	{
 		try {
 			var xpathResult = document.evaluate(
 					'descendant::xul:tab[@multipletab-selected = "true"]',
-					this.browser.mTabContainer,
+					(aTabBrowser || this.browser).mTabContainer,
 					this.NSResolver, // document.createNSResolver(document.documentElement),
 					XPathResult.FIRST_ORDERED_NODE_TYPE,
 					null
