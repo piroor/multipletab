@@ -79,12 +79,12 @@ var MultipleTabService = {
 		return array;
 	},
  
-	getSelectedTabs : function() 
+	getSelectedTabs : function(aTabBrowser) 
 	{
 		try {
 			var xpathResult = document.evaluate(
 					'descendant::xul:tab[@multipletab-selected = "true"]',
-					this.browser.mTabContainer,
+					(aTabBrowser || this.browser).mTabContainer,
 					this.NSResolver, // document.createNSResolver(document.documentElement),
 					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 					null
@@ -96,12 +96,12 @@ var MultipleTabService = {
 		return [];
 	},
  
-	getReadyToCloseTabs : function() 
+	getReadyToCloseTabs : function(aTabBrowser) 
 	{
 		try {
 			var xpathResult = document.evaluate(
 					'descendant::xul:tab[@multipletab-ready-to-close = "true"]',
-					this.browser.mTabContainer,
+					(aTabBrowser || this.browser).mTabContainer,
 					this.NSResolver, // document.createNSResolver(document.documentElement),
 					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
 					null
