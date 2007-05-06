@@ -965,10 +965,10 @@ var MultipleTabService = {
 		return this.setSelection(aTab, aTab.getAttribute('multipletab-selected') != 'true');
 	},
  
-	clearSelection : function() 
+	clearSelection : function(aTabBrowser) 
 	{
-		this.clearSelectionSub(this.getSelectedTabs(), 'multipletab-selected');
-		this.clearSelectionSub(this.getReadyToCloseTabs(), 'multipletab-ready-to-close');
+		this.clearSelectionSub(this.getSelectedTabs(aTabBrowser), 'multipletab-selected');
+		this.clearSelectionSub(this.getReadyToCloseTabs(aTabBrowser), 'multipletab-ready-to-close');
 		this.selectionModified = false;
 	},
 	clearSelectionSub : function(aTabs, aAttr)
