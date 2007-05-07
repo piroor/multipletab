@@ -423,12 +423,16 @@ var MultipleTabService = {
 			return;
 		}
 
-		if (this.isEventFiredOnTabIcon(aEvent)) return;
-
 		if (tab.mOverCloseButton) {
 			this.tabCloseboxDragging = true;
 			this.lastMouseOverTarget = document.getAnonymousElementByAttribute(tab, 'anonid', 'close-button');
 			tab.setAttribute('multipletab-ready-to-close', true);
+		}
+		else if (
+			this.isEventFiredOnTabIcon(aEvent) ||
+			this.tabDragMode == this.TAB_DRAG_MODE_DEFAULT
+			) {
+			return;
 		}
 		else {
 			this.tabDragging = true;
