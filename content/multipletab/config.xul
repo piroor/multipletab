@@ -64,6 +64,9 @@
 		<preference id="extensions.multipletab.show.multipletab-selection-removeTabs"
 			name="extensions.multipletab.show.multipletab-selection-removeTabs"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-clipboard"
+			name="extensions.multipletab.show.multipletab-selection-clipboard"
+			type="bool"/>
 	</preferences>
 	<groupbox>
 		<caption label="&config.selectionMenu.caption;"/>
@@ -83,6 +86,9 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-removeTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-removeTabs"
 				label="&popup.selection.removeTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-clipboard-check"
+				preference="extensions.multipletab.show.multipletab-selection-clipboard"
+				label="&popup.selection.clipboard;"/>
 		</vbox>
 	</groupbox>
 </prefpane>
@@ -95,11 +101,20 @@
 		<preference id="extensions.multipletab.show.multipletab-context-removeAll"
 			name="extensions.multipletab.show.multipletab-context-removeAll"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-context-removeAnalog"
+			name="extensions.multipletab.show.multipletab-context-removeAnalog"
+			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 			name="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-context-removeRightTabs"
 			name="extensions.multipletab.show.multipletab-context-removeRightTabs"
+			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-context-clipboard"
+			name="extensions.multipletab.show.multipletab-context-clipboard"
+			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-context-clipboardAll"
+			name="extensions.multipletab.show.multipletab-context-clipboardAll"
 			type="bool"/>
 	</preferences>
 	<groupbox>
@@ -111,12 +126,21 @@
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeAll"
 				preference="extensions.multipletab.show.multipletab-context-removeAll"
 				label="&popup.context.removeAll;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-removeAnalog"
+				preference="extensions.multipletab.show.multipletab-context-removeAnalog"
+				label="&popup.context.removeAnalog;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeLeftTabs-check"
 				preference="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 				label="&config.contextMenu.removeLeftTabs;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeRightTabs"
 				preference="extensions.multipletab.show.multipletab-context-removeRightTabs"
 				label="&config.contextMenu.removeRightTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-clipboard"
+				preference="extensions.multipletab.show.multipletab-context-clipboard"
+				label="&popup.context.clipboard;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-clipboardAll"
+				preference="extensions.multipletab.show.multipletab-context-clipboardAll"
+				label="&popup.context.clipboardAll;"/>
 		</vbox>
 	</groupbox>
 </prefpane>

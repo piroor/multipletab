@@ -3,6 +3,7 @@
 <!ENTITY popup.selection.addBookmark "Lapok könyvjelzőkbe">
 <!ENTITY popup.selection.duplicateTabs "Lapok kettőzése">
 <!ENTITY popup.selection.splitWindow "Megnyitás új ablakban">
+<!ENTITY popup.selection.clipboard   "Copy URIs of Selected Tabs">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Balra levő lapok bezárása">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Felette levő lapok bezárása">
@@ -11,7 +12,8 @@
 <!ENTITY popup.context.removeAll                  "Összes lap bezárása">
 <!ENTITY popup.context.removeAnalog               "Hasonló lapok bezárása">
 <!ENTITY popup.context.duplicate                  "Lap kettőzése">
-<!ENTITY popup.context.clipboard                  "Webhelyek másolása a vágólapra">
+<!ENTITY popup.context.clipboard                  "Copy URI">
+<!ENTITY popup.context.clipboardAll               "Copy URIs of All Tabs">
 
 
 

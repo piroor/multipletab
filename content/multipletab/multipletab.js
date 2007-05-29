@@ -38,7 +38,7 @@ var MultipleTabService = {
 	_SessionStore : null,
 	 
 /* Utilities */ 
-	 
+	
 	isEventFiredOnTabIcon : function(aEvent) 
 	{
 		var tab = this.getTabFromEvent(aEvent);
@@ -181,7 +181,7 @@ var MultipleTabService = {
 
 		this.initTabBrowser(gBrowser);
 	},
-	
+	 
 	initTabBrowser : function(aTabBrowser) 
 	{
 		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
@@ -662,14 +662,12 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return;
 
-		var max = aTabs.length;
-		if (!max) return;
-
-		var b = this.getTabBrowserFromChildren(aTabs[0]);
-		for (var i = max-1; i > -1; i--)
-		{
-			b.reloadTab(aTabs[i]);
-		}
+		var b;
+		var self = this;
+		Array.prototype.slice.call(aTabs).forEach(function(aTab) {
+			if (!b) b = self.getTabBrowserFromChildren(aTab);
+			b.reloadTab(aTab);
+		});
 	},
  
 	addBookmarkFor : function(aTabs) 
@@ -678,30 +676,28 @@ var MultipleTabService = {
 
 		var b = this.getTabBrowserFromChildren(aTabs[0]);
 
-		var currentTabInfo,
-			tabsInfo = [];
-		for (var i = 0, maxi = aTabs.length; i < maxi; i++)
-		{
-			var webNav = aTabs[i].linkedBrowser.webNavigation;
-			var url    = webNav.currentURI.spec;
-			var name   = '';
-			var charSet, description;
-			try {
-				var doc = webNav.document;
-				name = doc.title || url;
-				charSet = doc.characterSet;
-				description = BookmarksUtils.getDescriptionFromDocument(doc);
-			}
-			catch (e) {
-				name = url;
-			}
-			tabsInfo[i] = {
-				name        : name,
-				url         : url,
-				charset     : charSet,
-				description : description
-			};
-		}
+		var currentTabInfo;
+		var tabsInfo = Array.prototype.slice.call(aTabs).map(function(aTab) {
+				var webNav = aTab.linkedBrowser.webNavigation;
+				var url    = webNav.currentURI.spec;
+				var name   = '';
+				var charSet, description;
+				try {
+					var doc = webNav.document;
+					name = doc.title || url;
+					charSet = doc.characterSet;
+					description = BookmarksUtils.getDescriptionFromDocument(doc);
+				}
+				catch (e) {
+					name = url;
+				}
+				return {
+					name        : name,
+					url         : url,
+					charset     : charSet,
+					description : description
+				};
+			});
 
 		window.openDialog(
 			'chrome://browser/content/bookmarks/addBookmark2.xul',
@@ -768,7 +764,7 @@ var MultipleTabService = {
 		if (selectedIndex > -1)
 			b.selectedTab = b.mTabContainer.childNodes[selectedIndex];
 	},
- 	
+ 
 	splitWindowFrom : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -833,7 +829,7 @@ var MultipleTabService = {
 
 		return this.openNewWindowWithTabs(state, max);
 	},
-	 
+	
 	openNewWindowWithTabs : function(aState, aNumTabs) 
 	{
 		// Step 3: Restore state in new window
@@ -917,7 +913,67 @@ var MultipleTabService = {
 
 		return newWin;
 	},
-   
+  
+	copyURIsToClipboard : function(aTabs) 
+	{
+		if (!aTabs) return;
+
+		var clipboard = Components.classes['@mozilla.org/widget/clipboardhelper;1']
+								.getService(Components.interfaces.nsIClipboardHelper);
+		var stringToCopy = Array.prototype.slice.call(aTabs).map(function(aTab) {
+				return aTab.linkedBrowser.currentURI.spec;
+			});
+		if (stringToCopy.length > 1)
+			stringToCopy.push('');
+		clipboard.copyString(stringToCopy.join('\r\n'));
+	},
+ 	
+	closeTabsAnalog : function(aCurrentTab,aTabsL,aTabsR) 
+	{
+		var stringURLCurrent = gBrowser.getBrowserForTab(aCurrentTab).contentDocument.location.href;
+		stringURLCurrent = stringURLCurrent.substring(2+stringURLCurrent.indexOf('//'), stringURLCurrent.length);
+		stringURLCurrent = stringURLCurrent.substring(0,stringURLCurrent.indexOf('/'));
+		var stringURLTab = '';
+		var i = 0;
+
+		if (aTabsL) {
+
+			var maxL = aTabsL.length;
+			if (maxL) {
+
+				var b = this.getTabBrowserFromChildren(aTabsL[0]);
+				if ( maxL > 1 && !b.warnAboutClosingTabs(true, maxL)) {} else {
+					for (i = 0; i < maxL; i++)
+					{
+						stringURLTab = gBrowser.getBrowserForTab(aTabsL[i]).contentDocument.location.href;
+						stringURLTab = stringURLTab.substring(2+stringURLTab.indexOf('//'), stringURLTab.length);
+						stringURLTab = stringURLTab.substring(0,stringURLTab.indexOf('/'));
+						if (stringURLCurrent == stringURLTab)
+							b.removeTab(aTabsL[i]);
+					}
+				}
+			}
+		}
+		if (aTabsR) {
+
+			var maxR = aTabsR.length;
+			if (maxR) {
+
+				var b = this.getTabBrowserFromChildren(aTabsR[0]);
+				if ( maxR > 1 && !b.warnAboutClosingTabs(true, maxR)) {} else {
+					for (i = 0; i < maxR; i++)
+					{
+						stringURLTab = gBrowser.getBrowserForTab(aTabsR[i]).contentDocument.location.href;
+						stringURLTab = stringURLTab.substring(2+stringURLTab.indexOf('//'), stringURLTab.length);
+						stringURLTab = stringURLTab.substring(0,stringURLTab.indexOf('/'));
+						if (stringURLCurrent == stringURLTab)
+							b.removeTab(aTabsR[i]);
+					}
+				}
+			}
+		}
+	},
+  
 /* Tab Selection */ 
 	 
 	hasSelection : function(aTabBrowser) 

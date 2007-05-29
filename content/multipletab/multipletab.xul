@@ -37,9 +37,14 @@
 		<menuitem id="multipletab-selection-removeTabs"
 			label="&popup.selection.removeTabs;"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getSelectedTabs());"/>
+		<menuseparator id="multipletab-selection-clipboard-separator"/>
+		<menuitem id="multipletab-selection-clipboard"
+			label="&popup.selection.clipboard;"
+			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getSelectedTabs());"/>
 	</menupopup>
 
 	<menupopup id="multipletab-tabcontext-menu-template">
+
 		<menuitem id="multipletab-context-duplicate"
 			label="&popup.context.duplicate;"
 			oncommand="MultipleTabService.duplicateTabs([MultipleTabService.getTabBrowserFromChildren(this).mContextTab]);"
@@ -49,6 +54,14 @@
 			label="&popup.context.removeAll;"
 			tbattr="tabbrowser-multiple"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getTabBrowserFromChildren(this).mTabContainer.childNodes);"
+			multipletab-insertbefore="tabContextMenu.lastChild.previousSibling"/>
+
+		<menuitem id="multipletab-context-removeAnalog"
+			label="&popup.context.removeAnalog;"
+			tbattr="tabbrowser-multiple"
+			oncommand="MultipleTabService.closeTabsAnalog(MultipleTabService.getTabBrowserFromChildren(this).mContextTab,
+					MultipleTabService.getLeftTabsOf(MultipleTabService.getTabBrowserFromChildren(this).mContextTab),
+					MultipleTabService.getRightTabsOf(MultipleTabService.getTabBrowserFromChildren(this).mContextTab));"
 			multipletab-insertbefore="tabContextMenu.lastChild.previousSibling"/>
 
 		<menuitem id="multipletab-context-removeLeftTabs"
@@ -66,6 +79,19 @@
 		<menuseparator id="multipletab-context-separator-removeTabs"
 			tbattr="tabbrowser-multiple"
 			multipletab-insertbefore="tabContextMenu.lastChild"/>
+
+		<menuitem id="multipletab-context-clipboard"
+			label="&popup.context.clipboard;"
+			oncommand="MultipleTabService.copyURIsToClipboard([MultipleTabService.getTabBrowserFromChildren(this).mContextTab]);"
+			multipletab-insertbefore="tabContextMenu.lastChild"/>
+		<menuitem id="multipletab-context-clipboardAll"
+			label="&popup.context.clipboardAll;"
+			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabBrowserFromChildren(this).mTabContainer.childNodes);"
+			multipletab-insertbefore="tabContextMenu.lastChild"/>
+		<menuseparator id="multipletab-context-separator-clipboard"
+			tbattr="tabbrowser-multiple"
+			multipletab-insertbefore="tabContextMenu.lastChild"/>
+
 	</menupopup>
 
 </popupset>

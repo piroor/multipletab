@@ -3,13 +3,17 @@
 <!ENTITY popup.selection.addBookmark   "フォルダにまとめてブックマーク">
 <!ENTITY popup.selection.duplicateTabs "すべて複製">
 <!ENTITY popup.selection.splitWindow   "新しいウィンドウで開く">
+<!ENTITY popup.selection.clipboard     "すべてのURIをコピー">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "左のタブをすべて閉じる">
 <!ENTITY popup.context.removeLeftTabs.vertical    "上のタブをすべて閉じる">
 <!ENTITY popup.context.removeRightTabs.horizontal "右のタブをすべて閉じる">
 <!ENTITY popup.context.removeRightTabs.vertical   "下のタブをすべて閉じる">
 <!ENTITY popup.context.removeAll                  "すべてのタブを閉じる">
+<!ENTITY popup.context.removeAnalog               "連続したタブをすべて閉じる">
 <!ENTITY popup.context.duplicate                  "タブを複製">
+<!ENTITY popup.context.clipboard                  "URIをコピー">
+<!ENTITY popup.context.clipboardAll               "すべてのタブのURIをコピー">
 
 
 

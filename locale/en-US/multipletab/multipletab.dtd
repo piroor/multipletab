@@ -3,13 +3,17 @@
 <!ENTITY popup.selection.addBookmark "Bookmark Selected Tabs to New Folder">
 <!ENTITY popup.selection.duplicateTabs "Duplicate Selected Tabs">
 <!ENTITY popup.selection.splitWindow "Open in New Window">
+<!ENTITY popup.selection.clipboard   "Copy URIs of Selected Tabs">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Close Left Tabs">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Close Above Tabs">
 <!ENTITY popup.context.removeRightTabs.horizontal "Close Right Tabs">
 <!ENTITY popup.context.removeRightTabs.vertical   "Close Below Tabs">
 <!ENTITY popup.context.removeAll                  "Close All Tabs">
+<!ENTITY popup.context.removeAnalog               "Close Analog Tabs">
 <!ENTITY popup.context.duplicate                  "Duplicate Tab">
+<!ENTITY popup.context.clipboard                  "Copy URI">
+<!ENTITY popup.context.clipboardAll               "Copy URIs of All Tabs">
 
 
 
