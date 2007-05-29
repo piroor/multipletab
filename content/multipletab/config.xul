@@ -101,8 +101,8 @@
 		<preference id="extensions.multipletab.show.multipletab-context-removeAll"
 			name="extensions.multipletab.show.multipletab-context-removeAll"
 			type="bool"/>
-		<preference id="extensions.multipletab.show.multipletab-context-removeAnalog"
-			name="extensions.multipletab.show.multipletab-context-removeAnalog"
+		<preference id="extensions.multipletab.show.multipletab-context-removeSimilar"
+			name="extensions.multipletab.show.multipletab-context-removeSimilar"
 			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 			name="extensions.multipletab.show.multipletab-context-removeLeftTabs"
@@ -126,9 +126,9 @@
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeAll"
 				preference="extensions.multipletab.show.multipletab-context-removeAll"
 				label="&popup.context.removeAll;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-context-removeAnalog"
-				preference="extensions.multipletab.show.multipletab-context-removeAnalog"
-				label="&popup.context.removeAnalog;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-removeSimilar"
+				preference="extensions.multipletab.show.multipletab-context-removeSimilar"
+				label="&popup.context.removeSimilar;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeLeftTabs-check"
 				preference="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 				label="&config.contextMenu.removeLeftTabs;"/>

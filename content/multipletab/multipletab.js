@@ -658,6 +658,31 @@ var MultipleTabService = {
 		}
 	},
  
+	closeSimilarTabsOf : function(aTabs, aCurrentTab) 
+	{
+		if (!aCurrentTab || !aTabs || !aTabs.length) return;
+
+		var currentDomain = aCurrentTab.linkedBrowser.currentURI.host;
+		var removeTabs    = [];
+		Array.prototype.slice.call(aTabs).forEach(function(aTab) {
+			if (aTab == aCurrentTab) return;
+			if (aTab.linkedBrowser.currentURI.host == currentDomain)
+				removeTabs.push(aTab);
+		});
+
+		var max = removeTabs.length;
+		var b   = this.getTabBrowserFromChildren(aCurrentTab);
+		if (
+			max > 1 &&
+			!b.warnAboutClosingTabs(true, max)
+			)
+			return;
+
+		removeTabs.forEach(function(aTab) {
+			b.removeTab(aTab);
+		});
+	},
+ 	
 	reloadTabs : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -926,52 +951,6 @@ var MultipleTabService = {
 		if (stringToCopy.length > 1)
 			stringToCopy.push('');
 		clipboard.copyString(stringToCopy.join('\r\n'));
-	},
- 	
-	closeTabsAnalog : function(aCurrentTab,aTabsL,aTabsR) 
-	{
-		var stringURLCurrent = gBrowser.getBrowserForTab(aCurrentTab).contentDocument.location.href;
-		stringURLCurrent = stringURLCurrent.substring(2+stringURLCurrent.indexOf('//'), stringURLCurrent.length);
-		stringURLCurrent = stringURLCurrent.substring(0,stringURLCurrent.indexOf('/'));
-		var stringURLTab = '';
-		var i = 0;
-
-		if (aTabsL) {
-
-			var maxL = aTabsL.length;
-			if (maxL) {
-
-				var b = this.getTabBrowserFromChildren(aTabsL[0]);
-				if ( maxL > 1 && !b.warnAboutClosingTabs(true, maxL)) {} else {
-					for (i = 0; i < maxL; i++)
-					{
-						stringURLTab = gBrowser.getBrowserForTab(aTabsL[i]).contentDocument.location.href;
-						stringURLTab = stringURLTab.substring(2+stringURLTab.indexOf('//'), stringURLTab.length);
-						stringURLTab = stringURLTab.substring(0,stringURLTab.indexOf('/'));
-						if (stringURLCurrent == stringURLTab)
-							b.removeTab(aTabsL[i]);
-					}
-				}
-			}
-		}
-		if (aTabsR) {
-
-			var maxR = aTabsR.length;
-			if (maxR) {
-
-				var b = this.getTabBrowserFromChildren(aTabsR[0]);
-				if ( maxR > 1 && !b.warnAboutClosingTabs(true, maxR)) {} else {
-					for (i = 0; i < maxR; i++)
-					{
-						stringURLTab = gBrowser.getBrowserForTab(aTabsR[i]).contentDocument.location.href;
-						stringURLTab = stringURLTab.substring(2+stringURLTab.indexOf('//'), stringURLTab.length);
-						stringURLTab = stringURLTab.substring(0,stringURLTab.indexOf('/'));
-						if (stringURLCurrent == stringURLTab)
-							b.removeTab(aTabsR[i]);
-					}
-				}
-			}
-		}
 	},
   
 /* Tab Selection */ 
