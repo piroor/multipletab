@@ -1,0 +1,38 @@
+<!ENTITY popup.selection.removeTabs  "Lapok bezárása">
+<!ENTITY popup.selection.reloadTabs  "Lapok újratöltése">
+<!ENTITY popup.selection.addBookmark "Lapok könyvjelzőkbe">
+<!ENTITY popup.selection.duplicateTabs "Lapok kettőzése">
+<!ENTITY popup.selection.splitWindow "Megnyitás új ablakban">
+
+<!ENTITY popup.context.removeLeftTabs.horizontal  "Balra levő lapok bezárása">
+<!ENTITY popup.context.removeLeftTabs.vertical    "Felette levő lapok bezárása">
+<!ENTITY popup.context.removeRightTabs.horizontal "Jobbra levő lapok bezárása">
+<!ENTITY popup.context.removeRightTabs.vertical   "Alatta levő lapok bezárása">
+<!ENTITY popup.context.removeAll                  "Összes lap bezárása">
+<!ENTITY popup.context.removeAnalog               "Hasonló lapok bezárása">
+<!ENTITY popup.context.duplicate                  "Lap kettőzése">
+<!ENTITY popup.context.clipboard                  "Webhelyek másolása a vágólapra">
+
+
+
+<!ENTITY config.title        "Multiple Tab Handler - beállítások">
+
+<!ENTITY config.tabs.general "Általános">
+
+<!ENTITY config.tabdragmode.caption "Fülek 'Fogd és vidd' opciója">
+<!ENTITY config.tabdragmode.default "Alapértelmezett (áthelyezés és rendezés)">
+<!ENTITY config.tabdragmode.select  "Lapok kiválasztása">
+<!ENTITY config.tabdragmode.switch  "Lapok dinamikus váltása">
+
+<!ENTITY config.tabclickmode.caption "Ctrl-Klikk művelet a lap fülén">
+<!ENTITY config.tabclickmode.default "Lap bezárása">
+<!ENTITY config.tabclickmode.toggle  "Lap kiválasztása">
+
+<!ENTITY config.tabs.selectionMenu    "Kiválasztás - helyi menü">
+<!ENTITY config.selectionMenu.caption "A kiválasztott lapok füleinek helyi menüje:">
+
+<!ENTITY config.tabs.contextMenu    "Fül - helyi menü">
+<!ENTITY config.contextMenu.caption "Fülek helyi menüje:">
+<!ENTITY config.contextMenu.removeLeftTabs  "Balra (felette) levő lapok bezárása">
+<!ENTITY config.contextMenu.removeRightTabs "Jobbra (alatta) levő lapok bezárása">
+
