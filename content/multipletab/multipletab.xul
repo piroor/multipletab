@@ -58,7 +58,7 @@
 		<menuitem id="multipletab-context-removeSimilar"
 			label="&popup.context.removeSimilar;"
 			tbattr="tabbrowser-multiple"
-			oncommand="MultipleTabService.closeSimilarTabsOf(MultipleTabService.getTabBrowserFromChildren(this).mTabContainer.childNodes, MultipleTabService.getTabBrowserFromChildren(this).mContextTab);"
+			oncommand="MultipleTabService.closeSimilarTabsOf(MultipleTabService.getTabBrowserFromChildren(this).mContextTab);"
 			multipletab-insertbefore="tabContextMenu.lastChild.previousSibling"/>
 
 		<menuitem id="multipletab-context-removeLeftTabs"

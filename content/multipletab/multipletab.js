@@ -38,7 +38,7 @@ var MultipleTabService = {
 	_SessionStore : null,
 	 
 /* Utilities */ 
-	
+	 
 	isEventFiredOnTabIcon : function(aEvent) 
 	{
 		var tab = this.getTabFromEvent(aEvent);
@@ -147,6 +147,33 @@ var MultipleTabService = {
 		return [];
 	},
  
+	getSimilarTabsOf : function(aCurrentTab, aTabs) 
+	{
+		var resultTabs = [];
+		if (!aCurrentTab) return resultTabs;
+
+		if (!aTabs)
+			aTabs = this.getTabBrowserFromChildren(aCurrentTab).mTabContainer.childNodes;
+
+		try {
+			var currentDomain = aCurrentTab.linkedBrowser.currentURI.host;
+		}
+		catch(e) {
+			return resultTabs;
+		}
+
+		Array.prototype.slice.call(aTabs).forEach(function(aTab) {
+			if (aTab == aCurrentTab) return;
+			try {
+				if (aTab.linkedBrowser.currentURI.host == currentDomain)
+					resultTabs.push(aTab);
+			}
+			catch(e) {
+			}
+		});
+		return resultTabs;
+	},
+ 	
 	getTabFromEvent : function(aEvent) 
 	{
 		var target = aEvent.originalTarget || aEvent.target;
@@ -658,18 +685,11 @@ var MultipleTabService = {
 		}
 	},
  
-	closeSimilarTabsOf : function(aTabs, aCurrentTab) 
+	closeSimilarTabsOf : function(aCurrentTab, aTabs) 
 	{
-		if (!aCurrentTab || !aTabs || !aTabs.length) return;
+		if (!aCurrentTab) return;
 
-		var currentDomain = aCurrentTab.linkedBrowser.currentURI.host;
-		var removeTabs    = [];
-		Array.prototype.slice.call(aTabs).forEach(function(aTab) {
-			if (aTab == aCurrentTab) return;
-			if (aTab.linkedBrowser.currentURI.host == currentDomain)
-				removeTabs.push(aTab);
-		});
-
+		var removeTabs = this.getSimilarTabsOf(aCurrentTab, aTabs);
 		var max = removeTabs.length;
 		var b   = this.getTabBrowserFromChildren(aCurrentTab);
 		if (
@@ -682,7 +702,7 @@ var MultipleTabService = {
 			b.removeTab(aTab);
 		});
 	},
- 	
+ 
 	reloadTabs : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -945,14 +965,40 @@ var MultipleTabService = {
 
 		var clipboard = Components.classes['@mozilla.org/widget/clipboardhelper;1']
 								.getService(Components.interfaces.nsIClipboardHelper);
+		var self = this;
 		var stringToCopy = Array.prototype.slice.call(aTabs).map(function(aTab) {
-				return aTab.linkedBrowser.currentURI.spec;
+				return self.formatURIStringForClipboard(aTab.linkedBrowser.currentURI.spec, aTab);
 			});
 		if (stringToCopy.length > 1)
 			stringToCopy.push('');
 		clipboard.copyString(stringToCopy.join('\r\n'));
 	},
-  
+	
+	FORMAT_TYPE_DEFAULT : 0, 
+	FORMAT_TYPE_MOZ_URL : 1,
+	FORMAT_TYPE_LINK    : 2,
+ 
+	formatURIStringForClipboard : function(aURI, aTab) 
+	{
+		switch (this.getPref('extensions.multipletab.clipboard.formatType'))
+		{
+			default:
+			case this.FORMAT_TYPE_DEFAULT:
+				return aURI;
+
+			case this.FORMAT_TYPE_MOZ_URL:
+				return (aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label'))+
+					'\r\n'+aURI;
+
+			case this.FORMAT_TYPE_LINK:
+				return [
+					'<a href="'+aURI.replace(/"/g, '&quot;')+'">',
+					(aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label')),
+					'</a>'
+				].join('');
+		}
+	},
+   
 /* Tab Selection */ 
 	 
 	hasSelection : function(aTabBrowser) 
@@ -1027,7 +1073,7 @@ var MultipleTabService = {
 	selectionModified : false,
   
 /* Pref Listener */ 
-	
+	 
 	domain : 'extensions.multipletab', 
  
 	observe : function(aSubject, aTopic, aPrefName) 

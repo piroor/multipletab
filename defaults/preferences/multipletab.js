@@ -19,6 +19,9 @@ pref("extensions.multipletab.show.multipletab-context-duplicate",       true);
 pref("extensions.multipletab.show.multipletab-context-clipboard",       true);
 pref("extensions.multipletab.show.multipletab-context-clipboardAll",    true);
 
+// 0 = URI, 1 = title+URI, 2 = HTML Link
+pref("extensions.multipletab.clipboard.formatType", 0);
+
 
 pref("extensions.multipletab@piro.sakura.ne.jp.name", "chrome://multipletab/locale/multipletab.properties");
 pref("extensions.multipletab@piro.sakura.ne.jp.description", "chrome://multipletab/locale/multipletab.properties");
