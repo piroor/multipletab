@@ -30,6 +30,11 @@
 <!ENTITY config.tabclickmode.default "Lap bezárása">
 <!ENTITY config.tabclickmode.toggle  "Lap kiválasztása">
 
+<!ENTITY config.clopboardFormatType.caption "Text Format of &quot;Copy URIs of Tabs&quot; features">
+<!ENTITY config.clopboardFormatType.default "Simple URI">
+<!ENTITY config.clopboardFormatType.mozurl  "Page Title and URI">
+<!ENTITY config.clopboardFormatType.link    "HTML Link">
+
 <!ENTITY config.tabs.selectionMenu    "Kiválasztás - helyi menü">
 <!ENTITY config.selectionMenu.caption "A kiválasztott lapok füleinek helyi menüje:">
 

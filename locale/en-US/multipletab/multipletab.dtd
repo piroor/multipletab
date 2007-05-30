@@ -33,6 +33,11 @@
 <!ENTITY config.tabs.selectionMenu    "Tab Selection Menu">
 <!ENTITY config.selectionMenu.caption "Available items of the popup menu for selected tabs">
 
+<!ENTITY config.clopboardFormatType.caption "Text Format of &quot;Copy URIs of Tabs&quot; features">
+<!ENTITY config.clopboardFormatType.default "Simple URI">
+<!ENTITY config.clopboardFormatType.mozurl  "Page Title and URI">
+<!ENTITY config.clopboardFormatType.link    "HTML Link">
+
 <!ENTITY config.tabs.contextMenu    "Tab Context Menu">
 <!ENTITY config.contextMenu.caption "Available items of the context menu on tabs">
 <!ENTITY config.contextMenu.removeLeftTabs  "Close Left (Above) Tabs">
