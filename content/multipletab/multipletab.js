@@ -621,10 +621,10 @@ var MultipleTabService = {
 			separators.snapshotItem(i).removeAttribute('hidden');
 		}
 
-		separators = this.getObsoleteSeparators(aPopup);
-		for (var i = separators.snapshotLength-1; i > -1; i--)
+		var separator;
+		while (separator = this.getObsoleteSeparator(aPopup))
 		{
-			separators.snapshotItem(i).setAttribute('hidden', true);
+			separator.setAttribute('hidden', true);
 		}
 	},
 	
@@ -645,21 +645,21 @@ var MultipleTabService = {
 		return xpathResult;
 	},
  
-	getObsoleteSeparators : function(aPopup) 
+	getObsoleteSeparator : function(aPopup) 
 	{
 		try {
 			var xpathResult = document.evaluate(
-					'descendant::xul:menuseparator[not(following-sibling::*[not(@hidden)]) or not(preceding-sibling::*[not(@hidden)]) or local-name(following-sibling::*[not(@hidden)]) = "menuseparator"]',
+					'descendant::xul:menuseparator[not(@hidden)][not(following-sibling::*[not(@hidden)]) or not(preceding-sibling::*[not(@hidden)]) or local-name(following-sibling::*[not(@hidden)]) = "menuseparator"]',
 					aPopup,
 					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+					XPathResult.FIRST_ORDERED_NODE_TYPE,
 					null
 				);
 		}
 		catch(e) {
-			return { snapshotLength : 0 };
+			return null;
 		}
-		return xpathResult;
+		return xpathResult.singleNodeValue;
 	},
    
 /* Commands */ 
