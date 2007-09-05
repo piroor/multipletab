@@ -10,9 +10,13 @@
                    em:description="Provides feature to close multiple tabs."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/multipletab/"
                    em:iconURL="chrome://multipletab/content/icon32.png"
-                   em:optionsURL="chrome://multipletab/content/config.xul"
-                   em:updateURL="https://pub.cozmixng.org/~piro/xul/xul.rdf.en">
+                   em:optionsURL="chrome://multipletab/content/config.xul">
     <em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+
+
+    <em:updateURL>https://pub.cozmixng.org/~piro/xul/xul.rdf.en</em:updateURL>
+
+
     <em:targetApplication>
       <RDF:Description em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                        em:minVersion="2.0"
