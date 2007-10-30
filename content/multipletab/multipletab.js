@@ -6,10 +6,17 @@ var MultipleTabService = {
 	TAB_DRAG_MODE_SELECT  : 1,
 	TAB_DRAG_MODE_SWITCH  : 2,
 
-
 	tabClickMode : -1,
 	TAB_CLICK_MODE_DEFAULT : 0,
 	TAB_CLICK_MODE_TOGGLE  : 1,
+
+	kSELECTION_STYLE : 'multipletab-selection-style',
+	kSELECTED        : 'multipletab-selected',
+	kREADY_TO_CLOSE  : 'multipletab-ready-to-close',
+	kINSERT_BEFORE   : 'multipletab-insertbefore',
+
+	kSELECTION_MENU        : 'multipletab-selection-menu',
+	kCONTEXT_MENU_TEMPLATE : 'multipletab-tabcontext-menu-template',
 
 	NSResolver : {
 		lookupNamespaceURI : function(aPrefix)
@@ -28,6 +35,29 @@ var MultipleTabService = {
 			}
 		}
 	},
+	evaluateXPath : function(aExpression, aContext, aType) 
+	{
+		if (!aType) aType = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
+		try {
+			var xpathResult = document.evaluate(
+					aExpression,
+					aContext,
+					this.NSResolver,
+					aType,
+					null
+				);
+		}
+		catch(e) {
+			return {
+				singleNodeValue : null,
+				snapshotLength  : 0,
+				snapshotItem    : function() {
+					return null
+				}
+			};
+		}
+		return xpathResult;
+	},
 
 	get SessionStore() {
 		if (!this._SessionStore) {
@@ -41,18 +71,11 @@ var MultipleTabService = {
 	 
 	isEventFiredOnTabIcon : function(aEvent) 
 	{
-		var tab = this.getTabFromEvent(aEvent);
-		if (!tab) return false;
-
-		var icon = document.getAnonymousElementByAttribute(tab, 'class', 'tab-icon');
-		var box = icon.boxObject;
-		if (aEvent.screenX > box.screenX &&
-			aEvent.screenY > box.screenY &&
-			aEvent.screenX < box.screenX + box.width &&
-			aEvent.screenY < box.screenY + box.height)
-			return true;
-
-		return false;
+		return this.evaluateXPath(
+				'ancestor-or-self::*[@class="tab-icon"]',
+				aEvent.originalTarget || aEvent.target,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue ? true : false ;
 	},
  
 	isDisabled : function() 
@@ -81,70 +104,34 @@ var MultipleTabService = {
  
 	getSelectedTabs : function(aTabBrowser) 
 	{
-		try {
-			var xpathResult = document.evaluate(
-					'descendant::xul:tab[@multipletab-selected = "true"]',
-					(aTabBrowser || this.browser).mTabContainer,
-					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-					null
-				);
-			return this.getArrayFromXPathResult(xpathResult);
-		}
-		catch(e) {
-		}
-		return [];
+		return this.getArrayFromXPathResult(this.evaluateXPath(
+				'descendant::xul:tab[@'+this.kSELECTED+' = "true"]',
+				(aTabBrowser || this.browser).mTabContainer
+			));
 	},
  
 	getReadyToCloseTabs : function(aTabBrowser) 
 	{
-		try {
-			var xpathResult = document.evaluate(
-					'descendant::xul:tab[@multipletab-ready-to-close = "true"]',
-					(aTabBrowser || this.browser).mTabContainer,
-					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-					null
-				);
-			return this.getArrayFromXPathResult(xpathResult);
-		}
-		catch(e) {
-		}
-		return [];
+		return this.getArrayFromXPathResult(this.evaluateXPath(
+				'descendant::xul:tab[@'+this.kREADY_TO_CLOSE+' = "true"]',
+				(aTabBrowser || this.browser).mTabContainer
+			));
 	},
  
 	getLeftTabsOf : function(aTab) 
 	{
-		try {
-			var xpathResult = document.evaluate(
-					'preceding-sibling::xul:tab',
-					aTab,
-					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-					null
-				);
-			return this.getArrayFromXPathResult(xpathResult);
-		}
-		catch(e) {
-		}
-		return [];
+		return this.getArrayFromXPathResult(this.evaluateXPath(
+				'preceding-sibling::xul:tab',
+				aTab
+			));
 	},
  
 	getRightTabsOf : function(aTab) 
 	{
-		try {
-			var xpathResult = document.evaluate(
-					'following-sibling::xul:tab',
-					aTab,
-					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-					null
-				);
-			return this.getArrayFromXPathResult(xpathResult);
-		}
-		catch(e) {
-		}
-		return [];
+		return this.getArrayFromXPathResult(this.evaluateXPath(
+				'following-sibling::xul:tab',
+				aTab
+			));
 	},
  
 	getSimilarTabsOf : function(aCurrentTab, aTabs) 
@@ -176,20 +163,20 @@ var MultipleTabService = {
  	
 	getTabFromEvent : function(aEvent) 
 	{
-		var target = aEvent.originalTarget || aEvent.target;
-		while (target.localName != 'tab' && target.localName != 'tabs' && target.parentNode)
-			target = target.parentNode;
-
-		return (target.localName == 'tab') ? target : null ;
+		return this.evaluateXPath(
+				'ancestor-or-self::xul:tab',
+				aEvent.originalTarget || aEvent.target,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue;
 	},
  
 	getTabBrowserFromChildren : function(aTab) 
 	{
-		var target = aTab;
-		while (target.localName != 'tabbrowser' && target.parentNode)
-			target = target.parentNode;
-
-		return (target.localName == 'tabbrowser') ? target : null ;
+		return this.evaluateXPath(
+				'ancestor-or-self::xul:tabbrowser',
+				aTab,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue;
 	},
   
 /* Initializing */ 
@@ -205,54 +192,44 @@ var MultipleTabService = {
 		this.addPrefListener(this);
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabdrag.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.mode');
+		this.observe(null, 'nsPref:changed', 'extensions.multipletab.selectionStyle');
 
 		this.initTabBrowser(gBrowser);
+
+		window.setTimeout(function(aSelf) { aSelf.delayedInit(); }, 0, this);
+	},
+	delayedInit : function()
+	{
+		if ('SessionFix' in window &&
+			gBrowser.warnAboutClosingTabs.toSource().indexOf('__multipletab__closedTabsNum') < 0) {
+			eval('gBrowser.warnAboutClosingTabs = '+
+				gBrowser.warnAboutClosingTabs.toSource().replace(
+					'{',
+					'{ var sessionKey = document.getElementById("sessionfix-bundle").getString("sessionKey"); '
+				).replace(
+					'var numTabs = ',
+					'var numTabs = this.__multipletab__closedTabsNum || '
+				).replace(
+					'if (numWindows > 1)',
+					'if (numWindows > 1 || this.__multipletab__closedTabsNum)'
+				)
+			);
+		}
 	},
 	 
 	initTabBrowser : function(aTabBrowser) 
 	{
+		aTabBrowser.addEventListener('TabOpen', this, true);
+		aTabBrowser.addEventListener('TabClose', this, true);
 		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousemove',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousedown',   this, true);
 
-		var addTabMethod = 'addTab';
-		var removeTabMethod = 'removeTab';
-		if (aTabBrowser.__tabextensions__addTab) {
-			addTabMethod = '__tabextensions__addTab';
-			removeTabMethod = '__tabextensions__removeTab';
-		}
-
-		aTabBrowser.__multipletab__originalAddTab = aTabBrowser[addTabMethod];
-		aTabBrowser[addTabMethod] = function() {
-			var tab = this.__multipletab__originalAddTab.apply(this, arguments);
-			try {
-				MultipleTabService.initTab(tab);
-			}
-			catch(e) {
-			}
-			return tab;
-		};
-
-		aTabBrowser.__multipletab__originalRemoveTab = aTabBrowser[removeTabMethod];
-		aTabBrowser[removeTabMethod] = function(aTab) {
-			MultipleTabService.destroyTab(aTab);
-			var retVal = this.__multipletab__originalRemoveTab.apply(this, arguments);
-			try {
-				if (aTab.parentNode)
-					MultipleTabService.initTab(aTab);
-			}
-			catch(e) {
-			}
-			return retVal;
-		};
-
 		eval(
 			'aTabBrowser.warnAboutClosingTabs = '+
 			aTabBrowser.warnAboutClosingTabs.toSource().replace(
-				/\)/, ', aNumTabs)'
-			).replace(
-				/var numTabs = /, 'var numTabs = aNumTabs || '
+				'var numTabs = ', 'var numTabs = this.__multipletab__closedTabsNum || '
 			)
 		);
 
@@ -264,8 +241,6 @@ var MultipleTabService = {
 			this.initTab(tabs[i]);
 		}
 
-		delete addTabMethod;
-		delete removeTabMethod;
 		delete i;
 		delete maxi;
 		delete tabs;
@@ -275,7 +250,7 @@ var MultipleTabService = {
 	{
 		var id = parseInt(Math.random() * 65000);
 		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
-		var template = document.getElementById('multipletab-tabcontext-menu-template');
+		var template = document.getElementById(this.kCONTEXT_MENU_TEMPLATE);
 		var items = template.childNodes;
 		var item;
 		var refNode;
@@ -286,7 +261,7 @@ var MultipleTabService = {
 				item.setAttribute('id', item.getAttribute('id')+'-tabbrowser'+id);
 
 			try {
-				eval('refNode = '+item.getAttribute('multipletab-insertbefore'));
+				eval('refNode = '+item.getAttribute(this.kINSERT_BEFORE));
 			}
 			catch(e) {
 				refNode = null;
@@ -327,6 +302,8 @@ var MultipleTabService = {
 	
 	destroyTabBrowser : function(aTabBrowser) 
 	{
+		aTabBrowser.removeEventListener('TabOpen', this, true);
+		aTabBrowser.removeEventListener('TabClose', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
@@ -373,6 +350,14 @@ var MultipleTabService = {
 				this.onTabDragOver(aEvent);
 				break;
 
+			case 'TabOpen':
+				this.initTab(aEvent.originalTarget);
+				break;
+
+			case 'TabClose':
+				this.destroyTab(aEvent.originalTarget);
+				break;
+
 			case 'load':
 				this.init();
 				break;
@@ -383,7 +368,7 @@ var MultipleTabService = {
 
 			case 'popupshowing':
 				if (
-					aEvent.target.id != 'multipletab-selection-menu' &&
+					aEvent.target.id != this.kSELECTION_MENU &&
 					this.hasSelection()
 					) {
 					this.showSelectionPopup({
@@ -425,7 +410,10 @@ var MultipleTabService = {
 				return;
 			}
 			else if (aEvent.ctrlKey || aEvent.metaKey) {
-				if (this.tabClickMode != this.TAB_CLICK_MODE_TOGGLE) return;
+				if (this.tabClickMode != this.TAB_CLICK_MODE_TOGGLE) {
+					b.removeTab(tab);
+					return;
+				}
 
 				if (!this.selectionModified && !this.hasSelection())
 					this.setSelection(b.selectedTab, true);
@@ -453,7 +441,7 @@ var MultipleTabService = {
 		if (tab.mOverCloseButton) {
 			this.tabCloseboxDragging = true;
 			this.lastMouseOverTarget = document.getAnonymousElementByAttribute(tab, 'anonid', 'close-button');
-			tab.setAttribute('multipletab-ready-to-close', true);
+			tab.setAttribute(this.kREADY_TO_CLOSE, true);
 		}
 		else if (
 			this.isEventFiredOnTabIcon(aEvent) ||
@@ -556,10 +544,10 @@ var MultipleTabService = {
 			if (!onClosebox) return;
 
 			var tab = this.getTabFromEvent(aEvent);
-			if (tab.getAttribute('multipletab-ready-to-close') == 'true')
-				tab.removeAttribute('multipletab-ready-to-close');
+			if (tab.getAttribute(this.kREADY_TO_CLOSE) == 'true')
+				tab.removeAttribute(this.kREADY_TO_CLOSE);
 			else
-				tab.setAttribute('multipletab-ready-to-close', true);
+				tab.setAttribute(this.kREADY_TO_CLOSE, true);
 		}
 	},
   
@@ -567,7 +555,7 @@ var MultipleTabService = {
 	
 	get tabSelectionPopup() { 
 		if (!this._tabSelectionPopup) {
-			this._tabSelectionPopup = document.getElementById('multipletab-selection-menu');
+			this._tabSelectionPopup = document.getElementById(this.kSELECTION_MENU);
 		}
 		return this._tabSelectionPopup;
 	},
@@ -672,12 +660,15 @@ var MultipleTabService = {
 		if (!max) return;
 
 		var b = this.getTabBrowserFromChildren(aTabs[0]);
-
+		b.__multipletab__closedTabsNum = max;
 		if (
 			max > 1 &&
-			!b.warnAboutClosingTabs(true, max)
-			)
+			!b.warnAboutClosingTabs(true)
+			) {
+			b.__multipletab__closedTabsNum = 0;
 			return;
+		}
+		b.__multipletab__closedTabsNum = 0;
 
 		for (var i = max-1; i > -1; i--)
 		{
@@ -692,11 +683,15 @@ var MultipleTabService = {
 		var removeTabs = this.getSimilarTabsOf(aCurrentTab, aTabs);
 		var max = removeTabs.length;
 		var b   = this.getTabBrowserFromChildren(aCurrentTab);
+		b.__multipletab__closedTabsNum = max;
 		if (
 			max > 1 &&
-			!b.warnAboutClosingTabs(true, max)
-			)
+			!b.warnAboutClosingTabs(true)
+			) {
+			b.__multipletab__closedTabsNum = 0;
 			return;
+		}
+		b.__multipletab__closedTabsNum = 0;
 
 		removeTabs.forEach(function(aTab) {
 			b.removeTab(aTab);
@@ -779,7 +774,7 @@ var MultipleTabService = {
 		var selectedIndex = -1;
 		for (var i = max-1; i > -1; i--)
 		{
-			SS.setTabValue(aTabs[i], 'multipletab-selected', 'true');
+			SS.setTabValue(aTabs[i], this.kSELECTED, 'true');
 			if (aTabs[i] == b.selectedTab)
 				selectedIndex = i;
 		}
@@ -795,20 +790,20 @@ var MultipleTabService = {
 		for (var i = state.windows[0].tabs.length-1; i > -1; i--)
 		{
 			if (!state.windows[0].tabs[i].extData ||
-				state.windows[0].tabs[i].extData['multipletab-selected'] != 'true') {
+				state.windows[0].tabs[i].extData[this.kSELECTED] != 'true') {
 				state.windows[0].tabs.splice(i, 1);
 				if (i < state.windows[0].selected)
 					state.windows[0].selected--;
 			}
 			else {
-				delete state.windows[0].tabs[i].extData['multipletab-selected'];
+				delete state.windows[0].tabs[i].extData[this.kSELECTED];
 			}
 		}
 		state = state.toSource();
 
 		for (var i = max-1; i > -1; i--)
 		{
-			SS.deleteTabValue(aTabs[i], 'multipletab-selected');
+			SS.deleteTabValue(aTabs[i], this.kSELECTED);
 		}
 
 		SS.setWindowState(window, state, false);
@@ -832,7 +827,7 @@ var MultipleTabService = {
 
 		for (var i = max-1; i > -1; i--)
 		{
-			SS.setTabValue(aTabs[i], 'multipletab-selected', 'true');
+			SS.setTabValue(aTabs[i], this.kSELECTED, 'true');
 		}
 
 		var state = SS.getWindowState(window);
@@ -843,7 +838,7 @@ var MultipleTabService = {
 		for (var i = state.windows[0].tabs.length-1; i > -1; i--)
 		{
 			if (!state.windows[0].tabs[i].extData ||
-				state.windows[0].tabs[i].extData['multipletab-selected'] != 'true') {
+				state.windows[0].tabs[i].extData[this.kSELECTED] != 'true') {
 				state.windows[0].tabs.splice(i, 1);
 				if (i < state.windows[0].selected)
 					state.windows[0].selected--;
@@ -858,7 +853,7 @@ var MultipleTabService = {
 		for (var i = max-1; i > -1; i--)
 		{
 			tab = aTabs[i];
-			SS.deleteTabValue(tab, 'multipletab-selected');
+			SS.deleteTabValue(tab, this.kSELECTED);
 			if (tab.linkedBrowser.sessionHistory)
 				tab.linkedBrowser.sessionHistory.PurgeHistory(tab.linkedBrowser.sessionHistory.count);
 			tab.linkedBrowser.contentWindow.location.replace('about:blank');
@@ -889,6 +884,7 @@ var MultipleTabService = {
 		var SS = this.SessionStore;
 
 		var newWin = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
+		var key = this.kSELECTED;
 		newWin.addEventListener('load', function() {
 			newWin.removeEventListener('load', arguments.callee, false);
 
@@ -906,7 +902,7 @@ var MultipleTabService = {
 				var count = 0;
 				for (var i = tabs.length-1; i > -1; i--)
 				{
-					if (SS.getTabValue(tabs[i], 'multipletab-selected')) count++;
+					if (SS.getTabValue(tabs[i], key)) count++;
 				}
 
 				// if this window is not initialized yet, continue after a while.
@@ -920,7 +916,7 @@ var MultipleTabService = {
 
 				for (var i = tabs.length-1; i > -1; i--)
 				{
-					if (SS.getTabValue(tabs[i], 'multipletab-selected')) {
+					if (SS.getTabValue(tabs[i], key)) {
 						count++;
 						continue;
 					}
@@ -939,7 +935,7 @@ var MultipleTabService = {
 					for (var i = tabs.length-1; i > -1; i--)
 					{
 						try {
-							SS.deleteTabValue(tabs[i], 'multipletab-selected');
+							SS.deleteTabValue(tabs[i], key);
 						}
 						catch(e) {
 						}
@@ -1012,7 +1008,7 @@ var MultipleTabService = {
 	{
 		try {
 			var xpathResult = document.evaluate(
-					'descendant::xul:tab[@multipletab-selected = "true"]',
+					'descendant::xul:tab[@'+this.kSELECTED+' = "true"]',
 					(aTabBrowser || this.browser).mTabContainer,
 					this.NSResolver, // document.createNSResolver(document.documentElement),
 					XPathResult.FIRST_ORDERED_NODE_TYPE,
@@ -1027,23 +1023,23 @@ var MultipleTabService = {
  
 	isSelected : function(aTab) 
 	{
-		return aTab.getAttribute('multipletab-selected') == 'true';
+		return aTab.getAttribute(this.kSELECTED) == 'true';
 	},
  
 	setSelection : function(aTab, aState) 
 	{
 		if (!aState) {
-			aTab.removeAttribute('multipletab-selected');
+			aTab.removeAttribute(this.kSELECTED);
 			try {
-				this.SessionStore.deleteTabValue(aTab, 'multipletab-selected');
+				this.SessionStore.deleteTabValue(aTab, this.kSELECTED);
 			}
 			catch(e) {
 			}
 		}
 		else {
-			aTab.setAttribute('multipletab-selected', true);
+			aTab.setAttribute(this.kSELECTED, true);
 			try {
-				this.SessionStore.setTabValue(aTab, 'multipletab-selected', 'true');
+				this.SessionStore.setTabValue(aTab, this.kSELECTED, 'true');
 			}
 			catch(e) {
 			}
@@ -1054,13 +1050,13 @@ var MultipleTabService = {
  
 	toggleSelection : function(aTab) 
 	{
-		return this.setSelection(aTab, aTab.getAttribute('multipletab-selected') != 'true');
+		return this.setSelection(aTab, aTab.getAttribute(this.kSELECTED) != 'true');
 	},
  
 	clearSelection : function(aTabBrowser) 
 	{
-		this.clearSelectionSub(this.getSelectedTabs(aTabBrowser), 'multipletab-selected');
-		this.clearSelectionSub(this.getReadyToCloseTabs(aTabBrowser), 'multipletab-ready-to-close');
+		this.clearSelectionSub(this.getSelectedTabs(aTabBrowser), this.kSELECTED);
+		this.clearSelectionSub(this.getReadyToCloseTabs(aTabBrowser), this.kREADY_TO_CLOSE);
 		this.selectionModified = false;
 	},
 	clearSelectionSub : function(aTabs, aAttr)
@@ -1096,6 +1092,14 @@ var MultipleTabService = {
 
 			case 'extensions.multipletab.tabclick.mode':
 				this.tabClickMode = value;
+				break;
+
+			case 'extensions.multipletab.selectionStyle':
+				if (value == 'auto') {
+					value = ('tabColors' in window || 'CHROMATABS' in window) ? 'border' :
+							'color' ;
+				}
+				document.documentElement.setAttribute(this.kSELECTION_STYLE, value);
 				break;
 
 			default:
