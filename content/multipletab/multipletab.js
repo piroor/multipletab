@@ -200,8 +200,7 @@ var MultipleTabService = {
 	},
 	delayedInit : function()
 	{
-		if ('SessionFix' in window &&
-			gBrowser.warnAboutClosingTabs.toSource().indexOf('__multipletab__closedTabsNum') < 0) {
+		if ('SessionFix' in window) {
 			eval('gBrowser.warnAboutClosingTabs = '+
 				gBrowser.warnAboutClosingTabs.toSource().replace(
 					'{',
