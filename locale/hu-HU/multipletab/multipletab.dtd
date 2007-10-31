@@ -2,7 +2,7 @@
 <!ENTITY popup.selection.reloadTabs  "Kiválasztott lapok újratöltése">
 <!ENTITY popup.selection.addBookmark "Kiválasztott lapok könyvjelzőkbe">
 <!ENTITY popup.selection.duplicateTabs "Kiválasztott lapok kettőzése">
-<!ENTITY popup.selection.splitWindow "Lapok megnyitása új ablakban">
+<!ENTITY popup.selection.splitWindow "Move to New Window">
 <!ENTITY popup.selection.clipboard   "Kiválasztott lapok Webcímeinek másolása">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Balra levő lapok bezárása">

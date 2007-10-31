@@ -2,7 +2,7 @@
 <!ENTITY popup.selection.reloadTabs  "Reload Selected Tabs">
 <!ENTITY popup.selection.addBookmark "Bookmark Selected Tabs to New Folder">
 <!ENTITY popup.selection.duplicateTabs "Duplicate Selected Tabs">
-<!ENTITY popup.selection.splitWindow "Open in New Window">
+<!ENTITY popup.selection.splitWindow "Move to New Window">
 <!ENTITY popup.selection.clipboard   "Copy URIs of Selected Tabs">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Close Left Tabs">

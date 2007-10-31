@@ -2,7 +2,7 @@
 <!ENTITY popup.selection.reloadTabs    "すべて再読み込み">
 <!ENTITY popup.selection.addBookmark   "フォルダにまとめてブックマーク">
 <!ENTITY popup.selection.duplicateTabs "すべて複製">
-<!ENTITY popup.selection.splitWindow   "新しいウィンドウで開く">
+<!ENTITY popup.selection.splitWindow   "新しいウィンドウに移動">
 <!ENTITY popup.selection.clipboard     "すべてのURIをコピー">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "左のタブをすべて閉じる">
