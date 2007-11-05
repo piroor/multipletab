@@ -422,7 +422,7 @@ var MultipleTabService = {
 				aEvent.stopPropagation();
 				return;
 			}
-			else if (this.tabDragMode == this.TAB_DRAG_MODE_SELECT) {
+			else if (this.tabDragMode != this.TAB_DRAG_MODE_DEFAULT) {
 				var delay = this.getPref('extensions.multipletab.tabdrag.delay');
 				if (delay > 0) {
 					this.cancelDelayedDragStart();
