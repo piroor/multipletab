@@ -35,7 +35,7 @@ var MultipleTabService = {
 			}
 		}
 	},
-	evaluateXPath : function(aExpression, aContext, aType) 
+	evaluateXPath : function(aExpression, aContext, aType)
 	{
 		if (!aType) aType = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
 		try {
@@ -160,7 +160,7 @@ var MultipleTabService = {
 		});
 		return resultTabs;
 	},
- 	
+ 
 	getTabFromEvent : function(aEvent) 
 	{
 		return this.evaluateXPath(
@@ -322,7 +322,7 @@ var MultipleTabService = {
 	},
    
 /* Event Handling */ 
-	
+	 
 	handleEvent : function(aEvent) 
 	{
 		switch (aEvent.type)
@@ -422,15 +422,38 @@ var MultipleTabService = {
 				aEvent.stopPropagation();
 				return;
 			}
+			else if (this.tabDragMode == this.TAB_DRAG_MODE_SELECT) {
+				var delay = this.getPref('extensions.multipletab.tabdrag.delay');
+				if (delay > 0) {
+					this.cancelDelayedDragStart();
+					this.lastMouseDown = Date.now();
+					this.delayedDragStartTimer = window.setTimeout(this.delayedDragStart, delay, aEvent);
+				}
+			}
 		}
 		if (this.selectionModified && !this.hasSelection())
 			this.selectionModified = false;
 
 		this.clearSelection();
 	},
- 
+	 
+	delayedDragStart : function(aEvent) 
+	{
+		MultipleTabService.onTabDragStart(aEvent);
+	},
+	cancelDelayedDragStart : function()
+	{
+		if (this.delayedDragStartTimer) {
+			window.clearTimeout(this.delayedDragStartTimer);
+			this.delayedDragStartTimer = null;
+		}
+	},
+	delayedDragStartTimer : null,
+ 	 
 	onTabDragStart : function(aEvent) 
 	{
+		this.cancelDelayedDragStart();
+
 		var tab = this.getTabFromEvent(aEvent);
 		if (!tab) {
 			this.lastMouseOverTarget = null;
@@ -449,6 +472,9 @@ var MultipleTabService = {
 			return;
 		}
 		else {
+			var delay = this.getPref('extensions.multipletab.tabdrag.delay');
+			if (delay > 0 && Date.now() - this.lastMouseDown < delay)
+				return
 			this.tabDragging = true;
 			this.lastMouseOverTarget = tab;
 			if (this.tabDragMode == this.TAB_DRAG_MODE_SELECT)
@@ -460,10 +486,13 @@ var MultipleTabService = {
 	},
 	tabDragging         : false,
 	tabCloseboxDragging : false,
-	lastMouseOverTarget    : null,
+	lastMouseOverTarget : null,
+	lastMouseDown       : 0,
  
 	onTabDragEnd : function(aEvent) 
 	{
+		this.cancelDelayedDragStart();
+
 		if (this.tabCloseboxDragging) {
 			this.tabCloseboxDragging = false;
 			this.closeTabs(this.getReadyToCloseTabs());
@@ -584,6 +613,8 @@ var MultipleTabService = {
 		var isVertical = ((box.getAttribute('orient') || window.getComputedStyle(box, '').getPropertyValue('-moz-box-orient')) == 'vertical');
 
 		var label;
+		var key;
+		var selectType = this.getPref('extensions.multipletab.clipboard.formatType') == this.FORMAT_TYPE_SELECT;
 
 		for (var i = 0, maxi = nodes.length; i < maxi; i++)
 		{
@@ -593,7 +624,16 @@ var MultipleTabService = {
 				)
 				nodes[i].setAttribute('label', label);
 
-			pref = this.getPref('extensions.multipletab.show.'+nodes[i].getAttribute('id').replace(/-tabbrowser[0-9]+$/, ''));
+			key = nodes[i].getAttribute('id').replace(/-tabbrowser[0-9]+$/, '');
+			if (/^(multipletab-(context|selection)-clipboard(All)?)(:select)?$/.test(key)) {
+				key  = RegExp.$1
+				pref = this.getPref('extensions.multipletab.show.'+key) &&
+						(Boolean(RegExp.$4) == selectType);
+			}
+			else {
+				pref = this.getPref('extensions.multipletab.show.'+key);
+			}
+
 			if (pref === null) continue;
 
 			if (pref)
@@ -650,7 +690,7 @@ var MultipleTabService = {
 	},
    
 /* Commands */ 
-	 
+	
 	closeTabs : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -961,7 +1001,7 @@ var MultipleTabService = {
 		return newWin;
 	},
   
-	copyURIsToClipboard : function(aTabs) 
+	copyURIsToClipboard : function(aTabs, aFormat) 
 	{
 		if (!aTabs) return;
 
@@ -969,20 +1009,22 @@ var MultipleTabService = {
 								.getService(Components.interfaces.nsIClipboardHelper);
 		var self = this;
 		var stringToCopy = Array.prototype.slice.call(aTabs).map(function(aTab) {
-				return self.formatURIStringForClipboard(aTab.linkedBrowser.currentURI.spec, aTab);
+				return self.formatURIStringForClipboard(aTab.linkedBrowser.currentURI.spec, aTab, aFormat);
 			});
 		if (stringToCopy.length > 1)
 			stringToCopy.push('');
 		clipboard.copyString(stringToCopy.join('\r\n'));
 	},
 	
-	FORMAT_TYPE_DEFAULT : 0, 
+	FORMAT_TYPE_SELECT  : -1, 
+	FORMAT_TYPE_DEFAULT : 0,
 	FORMAT_TYPE_MOZ_URL : 1,
 	FORMAT_TYPE_LINK    : 2,
  
-	formatURIStringForClipboard : function(aURI, aTab) 
+	formatURIStringForClipboard : function(aURI, aTab, aFormat) 
 	{
-		switch (this.getPref('extensions.multipletab.clipboard.formatType'))
+		var format = aFormat || this.getPref('extensions.multipletab.clipboard.formatType');
+		switch (format)
 		{
 			default:
 			case this.FORMAT_TYPE_DEFAULT:

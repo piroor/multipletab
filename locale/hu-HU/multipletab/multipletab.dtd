@@ -14,6 +14,9 @@
 <!ENTITY popup.context.duplicate                  "Lap kettőzése">
 <!ENTITY popup.context.clipboard                  "Lap Webcímének másolása">
 <!ENTITY popup.context.clipboardAll               "Összes lap Webcímének másolása">
+<!ENTITY popup.context.clipboard.format.default "Webcím">
+<!ENTITY popup.context.clipboard.format.mozurl  "Fülnév és Webcím">
+<!ENTITY popup.context.clipboard.format.link    "HTML link">
 
 
 
@@ -21,19 +24,19 @@
 
 <!ENTITY config.tabs.general "Általános">
 
-<!ENTITY config.tabdragmode.caption "Fülek 'Fogd és vidd' opciója">
-<!ENTITY config.tabdragmode.default "Alapértelmezett (áthelyezés és rendezés)">
-<!ENTITY config.tabdragmode.select  "Lapok kiválasztása">
-<!ENTITY config.tabdragmode.switch  "Lapok dinamikus váltása">
+<!ENTITY config.tabdrag.mode.caption "Fülek 'Fogd és vidd' opciója">
+<!ENTITY config.tabdrag.mode.default "Alapértelmezett (áthelyezés és rendezés)">
+<!ENTITY config.tabdrag.mode.select  "Lapok kiválasztása">
+<!ENTITY config.tabdrag.mode.switch  "Lapok dinamikus váltása">
+<!ENTITY config.tabdrag.delay-before "Move tab by dragging within">
+<!ENTITY config.tabdrag.delay-after  "msec.">
 
 <!ENTITY config.tabclickmode.caption "Ctrl-Klikk művelet a lap fülén">
 <!ENTITY config.tabclickmode.default "Lap bezárása">
 <!ENTITY config.tabclickmode.toggle  "Lap kiválasztása">
 
 <!ENTITY config.clopboardFormatType.caption "A &quot;Lap Webcímének másolása&quot; opció formátuma">
-<!ENTITY config.clopboardFormatType.default "Webcím">
-<!ENTITY config.clopboardFormatType.mozurl  "Fülnév és Webcím">
-<!ENTITY config.clopboardFormatType.link    "HTML link">
+<!ENTITY config.clopboardFormatType.select  "Select from menu">
 
 <!ENTITY config.tabs.selectionMenu    "Kiválasztás - helyi menü">
 <!ENTITY config.selectionMenu.caption "A kiválasztott lapok füleinek helyi menüje:">

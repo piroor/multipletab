@@ -13,10 +13,14 @@
 	title="&config.title;"
 	onload="sizeToContent();">
 
-<prefpane id="prefpane-general" label="&config.tabs.general;">
+<prefpane id="prefpane-general" label="&config.tabs.general;"
+	onpaneload="initGeneralPane();">
 	<preferences>
 		<preference id="extensions.multipletab.tabdrag.mode"
 			name="extensions.multipletab.tabdrag.mode"
+			type="int"/>
+		<preference id="extensions.multipletab.tabdrag.delay"
+			name="extensions.multipletab.tabdrag.delay"
 			type="int"/>
 		<preference id="extensions.multipletab.tabclick.mode"
 			name="extensions.multipletab.tabclick.mode"
@@ -26,15 +30,26 @@
 			type="int"/>
 	</preferences>
 	<groupbox>
-		<caption label="&config.tabdragmode.caption;"/>
+		<caption label="&config.tabdrag.mode.caption;"/>
 		<vbox>
 			<radiogroup id="extensions.multipletab.tabdrag.mode-radiogroup"
 				preference="extensions.multipletab.tabdrag.mode"
-				orient="vertical">
-				<radio value="0" label="&config.tabdragmode.default;"/>
-				<radio value="1" label="&config.tabdragmode.select;"/>
-				<radio value="2" label="&config.tabdragmode.switch;"/>
+				orient="vertical"
+				oncommand="onDragModeChange();">
+				<radio value="0" label="&config.tabdrag.mode.default;"/>
+				<radio value="1" label="&config.tabdrag.mode.select;"/>
+				<radio value="2" label="&config.tabdrag.mode.switch;"/>
 			</radiogroup>
+			<hbox align="center">
+				<label value="&config.tabdrag.delay-before;"
+					control="extensions.multipletab.tabdrag.delay-textbox"/>
+				<textbox id="extensions.multipletab.tabdrag.delay-textbox"
+					preference="extensions.multipletab.tabdrag.delay"
+					type="number"
+					min="0" increment="1" style="width:5em;"/>
+				<label value="&config.tabdrag.delay-after;"
+					control="extensions.multipletab.tabdrag.delay-textbox"/>
+			</hbox>
 		</vbox>
 	</groupbox>
 	<groupbox>
@@ -42,7 +57,7 @@
 		<vbox>
 			<radiogroup id="extensions.multipletab.tabclick.mode-radiogroup"
 				preference="extensions.multipletab.tabclick.mode"
-				orient="vertical">
+				orient="horizontal">
 				<radio value="0" label="&config.tabclickmode.default;"/>
 				<radio value="1" label="&config.tabclickmode.toggle;"/>
 			</radiogroup>
@@ -52,11 +67,23 @@
 		<caption label="&config.clopboardFormatType.caption;"/>
 		<vbox>
 			<radiogroup id="extensions.multipletab.clipboard.formatType-radiogroup"
-				preference="extensions.multipletab.clipboard.formatType"
-				orient="vertical">
-				<radio value="0" label="&config.clopboardFormatType.default;"/>
-				<radio value="1" label="&config.clopboardFormatType.mozurl;"/>
-				<radio value="2" label="&config.clopboardFormatType.link;"/>
+				preference="extensions.multipletab.clipboard.formatType">
+				<grid>
+					<columns>
+						<column/>
+						<column/>
+					</columns>
+					<rows>
+						<row>
+							<radio value="-1" label="&config.clopboardFormatType.select;"/>
+							<radio value="0" label="&popup.context.clipboard.format.default;"/>
+						</row>
+						<row>
+							<radio value="1" label="&popup.context.clipboard.format.mozurl;"/>
+							<radio value="2" label="&popup.context.clipboard.format.link;"/>
+						</row>
+					</rows>
+				</grid>
 			</radiogroup>
 		</vbox>
 	</groupbox>
@@ -160,6 +187,6 @@
 	</groupbox>
 </prefpane>
 
+<script src="config.js" type="application/x-javascript"/>
 
 </prefwindow>
-

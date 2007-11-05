@@ -41,6 +41,18 @@
 		<menuitem id="multipletab-selection-clipboard"
 			label="&popup.selection.clipboard;"
 			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getSelectedTabs());"/>
+		<menu id="multipletab-selection-clipboard:select"
+			label="&popup.selection.clipboard;"
+			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('formatType')));">
+			<menupopup>
+				<menuitem label="&popup.context.clipboard.format.default;"
+					formatType="0"/>
+				<menuitem label="&popup.context.clipboard.format.mozurl;"
+					formatType="1"/>
+				<menuitem label="&popup.context.clipboard.format.link;"
+					formatType="2"/>
+			</menupopup>
+		</menu>
 	</menupopup>
 
 	<menupopup id="multipletab-tabcontext-menu-template">
@@ -81,10 +93,36 @@
 			label="&popup.context.clipboard;"
 			oncommand="MultipleTabService.copyURIsToClipboard([MultipleTabService.getTabBrowserFromChildren(this).mContextTab]);"
 			multipletab-insertbefore="tabContextMenu.lastChild"/>
+		<menu id="multipletab-context-clipboard:select"
+			label="&popup.context.clipboard;"
+			oncommand="MultipleTabService.copyURIsToClipboard([MultipleTabService.getTabBrowserFromChildren(this).mContextTab], Number(event.target.getAttribute('formatType')));"
+			multipletab-insertbefore="tabContextMenu.lastChild">
+			<menupopup>
+				<menuitem label="&popup.context.clipboard.format.default;"
+					formatType="0"/>
+				<menuitem label="&popup.context.clipboard.format.mozurl;"
+					formatType="1"/>
+				<menuitem label="&popup.context.clipboard.format.link;"
+					formatType="2"/>
+			</menupopup>
+		</menu>
 		<menuitem id="multipletab-context-clipboardAll"
 			label="&popup.context.clipboardAll;"
 			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabBrowserFromChildren(this).mTabContainer.childNodes);"
 			multipletab-insertbefore="tabContextMenu.lastChild"/>
+		<menu id="multipletab-context-clipboardAll:select"
+			label="&popup.context.clipboardAll;"
+			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabBrowserFromChildren(this).mTabContainer.childNodes, Number(event.target.getAttribute('formatType')));"
+			multipletab-insertbefore="tabContextMenu.lastChild">
+			<menupopup>
+				<menuitem label="&popup.context.clipboard.format.default;"
+					formatType="0"/>
+				<menuitem label="&popup.context.clipboard.format.mozurl;"
+					formatType="1"/>
+				<menuitem label="&popup.context.clipboard.format.link;"
+					formatType="2"/>
+			</menupopup>
+		</menu>
 		<menuseparator id="multipletab-context-separator-clipboard"
 			tbattr="tabbrowser-multiple"
 			multipletab-insertbefore="tabContextMenu.lastChild"/>

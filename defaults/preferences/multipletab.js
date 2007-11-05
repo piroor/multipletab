@@ -1,5 +1,6 @@
 // 0 = default, 1 = select tab, 2 = switch tab
-pref("extensions.multipletab.tabdrag.mode", 1);
+pref("extensions.multipletab.tabdrag.mode",      1);
+pref("extensions.multipletab.tabdrag.delay",     0);
 pref("extensions.multipletab.tabdrag.autoclear", true);
 // 0 = default, 1 = toggle selection
 pref("extensions.multipletab.tabclick.mode", 1);
@@ -20,8 +21,8 @@ pref("extensions.multipletab.show.multipletab-context-duplicate",       true);
 pref("extensions.multipletab.show.multipletab-context-clipboard",       true);
 pref("extensions.multipletab.show.multipletab-context-clipboardAll",    true);
 
-// 0 = URI, 1 = title+URI, 2 = HTML Link
-pref("extensions.multipletab.clipboard.formatType", 0);
+// 0 = URI, 1 = title+URI, 2 = HTML Link, -1 = select
+pref("extensions.multipletab.clipboard.formatType", -1);
 
 
 pref("extensions.multipletab@piro.sakura.ne.jp.name", "chrome://multipletab/locale/multipletab.properties");

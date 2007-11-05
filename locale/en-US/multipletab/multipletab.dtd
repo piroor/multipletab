@@ -14,6 +14,9 @@
 <!ENTITY popup.context.duplicate                  "Duplicate Tab">
 <!ENTITY popup.context.clipboard                  "Copy URI">
 <!ENTITY popup.context.clipboardAll               "Copy URIs of All Tabs">
+<!ENTITY popup.context.clipboard.format.default "Simple URI">
+<!ENTITY popup.context.clipboard.format.mozurl  "Page Title and URI">
+<!ENTITY popup.context.clipboard.format.link    "HTML Link">
 
 
 
@@ -21,10 +24,12 @@
 
 <!ENTITY config.tabs.general "General">
 
-<!ENTITY config.tabdragmode.caption "Action for dragging of tabs">
-<!ENTITY config.tabdragmode.default "Default (move and rearrange tabs)">
-<!ENTITY config.tabdragmode.select  "Select tabs">
-<!ENTITY config.tabdragmode.switch  "Switch tabs dynamically">
+<!ENTITY config.tabdrag.mode.caption "Action for dragging of tabs">
+<!ENTITY config.tabdrag.mode.default "Default (move and rearrange tabs)">
+<!ENTITY config.tabdrag.mode.select  "Select tabs">
+<!ENTITY config.tabdrag.mode.switch  "Switch tabs dynamically">
+<!ENTITY config.tabdrag.delay-before "Move tab by dragging within">
+<!ENTITY config.tabdrag.delay-after  "msec.">
 
 <!ENTITY config.tabclickmode.caption "Action for Ctrl(Command)-Click of tabs">
 <!ENTITY config.tabclickmode.default "Close Tab">
@@ -34,9 +39,7 @@
 <!ENTITY config.selectionMenu.caption "Available items of the popup menu for selected tabs">
 
 <!ENTITY config.clopboardFormatType.caption "Text Format of &quot;Copy URIs of Tabs&quot; features">
-<!ENTITY config.clopboardFormatType.default "Simple URI">
-<!ENTITY config.clopboardFormatType.mozurl  "Page Title and URI">
-<!ENTITY config.clopboardFormatType.link    "HTML Link">
+<!ENTITY config.clopboardFormatType.select  "Select from menu">
 
 <!ENTITY config.tabs.contextMenu    "Tab Context Menu">
 <!ENTITY config.contextMenu.caption "Available items of the context menu on tabs">

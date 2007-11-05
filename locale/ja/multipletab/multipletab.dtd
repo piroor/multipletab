@@ -14,6 +14,10 @@
 <!ENTITY popup.context.duplicate                  "タブを複製">
 <!ENTITY popup.context.clipboard                  "URIをコピー">
 <!ENTITY popup.context.clipboardAll               "すべてのタブのURIをコピー">
+<!ENTITY popup.context.clipboard.format.default   "URIのみ">
+<!ENTITY popup.context.clipboard.format.mozurl    "ページのタイトルとURI">
+<!ENTITY popup.context.clipboard.format.link      "HTMLのリンク">
+
 
 
 
@@ -21,10 +25,12 @@
 
 <!ENTITY config.tabs.general "全般">
 
-<!ENTITY config.tabdragmode.caption "タブをドラッグした時">
-<!ENTITY config.tabdragmode.default "タブを移動する">
-<!ENTITY config.tabdragmode.select  "タブを選択して、ポップアップメニューで動作を決定する">
-<!ENTITY config.tabdragmode.switch  "タブをダイナミックに切り換える">
+<!ENTITY config.tabdrag.mode.caption "タブをドラッグした時">
+<!ENTITY config.tabdrag.mode.default "タブを移動する">
+<!ENTITY config.tabdrag.mode.select  "タブを選択して、ポップアップメニューで動作を決定する">
+<!ENTITY config.tabdrag.mode.switch  "タブをダイナミックに切り換える">
+<!ENTITY config.tabdrag.delay-before "ボタン押下から">
+<!ENTITY config.tabdrag.delay-after  "ミリ秒以内のドラッグはタブの移動とみなす">
 
 <!ENTITY config.tabclickmode.caption "タブをCtrl（Command）-クリックした時">
 <!ENTITY config.tabclickmode.default "タブを閉じる">
@@ -34,9 +40,7 @@
 <!ENTITY config.selectionMenu.caption "タブ選択時のメニューに表示する項目">
 
 <!ENTITY config.clopboardFormatType.caption "タブのURIをコピーする時の形式">
-<!ENTITY config.clopboardFormatType.default "URIのみ">
-<!ENTITY config.clopboardFormatType.mozurl  "ページのタイトルとURI">
-<!ENTITY config.clopboardFormatType.link    "HTMLのリンク">
+<!ENTITY config.clopboardFormatType.select  "メニューから選択">
 
 <!ENTITY config.tabs.contextMenu    "タブのコンテキストメニュー">
 <!ENTITY config.contextMenu.caption "タブのコンテキストメニューに追加する項目">
