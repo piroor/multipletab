@@ -12,6 +12,7 @@
                    em:iconURL="chrome://multipletab/content/icon32.png"
                    em:optionsURL="chrome://multipletab/content/config.xul">
     <em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+    <em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 
 
     <em:updateURL>http://piro.sakura.ne.jp/xul/update.rdf</em:updateURL>
@@ -32,6 +33,11 @@
       <RDF:Description em:locale="hu-HU"
                        em:name="Multiple Tab Handler"
                        em:description="Lehetővé teszi több lap egyidejű bezárását, újratöltését, ..."/>
+    </em:localized>
+    <em:localized>
+      <RDF:Description em:locale="it-IT"
+                       em:name="Multiple Tab Handler"
+                       em:description="Fornisce funzionalità per la gestione contemporanea di più schede"/>
     </em:localized>
 
 
