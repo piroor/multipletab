@@ -603,12 +603,15 @@ var MultipleTabService = {
 		popup.hidePopup();
 		popup.autoClearSelection = aAutoClearSelection;
 		document.popupNode = gBrowser.mTabContainer;
-		popup.showPopup(
-			document.documentElement,
-			aEvent.screenX - document.documentElement.boxObject.screenX,
-			aEvent.screenY - document.documentElement.boxObject.screenY,
-			'popup'
-		);
+		if ('openPopupAtScreen' in popup) // Firefox 3
+			popup.openPopupAtScreen(aEvent.screenX, aEvent.screenY, true);
+		else
+			popup.showPopup(
+				document.documentElement,
+				aEvent.screenX - document.documentElement.boxObject.screenX,
+				aEvent.screenY - document.documentElement.boxObject.screenY,
+				'popup'
+			);
 	},
  
 	showHideMenuItems : function(aPopup) 
