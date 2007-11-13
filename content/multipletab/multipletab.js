@@ -78,6 +78,15 @@ var MultipleTabService = {
 			).singleNodeValue ? true : false ;
 	},
  
+	getCloseboxFromEvent : function(aEvent) 
+	{
+		return this.evaluateXPath(
+				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-close-button")]',
+				aEvent.originalTarget || aEvent.target,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue;
+	},
+ 
 	isDisabled : function() 
 	{
 		return (document.getElementById('cmd_CustomizeToolbars').getAttribute('disabled') == 'true');
@@ -462,9 +471,12 @@ var MultipleTabService = {
 			return;
 		}
 
-		if (tab.mOverCloseButton) {
+		if (
+			tab.mOverCloseButton ||
+			tab.tmp_mOverCloseButton // Tab Mix Plus
+			) {
 			this.tabCloseboxDragging = true;
-			this.lastMouseOverTarget = document.getAnonymousElementByAttribute(tab, 'anonid', 'close-button');
+			this.lastMouseOverTarget = this.getCloseboxFromEvent(aEvent);
 			tab.setAttribute(this.kREADY_TO_CLOSE, true);
 		}
 		else if (
@@ -576,8 +588,7 @@ var MultipleTabService = {
 
 			this.lastMouseOverTarget = aEvent.originalTarget;
 
-			var onClosebox = aEvent.originalTarget.getAttribute('anonid') == 'close-button';
-			if (!onClosebox) return;
+			if (!this.getCloseboxFromEvent(aEvent)) return;
 
 			var tab = this.getTabFromEvent(aEvent);
 			if (tab.getAttribute(this.kREADY_TO_CLOSE) == 'true')
