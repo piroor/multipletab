@@ -2,6 +2,7 @@
 pref("extensions.multipletab.tabdrag.mode",      1);
 pref("extensions.multipletab.tabdrag.delay",     200);
 pref("extensions.multipletab.tabdrag.autoclear", true);
+pref("extensions.multipletab.tabdrag.moveMultipleTabs", true);
 // 0 = default, 1 = toggle selection
 pref("extensions.multipletab.tabclick.mode", 1);
 pref("extensions.multipletab.selectionStyle", "auto");

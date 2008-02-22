@@ -28,6 +28,9 @@
 		<preference id="extensions.multipletab.clipboard.formatType"
 			name="extensions.multipletab.clipboard.formatType"
 			type="int"/>
+		<preference id="extensions.multipletab.tabdrag.moveMultipleTabs"
+			name="extensions.multipletab.tabdrag.moveMultipleTabs"
+			type="bool"/>
 	</preferences>
 	<groupbox>
 		<caption label="&config.tabdrag.mode.caption;"/>
@@ -50,6 +53,9 @@
 				<label value="&config.tabdrag.delay-after;"
 					control="extensions.multipletab.tabdrag.delay-textbox"/>
 			</hbox>
+			<checkbox id="extensions.multipletab.tabdrag.moveMultipleTabs-check"
+				preference="extensions.multipletab.tabdrag.moveMultipleTabs"
+				label="&config.tabdrag.moveMultipleTabs;"/>
 		</vbox>
 	</groupbox>
 	<groupbox>

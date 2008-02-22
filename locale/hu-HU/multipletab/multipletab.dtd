@@ -30,6 +30,7 @@
 <!ENTITY config.tabdrag.mode.switch  "Lapok dinamikus váltása">
 <!ENTITY config.tabdrag.delay-before "Move tab by dragging within">
 <!ENTITY config.tabdrag.delay-after  "msec.">
+<!ENTITY config.tabdrag.moveMultipleTabs "Move selected tabs together">
 
 <!ENTITY config.tabclickmode.caption "Ctrl-Klikk művelet a lap fülén">
 <!ENTITY config.tabclickmode.default "Lap bezárása">

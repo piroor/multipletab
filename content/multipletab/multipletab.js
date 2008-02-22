@@ -229,6 +229,7 @@ var MultipleTabService = {
 	{
 		aTabBrowser.addEventListener('TabOpen', this, true);
 		aTabBrowser.addEventListener('TabClose', this, true);
+		aTabBrowser.addEventListener('TabMove', this, true);
 		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousemove',   this, true);
@@ -312,6 +313,7 @@ var MultipleTabService = {
 	{
 		aTabBrowser.removeEventListener('TabOpen', this, true);
 		aTabBrowser.removeEventListener('TabClose', this, true);
+		aTabBrowser.removeEventListener('TabMove', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
@@ -331,7 +333,7 @@ var MultipleTabService = {
 	},
    
 /* Event Handling */ 
-	 
+	
 	handleEvent : function(aEvent) 
 	{
 		switch (aEvent.type)
@@ -364,6 +366,15 @@ var MultipleTabService = {
 
 			case 'TabClose':
 				this.destroyTab(aEvent.originalTarget);
+				break;
+
+			case 'TabMove':
+				if (
+					this.isSelected(aEvent.originalTarget) &&
+					this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs') &&
+					!aEvent.currentTarget.movingSelectedTabs
+					)
+					this.moveBundledTabsOf(aEvent.originalTarget);
 				break;
 
 			case 'load':
@@ -443,7 +454,9 @@ var MultipleTabService = {
 		if (this.selectionModified && !this.hasSelection())
 			this.selectionModified = false;
 
-		this.clearSelection();
+		if (!tab || !this.isSelected(tab) ||
+			!this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs'))
+			this.clearSelection();
 	},
 	 
 	delayedDragStart : function(aEvent) 
@@ -460,7 +473,7 @@ var MultipleTabService = {
 		}
 	},
 	delayedDragStartTimer : null,
- 	 
+  
 	onTabDragStart : function(aEvent) 
 	{
 		this.cancelDelayedDragStart();
@@ -485,7 +498,10 @@ var MultipleTabService = {
 			) {
 			return;
 		}
-		else {
+		else if (
+			!this.isSelected(tab) ||
+			!this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs')
+			) {
 			var delay = this.getPref('extensions.multipletab.tabdrag.delay');
 			if (delay > 0 && Date.now() - this.lastMouseDown < delay)
 				return
@@ -712,7 +728,7 @@ var MultipleTabService = {
 	},
    
 /* Commands */ 
-	
+	 
 	closeTabs : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -1064,9 +1080,24 @@ var MultipleTabService = {
 				].join('');
 		}
 	},
-   
+  
+	moveBundledTabsOf : function(aMovedTab) 
+	{
+		var b = this.getTabBrowserFromChildren(aMovedTab);
+		var tabs = this.getSelectedTabs(b);
+		var offset = 0;
+		b.movingSelectedTabs = true;
+		tabs.forEach(function(aTab) {
+			if (aTab == aMovedTab) return;
+			var pos = aMovedTab._tPos + (++offset);
+			if (pos > aTab._tPos) pos--;
+			b.moveTabTo(aTab, pos);
+		});
+		b.movingSelectedTabs = false;
+	},
+ 	 
 /* Tab Selection */ 
-	 
+	
 	hasSelection : function(aTabBrowser) 
 	{
 		try {
@@ -1150,7 +1181,7 @@ var MultipleTabService = {
 	selectionModified : false,
   
 /* Pref Listener */ 
-	 
+	
 	domain : 'extensions.multipletab', 
  
 	observe : function(aSubject, aTopic, aPrefName) 
@@ -1182,7 +1213,7 @@ var MultipleTabService = {
 	},
   
 /* Save/Load Prefs */ 
-	 
+	
 	get Prefs() 
 	{
 		if (!this._Prefs) {

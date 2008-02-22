@@ -30,6 +30,7 @@
 <!ENTITY config.tabdrag.mode.switch  "Switch tabs dynamically">
 <!ENTITY config.tabdrag.delay-before "Move tab by dragging within">
 <!ENTITY config.tabdrag.delay-after  "msec.">
+<!ENTITY config.tabdrag.moveMultipleTabs "Move selected tabs together">
 
 <!ENTITY config.tabclickmode.caption "Action for Ctrl(Command)-Click of tabs">
 <!ENTITY config.tabclickmode.default "Close Tab">

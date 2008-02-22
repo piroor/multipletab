@@ -30,6 +30,7 @@
 <!ENTITY config.tabdrag.mode.switch  "Cambia dinamicamente la scheda attiva">
 <!ENTITY config.tabdrag.delay-before "Move tab by dragging within">
 <!ENTITY config.tabdrag.delay-after  "msec.">
+<!ENTITY config.tabdrag.moveMultipleTabs "Move selected tabs together">
 
 <!ENTITY config.tabclickmode.caption "Azione per Ctrl(Command)-Clic sulle schede">
 <!ENTITY config.tabclickmode.default "Chiudi scheda"> 
