@@ -187,7 +187,12 @@ var MultipleTabService = {
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
 	},
-  
+ 
+	get allowMoveMultipleTabs() 
+	{
+		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
+	},
+ 	 
 /* Initializing */ 
 	
 	init : function() 
@@ -371,10 +376,10 @@ var MultipleTabService = {
 			case 'TabMove':
 				if (
 					this.isSelected(aEvent.originalTarget) &&
-					this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs') &&
+					this.allowMoveMultipleTabs &&
 					!aEvent.currentTarget.movingSelectedTabs
 					)
-					this.moveBundledTabsOf(aEvent.originalTarget);
+					this.moveBundledTabsOf(aEvent.originalTarget, aEvent);
 				break;
 
 			case 'load':
@@ -455,12 +460,13 @@ var MultipleTabService = {
 			this.selectionModified = false;
 
 		if (!tab || !this.isSelected(tab) ||
-			!this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs'))
+			!this.allowMoveMultipleTabs)
 			this.clearSelection();
 	},
 	 
 	delayedDragStart : function(aEvent) 
 	{
+		MultipleTabService.clearSelection();
 		MultipleTabService.onTabDragStart(aEvent);
 		MultipleTabService.tabDragging = false; // cancel "dragging" before we start to drag it really.
 		MultipleTabService.delayedDragStartReady = true;
@@ -498,10 +504,7 @@ var MultipleTabService = {
 			) {
 			return;
 		}
-		else if (
-			!this.isSelected(tab) ||
-			!this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs')
-			) {
+		else {
 			var delay = this.getPref('extensions.multipletab.tabdrag.delay');
 			if (delay > 0 && Date.now() - this.lastMouseDown < delay)
 				return
@@ -1081,7 +1084,7 @@ var MultipleTabService = {
 		}
 	},
   
-	moveBundledTabsOf : function(aMovedTab) 
+	moveBundledTabsOf : function(aMovedTab, aEvent) 
 	{
 		var b = this.getTabBrowserFromChildren(aMovedTab);
 		var tabs = this.getSelectedTabs(b);
@@ -1095,7 +1098,7 @@ var MultipleTabService = {
 		});
 		b.movingSelectedTabs = false;
 	},
- 	 
+  
 /* Tab Selection */ 
 	
 	hasSelection : function(aTabBrowser) 
