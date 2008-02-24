@@ -269,12 +269,12 @@ var MultipleTabService = {
 				'aTabBrowser.duplicateTab = '+
 				aTabBrowser.duplicateTab.toSource().replace(
 					'{',
-					'var newTab'
+					'{ var newTab;'
 				).replace(
 					/return /g,
 					'newTab = '
 				).replace(
-					/(\}\)?)/,
+					/(\}\)?)$/,
 					<><![CDATA[
 						MultipleTabService.fireDuplicateEvent(newTab, aTab);
 						return newTab;
@@ -1149,21 +1149,32 @@ var MultipleTabService = {
 	duplicateBundledTabsOf : function(aNewTab, aSourceTab, aEvent) 
 	{
 		var b = this.getTabBrowserFromChildren(aNewTab);
-		var tabs = this.getSelectedTabs(b);
 		var offset = 0;
 		var self = this;
+		var tabs, remoteBrowser, remoteService, shouldBeClosed;
 		b.duplicatingSelectedTabs = true;
 		b.movingSelectedTabs = true;
+		if (aNewTab.ownerDocument == aSourceTab.ownerDocument) {
+			tabs = this.getSelectedTabs(b);
+		}
+		else { // moved from another window
+			remoteService = aSourceTab.ownerDocument.defaultView.MultipleTabService;
+			remoteBrowser = remoteService.getTabBrowserFromChildren(aSourceTab);
+			tabs = remoteService.getSelectedTabs(remoteBrowser);
+			shouldBeClosed = remoteBrowser.mTabContainer.childNodes.length == tabs.length;
+		}
 		tabs.forEach(function(aTab) {
 			self.setSelection(aTab, false);
 			if (aTab == aSourceTab) return;
-			aTab = b.duplicateTab(aTab);
-			self.setSelection(aTab, true);
+			var newTab = b.duplicateTab(aTab);
+			self.setSelection(newTab, true);
 			var pos = aNewTab._tPos + (++offset);
-			if (pos > aTab._tPos) pos--;
-			b.moveTabTo(aTab, pos);
+			if (pos > newTab._tPos) pos--;
+			b.moveTabTo(newTab, pos);
+			if (remoteBrowser) remoteBrowser.removeTab(aTab);
 		});
-		self.setSelection(aNewTab, true);
+		if (shouldBeClosed) remoteBrowser.ownerDocument.defaultView.close();
+		this.setSelection(aNewTab, true);
 		b.movingSelectedTabs = false;
 		b.duplicatingSelectedTabs = false;
 	},
