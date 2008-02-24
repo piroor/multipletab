@@ -228,6 +228,13 @@ var MultipleTabService = {
 				)
 			);
 		}
+
+		if (!('duplicateTab' in gBrowser)) {
+			gBrowser.duplicateTab = function(aTab) {
+				MultipleTabService.duplicateTabs([aTab]);
+				return this.mTabContainer.lastChild;
+			};
+		}
 	},
 	 
 	initTabBrowser : function(aTabBrowser) 
@@ -496,6 +503,7 @@ var MultipleTabService = {
 			) {
 			this.tabCloseboxDragging = true;
 			this.lastMouseOverTarget = this.getCloseboxFromEvent(aEvent);
+			this.clearSelectionSub(this.getSelectedTabs(this.getTabBrowserFromChildren(tab)), this.kSELECTED);
 			tab.setAttribute(this.kREADY_TO_CLOSE, true);
 		}
 		else if (
