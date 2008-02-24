@@ -1153,6 +1153,7 @@ var MultipleTabService = {
 		var offset = 0;
 		var self = this;
 		b.duplicatingSelectedTabs = true;
+		b.movingSelectedTabs = true;
 		tabs.forEach(function(aTab) {
 			self.setSelection(aTab, false);
 			if (aTab == aSourceTab) return;
@@ -1163,6 +1164,7 @@ var MultipleTabService = {
 			b.moveTabTo(aTab, pos);
 		});
 		self.setSelection(aNewTab, true);
+		b.movingSelectedTabs = false;
 		b.duplicatingSelectedTabs = false;
 	},
   
