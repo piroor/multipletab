@@ -192,9 +192,17 @@ var MultipleTabService = {
 	{
 		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
 	},
- 	 
+ 
+	fireDuplicateEvent : function(aNewTab, aSourceTab) 
+	{
+		var event = document.createEvent('Events');
+		event.initEvent('MultipleTabHandler:TabDuplicate', true, false);
+		event.sourceTab = aSourceTab;
+		aNewTab.dispatchEvent(event);
+	},
+  
 /* Initializing */ 
-	
+	 
 	init : function() 
 	{
 		if (!('gBrowser' in window)) return;
@@ -232,6 +240,7 @@ var MultipleTabService = {
 		if (!('duplicateTab' in gBrowser)) {
 			gBrowser.duplicateTab = function(aTab) {
 				MultipleTabService.duplicateTabs([aTab]);
+				MultipleTabService.fireDuplicateEvent(this.mTabContainer.lastChild, aTab);
 				return this.mTabContainer.lastChild;
 			};
 		}
@@ -242,6 +251,7 @@ var MultipleTabService = {
 		aTabBrowser.addEventListener('TabOpen', this, true);
 		aTabBrowser.addEventListener('TabClose', this, true);
 		aTabBrowser.addEventListener('TabMove', this, true);
+		aTabBrowser.addEventListener('MultipleTabHandler:TabDuplicate', this, true);
 		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousemove',   this, true);
@@ -253,6 +263,15 @@ var MultipleTabService = {
 				'var numTabs = ', 'var numTabs = this.__multipletab__closedTabsNum || '
 			)
 		);
+
+		if ('duplicateTab' in aTabBrowser) {
+			aTabBrowser.__multipletab__duplicateTab = aTabBrowser.duplicateTab;
+			aTabBrowser.duplicateTab = function(aTab) {
+				var tab = this.__multipletab__duplicateTab.apply(this, arguments);
+				MultipleTabService.fireDuplicateEvent(tab, aTab);
+				return tab;
+			};
+		}
 
 		this.initTabBrowserContextMenu(aTabBrowser);
 
@@ -301,7 +320,7 @@ var MultipleTabService = {
 	{
 		aTab.addEventListener('mousemove', this, true);
 	},
-  
+  	
 	destroy : function() 
 	{
 		this.destroyTabBrowser(gBrowser);
@@ -326,6 +345,7 @@ var MultipleTabService = {
 		aTabBrowser.removeEventListener('TabOpen', this, true);
 		aTabBrowser.removeEventListener('TabClose', this, true);
 		aTabBrowser.removeEventListener('TabMove', this, true);
+		aTabBrowser.removeEventListener('MultipleTabHandler:TabDuplicate', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
@@ -387,6 +407,15 @@ var MultipleTabService = {
 					!aEvent.currentTarget.movingSelectedTabs
 					)
 					this.moveBundledTabsOf(aEvent.originalTarget, aEvent);
+				break;
+
+			case 'MultipleTabHandler:TabDuplicate':
+				if (
+					this.isSelected(aEvent.sourceTab) &&
+					this.allowMoveMultipleTabs &&
+					!aEvent.currentTarget.duplicatingSelectedTabs
+					)
+					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab, aEvent);
 				break;
 
 			case 'load':
@@ -1105,6 +1134,26 @@ var MultipleTabService = {
 			b.moveTabTo(aTab, pos);
 		});
 		b.movingSelectedTabs = false;
+	},
+ 
+	duplicateBundledTabsOf : function(aNewTab, aSourceTab, aEvent) 
+	{
+		var b = this.getTabBrowserFromChildren(aNewTab);
+		var tabs = this.getSelectedTabs(b);
+		var offset = 0;
+		var self = this;
+		b.duplicatingSelectedTabs = true;
+		tabs.forEach(function(aTab) {
+			self.setSelection(aTab, false);
+			if (aTab == aSourceTab) return;
+			aTab = b.duplicateTab(aTab);
+			self.setSelection(aTab, true);
+			var pos = aNewTab._tPos + (++offset);
+			if (pos > aTab._tPos) pos--;
+			b.moveTabTo(aTab, pos);
+		});
+		self.setSelection(aNewTab, true);
+		b.duplicatingSelectedTabs = false;
 	},
   
 /* Tab Selection */ 

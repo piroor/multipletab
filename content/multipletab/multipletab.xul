@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 
 <?xml-stylesheet href="chrome://multipletab/skin/multipletab.css" type="text/css"?>
+<?xul-overlay href="tabFx2Compatible.xul"?>
 
 <!DOCTYPE overlay SYSTEM "chrome://multipletab/locale/multipletab.dtd">
 
