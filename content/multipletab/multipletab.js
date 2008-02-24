@@ -264,6 +264,7 @@ var MultipleTabService = {
 			)
 		);
 
+/*
 		eval(
 			'aTabBrowser.onDragStart = '+
 			aTabBrowser.onDragStart.toSource().replace(
@@ -301,6 +302,7 @@ var MultipleTabService = {
 				]]></>
 			)
 		);
+*/
 
 		if ('duplicateTab' in aTabBrowser) {
 			eval(
