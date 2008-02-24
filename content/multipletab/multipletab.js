@@ -265,12 +265,22 @@ var MultipleTabService = {
 		);
 
 		if ('duplicateTab' in aTabBrowser) {
-			aTabBrowser.__multipletab__duplicateTab = aTabBrowser.duplicateTab;
-			aTabBrowser.duplicateTab = function(aTab) {
-				var tab = this.__multipletab__duplicateTab.apply(this, arguments);
-				MultipleTabService.fireDuplicateEvent(tab, aTab);
-				return tab;
-			};
+			eval(
+				'aTabBrowser.duplicateTab = '+
+				aTabBrowser.duplicateTab.toSource().replace(
+					'{',
+					'var newTab'
+				).replace(
+					/return /g,
+					'newTab = '
+				).replace(
+					/(\}\)?)/,
+					<><![CDATA[
+						MultipleTabService.fireDuplicateEvent(newTab, aTab);
+						return newTab;
+					$1]]></>
+				)
+			);
 		}
 
 		this.initTabBrowserContextMenu(aTabBrowser);
