@@ -264,6 +264,44 @@ var MultipleTabService = {
 			)
 		);
 
+		eval(
+			'aTabBrowser.onDragStart = '+
+			aTabBrowser.onDragStart.toSource().replace(
+				'aXferData.data.addDataForFlavour("text/unicode", URI.spec);',
+				<><![CDATA[
+					var selectedTabs = MultipleTabService.getSelectedTabs(this);
+					if (MultipleTabService.isSelected(aEvent.target) &&
+						MultipleTabService.allowMoveMultipleTabs) {
+						aXferData.data.addDataForFlavour(
+							'text/unicode',
+							selectedTabs.map(function(aTab) {
+								return aTab.linkedBrowser.currentURI.spec;
+							}).join('\n')
+						);
+					}
+					else {
+						$&
+					}
+				]]></>
+			).replace(
+				/(aXferData.data.addDataForFlavour\("text\/html", [^\)]+\);)/,
+				<><![CDATA[
+					if (MultipleTabService.isSelected(aEvent.target) &&
+						MultipleTabService.allowMoveMultipleTabs) {
+						aXferData.data.addDataForFlavour(
+							'text/html',
+							selectedTabs.map(function(aTab) {
+								return '<a href="' + aTab.linkedBrowser.currentURI.spec + '">' + aTab.label + '</a>';
+							}).join('\n')
+						);
+					}
+					else {
+						$1
+					}
+				]]></>
+			)
+		);
+
 		if ('duplicateTab' in aTabBrowser) {
 			eval(
 				'aTabBrowser.duplicateTab = '+
