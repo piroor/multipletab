@@ -2,8 +2,8 @@
 <!ENTITY popup.selection.reloadTabs  "Kiválasztott lapok újratöltése">
 <!ENTITY popup.selection.addBookmark "Kiválasztott lapok könyvjelzőkbe">
 <!ENTITY popup.selection.duplicateTabs "Kiválasztott lapok kettőzése">
-<!ENTITY popup.selection.splitWindow "Move to New Window">
-<!ENTITY popup.selection.clipboard   "Kiválasztott lapok Webcímeinek másolása">
+<!ENTITY popup.selection.splitWindow "Kiválasztott lapok áthelyezése új ablakba">
+<!ENTITY popup.selection.clipboard   "Kiválasztott lapok adatainak másolása">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Balra levő lapok bezárása">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Felette levő lapok bezárása">
@@ -12,15 +12,15 @@
 <!ENTITY popup.context.removeAll                  "Összes lap bezárása">
 <!ENTITY popup.context.removeSimilar              "Hasonló lapok bezárása">
 <!ENTITY popup.context.duplicate                  "Lap kettőzése">
-<!ENTITY popup.context.clipboard                  "Lap Webcímének másolása">
-<!ENTITY popup.context.clipboardAll               "Összes lap Webcímének másolása">
-<!ENTITY popup.context.clipboard.format.default "Webcím">
-<!ENTITY popup.context.clipboard.format.mozurl  "Fülnév és Webcím">
-<!ENTITY popup.context.clipboard.format.link    "HTML link">
+<!ENTITY popup.context.clipboard                  "Lap adatainak másolása">
+<!ENTITY popup.context.clipboardAll               "Összes lap adatainak másolása">
+<!ENTITY popup.context.clipboard.format.default "Webcím másolása">
+<!ENTITY popup.context.clipboard.format.mozurl  "Név és webcím másolása">
+<!ENTITY popup.context.clipboard.format.link    "HTML link másolása">
 
 
 
-<!ENTITY config.title        "Multiple Tab Handler - beállítások">
+<!ENTITY config.title        "Multiple Tab Handler – Beállítások">
 
 <!ENTITY config.tabs.general "Általános">
 
@@ -28,22 +28,22 @@
 <!ENTITY config.tabdrag.mode.default "Alapértelmezett (áthelyezés és rendezés)">
 <!ENTITY config.tabdrag.mode.select  "Lapok kiválasztása">
 <!ENTITY config.tabdrag.mode.switch  "Lapok dinamikus váltása">
-<!ENTITY config.tabdrag.delay-before "Move tab by dragging within">
-<!ENTITY config.tabdrag.delay-after  "msec.">
-<!ENTITY config.tabdrag.moveMultipleTabs "Move selected tabs together">
+<!ENTITY config.tabdrag.delay-before "Lap áthelyezése áthúzással">
+<!ENTITY config.tabdrag.delay-after  "ezredmp.-ig">
+<!ENTITY config.tabdrag.moveMultipleTabs "Kiválasztott lapok egyidejű áthelyezése">
 
-<!ENTITY config.tabclickmode.caption "Ctrl-Klikk művelet a lap fülén">
+<!ENTITY config.tabclickmode.caption "Ctrl+kattintás a lap fülén:">
 <!ENTITY config.tabclickmode.default "Lap bezárása">
 <!ENTITY config.tabclickmode.toggle  "Lap kiválasztása">
 
-<!ENTITY config.clopboardFormatType.caption "A &quot;Lap Webcímének másolása&quot; opció formátuma">
-<!ENTITY config.clopboardFormatType.select  "Select from menu">
+<!ENTITY config.clopboardFormatType.caption "A &quot;Lap adatainak másolása&quot; opció művelete">
+<!ENTITY config.clopboardFormatType.select  "Kiválasztás menüből">
 
-<!ENTITY config.tabs.selectionMenu    "Kiválasztás - helyi menü">
+<!ENTITY config.tabs.selectionMenu    "Kiválasztott fülek">
 <!ENTITY config.selectionMenu.caption "A kiválasztott lapok füleinek helyi menüje:">
 
-<!ENTITY config.tabs.contextMenu    "Fül - helyi menü">
-<!ENTITY config.contextMenu.caption "Fülek helyi menüje:">
+<!ENTITY config.tabs.contextMenu    "Fülek helyi menüje">
+<!ENTITY config.contextMenu.caption "A fülek helyi menüjének kibővítése az alábbiakkal:">
 <!ENTITY config.contextMenu.removeLeftTabs  "Balra (felette) levő lapok bezárása">
 <!ENTITY config.contextMenu.removeRightTabs "Jobbra (alatta) levő lapok bezárása">
 
