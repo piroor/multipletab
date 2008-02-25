@@ -22,22 +22,26 @@
     <em:localized>
       <RDF:Description em:locale="en-US"
                        em:name="Multiple Tab Handler"
-                       em:description="Provides features to close (, reload, etc.) multiple tabs at once."/>
+                       em:description="Provides features to close (, reload, etc.) multiple tabs at once."
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"/>
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="ja"
                        em:name="マルチプルタブハンドラ"
-                       em:description="複数のタブをまとめて閉じたり再読み込みしたりといった機能を加えます。"/>
+                       em:description="複数のタブをまとめて閉じたり再読み込みしたりといった機能を加えます。"
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html"/>
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="hu-HU"
                        em:name="Multiple Tab Handler"
-                       em:description="Lehetővé teszi több lap egyidejű bezárását, újratöltését, ..."/>
+                       em:description="Lehetővé teszi több lap egyidejű bezárását, újratöltését, ..."
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"/>
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="it-IT"
                        em:name="Multiple Tab Handler"
-                       em:description="Fornisce funzionalità per la gestione contemporanea di più schede"/>
+                       em:description="Fornisce funzionalità per la gestione contemporanea di più schede"
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"/>
     </em:localized>
 
 
