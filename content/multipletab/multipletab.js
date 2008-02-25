@@ -465,7 +465,7 @@ var MultipleTabService = {
 					this.allowMoveMultipleTabs &&
 					!aEvent.currentTarget.duplicatingSelectedTabs
 					)
-					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab, aEvent);
+					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab);
 				break;
 
 			case 'load':
@@ -1170,57 +1170,91 @@ var MultipleTabService = {
 				].join('');
 		}
 	},
-  
+   
+/* Move and Duplicate multiple tabs on Drag and Drop */ 
+	 
+	calculateDeltaForNewPosition : function(aTabs, aOriginalPos, aNewPos) 
+	{
+		var isMove = aNewPos > -1;
+		var movedToLeft = isMove && (aNewPos - aOriginalPos < 0);
+		var afterTabsOffset = (!isMove || movedToLeft) ? 0 : -1 ;
+		return aTabs.map(function(aTab) {
+				var originalPos = aTab._tPos;
+				if (aNewPos > -1) {
+					if (
+						movedToLeft &&
+						aTab._tPos > aNewPos &&
+						aTab._tPos <= aOriginalPos
+						)
+						originalPos--;
+					else if (
+						!movedToLeft &&
+						aTab._tPos < aNewPos &&
+						aTab._tPos >= aOriginalPos
+						)
+						originalPos++;
+				}
+				if (originalPos < aOriginalPos)
+					return movedToLeft ? 0 : -1;
+				return ++afterTabsOffset;
+			});
+	},
+ 	
 	moveBundledTabsOf : function(aMovedTab, aEvent) 
 	{
 		var b = this.getTabBrowserFromChildren(aMovedTab);
 		var tabs = this.getSelectedTabs(b);
-		var offset = 0;
+		tabs.splice(tabs.indexOf(aMovedTab), 1);
+		var delta = this.calculateDeltaForNewPosition(tabs, aEvent.detail, aMovedTab._tPos);
 		b.movingSelectedTabs = true;
-		tabs.forEach(function(aTab) {
-			if (aTab == aMovedTab) return;
-			var pos = aMovedTab._tPos + (++offset);
-			if (pos > aTab._tPos) pos--;
-			b.moveTabTo(aTab, pos);
+		tabs.forEach(function(aTab, aIndex) {
+			b.moveTabTo(aTab, aMovedTab._tPos + delta[aIndex]);
 		});
-		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 		b.movingSelectedTabs = false;
+		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 	},
  
-	duplicateBundledTabsOf : function(aNewTab, aSourceTab, aEvent) 
+	duplicateBundledTabsOf : function(aNewTab, aSourceTab) 
 	{
 		var b = this.getTabBrowserFromChildren(aNewTab);
-		var offset = 0;
-		var self = this;
-		var tabs, remoteBrowser, remoteService, shouldBeClosed;
-		b.duplicatingSelectedTabs = true;
-		b.movingSelectedTabs = true;
+		var tabs, newPos, sourceBrowser, sourceService, shouldBeClosed;
 		if (aNewTab.ownerDocument == aSourceTab.ownerDocument) {
+			sourceService = this;
+			sourceBrowser = b;
 			tabs = this.getSelectedTabs(b);
+			shouldBeClosed = false;
 		}
 		else { // moved from another window
-			remoteService = aSourceTab.ownerDocument.defaultView.MultipleTabService;
-			remoteBrowser = remoteService.getTabBrowserFromChildren(aSourceTab);
-			tabs = remoteService.getSelectedTabs(remoteBrowser);
-			shouldBeClosed = remoteBrowser.mTabContainer.childNodes.length == tabs.length;
+			sourceService = aSourceTab.ownerDocument.defaultView.MultipleTabService;
+			sourceBrowser = sourceService.getTabBrowserFromChildren(aSourceTab);
+			tabs = sourceService.getSelectedTabs(sourceBrowser);
+			shouldBeClosed = sourceBrowser.mTabContainer.childNodes.length == tabs.length;
 		}
-		tabs.forEach(function(aTab) {
-			self.setSelection(aTab, false);
-			if (aTab == aSourceTab) return;
-			var newTab = b.duplicateTab(aTab);
-			self.setSelection(newTab, true);
-			var pos = aNewTab._tPos + (++offset);
-			if (pos > newTab._tPos) pos--;
-			b.moveTabTo(newTab, pos);
-			if (remoteBrowser) remoteBrowser.removeTab(aTab);
-		});
-		if (shouldBeClosed) remoteBrowser.ownerDocument.defaultView.close();
-		this.setSelection(aNewTab, true);
-		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
-		b.movingSelectedTabs = false;
-		b.duplicatingSelectedTabs = false;
+		var index = tabs.indexOf(aSourceTab);
+		tabs.splice(index, 1);
+
+		var delta = sourceService.calculateDeltaForNewPosition(tabs, aSourceTab._tPos, -1);
+
+		sourceService.setSelection(aSourceTab, false);
+		var self = this;
+		window.setTimeout(function() {
+			b.duplicatingSelectedTabs = true;
+			b.movingSelectedTabs = true;
+			tabs.forEach(function(aTab, aIndex) {
+				sourceService.setSelection(aTab, false);
+				var newTab = b.duplicateTab(aTab);
+				self.setSelection(newTab, true);
+				b.moveTabTo(newTab, aNewTab._tPos + delta[aIndex] + 1);
+				if (b != sourceBrowser) sourceBrowser.removeTab(aTab);
+			});
+			if (shouldBeClosed) sourceBrowser.ownerDocument.defaultView.close();
+			self.setSelection(aNewTab, true);
+			b.movingSelectedTabs = false;
+			b.duplicatingSelectedTabs = false;
+			b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
+		}, 0);
 	},
- 	 
+  
 /* Tab Selection */ 
 	
 	hasSelection : function(aTabBrowser) 
