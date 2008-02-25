@@ -1199,7 +1199,7 @@ var MultipleTabService = {
 				return ++afterTabsOffset;
 			});
 	},
- 	
+ 
 	moveBundledTabsOf : function(aMovedTab, aEvent) 
 	{
 		var b = this.getTabBrowserFromChildren(aMovedTab);
@@ -1240,10 +1240,12 @@ var MultipleTabService = {
 		window.setTimeout(function() {
 			b.duplicatingSelectedTabs = true;
 			b.movingSelectedTabs = true;
+			var hasNextTab = aNewTab.nextSibling;
 			tabs.forEach(function(aTab, aIndex) {
 				sourceService.setSelection(aTab, false);
 				var newTab = b.duplicateTab(aTab);
 				self.setSelection(newTab, true);
+				if (delta[aIndex] > 0 && hasNextTab) delta[aIndex]--;
 				b.moveTabTo(newTab, aNewTab._tPos + delta[aIndex] + 1);
 				if (b != sourceBrowser) sourceBrowser.removeTab(aTab);
 			});
@@ -1254,7 +1256,7 @@ var MultipleTabService = {
 			b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 		}, 0);
 	},
-  
+ 	 
 /* Tab Selection */ 
 	
 	hasSelection : function(aTabBrowser) 
