@@ -149,7 +149,7 @@ var MultipleTabService = {
 		if (!aCurrentTab) return resultTabs;
 
 		if (!aTabs)
-			aTabs = this.getTabBrowserFromChildren(aCurrentTab).mTabContainer.childNodes;
+			aTabs = this.getTabBrowserFromChild(aCurrentTab).mTabContainer.childNodes;
 
 		try {
 			var currentDomain = aCurrentTab.linkedBrowser.currentURI.host;
@@ -179,7 +179,7 @@ var MultipleTabService = {
 			).singleNodeValue;
 	},
  
-	getTabBrowserFromChildren : function(aTab) 
+	getTabBrowserFromChild : function(aTab) 
 	{
 		return this.evaluateXPath(
 				'ancestor-or-self::xul:tabbrowser',
@@ -187,7 +187,13 @@ var MultipleTabService = {
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
 	},
- 
+	 
+	// old method (for backward compatibility) 
+	getTabBrowserFromChildren : function(aTab)
+	{
+		return this.getTabBrowserFromChild(aTab);
+	},
+  
 	get allowMoveMultipleTabs() 
 	{
 		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
@@ -200,7 +206,7 @@ var MultipleTabService = {
 		event.sourceTab = aSourceTab;
 		aNewTab.dispatchEvent(event);
 	},
-  
+  	
 /* Initializing */ 
 	
 	init : function() 
@@ -415,7 +421,7 @@ var MultipleTabService = {
 	},
    
 /* Event Handling */ 
-	 
+	
 	handleEvent : function(aEvent) 
 	{
 		switch (aEvent.type)
@@ -500,7 +506,7 @@ var MultipleTabService = {
 
 		var tab = this.getTabFromEvent(aEvent);
 		if (tab) {
-			var b = this.getTabBrowserFromChildren(tab);
+			var b = this.getTabBrowserFromChild(tab);
 			if (aEvent.shiftKey) {
 				var tabs = b.mTabContainer.childNodes;
 				var inSelection = false;
@@ -582,7 +588,7 @@ var MultipleTabService = {
 			) {
 			this.tabCloseboxDragging = true;
 			this.lastMouseOverTarget = this.getCloseboxFromEvent(aEvent);
-			this.clearSelectionSub(this.getSelectedTabs(this.getTabBrowserFromChildren(tab)), this.kSELECTED);
+			this.clearSelectionSub(this.getSelectedTabs(this.getTabBrowserFromChild(tab)), this.kSELECTED);
 			tab.setAttribute(this.kREADY_TO_CLOSE, true);
 		}
 		else if (
@@ -645,7 +651,7 @@ var MultipleTabService = {
 			) || this.isDisabled())
 			return;
 
-		var b = this.getTabBrowserFromChildren(aEvent.originalTarget);
+		var b = this.getTabBrowserFromChild(aEvent.originalTarget);
 		var arrowscrollbox = b.mTabContainer.mTabstrip;
 		if (aEvent.originalTarget == document.getAnonymousElementByAttribute(arrowscrollbox, 'class', 'scrollbutton-up')) {
 			arrowscrollbox._startScroll(-1);
@@ -681,7 +687,7 @@ var MultipleTabService = {
 					break;
 
 				case this.TAB_DRAG_MODE_SWITCH:
-					var b = this.getTabBrowserFromChildren(tab);
+					var b = this.getTabBrowserFromChild(tab);
 					b.selectedTab = tab;
 					break;
 
@@ -736,7 +742,7 @@ var MultipleTabService = {
 		var nodes = aPopup.childNodes;
 		var pref;
 
-		var b   = this.getTabBrowserFromChildren(aPopup) || this.browser;
+		var b   = this.getTabBrowserFromChild(aPopup) || this.browser;
 		var box = b.mTabContainer.mTabstrip || b.mTabContainer ;
 		var isVertical = ((box.getAttribute('orient') || window.getComputedStyle(box, '').getPropertyValue('-moz-box-orient')) == 'vertical');
 
@@ -818,7 +824,7 @@ var MultipleTabService = {
 	},
    
 /* Commands */ 
-	 
+	
 	closeTabs : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -826,7 +832,7 @@ var MultipleTabService = {
 		var max = aTabs.length;
 		if (!max) return;
 
-		var b = this.getTabBrowserFromChildren(aTabs[0]);
+		var b = this.getTabBrowserFromChild(aTabs[0]);
 		b.__multipletab__closedTabsNum = max;
 		if (
 			max > 1 &&
@@ -849,7 +855,7 @@ var MultipleTabService = {
 
 		var removeTabs = this.getSimilarTabsOf(aCurrentTab, aTabs);
 		var max = removeTabs.length;
-		var b   = this.getTabBrowserFromChildren(aCurrentTab);
+		var b   = this.getTabBrowserFromChild(aCurrentTab);
 		b.__multipletab__closedTabsNum = max;
 		if (
 			max > 1 &&
@@ -872,7 +878,7 @@ var MultipleTabService = {
 		var b;
 		var self = this;
 		Array.prototype.slice.call(aTabs).forEach(function(aTab) {
-			if (!b) b = self.getTabBrowserFromChildren(aTab);
+			if (!b) b = self.getTabBrowserFromChild(aTab);
 			b.reloadTab(aTab);
 		});
 	},
@@ -881,7 +887,7 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return;
 
-		var b = this.getTabBrowserFromChildren(aTabs[0]);
+		var b = this.getTabBrowserFromChild(aTabs[0]);
 
 		if ('PlacesUtils' in window) { // Firefox 3
 			PlacesUtils.showMinimalAddMultiBookmarkUI(Array.prototype.slice.call(aTabs).map(function(aTab) {
@@ -935,7 +941,7 @@ var MultipleTabService = {
 		var max = aTabs.length;
 		if (!max) return;
 
-		var b  = this.getTabBrowserFromChildren(aTabs[0]);
+		var b  = this.getTabBrowserFromChild(aTabs[0]);
 		var SS = this.SessionStore;
 
 		var selectedIndex = -1;
@@ -989,7 +995,7 @@ var MultipleTabService = {
 
 		// Step 1: get window state
 
-		var b  = this.getTabBrowserFromChildren(aTabs[0]);
+		var b  = this.getTabBrowserFromChild(aTabs[0]);
 		var SS = this.SessionStore;
 
 		for (var i = max-1; i > -1; i--)
@@ -1172,7 +1178,7 @@ var MultipleTabService = {
 	},
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 
-	 
+	
 	calculateDeltaForNewPosition : function(aTabs, aOriginalPos, aNewPos) 
 	{
 		var isMove = aNewPos > -1;
@@ -1202,7 +1208,7 @@ var MultipleTabService = {
  
 	moveBundledTabsOf : function(aMovedTab, aEvent) 
 	{
-		var b = this.getTabBrowserFromChildren(aMovedTab);
+		var b = this.getTabBrowserFromChild(aMovedTab);
 		var tabs = this.getSelectedTabs(b);
 		tabs.splice(tabs.indexOf(aMovedTab), 1);
 		var delta = this.calculateDeltaForNewPosition(tabs, aEvent.detail, aMovedTab._tPos);
@@ -1216,7 +1222,7 @@ var MultipleTabService = {
  
 	duplicateBundledTabsOf : function(aNewTab, aSourceTab) 
 	{
-		var b = this.getTabBrowserFromChildren(aNewTab);
+		var b = this.getTabBrowserFromChild(aNewTab);
 		var tabs, newPos, sourceBrowser, sourceService, shouldBeClosed;
 		if (aNewTab.ownerDocument == aSourceTab.ownerDocument) {
 			sourceService = this;
@@ -1226,7 +1232,7 @@ var MultipleTabService = {
 		}
 		else { // moved from another window
 			sourceService = aSourceTab.ownerDocument.defaultView.MultipleTabService;
-			sourceBrowser = sourceService.getTabBrowserFromChildren(aSourceTab);
+			sourceBrowser = sourceService.getTabBrowserFromChild(aSourceTab);
 			tabs = sourceService.getSelectedTabs(sourceBrowser);
 			shouldBeClosed = sourceBrowser.mTabContainer.childNodes.length == tabs.length;
 		}
@@ -1256,7 +1262,7 @@ var MultipleTabService = {
 			b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 		}, 0);
 	},
- 	 
+  
 /* Tab Selection */ 
 	
 	hasSelection : function(aTabBrowser) 
