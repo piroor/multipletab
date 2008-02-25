@@ -68,7 +68,7 @@ var MultipleTabService = {
 	_SessionStore : null,
 	 
 /* Utilities */ 
-	 
+	
 	isEventFiredOnTabIcon : function(aEvent) 
 	{
 		return this.evaluateXPath(
@@ -202,7 +202,7 @@ var MultipleTabService = {
 	},
   
 /* Initializing */ 
-	 
+	
 	init : function() 
 	{
 		if (!('gBrowser' in window)) return;
@@ -370,7 +370,7 @@ var MultipleTabService = {
 	{
 		aTab.addEventListener('mousemove', this, true);
 	},
-  	
+  
 	destroy : function() 
 	{
 		this.destroyTabBrowser(gBrowser);
@@ -415,7 +415,7 @@ var MultipleTabService = {
 	},
    
 /* Event Handling */ 
-	
+	 
 	handleEvent : function(aEvent) 
 	{
 		switch (aEvent.type)
@@ -549,7 +549,7 @@ var MultipleTabService = {
 			!this.allowMoveMultipleTabs)
 			this.clearSelection();
 	},
-	 
+	
 	delayedDragStart : function(aEvent) 
 	{
 		MultipleTabService.clearSelection();
@@ -1183,6 +1183,7 @@ var MultipleTabService = {
 			if (pos > aTab._tPos) pos--;
 			b.moveTabTo(aTab, pos);
 		});
+		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 		b.movingSelectedTabs = false;
 	},
  
@@ -1215,10 +1216,11 @@ var MultipleTabService = {
 		});
 		if (shouldBeClosed) remoteBrowser.ownerDocument.defaultView.close();
 		this.setSelection(aNewTab, true);
+		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 		b.movingSelectedTabs = false;
 		b.duplicatingSelectedTabs = false;
 	},
-  
+ 	 
 /* Tab Selection */ 
 	
 	hasSelection : function(aTabBrowser) 
