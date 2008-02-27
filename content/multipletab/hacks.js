@@ -6,14 +6,9 @@ MultipleTabService.overrideExtensionsOnInit = function() {
 			TG_Group_DnD_Observer.onDrop.toSource().replace(
 				/(TG_Move_To_Group\([^\)]+\))/,
 				<><![CDATA[
-					var sourceWindow, sourceBrowser;
-					if (tab &&
-						tab.localName == 'tab' &&
-						(sourceWindow = tab.ownerDocument.defaultView) &&
-						'MultipleTabService' in sourceWindow &&
-						(sourceBrowser = sourceWindow.MultipleTabService.getTabBrowserFromChild(tab)) &&
-						sourceWindow.MultipleTabService.isSelected(tab)) {
-						var tabs = sourceWindow.MultipleTabService.getSelectedTabs(sourceBrowser);
+					var info = {};
+					var tabs = MultipleTabService.getBundledTabsOf(tab, info);
+					if (tabs.length) {
 						tabs.forEach(function(tab) {
 							$1;
 						});
@@ -30,15 +25,9 @@ MultipleTabService.overrideExtensionsOnInit = function() {
 				sessionObserver.onDrop.toSource().replace(
 					'{',
 					<><![CDATA[$&
-						var tab = arguments[2].sourceNode;
-						var sourceWindow, sourceBrowser;
-						if (tab &&
-							tab.localName == 'tab' &&
-							(sourceWindow = tab.ownerDocument.defaultView) &&
-							'MultipleTabService' in sourceWindow &&
-							(sourceBrowser = sourceWindow.MultipleTabService.getTabBrowserFromChild(tab)) &&
-							sourceWindow.MultipleTabService.isSelected(tab)) {
-							var tabs = sourceWindow.MultipleTabService.getSelectedTabs(sourceBrowser);
+						var info = {};
+						var tabs = MultipleTabService.getBundledTabsOf(arguments[2].sourceNode, info);
+						if (tabs.length) {
 							var wadid = arguments[0].target.getAttribute('wad_id');
 							tabs.forEach(function(aTab) {
 								addURLtoSession(aTab.linkedBrowser.currentURI.spec, wadid);

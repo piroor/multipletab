@@ -206,7 +206,7 @@ var MultipleTabService = {
 		event.sourceTab = aSourceTab;
 		aNewTab.dispatchEvent(event);
 	},
-  	
+  
 /* Initializing */ 
 	
 	init : function() 
@@ -817,7 +817,7 @@ var MultipleTabService = {
 	},
    
 /* Commands */ 
-	
+	 
 	closeTabs : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -1171,7 +1171,29 @@ var MultipleTabService = {
 	},
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 
-	
+	 
+	getBundledTabsOf : function(aTab, aInfo) 
+	{
+		if (!aInfo) aInfo = {};
+		aInfo.sourceWindow = null;
+		aInfo.sourceBrowser = null;
+		var tabs = [];
+
+		var w, b;
+		if (
+			!aTab ||
+			aTab.localName != 'tab' ||
+			!(w = aTab.ownerDocument.defaultView) ||
+			!('MultipleTabService' in w) ||
+			!(b = w.MultipleTabService.getTabBrowserFromChild(aTab))
+			)
+			return tabs;
+
+		aInfo.sourceWindow = w;
+		aInfo.sourceBrowser = b;
+		return w.MultipleTabService.getSelectedTabs(b);
+	},
+ 
 	calculateDeltaForNewPosition : function(aTabs, aOriginalPos, aNewPos) 
 	{
 		var isMove = aNewPos > -1;
@@ -1215,20 +1237,14 @@ var MultipleTabService = {
  
 	duplicateBundledTabsOf : function(aNewTab, aSourceTab) 
 	{
+		var info = {};
+		var tabs = this.getBundledTabsOf(aSourceTab);
+
 		var b = this.getTabBrowserFromChild(aNewTab);
-		var tabs, newPos, sourceBrowser, sourceService, shouldBeClosed;
-		if (aNewTab.ownerDocument == aSourceTab.ownerDocument) {
-			sourceService = this;
-			sourceBrowser = b;
-			tabs = this.getSelectedTabs(b);
-			shouldBeClosed = false;
-		}
-		else { // moved from another window
-			sourceService = aSourceTab.ownerDocument.defaultView.MultipleTabService;
-			sourceBrowser = sourceService.getTabBrowserFromChild(aSourceTab);
-			tabs = sourceService.getSelectedTabs(sourceBrowser);
-			shouldBeClosed = sourceBrowser.mTabContainer.childNodes.length == tabs.length;
-		}
+		var sourceBrowser = info.sourceBrowser;
+		var sourceService = info.sourceWindow.MultipleTabService;
+		var shouldBeClosed = sourceBrowser != b && sourceBrowser.mTabContainer.childNodes.length == tabs.length;
+
 		var index = tabs.indexOf(aSourceTab);
 		tabs.splice(index, 1);
 
@@ -1253,9 +1269,13 @@ var MultipleTabService = {
 			b.movingSelectedTabs = false;
 			b.duplicatingSelectedTabs = false;
 			b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
+
+			delete info.sourceBrowser;
+			delete info.sourceWindow;
+			info = null;
 		}, 0);
 	},
-  
+ 	 
 /* Tab Selection */ 
 	
 	hasSelection : function(aTabBrowser) 
