@@ -68,7 +68,7 @@ var MultipleTabService = {
 	_SessionStore : null,
 	 
 /* Utilities */ 
-	
+	 
 	isEventFiredOnTabIcon : function(aEvent) 
 	{
 		return this.evaluateXPath(
@@ -187,7 +187,7 @@ var MultipleTabService = {
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
 	},
-	 
+	
 	// old method (for backward compatibility) 
 	getTabBrowserFromChildren : function(aTab)
 	{
@@ -960,6 +960,9 @@ var MultipleTabService = {
 				state.windows[0].tabs.splice(i, 1);
 				if (i < state.windows[0].selected)
 					state.windows[0].selected--;
+				this._clearTabValueKeys.forEach(function(aKey) {
+					delete state.windows[0].tabs[i].extData[aKey];
+				});
 			}
 			else {
 				delete state.windows[0].tabs[i].extData[this.kSELECTED];
@@ -1008,6 +1011,9 @@ var MultipleTabService = {
 				state.windows[0].tabs.splice(i, 1);
 				if (i < state.windows[0].selected)
 					state.windows[0].selected--;
+				this._clearTabValueKeys.forEach(function(aKey) {
+					delete state.windows[0].tabs[i].extData[aKey];
+				});
 			}
 		}
 		state = state.toSource();
@@ -1081,13 +1087,9 @@ var MultipleTabService = {
 				delete count;
 				delete aNumTabs;
 
-
 				for (var i = tabs.length-1; i > -1; i--)
 				{
-					if (SS.getTabValue(tabs[i], key)) {
-						count++;
-						continue;
-					}
+					if (SS.getTabValue(tabs[i], key)) continue;
 					try {
 						if (tabs[i].linkedBrowser.sessionHistory)
 							tabs[i].linkedBrowser.sessionHistory.PurgeHistory(tabs[i].linkedBrowser.sessionHistory.count);
@@ -1129,7 +1131,13 @@ var MultipleTabService = {
 
 		return newWin;
 	},
-  	
+ 
+	registerClearTabValueKey : function(aKey) 
+	{
+		this._clearTabValueKeys.push(aKey);
+	},
+	_clearTabValueKeys : [],
+ 	 
 	copyURIsToClipboard : function(aTabs, aFormat) 
 	{
 		if (!aTabs) return;

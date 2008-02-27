@@ -18,6 +18,10 @@ MultipleTabService.overrideExtensionsOnInit = function() {
 			)
 		);
 		this.hideObsoleteTabs = false;
+		this.registerClearTabValueKey('tg_gname');
+		this.registerClearTabValueKey('tg_gid');
+		this.registerClearTabValueKey('tg_gselected');
+		this.registerClearTabValueKey('tg_tselected');
 	}
 
 	// Linkwad
