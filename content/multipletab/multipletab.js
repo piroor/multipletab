@@ -501,6 +501,10 @@ var MultipleTabService = {
 				var inSelection = false;
 				for (var i = 0, maxi = tabs.length; i < maxi; i++)
 				{
+					if (tabs[i].getAttribute('hidden') == 'true' ||
+						tabs[i].getAttribute('collapsed') == 'true')
+						continue;
+
 					if (tabs[i] == b.selectedTab ||
 						tabs[i] == tab) {
 						inSelection = !inSelection;
