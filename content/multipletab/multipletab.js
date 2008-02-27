@@ -1238,7 +1238,7 @@ var MultipleTabService = {
 	duplicateBundledTabsOf : function(aNewTab, aSourceTab) 
 	{
 		var info = {};
-		var tabs = this.getBundledTabsOf(aSourceTab);
+		var tabs = this.getBundledTabsOf(aSourceTab, info);
 
 		var b = this.getTabBrowserFromChild(aNewTab);
 		var sourceBrowser = info.sourceBrowser;
