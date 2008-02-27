@@ -1,5 +1,28 @@
 MultipleTabService.overrideExtensionsOnInit = function() {
 
+	// Tab Groups
+	if ('TG_Group_DnD_Observer' in window)
+		eval('TG_Group_DnD_Observer.onDrop = '+
+			TG_Group_DnD_Observer.onDrop.toSource().replace(
+				/(TG_Move_To_Group\([^\)]+\))/,
+				<><![CDATA[
+					var sourceWindow, sourceBrowser;
+					if (tab &&
+						tab.localName == 'tab' &&
+						(sourceWindow = tab.ownerDocument.defaultView) &&
+						'MultipleTabService' in sourceWindow &&
+						(sourceBrowser = sourceWindow.MultipleTabService.getTabBrowserFromChild(tab)) &&
+						sourceWindow.MultipleTabService.isSelected(tab)) {
+						var tabs = sourceWindow.MultipleTabService.getSelectedTabs(sourceBrowser);
+						tabs.forEach(function(tab) {
+							$1;
+						});
+						return;
+					}
+				]]></>
+			)
+		);
+
 	// Linkwad
 	if (document.getElementById('linkwad_toolbar')) {
 		if ('sessionObserver' in window)
