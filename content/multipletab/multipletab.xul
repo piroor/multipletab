@@ -10,6 +10,7 @@
          xmlns:html="http://www.w3.org/1999/xhtml">
 
 <script src="multipletab.js" type="application/x-javascript"/>
+<script src="hacks.js" type="application/x-javascript"/>
 
 <popupset id="mainPopupSet">
 

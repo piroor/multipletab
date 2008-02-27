@@ -224,24 +224,13 @@ var MultipleTabService = {
 
 		this.initTabBrowser(gBrowser);
 
+		this.overrideExtensionsOnInit(); // hacks.js
+
 		window.setTimeout(function(aSelf) { aSelf.delayedInit(); }, 0, this);
 	},
 	delayedInit : function()
 	{
-		if ('SessionFix' in window) {
-			eval('gBrowser.warnAboutClosingTabs = '+
-				gBrowser.warnAboutClosingTabs.toSource().replace(
-					'{',
-					'{ var sessionKey = document.getElementById("sessionfix-bundle").getString("sessionKey"); '
-				).replace(
-					'var numTabs = ',
-					'var numTabs = this.__multipletab__closedTabsNum || '
-				).replace(
-					'if (numWindows > 1)',
-					'if (numWindows > 1 || this.__multipletab__closedTabsNum)'
-				)
-			);
-		}
+		this.overrideExtensionsOnDelayedInit(); // hacks.js
 
 		if (!('duplicateTab' in gBrowser)) {
 			gBrowser.duplicateTab = function(aTab) {
