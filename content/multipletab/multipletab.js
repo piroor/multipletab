@@ -1023,7 +1023,8 @@ var MultipleTabService = {
 			if (tab.linkedBrowser.sessionHistory)
 				tab.linkedBrowser.sessionHistory.PurgeHistory(tab.linkedBrowser.sessionHistory.count);
 			tab.linkedBrowser.contentWindow.location.replace('about:blank');
-			tab.setAttribute('collapsed', true);
+			if (this.hideObsoleteTabs)
+				tab.setAttribute('collapsed', true);
 			tab.__multipletab__shouldRemove = true;
 		}
 		delete tab;
@@ -1042,7 +1043,8 @@ var MultipleTabService = {
 
 		return this.openNewWindowWithTabs(state, max);
 	},
-	
+	hideObsoleteTabs : true,
+	 
 	openNewWindowWithTabs : function(aState, aNumTabs) 
 	{
 		// Step 3: Restore state in new window
@@ -1127,7 +1129,7 @@ var MultipleTabService = {
 
 		return newWin;
 	},
-  
+  	
 	copyURIsToClipboard : function(aTabs, aFormat) 
 	{
 		if (!aTabs) return;
@@ -1275,7 +1277,7 @@ var MultipleTabService = {
 			info = null;
 		}, 0);
 	},
- 	 
+  
 /* Tab Selection */ 
 	
 	hasSelection : function(aTabBrowser) 

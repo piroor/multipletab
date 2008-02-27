@@ -1,7 +1,7 @@
 MultipleTabService.overrideExtensionsOnInit = function() {
 
 	// Tab Groups
-	if ('TG_Group_DnD_Observer' in window)
+	if ('TG_Group_DnD_Observer' in window) {
 		eval('TG_Group_DnD_Observer.onDrop = '+
 			TG_Group_DnD_Observer.onDrop.toSource().replace(
 				/(TG_Move_To_Group\([^\)]+\))/,
@@ -17,6 +17,8 @@ MultipleTabService.overrideExtensionsOnInit = function() {
 				]]></>
 			)
 		);
+		this.hideObsoleteTabs = false;
+	}
 
 	// Linkwad
 	if (document.getElementById('linkwad_toolbar')) {
