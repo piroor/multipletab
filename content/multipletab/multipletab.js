@@ -216,6 +216,7 @@ var MultipleTabService = {
 		window.addEventListener('mouseup', this, true);
 
 		window.removeEventListener('load', this, false);
+		window.addEventListener('unload', MultipleTabService, false);
 
 		this.addPrefListener(this);
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabdrag.mode');
@@ -227,6 +228,11 @@ var MultipleTabService = {
 		this.overrideExtensionsOnInit(); // hacks.js
 
 		window.setTimeout(function(aSelf) { aSelf.delayedInit(); }, 0, this);
+	},
+	preInit : function()
+	{
+		window.removeEventListener('DOMContentLoaded', this, false);
+		this.overrideExtensionsOnPreInit(); // hacks.js
 	},
 	delayedInit : function()
 	{
@@ -461,6 +467,10 @@ var MultipleTabService = {
 					!aEvent.currentTarget.duplicatingSelectedTabs
 					)
 					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab);
+				break;
+
+			case 'DOMContentLoaded':
+				this.preInit();
 				break;
 
 			case 'load':
@@ -934,6 +944,8 @@ var MultipleTabService = {
 		var max = aTabs.length;
 		if (!max) return;
 
+		this.duplicatingTabs = true;
+
 		var b  = this.getTabBrowserFromChild(aTabs[0]);
 		var SS = this.SessionStore;
 
@@ -979,6 +991,10 @@ var MultipleTabService = {
 
 		if (selectedIndex > -1)
 			b.selectedTab = b.mTabContainer.childNodes[selectedIndex];
+
+		window.setTimeout(function(aSelf) {
+			aSelf.duplicatingTabs = false;
+		}, 0, this);
 	},
  
 	splitWindowFrom : function(aTabs) 
@@ -1062,6 +1078,8 @@ var MultipleTabService = {
 		newWin.addEventListener('load', function() {
 			newWin.removeEventListener('load', arguments.callee, false);
 
+			newWin.MultipleTabService.duplicatingTabs = true;
+
 			SS.setWindowState(newWin, aState, false);
 			delete aState;
 
@@ -1118,6 +1136,8 @@ var MultipleTabService = {
 
 					newWin.gBrowser.mStrip.removeAttribute('collapsed');
 					newWin.focus();
+
+					newWin.MultipleTabService.duplicatingTabs = false;
 
 					delete i;
 					delete tabs;
@@ -1499,5 +1519,5 @@ var MultipleTabService = {
 }; 
 
 window.addEventListener('load', MultipleTabService, false);
-window.addEventListener('unload', MultipleTabService, false);
+window.addEventListener('DOMContentLoaded', MultipleTabService, false);
  

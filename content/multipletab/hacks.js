@@ -1,3 +1,19 @@
+MultipleTabService.overrideExtensionsOnPreInit = function() {
+
+	// Tab Groups
+	if ('TG_Tab_SSTabRestoring_Event' in window) {
+		eval('window.TG_Tab_SSTabRestoring_Event = '+
+			window.TG_Tab_SSTabRestoring_Event.toSource().replace(
+				'{',
+				<><![CDATA[$&
+					if (MultipleTabService.duplicatingTabs) return;
+				]]></>
+			)
+		);
+	}
+
+};
+
 MultipleTabService.overrideExtensionsOnInit = function() {
 
 	// Tab Groups
