@@ -10,6 +10,11 @@ MultipleTabService.overrideExtensionsOnPreInit = function() {
 				]]></>
 			)
 		);
+		this.registerDuplicatedTabPostProcess(function(aTab, aIndex) {
+			var groups = document.getElementById('TG-GroupList');
+			TG_Add_To_Group(aTab, groups.selectedItem);
+			gBrowser.moveTabTo(aTab, aIndex);
+		});
 	}
 
 };
@@ -33,7 +38,6 @@ MultipleTabService.overrideExtensionsOnInit = function() {
 				]]></>
 			)
 		);
-		this.hideObsoleteTabs = false;
 		this.registerClearTabValueKey('tg_gname');
 		this.registerClearTabValueKey('tg_gid');
 		this.registerClearTabValueKey('tg_gselected');

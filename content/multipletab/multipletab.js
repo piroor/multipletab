@@ -1027,6 +1027,8 @@ var MultipleTabService = {
 				state.windows[0].tabs.splice(i, 1);
 				if (i < state.windows[0].selected)
 					state.windows[0].selected--;
+			}
+			else {
 				this._clearTabValueKeys.forEach(function(aKey) {
 					delete state.windows[0].tabs[i].extData[aKey];
 				});
@@ -1045,8 +1047,7 @@ var MultipleTabService = {
 			if (tab.linkedBrowser.sessionHistory)
 				tab.linkedBrowser.sessionHistory.PurgeHistory(tab.linkedBrowser.sessionHistory.count);
 			tab.linkedBrowser.contentWindow.location.replace('about:blank');
-			if (this.hideObsoleteTabs)
-				tab.setAttribute('collapsed', true);
+			tab.setAttribute('collapsed', true);
 			tab.__multipletab__shouldRemove = true;
 		}
 		delete tab;
@@ -1065,7 +1066,6 @@ var MultipleTabService = {
 
 		return this.openNewWindowWithTabs(state, max);
 	},
-	hideObsoleteTabs : true,
 	 
 	openNewWindowWithTabs : function(aState, aNumTabs) 
 	{
@@ -1090,7 +1090,7 @@ var MultipleTabService = {
 
 			newWin.setTimeout(function() {
 				var restored = false;
-				var tabs = newWin.gBrowser.mTabContainer.childNodes;
+				var tabs = Array.prototype.slice.call(newWin.gBrowser.mTabContainer.childNodes);
 				var count = 0;
 				for (var i = tabs.length-1; i > -1; i--)
 				{
@@ -1130,8 +1130,12 @@ var MultipleTabService = {
 
 						if (tabs[i].__multipletab__shouldRemove)
 							newWin.gBrowser.removeTab(tabs[i]);
-						else
+						else {
 							tabs[i].removeAttribute('collapsed');
+							newWin.MultipleTabService._duplicatedTabPostProcesses.forEach(function(aProcess) {
+								aProcess(tabs[i], i);
+							});
+						}
 					}
 
 					newWin.gBrowser.mStrip.removeAttribute('collapsed');
@@ -1157,6 +1161,12 @@ var MultipleTabService = {
 		this._clearTabValueKeys.push(aKey);
 	},
 	_clearTabValueKeys : [],
+ 
+	registerDuplicatedTabPostProcess : function(aProcess) 
+	{
+		this._duplicatedTabPostProcesses.push(aProcess);
+	},
+	_duplicatedTabPostProcesses : [],
  	 
 	copyURIsToClipboard : function(aTabs, aFormat) 
 	{
