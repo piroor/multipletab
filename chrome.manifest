@@ -6,5 +6,6 @@ locale	multipletab	en-US	jar:chrome/multipletab.jar!/locale/en-US/multipletab/
 locale	multipletab	ja	jar:chrome/multipletab.jar!/locale/ja/multipletab/
 locale	multipletab	hu-HU	jar:chrome/multipletab.jar!/locale/hu-HU/multipletab/
 locale	multipletab	it-IT	jar:chrome/multipletab.jar!/locale/it-IT/multipletab/
+locale	multipletab	es-ES	jar:chrome/multipletab.jar!/locale/es-ES/multipletab/
 
 skin	multipletab	classic/1.0	jar:chrome/multipletab.jar!/skin/classic/multipletab/

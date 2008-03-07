@@ -1,0 +1,49 @@
+<!ENTITY popup.selection.removeTabs  "Cerrar pestañas seleccionadas">
+<!ENTITY popup.selection.reloadTabs  "Refrescar pestañas seleccionadas">
+<!ENTITY popup.selection.addBookmark "Añadirlas a marcadores en una nueva carpeta">
+<!ENTITY popup.selection.duplicateTabs "Duplicar pestañas seleccionadas">
+<!ENTITY popup.selection.splitWindow "Moverlas a una nueva ventana">
+<!ENTITY popup.selection.clipboard   "Copiar URIs de las pestañas seleccionadas">
+
+<!ENTITY popup.context.removeLeftTabs.horizontal  "Cerrar pestañas de la izquierda">
+<!ENTITY popup.context.removeLeftTabs.vertical    "Cerrar pestañas que están encima">
+<!ENTITY popup.context.removeRightTabs.horizontal "Cerrar pestañas de la derecha">
+<!ENTITY popup.context.removeRightTabs.vertical   "Cerrar pestañas que están debajo">
+<!ENTITY popup.context.removeAll                  "Cerrar todas las pestañas">
+<!ENTITY popup.context.removeSimilar              "Cerrar pestañas similares">
+<!ENTITY popup.context.duplicate                  "Duplicar pestañas">
+<!ENTITY popup.context.clipboard                  "Copiar URI">
+<!ENTITY popup.context.clipboardAll               "Copiar URIs de todas las pestañas">
+<!ENTITY popup.context.clipboard.format.default "URI">
+<!ENTITY popup.context.clipboard.format.mozurl  "Título de página y URI">
+<!ENTITY popup.context.clipboard.format.link    "Enlace HTML">
+
+
+
+<!ENTITY config.title        "Configuración de Multiple Tab Handler (Manipulador Múltiple de Pestañas)">
+
+<!ENTITY config.tabs.general "General">
+
+<!ENTITY config.tabdrag.mode.caption "Acción al arrastrar pestañas">
+<!ENTITY config.tabdrag.mode.default "Predeterminada (mover y reorganizar pestañas)">
+<!ENTITY config.tabdrag.mode.select  "Seleccionar pestañas">
+<!ENTITY config.tabdrag.mode.switch  "Cambiar pestañas dinámicamente">
+<!ENTITY config.tabdrag.delay-before "Arrastrar luego de ">
+<!ENTITY config.tabdrag.delay-after  "mseg.">
+<!ENTITY config.tabdrag.moveMultipleTabs "Mover juntas las pestañas seleccionadas">
+
+<!ENTITY config.tabclickmode.caption "Acción para Ctrl(Comando)-Click en las pestañas">
+<!ENTITY config.tabclickmode.default "Cerrar pestaña">
+<!ENTITY config.tabclickmode.toggle  "Cambiar selección de pestañas">
+
+<!ENTITY config.tabs.selectionMenu    "Menú de selección de pestañas">
+<!ENTITY config.selectionMenu.caption "Items disponibles en el menú para las pestañas seleccionadas">
+
+<!ENTITY config.clopboardFormatType.caption "Formato de texto para &quot;Copiar URIs&quot;">
+<!ENTITY config.clopboardFormatType.select  "Seleccionar desde un menú">
+
+<!ENTITY config.tabs.contextMenu    "Menú contextual en pestañas">
+<!ENTITY config.contextMenu.caption "Items disponibles en el menú contextual de las pestañas">
+<!ENTITY config.contextMenu.removeLeftTabs  "Cerrar pestañas a la izquierda (Encima)">
+<!ENTITY config.contextMenu.removeRightTabs "Cerrar pestañas a la derecha (Debajo)">
+
