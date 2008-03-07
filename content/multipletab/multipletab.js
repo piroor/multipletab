@@ -972,12 +972,12 @@ var MultipleTabService = {
 				state.windows[0].tabs.splice(i, 1);
 				if (i < state.windows[0].selected)
 					state.windows[0].selected--;
-				this._clearTabValueKeys.forEach(function(aKey) {
-					delete state.windows[0].tabs[i].extData[aKey];
-				});
 			}
 			else {
 				delete state.windows[0].tabs[i].extData[this.kSELECTED];
+				this._clearTabValueKeys.forEach(function(aKey) {
+					delete state.windows[0].tabs[i].extData[aKey];
+				});
 			}
 		}
 		state = state.toSource();
