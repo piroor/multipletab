@@ -18,6 +18,7 @@
 		oncommand="this.hidePopup();"
 		onpopupshowing="MultipleTabService.showHideMenuItems(this);"
 		onpopuphidden="
+			if (event.target != this) return;
 			if (this.autoClearSelection)
 				MultipleTabService.clearSelection();
 			this.autoClearSelection = false;
