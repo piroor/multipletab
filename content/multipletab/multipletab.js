@@ -12,6 +12,7 @@ var MultipleTabService = {
 
 	kSELECTION_STYLE : 'multipletab-selection-style',
 	kSELECTED        : 'multipletab-selected',
+	kSELECTED_DUPLICATING : 'multipletab-selected-duplicating',
 	kREADY_TO_CLOSE  : 'multipletab-ready-to-close',
 	kINSERT_BEFORE   : 'multipletab-insertbefore',
 
@@ -948,6 +949,7 @@ var MultipleTabService = {
 
 		var b  = this.getTabBrowserFromChild(aTabs[0]);
 		var SS = this.SessionStore;
+		var self = this;
 
 		var selectedIndex = -1;
 		for (var i = max-1; i > -1; i--)
@@ -974,7 +976,6 @@ var MultipleTabService = {
 					state.windows[0].selected--;
 			}
 			else {
-				delete state.windows[0].tabs[i].extData[this.kSELECTED];
 				this._clearTabValueKeys.forEach(function(aKey) {
 					delete state.windows[0].tabs[i].extData[aKey];
 				});
@@ -982,15 +983,18 @@ var MultipleTabService = {
 		}
 		state = state.toSource();
 
-		for (var i = max-1; i > -1; i--)
-		{
-			SS.deleteTabValue(aTabs[i], this.kSELECTED);
-		}
+		this.clearSelection();
 
 		SS.setWindowState(window, state, false);
 
 		if (selectedIndex > -1)
 			b.selectedTab = b.mTabContainer.childNodes[selectedIndex];
+
+		var tabs = Array.prototype.slice.call(b.mTabContainer.childNodes).reverse();
+		for (var i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			this.setSelection(tabs[i], true);
+		}
 
 		window.setTimeout(function(aSelf) {
 			aSelf.duplicatingTabs = false;
