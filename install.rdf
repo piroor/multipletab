@@ -5,7 +5,7 @@
   <RDF:Description RDF:about="urn:mozilla:install-manifest"
                    em:id="multipletab@piro.sakura.ne.jp"
                    em:name="Multiple Tab Handler"
-                   em:version="0.2.2008031001"
+                   em:version="0.2.2008040701"
                    em:creator="SHIMODA Hiroshi"
                    em:description="Provides feature to close multiple tabs."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/multipletab/"
@@ -55,7 +55,7 @@
     <em:targetApplication>
       <RDF:Description em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                        em:minVersion="2.0"
-                       em:maxVersion="3.0b5pre" />
+                       em:maxVersion="3.0pre" />
     </em:targetApplication>
   </RDF:Description>
 </RDF:RDF>
