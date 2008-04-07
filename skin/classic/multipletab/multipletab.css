@@ -20,6 +20,6 @@
 }
 
 .tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button image {
-	outline: 2px solid invert;
+	outline: 2px solid /*invert*/ important;
 	background-color: Highlight !important;
 }

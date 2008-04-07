@@ -9,3 +9,4 @@ locale	multipletab	it-IT	jar:chrome/multipletab.jar!/locale/it-IT/multipletab/
 locale	multipletab	es-ES	jar:chrome/multipletab.jar!/locale/es-ES/multipletab/
 
 skin	multipletab	classic/1.0	jar:chrome/multipletab.jar!/skin/classic/multipletab/
+skin	multipletab-fx3	classic/1.0	jar:chrome/multipletab.jar!/skin/classic/multipletab/	appversion>=3.0b5pre
