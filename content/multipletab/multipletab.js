@@ -893,8 +893,9 @@ var MultipleTabService = {
 
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 
-		if ('PlacesUtils' in window) { // Firefox 3
-			PlacesUtils.showMinimalAddMultiBookmarkUI(Array.prototype.slice.call(aTabs).map(function(aTab) {
+		if ('PlacesUIUtils' in window || 'PlacesUtils' in window) { // Firefox 3
+			var utils = 'PlacesUIUtils' in window ? PlacesUIUtils : PlacesUtils ;
+			utils.showMinimalAddMultiBookmarkUI(Array.prototype.slice.call(aTabs).map(function(aTab) {
 				return aTab.linkedBrowser.currentURI;
 			}));
 			return;
