@@ -159,7 +159,7 @@ var MultipleTabService = {
 			return resultTabs;
 		}
 
-		Array.prototype.slice.call(aTabs).forEach(function(aTab) {
+		Array.slice(aTabs).forEach(function(aTab) {
 			if (aTab == aCurrentTab) return;
 			try {
 				if (aTab.linkedBrowser.currentURI.host == currentDomain)
@@ -881,7 +881,7 @@ var MultipleTabService = {
 
 		var b;
 		var self = this;
-		Array.prototype.slice.call(aTabs).forEach(function(aTab) {
+		Array.slice(aTabs).forEach(function(aTab) {
 			if (!b) b = self.getTabBrowserFromChild(aTab);
 			b.reloadTab(aTab);
 		});
@@ -895,14 +895,14 @@ var MultipleTabService = {
 
 		if ('PlacesUIUtils' in window || 'PlacesUtils' in window) { // Firefox 3
 			var utils = 'PlacesUIUtils' in window ? PlacesUIUtils : PlacesUtils ;
-			utils.showMinimalAddMultiBookmarkUI(Array.prototype.slice.call(aTabs).map(function(aTab) {
+			utils.showMinimalAddMultiBookmarkUI(Array.slice(aTabs).map(function(aTab) {
 				return aTab.linkedBrowser.currentURI;
 			}));
 			return;
 		}
 
 		var currentTabInfo;
-		var tabsInfo = Array.prototype.slice.call(aTabs).map(function(aTab) {
+		var tabsInfo = Array.slice(aTabs).map(function(aTab) {
 				var webNav = aTab.linkedBrowser.webNavigation;
 				var url    = webNav.currentURI.spec;
 				var name   = '';
@@ -991,7 +991,7 @@ var MultipleTabService = {
 		if (selectedIndex > -1)
 			b.selectedTab = b.mTabContainer.childNodes[selectedIndex];
 
-		var tabs = Array.prototype.slice.call(b.mTabContainer.childNodes).reverse();
+		var tabs = Array.slice(b.mTabContainer.childNodes).reverse();
 		for (var i = 0, maxi = aTabs.length; i < maxi; i++)
 		{
 			this.setSelection(tabs[i], true);
@@ -1095,7 +1095,7 @@ var MultipleTabService = {
 
 			newWin.setTimeout(function() {
 				var restored = false;
-				var tabs = Array.prototype.slice.call(newWin.gBrowser.mTabContainer.childNodes);
+				var tabs = Array.slice(newWin.gBrowser.mTabContainer.childNodes);
 				var count = 0;
 				for (var i = tabs.length-1; i > -1; i--)
 				{
@@ -1180,7 +1180,7 @@ var MultipleTabService = {
 		var clipboard = Components.classes['@mozilla.org/widget/clipboardhelper;1']
 								.getService(Components.interfaces.nsIClipboardHelper);
 		var self = this;
-		var stringToCopy = Array.prototype.slice.call(aTabs).map(function(aTab) {
+		var stringToCopy = Array.slice(aTabs).map(function(aTab) {
 				return self.formatURIStringForClipboard(aTab.linkedBrowser.currentURI.spec, aTab, aFormat);
 			});
 		if (stringToCopy.length > 1)
