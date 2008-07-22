@@ -593,7 +593,7 @@ var MultipleTabService = {
 			this.tabCloseboxDragging = true;
 			this.lastMouseOverTarget = this.getCloseboxFromEvent(aEvent);
 			this.clearSelectionSub(this.getSelectedTabs(this.getTabBrowserFromChild(tab)), this.kSELECTED);
-			tab.setAttribute(this.kREADY_TO_CLOSE, true);
+			this.setReadyToClose(tab, true);
 		}
 		else if (
 			this.isEventFiredOnTabIcon(aEvent) ||
@@ -707,10 +707,7 @@ var MultipleTabService = {
 			if (!this.getCloseboxFromEvent(aEvent)) return;
 
 			var tab = this.getTabFromEvent(aEvent);
-			if (tab.getAttribute(this.kREADY_TO_CLOSE) == 'true')
-				tab.removeAttribute(this.kREADY_TO_CLOSE);
-			else
-				tab.setAttribute(this.kREADY_TO_CLOSE, true);
+			this.toggleReadyToClose(tab);
 		}
 	},
   
@@ -828,7 +825,7 @@ var MultipleTabService = {
 	},
    
 /* Commands */ 
-	 
+	
 	closeTabs : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -1071,7 +1068,7 @@ var MultipleTabService = {
 
 		return this.openNewWindowWithTabs(state, max);
 	},
-	 
+	
 	openNewWindowWithTabs : function(aState, aNumTabs) 
 	{
 		// Step 3: Restore state in new window
@@ -1172,7 +1169,7 @@ var MultipleTabService = {
 		this._duplicatedTabPostProcesses.push(aProcess);
 	},
 	_duplicatedTabPostProcesses : [],
- 	 
+  
 	copyURIsToClipboard : function(aTabs, aFormat) 
 	{
 		if (!aTabs) return;
@@ -1216,7 +1213,7 @@ var MultipleTabService = {
 	},
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 
-	 
+	
 	getBundledTabsOf : function(aTab, aInfo) 
 	{
 		if (!aInfo) aInfo = {};
@@ -1322,7 +1319,7 @@ var MultipleTabService = {
 	},
   
 /* Tab Selection */ 
-	
+	 
 	hasSelection : function(aTabBrowser) 
 	{
 		try {
@@ -1347,20 +1344,34 @@ var MultipleTabService = {
  
 	setSelection : function(aTab, aState) 
 	{
+		return this.setBooleanAttributeToTab(aTab, this.kSELECTED, aState, true);
+	},
+	 
+	setReadyToClose : function(aTab, aState) 
+	{
+		return this.setBooleanAttributeToTab(aTab, this.kREADY_TO_CLOSE, aState, false);
+	},
+ 
+	setBooleanAttributeToTab : function(aTab, aAttr, aState, aShouldSaveToSession) 
+	{
 		if (!aState) {
-			aTab.removeAttribute(this.kSELECTED);
-			try {
-				this.SessionStore.deleteTabValue(aTab, this.kSELECTED);
-			}
-			catch(e) {
+			aTab.removeAttribute(aAttr);
+			if (aShouldSaveToSession) {
+				try {
+					this.SessionStore.deleteTabValue(aTab, this.kSELECTED);
+				}
+				catch(e) {
+				}
 			}
 		}
 		else {
-			aTab.setAttribute(this.kSELECTED, true);
-			try {
-				this.SessionStore.setTabValue(aTab, this.kSELECTED, 'true');
-			}
-			catch(e) {
+			aTab.setAttribute(aAttr, true);
+			if (aShouldSaveToSession) {
+				try {
+					this.SessionStore.setTabValue(aTab, this.kSELECTED, 'true');
+				}
+				catch(e) {
+				}
 			}
 		}
 		this.selectionModified = true;
@@ -1371,18 +1382,29 @@ var MultipleTabService = {
 			var tabs = TreeStyleTabService.getDescendantTabs(aTab);
 			for (var i = 0, maxi = tabs.length; i < maxi; i++)
 			{
-				this.setSelection(tabs[i], aState);
+				this.setBooleanAttributeToTab(tabs[i], aAttr, aState, aShouldSaveToSession);
 			}
 		}
 
 		return aState;
 	},
- 
+  
 	toggleSelection : function(aTab) 
 	{
-		return this.setSelection(aTab, aTab.getAttribute(this.kSELECTED) != 'true');
+		return this.toggleBooleanAttributeToTab(aTab, this.kSELECTED, true);
 	},
- 
+	 
+	toggleReadyToClose : function(aTab) 
+	{
+		return this.toggleBooleanAttributeToTab(aTab, this.kREADY_TO_CLOSE, false);
+	},
+ 	
+	toggleBooleanAttributeToTab : function(aTab, aAttr, aShouldSaveToSession) 
+	{
+		return this.setBooleanAttributeToTab(aTab, aAttr, aTab.getAttribute(aAttr) != 'true', aShouldSaveToSession);
+	},
+
+  
 	clearSelection : function(aTabBrowser) 
 	{
 		this.clearSelectionSub(this.getSelectedTabs(aTabBrowser), this.kSELECTED);
