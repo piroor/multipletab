@@ -1,7 +1,7 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
 .tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button {
-	outline: 2px solid /*invert*/ important;
+	outline: 2px solid Highlight important;
 	background-color: Highlight !important;
 }
 

@@ -844,10 +844,17 @@ var MultipleTabService = {
 		}
 		b.__multipletab__closedTabsNum = 0;
 
-		for (var i = max-1; i > -1; i--)
-		{
-			b.removeTab(aTabs[i]);
-		}
+		var tabs = Array.slice(aTabs);
+		tabs.reverse();
+		var selected;
+		tabs.forEach(function(aTab) {
+			if (aTab.selected)
+				selected = aTab;
+			else
+				b.removeTab(aTab);
+		});
+		if (selected)
+			b.removeTab(selected);
 	},
  
 	closeSimilarTabsOf : function(aCurrentTab, aTabs) 
