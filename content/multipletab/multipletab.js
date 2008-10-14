@@ -340,7 +340,7 @@ var MultipleTabService = {
 	 
 	initTabBrowserContextMenu : function(aTabBrowser) 
 	{
-		var id = parseInt(Math.random() * 65000);
+		var suffix = '-tabbrowser-'+(aTabBrowser.id || 'instance-'+idparseInt(Math.random() * 65000));
 		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		var template = document.getElementById(this.kCONTEXT_MENU_TEMPLATE);
 		var items = template.childNodes;
@@ -350,7 +350,7 @@ var MultipleTabService = {
 		{
 			item = items[i].cloneNode(true);
 			if (item.getAttribute('id'))
-				item.setAttribute('id', item.getAttribute('id')+'-tabbrowser'+id);
+				item.setAttribute('id', item.getAttribute('id')+suffix);
 
 			try {
 				eval('refNode = '+item.getAttribute(this.kINSERT_BEFORE));
