@@ -495,6 +495,7 @@ var MultipleTabService = {
 					aEvent.stopPropagation();
 					return false;
 				}
+				this.enableMenuItems(aEvent.target);
 				this.showHideMenuItems(aEvent.target);
 				break;
 		}
@@ -726,7 +727,7 @@ var MultipleTabService = {
 		var popup = this.tabSelectionPopup;
 		popup.hidePopup();
 		popup.autoClearSelection = aAutoClearSelection;
-		document.popupNode = gBrowser.mTabContainer;
+		document.popupNode = this.browser.mTabContainer;
 		if ('openPopupAtScreen' in popup) // Firefox 3
 			popup.openPopupAtScreen(aEvent.screenX, aEvent.screenY, true);
 		else
@@ -736,6 +737,47 @@ var MultipleTabService = {
 				aEvent.screenY - document.documentElement.boxObject.screenY,
 				'popup'
 			);
+	},
+ 
+	enableMenuItems : function(aPopup) 
+	{
+		var tab = this.browser.mContextTab || this.browser.selectedTab;
+
+		try {
+			var removeLeft = document.evaluate(
+					'descendant::xul:menuitem[starts-with(@id, "multipletab-context-removeLeftTabs")]',
+					aPopup,
+					this.NSResolver,
+					XPathResult.FIRST_ORDERED_NODE_TYPE,
+					null
+				).singleNodeValue;
+			if (removeLeft) {
+				if (tab.previousSibling)
+					removeLeft.removeAttribute('disabled');
+				else
+					removeLeft.setAttribute('disabled', true);
+			}
+		}
+		catch(e) {
+		}
+
+		try {
+			var removeRight = document.evaluate(
+					'descendant::xul:menuitem[starts-with(@id, "multipletab-context-removeRightTabs")]',
+					aPopup,
+					this.NSResolver,
+					XPathResult.FIRST_ORDERED_NODE_TYPE,
+					null
+				).singleNodeValue;
+			if (removeRight) {
+				if (tab.nextSibling)
+					removeRight.removeAttribute('disabled');
+				else
+					removeRight.setAttribute('disabled', true);
+			}
+		}
+		catch(e) {
+		}
 	},
  
 	showHideMenuItems : function(aPopup) 
