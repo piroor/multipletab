@@ -340,7 +340,7 @@ var MultipleTabService = {
 	 
 	initTabBrowserContextMenu : function(aTabBrowser) 
 	{
-		var suffix = '-tabbrowser-'+(aTabBrowser.id || 'instance-'+idparseInt(Math.random() * 65000));
+		var suffix = '-tabbrowser-'+(aTabBrowser.id || 'instance-'+parseInt(Math.random() * 65000));
 		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		var template = document.getElementById(this.kCONTEXT_MENU_TEMPLATE);
 		var items = template.childNodes;
@@ -982,7 +982,8 @@ var MultipleTabService = {
 			)
 		);
 	},
-	addBookmarkTabsFilter : function(aTab) {
+	addBookmarkTabsFilter : function(aTab)
+	{
 		return aTab.linkedBrowser.currentURI;
 	},
  

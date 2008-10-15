@@ -66,7 +66,8 @@ MultipleTabService.overrideExtensionsOnInit = function() {
 	}
 
 	// Tab Mix Plus
-	if ('TMP_Places' in window) {
+	if ('TMP_Places' in window &&
+		'getTabFixedTitle' in TMP_Places) {
 		MultipleTabService.addBookmarkTabsFilter = function(aTab) {
 			var b = aTab.linkedBrowser;
 			var uri = b.currentURI;
