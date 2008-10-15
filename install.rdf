@@ -24,38 +24,63 @@
       <RDF:Description em:locale="en-US"
                        em:name="Multiple Tab Handler"
                        em:description="Provides features to close (, reload, etc.) multiple tabs at once."
-                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"/>
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
+                       em:creator="SHIMODA Hiroshi">
+		<em:contributor>Mikes Kaszmn Istvn (some features and hu-HU locale)</em:contributor>
+		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
+		<em:translator>tito (es-ES locale)</em:translator>
+      </RDF:Description>
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="ja"
                        em:name="マルチプルタブハンドラ"
                        em:description="複数のタブをまとめて閉じたり再読み込みしたりといった機能を加えます。"
-                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html"/>
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html"
+                       em:creator="SHIMODA Hiroshi">
+		<em:contributor>Mikes Kaszmn Istvn (some features and hu-HU locale)</em:contributor>
+		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
+		<em:translator>tito (es-ES locale)</em:translator>
+      </RDF:Description>
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="hu-HU"
                        em:name="Multiple Tab Handler"
                        em:description="Lehetővé teszi több lap egyidejű bezárását, újratöltését, ..."
-                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"/>
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
+                       em:creator="SHIMODA Hiroshi">
+		<em:contributor>Mikes Kaszmn Istvn (some features and hu-HU locale)</em:contributor>
+		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
+		<em:translator>tito (es-ES locale)</em:translator>
+      </RDF:Description>
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="it-IT"
                        em:name="Multiple Tab Handler"
                        em:description="Fornisce funzionalità per la gestione contemporanea di più schede"
-                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"/>
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
+                       em:creator="SHIMODA Hiroshi">
+		<em:contributor>Mikes Kaszmn Istvn (some features and hu-HU locale)</em:contributor>
+		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
+		<em:translator>tito (es-ES locale)</em:translator>
+      </RDF:Description>
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="es-ES"
                        em:name="Multiple Tab Handler (Manipulador multiple de Pestañas)"
                        em:description="Implementa la habilidad de seleccionar multiples pestañas para cerrarlas, recargarlas, marcarlas, moverlas o duplicarlas todas a la vez"
-                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"/>
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
+                       em:creator="SHIMODA Hiroshi">
+		<em:contributor>Mikes Kaszmn Istvn (some features and hu-HU locale)</em:contributor>
+		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
+		<em:translator>tito (es-ES locale)</em:translator>
+      </RDF:Description>
     </em:localized>
 
 
     <em:targetApplication>
       <RDF:Description em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                        em:minVersion="2.0"
-                       em:maxVersion="3.0.*" />
+                       em:maxVersion="3.1b2pre" />
     </em:targetApplication>
   </RDF:Description>
 </RDF:RDF>
