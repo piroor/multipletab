@@ -801,7 +801,7 @@ var MultipleTabService = {
 				)
 				nodes[i].setAttribute('label', label);
 
-			key = nodes[i].getAttribute('id').replace(/-tabbrowser[0-9]+$/, '');
+			key = nodes[i].getAttribute('id').replace(/-tabbrowser-.*$/, '');
 			if (/^(multipletab-(context|selection)-clipboard(All)?)(:select)?$/.test(key)) {
 				key  = RegExp.$1
 				pref = this.getPref('extensions.multipletab.show.'+key) &&
