@@ -92,7 +92,7 @@ var MultipleTabService = {
 	{
 		return navigator.platform.toLowerCase().indexOf('mac') > -1 ? aEvent.metaKey : aEvent.ctrlKey ;
 	},
- 	
+ 
 	isDisabled : function() 
 	{
 		return (document.getElementById('cmd_CustomizeToolbars').getAttribute('disabled') == 'true');
@@ -212,7 +212,54 @@ var MultipleTabService = {
 		event.sourceTab = aSourceTab;
 		aNewTab.dispatchEvent(event);
 	},
-  
+ 
+	createDragFeedbackImage : function(aNode) 
+	{
+		var tabs = this.getDraggedTabs(aNode);
+		if (tabs.length < 2) return null;
+
+		var canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
+		var offset = tabs[0].boxObject.height * 0.66;
+		var padding = offset * (tabs.length - 1);
+		var width = tabs[0].boxObject.width + (padding * 0.66);
+		var height = tabs[0].boxObject.height + padding;
+		canvas.width = width;
+		canvas.height = height;
+		try {
+			var ctx = canvas.getContext('2d');
+			ctx.clearRect(0, 0, width, height);
+			tabs.forEach(function(aTab, aIndex) {
+				var box = aTab.boxObject;
+				ctx.drawWindow(window, box.x, box.y, box.width, box.height, 'transparent');
+				ctx.translate(offset * 0.66, offset);
+			}, this);
+			var image = new Image();
+			image.src = canvas.toDataURL()
+			return image;
+		}
+		catch(e) {
+			return null;
+		}
+	},
+	getDragFeedbackImageX : function(aNode)
+	{
+		var tabs = this.getDraggedTabs(aNode);
+		if (tabs.length < 2) return 0;
+		return 16;
+	},
+	getDragFeedbackImageY : function(aNode)
+	{
+		var tabs = this.getDraggedTabs(aNode);
+		if (tabs.length < 2) return 0;
+		return 16;
+	},
+	getDraggedTabs : function(aNode)
+	{
+		var b = this.getTabBrowserFromChild(aNode);
+		var tabs = b ? this.getSelectedTabs(b) : [] ;
+		return tabs;
+	},
+ 	 
 /* Initializing */ 
 	
 	init : function() 
@@ -228,6 +275,16 @@ var MultipleTabService = {
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabdrag.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.selectionStyle');
+
+/*
+		if ('nsDragAndDrop' in window &&
+			'startDrag' in nsDragAndDrop) {
+			eval('nsDragAndDrop.startDrag = '+nsDragAndDrop.startDrag.toSource().replace(
+				/(invokeDragSessionWithImage\([^\)]+,\s*)null\s*,\s*0,\s*0(\s*,[^\)]+\))/,
+				'$1MultipleTabService.createDragFeedbackImage(aEvent.target), MultipleTabService.getDragFeedbackImageX(aEvent.target), MultipleTabService.getDragFeedbackImageY(aEvent.target)$2'
+			));
+		}
+*/
 
 		this.initTabBrowser(gBrowser);
 
@@ -259,6 +316,7 @@ var MultipleTabService = {
 		aTabBrowser.addEventListener('TabClose', this, true);
 		aTabBrowser.addEventListener('TabMove', this, true);
 		aTabBrowser.addEventListener('MultipleTabHandler:TabDuplicate', this, true);
+		aTabBrowser.mTabContainer.addEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousemove',   this, true);
@@ -403,6 +461,7 @@ var MultipleTabService = {
 		aTabBrowser.removeEventListener('TabClose', this, true);
 		aTabBrowser.removeEventListener('TabMove', this, true);
 		aTabBrowser.removeEventListener('MultipleTabHandler:TabDuplicate', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
@@ -431,6 +490,9 @@ var MultipleTabService = {
 				this.lastMouseDownX = aEvent.screenX;
 				this.lastMouseDownY = aEvent.screenY;
 				this.onTabClick(aEvent);
+				break;
+
+			case 'dragstart':
 				break;
 
 			case 'draggesture':
