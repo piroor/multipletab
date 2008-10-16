@@ -70,7 +70,7 @@ var MultipleTabService = {
 	_SessionStore : null,
 	 
 /* Utilities */ 
-	 
+	
 	isEventFiredOnTabIcon : function(aEvent) 
 	{
 		return this.evaluateXPath(
@@ -186,6 +186,15 @@ var MultipleTabService = {
 			).singleNodeValue;
 	},
  
+	getTabBrowserTabFromChild : function(aNode) 
+	{
+		return this.evaluateXPath(
+				'ancestor-or-self::*[local-name()="tab" and ancestor::*[local-name()="tabbrowser"]]',
+				aNode,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue;
+	},
+ 
 	getTabBrowserFromChild : function(aTab) 
 	{
 		return this.evaluateXPath(
@@ -206,10 +215,19 @@ var MultipleTabService = {
 		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
 	},
  
-	fireDuplicateEvent : function(aNewTab, aSourceTab) 
+	fireDuplicateEvent : function(aNewTab, aSourceTab, aSourceEvent) 
 	{
 		var event = document.createEvent('Events');
 		event.initEvent('MultipleTabHandler:TabDuplicate', true, false);
+		event.sourceTab = aSourceTab;
+		event.mayBeMove = aSourceEvent && !this.isAccelKeyPressed(aSourceEvent);
+		aNewTab.dispatchEvent(event);
+	},
+ 
+	fireWindowMoveEvent : function(aNewTab, aSourceTab) 
+	{
+		var event = document.createEvent('Events');
+		event.initEvent('MultipleTabHandler:TabWindowMove', true, false);
 		event.sourceTab = aSourceTab;
 		aNewTab.dispatchEvent(event);
 	},
@@ -260,9 +278,9 @@ var MultipleTabService = {
 		var tabs = b ? this.getSelectedTabs(b) : [] ;
 		return tabs;
 	},
- 	 
+  
 /* Initializing */ 
-	
+	 
 	init : function() 
 	{
 		if (!('gBrowser' in window)) return;
@@ -303,9 +321,9 @@ var MultipleTabService = {
 		this.overrideExtensionsOnDelayedInit(); // hacks.js
 
 		if (!('duplicateTab' in gBrowser)) {
-			gBrowser.duplicateTab = function(aTab) {
+			gBrowser.duplicateTab = function(aTab, aSourceEvent) {
 				MultipleTabService.duplicateTabs([aTab]);
-				MultipleTabService.fireDuplicateEvent(this.mTabContainer.lastChild, aTab);
+				MultipleTabService.fireDuplicateEvent(this.mTabContainer.lastChild, aTab, aSourceEvent);
 				return this.mTabContainer.lastChild;
 			};
 		}
@@ -317,6 +335,7 @@ var MultipleTabService = {
 		aTabBrowser.addEventListener('TabClose', this, true);
 		aTabBrowser.addEventListener('TabMove', this, true);
 		aTabBrowser.addEventListener('MultipleTabHandler:TabDuplicate', this, true);
+		aTabBrowser.addEventListener('MultipleTabHandler:TabWindowMove', this, true);
 //		aTabBrowser.mTabContainer.addEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
@@ -374,6 +393,9 @@ var MultipleTabService = {
 			eval(
 				'aTabBrowser.duplicateTab = '+
 				aTabBrowser.duplicateTab.toSource().replace(
+					')',
+					', aSourceEvent)'
+				).replace(
 					'{',
 					'{ var newTab;'
 				).replace(
@@ -382,11 +404,28 @@ var MultipleTabService = {
 				).replace(
 					/(\}\)?)$/,
 					<><![CDATA[
-						MultipleTabService.fireDuplicateEvent(newTab, aTab);
+						MultipleTabService.fireDuplicateEvent(newTab, aTab, aSourceEvent);
 						return newTab;
 					$1]]></>
 				)
 			);
+		}
+
+		if ('_onDrop' in aTabBrowser && 'swapBrowsersAndCloseOther' in aTabBrowser) {
+			eval('aTabBrowser._onDrop = '+aTabBrowser._onDrop.toSource().replace(
+				/(this\.swapBrowsersAndCloseOther\([^;]+\);)/,
+				'MultipleTabService.fireWindowMoveEvent(newTab, draggedTab); $1'
+			));
+			aTabBrowser.__multipletab__canDoWindowMove = true;
+		}
+		else {
+			if ('onDrop' in aTabBrowser) {
+				eval('aTabBrowser.onDrop = '+aTabBrowser.onDrop.toSource().replace(
+					/(this\.duplicateTab\([^\)]+)(\))/g,
+					'$1, aEvent$2'
+				));
+			}
+			aTabBrowser.__multipletab__canDoWindowMove = false;
 		}
 
 		this.initTabBrowserContextMenu(aTabBrowser);
@@ -401,7 +440,7 @@ var MultipleTabService = {
 		delete maxi;
 		delete tabs;
 	},
-	 
+	
 	initTabBrowserContextMenu : function(aTabBrowser) 
 	{
 		var suffix = '-tabbrowser-'+(aTabBrowser.id || 'instance-'+parseInt(Math.random() * 65000));
@@ -462,6 +501,7 @@ var MultipleTabService = {
 		aTabBrowser.removeEventListener('TabClose', this, true);
 		aTabBrowser.removeEventListener('TabMove', this, true);
 		aTabBrowser.removeEventListener('MultipleTabHandler:TabDuplicate', this, true);
+		aTabBrowser.removeEventListener('MultipleTabHandler:TabWindowMove', this, true);
 //		aTabBrowser.mTabContainer.removeEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
@@ -535,7 +575,16 @@ var MultipleTabService = {
 					this.allowMoveMultipleTabs &&
 					!aEvent.currentTarget.duplicatingSelectedTabs
 					)
-					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab);
+					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab, aEvent.mayBeMove);
+				break;
+
+			case 'MultipleTabHandler:TabWindowMove':
+				if (
+					this.isSelected(aEvent.sourceTab) &&
+					this.allowMoveMultipleTabs &&
+					!aEvent.currentTarget.duplicatingSelectedTabs
+					)
+					this.windowMoveBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab);
 				break;
 
 			case 'DOMContentLoaded':
@@ -1332,7 +1381,7 @@ var MultipleTabService = {
 	},
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 
-	
+	 
 	getBundledTabsOf : function(aTab, aInfo) 
 	{
 		if (!aInfo) aInfo = {};
@@ -1396,40 +1445,96 @@ var MultipleTabService = {
 		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 	},
  
-	duplicateBundledTabsOf : function(aNewTab, aSourceTab) 
+	windowMoveBundledTabsOf : function(aNewTab, aSourceTab) 
 	{
-		var info = {};
-		var tabs = this.getBundledTabsOf(aSourceTab, info);
+		var targetBrowser = this.getTabBrowserFromChild(aNewTab);
 
-		var b = this.getTabBrowserFromChild(aNewTab);
+		if (!targetBrowser.__multipletab__canDoWindowMove) {
+			this.duplicateBundledTabsOf(aNewTab, aSourceTab, true);
+			retrurn;
+		}
+
+		var info = {};
+		var sourceTabs = this.getBundledTabsOf(aSourceTab, info);
+
+		var index = sourceTabs.indexOf(aSourceTab);
+		sourceTabs.splice(index, 1);
+
 		var sourceBrowser = info.sourceBrowser;
 		var sourceService = info.sourceWindow.MultipleTabService;
-		var shouldBeClosed = sourceBrowser != b && sourceBrowser.mTabContainer.childNodes.length == tabs.length;
+		var shouldBeClosed = sourceBrowser.mTabContainer.childNodes.length == sourceTabs.length;
 
-		var index = tabs.indexOf(aSourceTab);
-		tabs.splice(index, 1);
+		var delta = sourceService.calculateDeltaForNewPosition(sourceTabs, aSourceTab._tPos, -1);
 
-		var delta = sourceService.calculateDeltaForNewPosition(tabs, aSourceTab._tPos, -1);
+		targetBrowser.movingSelectedTabs = true;
+		this.clearSelection(targetBrowser);
+
+		var hasNextTab = aNewTab.nextSibling;
+		sourceTabs.forEach(function(aTab, aIndex) {
+			sourceService.setSelection(aTab, false);
+
+			var newTab = targetBrowser.addTab();
+			newTab.linkedBrowser.stop();
+			newTab.linkedBrowser.docShell;
+			targetBrowser.swapBrowsersAndCloseOther(newTab, aTab);
+			targetBrowser.setTabTitle(newTab);
+
+			if (delta[aIndex] > 0 && hasNextTab) delta[aIndex]--;
+			targetBrowser.moveTabTo(newTab, aNewTab._tPos + delta[aIndex] + 1);
+
+			this.setSelection(newTab, true);
+		}, this);
+
+		if (shouldBeClosed) sourceBrowser.ownerDocument.defaultView.close();
+
+		this.setSelection(aNewTab, true);
+		targetBrowser.movingSelectedTabs = false;
+	},
+ 	
+	duplicateBundledTabsOf : function(aNewTab, aSourceTab, aMayBeMove) 
+	{
+		var info = {};
+		var sourceTabs = this.getBundledTabsOf(aSourceTab, info);
+
+		var targetBrowser = this.getTabBrowserFromChild(aNewTab);
+		var sourceBrowser = info.sourceBrowser;
+		var sourceService = info.sourceWindow.MultipleTabService;
+
+		var isMove = aMayBeMove && targetBrowser != sourceBrowser;
+		var shouldBeClosed = isMove && sourceBrowser.mTabContainer.childNodes.length == sourceTabs.length;
+
+		var index = sourceTabs.indexOf(aSourceTab);
+		sourceTabs.splice(index, 1);
+
+		var delta = sourceService.calculateDeltaForNewPosition(sourceTabs, aSourceTab._tPos, -1);
 
 		sourceService.setSelection(aSourceTab, false);
 		var self = this;
 		window.setTimeout(function() {
-			b.duplicatingSelectedTabs = true;
-			b.movingSelectedTabs = true;
+			targetBrowser.duplicatingSelectedTabs = true;
+			targetBrowser.movingSelectedTabs = true;
+
 			var hasNextTab = aNewTab.nextSibling;
-			tabs.forEach(function(aTab, aIndex) {
+
+			sourceTabs.forEach(function(aTab, aIndex) {
 				sourceService.setSelection(aTab, false);
-				var newTab = b.duplicateTab(aTab);
-				self.setSelection(newTab, true);
+
+				var newTab = targetBrowser.duplicateTab(aTab);
+
 				if (delta[aIndex] > 0 && hasNextTab) delta[aIndex]--;
-				b.moveTabTo(newTab, aNewTab._tPos + delta[aIndex] + 1);
-				if (b != sourceBrowser) sourceBrowser.removeTab(aTab);
+				targetBrowser.moveTabTo(newTab, aNewTab._tPos + delta[aIndex] + 1);
+
+				if (isMove) sourceBrowser.removeTab(aTab);
+
+				self.setSelection(newTab, true);
 			});
+
 			if (shouldBeClosed) sourceBrowser.ownerDocument.defaultView.close();
+
 			self.setSelection(aNewTab, true);
-			b.movingSelectedTabs = false;
-			b.duplicatingSelectedTabs = false;
-			b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
+			targetBrowser.movingSelectedTabs = false;
+			targetBrowser.duplicatingSelectedTabs = false;
+			targetBrowser.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 
 			delete info.sourceBrowser;
 			delete info.sourceWindow;
@@ -1512,7 +1617,7 @@ var MultipleTabService = {
 	{
 		return this.toggleBooleanAttributeToTab(aTab, this.kSELECTED, true);
 	},
-	 
+	
 	toggleReadyToClose : function(aTab) 
 	{
 		return this.toggleBooleanAttributeToTab(aTab, this.kREADY_TO_CLOSE, false);
