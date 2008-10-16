@@ -40,9 +40,10 @@ var MultipleTabService = {
 	{
 		if (!aType) aType = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
 		try {
-			var xpathResult = document.evaluate(
+			var doc = aContext.ownerDocument || aContext || document;
+			var xpathResult = doc.evaluate(
 					aExpression,
-					aContext,
+					aContext || document,
 					this.NSResolver,
 					aType,
 					null
@@ -316,7 +317,7 @@ var MultipleTabService = {
 		aTabBrowser.addEventListener('TabClose', this, true);
 		aTabBrowser.addEventListener('TabMove', this, true);
 		aTabBrowser.addEventListener('MultipleTabHandler:TabDuplicate', this, true);
-		aTabBrowser.mTabContainer.addEventListener('dragstart',   this, true);
+//		aTabBrowser.mTabContainer.addEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousemove',   this, true);
@@ -461,7 +462,7 @@ var MultipleTabService = {
 		aTabBrowser.removeEventListener('TabClose', this, true);
 		aTabBrowser.removeEventListener('TabMove', this, true);
 		aTabBrowser.removeEventListener('MultipleTabHandler:TabDuplicate', this, true);
-		aTabBrowser.mTabContainer.removeEventListener('dragstart',   this, true);
+//		aTabBrowser.mTabContainer.removeEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
@@ -492,8 +493,8 @@ var MultipleTabService = {
 				this.onTabClick(aEvent);
 				break;
 
-			case 'dragstart':
-				break;
+//			case 'dragstart':
+//				break;
 
 			case 'draggesture':
 				this.onTabDragStart(aEvent);
