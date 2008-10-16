@@ -88,6 +88,11 @@ var MultipleTabService = {
 			).singleNodeValue;
 	},
  
+	isAccelKeyPressed : function(aEvent) 
+	{
+		return navigator.platform.toLowerCase().indexOf('mac') > -1 ? aEvent.metaKey : aEvent.ctrlKey ;
+	},
+ 	
 	isDisabled : function() 
 	{
 		return (document.getElementById('cmd_CustomizeToolbars').getAttribute('disabled') == 'true');
@@ -530,7 +535,7 @@ var MultipleTabService = {
 				aEvent.stopPropagation();
 				return;
 			}
-			else if (aEvent.ctrlKey || aEvent.metaKey) {
+			else if (this.isAccelKeyPressed(aEvent)) {
 				if (this.tabClickMode != this.TAB_CLICK_MODE_TOGGLE) {
 					b.removeTab(tab);
 					return;
@@ -1370,7 +1375,7 @@ var MultipleTabService = {
 	},
   
 /* Tab Selection */ 
-	 
+	
 	hasSelection : function(aTabBrowser) 
 	{
 		try {
@@ -1449,7 +1454,7 @@ var MultipleTabService = {
 	{
 		return this.toggleBooleanAttributeToTab(aTab, this.kREADY_TO_CLOSE, false);
 	},
- 	
+ 
 	toggleBooleanAttributeToTab : function(aTab, aAttr, aShouldSaveToSession) 
 	{
 		return this.setBooleanAttributeToTab(aTab, aAttr, aTab.getAttribute(aAttr) != 'true', aShouldSaveToSession);
