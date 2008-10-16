@@ -984,7 +984,7 @@ var MultipleTabService = {
 	},
    
 /* Commands */ 
-	
+	 
 	closeTabs : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -1167,7 +1167,80 @@ var MultipleTabService = {
 		}, 0, this);
 	},
  
-	splitWindowFrom : function(aTabs) 
+	splitWindowFromTabs : function(aTabs) 
+	{
+		if (!aTabs) return;
+		var max = aTabs.length;
+		if (!max) return;
+		var b  = this.getTabBrowserFromChild(aTabs[0]);
+
+		if (!b.__multipletab__canDoWindowMove) {
+			this.splitWindowFromTabsOld(aTabs);
+			return;
+		}
+
+		var allSelected = true;
+		var selectionState = aTabs.map(function(aTab) {
+				var selected = this.isSelected(aTab);
+				if (!selected) allSelected = false;
+				return selected;
+			}, this);
+
+		var newWin = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
+		newWin.addEventListener('load', function() {
+			newWin.removeEventListener('load', arguments.callee, false);
+			newWin.MultipleTabService.duplicatingTabs = true;
+			newWin.setTimeout(function() {
+				var targetBrowser = newWin.gBrowser;
+				var newTabs = [];
+				aTabs.forEach(function(aTab, aIndex) {
+					var newTab = targetBrowser.addTab();
+					newTabs.push(newTab);
+					newTab.linkedBrowser.stop();
+					newTab.linkedBrowser.docShell;
+					targetBrowser.swapBrowsersAndCloseOther(newTab, aTab);
+					targetBrowser.setTabTitle(newTab);
+
+					if (!allSelected && selectionState[aIndex])
+						newWin.MultipleTabService.setSelection(newTab, true);
+				}, this);
+
+				Array.slice(targetBrowser.mTabContainer.childNodes).forEach(function(aTab) {
+					if (newTabs.indexOf(aTab) > -1) return;
+					try {
+						if (aTab.linkedBrowser.sessionHistory)
+							aTab.linkedBrowser.sessionHistory.PurgeHistory(aTab.linkedBrowser.sessionHistory.count);
+					}
+					catch(e) {
+						dump(e+'\n');
+					}
+					aTab.linkedBrowser.contentWindow.location.replace('about:blank');
+					targetBrowser.removeTab(aTab);
+				});
+
+				newTabs.forEach(function(aTab, aTabIndex) {
+					newWin.MultipleTabService._duplicatedTabPostProcesses.forEach(function(aProcess) {
+						aProcess(aTab, aTabIndex);
+					});
+				});
+
+				newWin.MultipleTabService.duplicatingTabs = false;
+
+				delete allSelected;
+				delete selectionState;
+				delete targetBrowser;
+				delete newTabs;
+				delete newWin;
+			}, 0);
+		}, false);
+	},
+	
+	splitWindowFrom : function(aTabs) // old name 
+	{
+		this.splitWindowFromTabs(aTabs);
+	},
+  	
+	splitWindowFromTabsOld : function(aTabs) 
 	{
 		if (!aTabs) return;
 
@@ -1352,7 +1425,7 @@ var MultipleTabService = {
 			stringToCopy.push('');
 		clipboard.copyString(stringToCopy.join('\r\n'));
 	},
-	
+	 
 	FORMAT_TYPE_SELECT  : -1, 
 	FORMAT_TYPE_DEFAULT : 0,
 	FORMAT_TYPE_MOZ_URL : 1,
@@ -1490,7 +1563,7 @@ var MultipleTabService = {
 		this.setSelection(aNewTab, true);
 		targetBrowser.movingSelectedTabs = false;
 	},
- 	
+ 
 	duplicateBundledTabsOf : function(aNewTab, aSourceTab, aMayBeMove) 
 	{
 		var info = {};
