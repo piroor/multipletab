@@ -19,6 +19,12 @@
 		<preference id="extensions.multipletab.tabdrag.mode"
 			name="extensions.multipletab.tabdrag.mode"
 			type="int"/>
+		<preference id="extensions.multipletab.tabdrag.autopopup"
+			name="extensions.multipletab.tabdrag.autopopup"
+			type="bool"/>
+		<preference id="extensions.multipletab.tabdrag.autoclear"
+			name="extensions.multipletab.tabdrag.autoclear"
+			type="bool"/>
 		<preference id="extensions.multipletab.tabdrag.delay"
 			name="extensions.multipletab.tabdrag.delay"
 			type="int"/>
@@ -41,6 +47,18 @@
 				oncommand="onDragModeChange();">
 				<radio value="0" label="&config.tabdrag.mode.default;"/>
 				<radio value="1" label="&config.tabdrag.mode.select;"/>
+				<hbox align="center">
+					<spacer style="width:1em;"/>
+					<checkbox id="extensions.multipletab.tabdrag.autopopup-check"
+						preference="extensions.multipletab.tabdrag.autopopup"
+						label="&config.tabdrag.autopopup;"/>
+				</hbox>
+				<hbox align="center">
+					<spacer style="width:2em;"/>
+					<checkbox id="extensions.multipletab.tabdrag.autoclear-check"
+						preference="extensions.multipletab.tabdrag.autoclear"
+						label="&config.tabdrag.autoclear;"/>
+				</hbox>
 				<radio value="2" label="&config.tabdrag.mode.switch;"/>
 			</radiogroup>
 			<hbox align="center">

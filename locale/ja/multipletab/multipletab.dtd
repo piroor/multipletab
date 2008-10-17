@@ -31,6 +31,8 @@
 <!ENTITY config.tabdrag.mode.switch  "タブをダイナミックに切り換える">
 <!ENTITY config.tabdrag.delay-before "ボタン押下から">
 <!ENTITY config.tabdrag.delay-after  "ミリ秒以内のドラッグはタブの移動とみなす">
+<!ENTITY config.tabdrag.autopopup     "自動的にメニューを開く">
+<!ENTITY config.tabdrag.autoclear     "メニューを閉じたらタブの選択を解除する">
 <!ENTITY config.tabdrag.moveMultipleTabs "選択されたタブをまとめて移動する">
 
 <!ENTITY config.tabclickmode.caption "タブをCtrl（Command）-クリックした時">

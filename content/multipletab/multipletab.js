@@ -745,7 +745,8 @@ var MultipleTabService = {
 		else if (this.tabDragging) {
 			this.tabDragging = false;
 			if (this.hasSelection()) {
-				this.showSelectionPopup(aEvent, this.getPref('extensions.multipletab.tabdrag.autoclear'));
+				if (this.getPref('extensions.multipletab.tabdrag.autopopup'))
+					this.showSelectionPopup(aEvent, this.getPref('extensions.multipletab.tabdrag.autoclear'));
 			}
 			else {
 				this.clearSelection();

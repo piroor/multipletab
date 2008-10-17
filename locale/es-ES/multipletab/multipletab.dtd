@@ -30,6 +30,8 @@
 <!ENTITY config.tabdrag.mode.switch  "Cambiar pestañas dinámicamente">
 <!ENTITY config.tabdrag.delay-before "Arrastrar luego de ">
 <!ENTITY config.tabdrag.delay-after  "mseg.">
+<!ENTITY config.tabdrag.autopopup     "Open popup menu automatically">
+<!ENTITY config.tabdrag.autoclear     "Clear tab selection after the popup menu is closed">
 <!ENTITY config.tabdrag.moveMultipleTabs "Mover juntas las pestañas seleccionadas">
 
 <!ENTITY config.tabclickmode.caption "Acción para Ctrl(Comando)-Click en las pestañas">

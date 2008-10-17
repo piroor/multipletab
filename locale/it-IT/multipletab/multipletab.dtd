@@ -30,6 +30,8 @@
 <!ENTITY config.tabdrag.mode.switch  "Cambia dinamicamente la scheda attiva">
 <!ENTITY config.tabdrag.delay-before "Sposta le schede trascinandole per almeno">
 <!ENTITY config.tabdrag.delay-after  "msec.">
+<!ENTITY config.tabdrag.autopopup     "Open popup menu automatically">
+<!ENTITY config.tabdrag.autoclear     "Clear tab selection after the popup menu is closed">
 <!ENTITY config.tabdrag.moveMultipleTabs "Sposta assieme le schede selezionate">
 
 <!ENTITY config.tabclickmode.caption "Azione per Ctrl(Command)-Clic sulle schede">

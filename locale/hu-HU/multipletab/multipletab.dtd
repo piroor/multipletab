@@ -30,6 +30,8 @@
 <!ENTITY config.tabdrag.mode.switch  "Lapok dinamikus váltása">
 <!ENTITY config.tabdrag.delay-before "Lap áthelyezése áthúzással">
 <!ENTITY config.tabdrag.delay-after  "ezredmp.-ig">
+<!ENTITY config.tabdrag.autopopup     "Open popup menu automatically">
+<!ENTITY config.tabdrag.autoclear     "Clear tab selection after the popup menu is closed">
 <!ENTITY config.tabdrag.moveMultipleTabs "Kiválasztott lapok egyidejű áthelyezése">
 
 <!ENTITY config.tabclickmode.caption "Ctrl+kattintás a lap fülén:">
