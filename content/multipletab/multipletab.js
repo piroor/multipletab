@@ -1558,6 +1558,7 @@ var MultipleTabService = {
 	closeOwner : function(aTabOwner)
 	{
 		var w = aTabOwner.ownerDocument.defaultView;
+		if (!w) return;
 		if ('SplitBrowser' in w &&
 			'getSubBrowserFromChild' in w.SplitBrowser) {
 			var subbrowser = w.SplitBrowser.getSubBrowserFromChild(aTabOwner);
