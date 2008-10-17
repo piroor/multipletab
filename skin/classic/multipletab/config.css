@@ -3,6 +3,5 @@
 #prefpane-selection-menu-items,
 #prefpane-context-menu-items {
 	overflow: auto;
-	max-height: 15em;
 }
 

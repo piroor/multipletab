@@ -134,9 +134,9 @@
 			name="extensions.multipletab.show.multipletab-selection-clipboard"
 			type="bool"/>
 	</preferences>
-	<groupbox>
+	<groupbox flex="1">
 		<caption label="&config.selectionMenu.caption;"/>
-		<vbox id="prefpane-selection-menu-items">
+		<vbox id="prefpane-selection-menu-items" flex="1">
 			<checkbox id="extensions.multipletab.show.multipletab-selection-reloadTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-reloadTabs"
 				label="&popup.selection.reloadTabs;"/>
@@ -183,9 +183,9 @@
 			name="extensions.multipletab.show.multipletab-context-clipboardAll"
 			type="bool"/>
 	</preferences>
-	<groupbox>
+	<groupbox flex="1">
 		<caption label="&config.contextMenu.caption;"/>
-		<vbox id="prefpane-context-menu-items">
+		<vbox id="prefpane-context-menu-items" flex="1">
 			<checkbox id="extensions.multipletab.show.multipletab-context-duplicate"
 				preference="extensions.multipletab.show.multipletab-context-duplicate"
 				label="&popup.context.duplicate;"/>
