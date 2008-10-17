@@ -180,17 +180,8 @@ var MultipleTabService = {
 	getTabFromEvent : function(aEvent) 
 	{
 		return this.evaluateXPath(
-				'ancestor-or-self::xul:tab',
+				'ancestor-or-self::xul:tab[ancestor::xul:tabbrowser]',
 				aEvent.originalTarget || aEvent.target,
-				XPathResult.FIRST_ORDERED_NODE_TYPE
-			).singleNodeValue;
-	},
- 
-	getTabBrowserTabFromChild : function(aNode) 
-	{
-		return this.evaluateXPath(
-				'ancestor-or-self::*[local-name()="tab" and ancestor::*[local-name()="tabbrowser"]]',
-				aNode,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
 	},
