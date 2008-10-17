@@ -1526,7 +1526,7 @@ var MultipleTabService = {
 
 		var sourceBrowser = info.sourceBrowser;
 		var sourceService = info.sourceWindow.MultipleTabService;
-		var shouldBeClosed = sourceBrowser.mTabContainer.childNodes.length == sourceTabs.length;
+		var shouldClose = sourceBrowser.mTabContainer.childNodes.length == sourceTabs.length;
 
 		var delta = sourceService.calculateDeltaForNewPosition(sourceTabs, aSourceTab._tPos, -1);
 
@@ -1549,10 +1549,24 @@ var MultipleTabService = {
 			this.setSelection(newTab, true);
 		}, this);
 
-		if (shouldBeClosed) sourceBrowser.ownerDocument.defaultView.close();
+		if (shouldClose) this.closeOwner(sourceBrowser);
 
 		this.setSelection(aNewTab, true);
 		targetBrowser.movingSelectedTabs = false;
+	},
+ 
+	closeOwner : function(aTabOwner)
+	{
+		var w = aTabOwner.ownerDocument.defaultView;
+		if ('SplitBrowser' in w &&
+			'getSubBrowserFromChild' in w.SplitBrowser) {
+			var subbrowser = w.SplitBrowser.getSubBrowserFromChild(aTabOwner);
+			if (subbrowser) {
+				subbrowser.close();
+				return;
+			}
+		}
+		w.close();
 	},
  
 	duplicateBundledTabsOf : function(aNewTab, aSourceTab, aMayBeMove) 
@@ -1565,7 +1579,7 @@ var MultipleTabService = {
 		var sourceService = info.sourceWindow.MultipleTabService;
 
 		var isMove = aMayBeMove && targetBrowser != sourceBrowser;
-		var shouldBeClosed = isMove && sourceBrowser.mTabContainer.childNodes.length == sourceTabs.length;
+		var shouldClose = isMove && sourceBrowser.mTabContainer.childNodes.length == sourceTabs.length;
 
 		var index = sourceTabs.indexOf(aSourceTab);
 		sourceTabs.splice(index, 1);
@@ -1593,7 +1607,7 @@ var MultipleTabService = {
 				self.setSelection(newTab, true);
 			});
 
-			if (shouldBeClosed) sourceBrowser.ownerDocument.defaultView.close();
+			if (shouldClose) self.closeOwner(sourceBrowser);
 
 			self.setSelection(aNewTab, true);
 			targetBrowser.movingSelectedTabs = false;
