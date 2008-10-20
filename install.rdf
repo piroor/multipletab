@@ -26,7 +26,7 @@
                        em:description="Provides features to close (, reload, etc.) multiple tabs at once."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmn Istvn (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
       </RDF:Description>
@@ -37,7 +37,7 @@
                        em:description="複数のタブをまとめて閉じたり再読み込みしたりといった機能を加えます。"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmn Istvn (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
       </RDF:Description>
@@ -48,7 +48,7 @@
                        em:description="Lehetővé teszi több lap egyidejű bezárását, újratöltését, ..."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmn Istvn (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
       </RDF:Description>
@@ -59,7 +59,7 @@
                        em:description="Fornisce funzionalità per la gestione contemporanea di più schede"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmn Istvn (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
       </RDF:Description>
@@ -70,7 +70,7 @@
                        em:description="Implementa la habilidad de seleccionar multiples pestañas para cerrarlas, recargarlas, marcarlas, moverlas o duplicarlas todas a la vez"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmn Istvn (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
       </RDF:Description>
