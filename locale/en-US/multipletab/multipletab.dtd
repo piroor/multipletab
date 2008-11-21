@@ -1,51 +1,51 @@
-<!ENTITY popup.selection.removeTabs  "Close Selected Tabs">
-<!ENTITY popup.selection.reloadTabs  "Reload Selected Tabs">
-<!ENTITY popup.selection.addBookmark "Bookmark Selected Tabs to New Folder">
-<!ENTITY popup.selection.duplicateTabs "Duplicate Selected Tabs">
-<!ENTITY popup.selection.splitWindow "Move to New Window">
-<!ENTITY popup.selection.clipboard   "Copy URIs of Selected Tabs">
+<!ENTITY popup.selection.removeTabs  "Chiudi le schede selezionate">
+<!ENTITY popup.selection.reloadTabs  "Ricarica le schede selezionate">
+<!ENTITY popup.selection.addBookmark "Aggiungi schede selezionate a una nuova cartella nei segnalibri">
+<!ENTITY popup.selection.duplicateTabs "Duplica le schede selezionate">
+<!ENTITY popup.selection.splitWindow "Apri in una nuova finestra">
+<!ENTITY popup.selection.clipboard   "Copia l&apos;indirizzo delle schede selezionate">
 
-<!ENTITY popup.context.removeLeftTabs.horizontal  "Close Left Tabs">
-<!ENTITY popup.context.removeLeftTabs.vertical    "Close Above Tabs">
-<!ENTITY popup.context.removeRightTabs.horizontal "Close Right Tabs">
-<!ENTITY popup.context.removeRightTabs.vertical   "Close Below Tabs">
-<!ENTITY popup.context.removeAll                  "Close All Tabs">
-<!ENTITY popup.context.removeSimilar              "Close Similar Tabs">
-<!ENTITY popup.context.duplicate                  "Duplicate Tab">
-<!ENTITY popup.context.clipboard                  "Copy URI">
-<!ENTITY popup.context.clipboardAll               "Copy URIs of All Tabs">
-<!ENTITY popup.context.clipboard.format.default "Simple URI">
-<!ENTITY popup.context.clipboard.format.mozurl  "Page Title and URI">
-<!ENTITY popup.context.clipboard.format.link    "HTML Link">
+<!ENTITY popup.context.removeLeftTabs.horizontal  "Chiudi le schede a sinistra">
+<!ENTITY popup.context.removeLeftTabs.vertical    "Chiudi le schede sopra ">
+<!ENTITY popup.context.removeRightTabs.horizontal "Chiudi le schede a destra">
+<!ENTITY popup.context.removeRightTabs.vertical   "Chiudi le schede sotto">
+<!ENTITY popup.context.removeAll                  "Chiudi tutti le schede">
+<!ENTITY popup.context.removeSimilar              "Chiudi le schede simili">
+<!ENTITY popup.context.duplicate                  "Duplica scheda">
+<!ENTITY popup.context.clipboard                  "Copia indirizzo">
+<!ENTITY popup.context.clipboardAll               "Copia l&apos;indirizzo di tutte le schede">
+<!ENTITY popup.context.clipboard.format.default "Indirizzo semplice">
+<!ENTITY popup.context.clipboard.format.mozurl  "Titolo pagina e indirizzo">
+<!ENTITY popup.context.clipboard.format.link    "Collegamento HTML">
 
 
 
-<!ENTITY config.title        "Configuration of Multiple Tab Handler">
+<!ENTITY config.title        "Configurazione di Multiple Tab Handler">
 
-<!ENTITY config.tabs.general "General">
+<!ENTITY config.tabs.general "Generale">
 
-<!ENTITY config.tabdrag.mode.caption "Action for dragging of tabs">
-<!ENTITY config.tabdrag.mode.default "Default (move and rearrange tabs)">
-<!ENTITY config.tabdrag.mode.select  "Select tabs">
-<!ENTITY config.tabdrag.mode.switch  "Switch tabs dynamically">
-<!ENTITY config.tabdrag.delay-before "Move tab by dragging within">
+<!ENTITY config.tabdrag.mode.caption "Azione per il trascinamento delle schede">
+<!ENTITY config.tabdrag.mode.default "Predefinita (sposta e riordina le schede)">
+<!ENTITY config.tabdrag.mode.select  "Seleziona schede">
+<!ENTITY config.tabdrag.mode.switch  "Cambia dinamicamente la scheda attiva">
+<!ENTITY config.tabdrag.delay-before "Sposta le schede trascinandole per almeno">
 <!ENTITY config.tabdrag.delay-after  "msec.">
-<!ENTITY config.tabdrag.autopopup     "Open popup menu automatically">
-<!ENTITY config.tabdrag.autoclear     "Clear tab selection after the popup menu is closed">
-<!ENTITY config.tabdrag.moveMultipleTabs "Move selected tabs together">
+<!ENTITY config.tabdrag.autopopup     "Apri automaticamente il menu contestuale">
+<!ENTITY config.tabdrag.autoclear     "Annulla la selezione delle schede alla chiusura del menu contestuale">
+<!ENTITY config.tabdrag.moveMultipleTabs "Sposta assieme le schede selezionate">
 
-<!ENTITY config.tabclickmode.caption "Action for Ctrl(Command)-Click of tabs">
-<!ENTITY config.tabclickmode.default "Close Tab">
-<!ENTITY config.tabclickmode.toggle  "Toggle Selection of Tab">
+<!ENTITY config.tabclickmode.caption "Azione per Ctrl(Command)-Clic sulle schede">
+<!ENTITY config.tabclickmode.default "Chiudi scheda"> 
+<!ENTITY config.tabclickmode.toggle  "Inverti selezione della scheda">
 
-<!ENTITY config.tabs.selectionMenu    "Tab Selection Menu">
-<!ENTITY config.selectionMenu.caption "Available items of the popup menu for selected tabs">
+<!ENTITY config.tabs.selectionMenu    "Menu contestuale schede selezionate">
+<!ENTITY config.selectionMenu.caption "Aggiungi le seguenti voci al menu contestuale delle schede selezionate">
 
-<!ENTITY config.clopboardFormatType.caption "Text Format of &quot;Copy URIs of Tabs&quot; features">
-<!ENTITY config.clopboardFormatType.select  "Select from menu">
+<!ENTITY config.clopboardFormatType.caption "Formato del testo delle funzioni &quot;Copia indirizzo&quot;">
+<!ENTITY config.clopboardFormatType.select  "Seleziona dal menu">
 
-<!ENTITY config.tabs.contextMenu    "Tab Context Menu">
-<!ENTITY config.contextMenu.caption "Available items of the context menu on tabs">
-<!ENTITY config.contextMenu.removeLeftTabs  "Close Left (Above) Tabs">
-<!ENTITY config.contextMenu.removeRightTabs "Close Right (Below) Tabs">
+<!ENTITY config.tabs.contextMenu    "Menu contestuale della barra delle schede">
+<!ENTITY config.contextMenu.caption "Aggiungi le seguenti voci al menu contestuale della barra delle schede">
+<!ENTITY config.contextMenu.removeLeftTabs  "Chiudi schede a sinistra (sopra)">
+<!ENTITY config.contextMenu.removeRightTabs "Chiudi schede a destra (sotto)">
 
