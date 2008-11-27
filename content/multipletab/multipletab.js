@@ -269,9 +269,16 @@ var MultipleTabService = {
 		var tabs = b ? this.getSelectedTabs(b) : [] ;
 		return tabs;
 	},
+ 
+	filterBlankTabs : function(aTabs) 
+	{
+		return aTabs.filter(function(aTab) {
+				return aTab.linkedBrowser.currentURI.spec != 'about:blank';
+			});
+	},
   
 /* Initializing */ 
-	 
+	
 	init : function() 
 	{
 		if (!('gBrowser' in window)) return;
@@ -319,7 +326,7 @@ var MultipleTabService = {
 			};
 		}
 	},
-	 
+	
 	initTabBrowser : function(aTabBrowser) 
 	{
 		aTabBrowser.addEventListener('TabOpen', this, true);
@@ -822,7 +829,7 @@ var MultipleTabService = {
 	},
   
 /* Popup */ 
-	
+	 
 	get tabSelectionPopup() { 
 		if (!this._tabSelectionPopup) {
 			this._tabSelectionPopup = document.getElementById(this.kSELECTION_MENU);
@@ -900,7 +907,11 @@ var MultipleTabService = {
 
 		var label;
 		var key;
-		var selectType = this.getPref('extensions.multipletab.clipboard.formatType') == this.FORMAT_TYPE_SELECT;
+		var selectType = {
+				clipboard    : (this.getPref('extensions.multipletab.clipboard.formatType') == -1),
+				clipboardAll : (this.getPref('extensions.multipletab.clipboard.formatType') == -1),
+				saveTabs     : (this.getPref('extensions.multipletab.saveTabs.saveType') == -1)
+			};
 
 		for (var i = 0, maxi = nodes.length; i < maxi; i++)
 		{
@@ -911,10 +922,10 @@ var MultipleTabService = {
 				nodes[i].setAttribute('label', label);
 
 			key = nodes[i].getAttribute('id').replace(/-tabbrowser-.*$/, '');
-			if (/^(multipletab-(context|selection)-clipboard(All)?)(:select)?$/.test(key)) {
+			if (/^(multipletab-(context|selection)-(clipboard|clipboardAll|saveTabs))(:select)?$/.test(key)) {
 				key  = RegExp.$1
 				pref = this.getPref('extensions.multipletab.show.'+key) &&
-						(Boolean(RegExp.$4) == selectType);
+						(Boolean(RegExp.$4) == selectType[RegExp.$3]);
 			}
 			else {
 				pref = this.getPref('extensions.multipletab.show.'+key);
@@ -974,7 +985,7 @@ var MultipleTabService = {
 		}
 		return xpathResult.singleNodeValue;
 	},
-   
+  	 
 /* Commands */ 
 	 
 	closeTabs : function(aTabs) 
@@ -1042,6 +1053,53 @@ var MultipleTabService = {
 		});
 	},
  
+	saveTabs : function(aTabs, aSaveType) 
+	{
+		if (!aTabs) return;
+
+		aTabs = this.filterBlankTabs(aTabs);
+
+		if (aTabs.length == 1) {
+			saveDocument(aTabs[0].linkedBrowser.contentDocument);
+			return;
+		}
+
+		var folder = this.selectFolder('choose save folder');
+		if (!folder) return;
+
+		aTabs.forEach(function(aTab) {
+			var destFile = folder.clone();
+			var uri = aTab.linkedBrowser.currentURI;
+			try {
+				uri.QueryInterface(Components.interfaces.nsIURL);
+				destFile.append(decodeURIComponent(uri.fileName));
+			}
+			catch(e) {
+			}
+			window.setTimeout(this.saveOneTab, 200, uri.spec, new AutoChosen(destFile, uri), uri);
+		}, this);
+	},
+	 
+	selectFolder : function(aTitle) 
+	{
+		var picker = Components
+						.classes['@mozilla.org/filepicker;1']
+						.createInstance(Components.interfaces.nsIFilePicker);
+		picker.init(window, aTitle, picker.modeGetFolder);
+		var downloadDir = this.getPref('browser.download.dir', Components.interfaces.nsILocalFile);
+		if (downloadDir) picker.displayDirectory = downloadDir;
+		picker.appendFilters(picker.filterAll);
+		if (picker.show() == picker.returnOK) {
+			return picker.file.QueryInterface(Components.interfaces.nsILocalFile);
+		}
+		return null;
+	},
+ 
+	saveOneTab : function(aURI, aChosenData, aBaseURI) 
+	{
+		internalSave(aURI, null, null, null, null, false, null, aChosenData, aBaseURI);
+	},
+  
 	addBookmarkFor : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -1231,7 +1289,7 @@ var MultipleTabService = {
 	{
 		this.splitWindowFromTabs(aTabs);
 	},
-  	
+  
 	splitWindowFromTabsOld : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -1418,8 +1476,7 @@ var MultipleTabService = {
 		clipboard.copyString(stringToCopy.join('\r\n'));
 	},
 	 
-	FORMAT_TYPE_SELECT  : -1, 
-	FORMAT_TYPE_DEFAULT : 0,
+	FORMAT_TYPE_DEFAULT : 0, 
 	FORMAT_TYPE_MOZ_URL : 1,
 	FORMAT_TYPE_LINK    : 2,
  
@@ -1446,7 +1503,7 @@ var MultipleTabService = {
 	},
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 
-	 
+	
 	getBundledTabsOf : function(aTab, aInfo) 
 	{
 		if (!aInfo) aInfo = {};
@@ -1556,7 +1613,7 @@ var MultipleTabService = {
 		targetBrowser.movingSelectedTabs = false;
 	},
  
-	closeOwner : function(aTabOwner)
+	closeOwner : function(aTabOwner) 
 	{
 		var w = aTabOwner.ownerDocument.defaultView;
 		if (!w) return;
@@ -1764,7 +1821,7 @@ var MultipleTabService = {
 	},
   
 /* Save/Load Prefs */ 
-	
+	 
 	get Prefs() 
 	{
 		if (!this._Prefs) {
@@ -1774,9 +1831,13 @@ var MultipleTabService = {
 	},
 	_Prefs : null,
  
-	getPref : function(aPrefstring) 
+	getPref : function(aPrefstring, aInterface) 
 	{
 		try {
+			if (aInterface) {
+				return this.Prefs.getComplexValue(aPrefstring, aInterface);
+			}
+
 			switch (this.Prefs.getPrefType(aPrefstring))
 			{
 				case this.Prefs.PREF_STRING:

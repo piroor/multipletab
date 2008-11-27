@@ -1,6 +1,7 @@
 <!ENTITY popup.selection.removeTabs  "Kiválasztott lapok bezárása">
 <!ENTITY popup.selection.reloadTabs  "Kiválasztott lapok újratöltése">
 <!ENTITY popup.selection.addBookmark "Kiválasztott lapok könyvjelzőkbe">
+<!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
 <!ENTITY popup.selection.duplicateTabs "Kiválasztott lapok kettőzése">
 <!ENTITY popup.selection.splitWindow "Kiválasztott lapok áthelyezése új ablakba">
 <!ENTITY popup.selection.clipboard   "Kiválasztott lapok adatainak másolása">
@@ -17,6 +18,11 @@
 <!ENTITY popup.context.clipboard.format.default "Webcím másolása">
 <!ENTITY popup.context.clipboard.format.mozurl  "Név és webcím másolása">
 <!ENTITY popup.context.clipboard.format.link    "HTML link másolása">
+<!ENTITY popup.context.saveTabs                   "Save as files">
+<!ENTITY popup.context.saveTabs.type.auto         "Auto-detect file types">
+<!ENTITY popup.context.saveTabs.type.complete     "Web Page, complete">
+<!ENTITY popup.context.saveTabs.type.html         "Web Page, HTML only">
+<!ENTITY popup.context.saveTabs.type.text         "Text Files">
 
 
 
