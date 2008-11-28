@@ -31,21 +31,6 @@
 		<menuitem id="multipletab-selection-addBookmark"
 			label="&popup.selection.addBookmark;"
 			oncommand="MultipleTabService.addBookmarkFor(MultipleTabService.getSelectedTabs());"/>
-		<menuitem id="multipletab-selection-saveTabs"
-			label="&popup.selection.saveTabs;"
-			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs());"/>
-		<menu id="multipletab-selection-saveTabs:select"
-			label="&popup.selection.saveTabs;"
-			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('saveType')));">
-			<menupopup>
-				<menuitem label="&popup.context.saveTabs.type.default;"
-					saveType="0"/>
-				<menuitem label="&popup.context.saveTabs.type.complete;"
-					saveType="1"/>
-				<menuitem label="&popup.context.saveTabs.type.text;"
-					saveType="2"/>
-			</menupopup>
-		</menu>
 		<menuseparator id="multipletab-selection-duplicate-separator"/>
 		<menuitem id="multipletab-selection-duplicateTabs"
 			label="&popup.selection.duplicateTabs;"
@@ -73,31 +58,12 @@
 					formatType="2"/>
 			</menupopup>
 		</menu>
-	</menupopup>
-
-	<menupopup id="multipletab-tabcontext-menu-template">
-
-		<menuitem id="multipletab-context-duplicate"
-			label="&popup.context.duplicate;"
-			oncommand="MultipleTabService.duplicateTabs([MultipleTabService.getTabBrowserFromChild(this).mContextTab]);"
-			multipletab-insertbefore="tabContextMenu.childNodes[1]"/>
-
-		<menuitem id="multipletab-context-saveTabs"
-			label="&popup.context.saveTabs;"
-			oncommand="MultipleTabService.saveTabs([MultipleTabService.getTabBrowserFromChild(this).mContextTab]);"
-			multipletab-insertafter="
-				tabContextMenu.getElementsByAttribute('command', 'Browser:BookmarkAllTabs').length ?
-					tabContextMenu.getElementsByAttribute('command', 'Browser:BookmarkAllTabs')[0].nextSibling :
-					tabContextMenu.getElementsByAttribute('anonid', 'undoCloseTabMenuItem')[0]
-			"/>
-		<menu id="multipletab-context-saveTabs:select"
-			label="&popup.context.saveTabs;"
-			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('saveType')));"
-			multipletab-insertafter="
-				tabContextMenu.getElementsByAttribute('command', 'Browser:BookmarkAllTabs').length ?
-					tabContextMenu.getElementsByAttribute('command', 'Browser:BookmarkAllTabs')[0].nextSibling :
-					tabContextMenu.getElementsByAttribute('anonid', 'undoCloseTabMenuItem')[0]
-			">
+		<menuitem id="multipletab-selection-saveTabs"
+			label="&popup.selection.saveTabs;"
+			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs());"/>
+		<menu id="multipletab-selection-saveTabs:select"
+			label="&popup.selection.saveTabs;"
+			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('saveType')));">
 			<menupopup>
 				<menuitem label="&popup.context.saveTabs.type.default;"
 					saveType="0"/>
@@ -107,6 +73,14 @@
 					saveType="2"/>
 			</menupopup>
 		</menu>
+	</menupopup>
+
+	<menupopup id="multipletab-tabcontext-menu-template">
+
+		<menuitem id="multipletab-context-duplicate"
+			label="&popup.context.duplicate;"
+			oncommand="MultipleTabService.duplicateTabs([MultipleTabService.getTabBrowserFromChild(this).mContextTab]);"
+			multipletab-insertbefore="tabContextMenu.childNodes[1]"/>
 
 		<menuitem id="multipletab-context-removeAll"
 			label="&popup.context.removeAll;"
@@ -167,6 +141,25 @@
 					formatType="1"/>
 				<menuitem label="&popup.context.clipboard.format.link;"
 					formatType="2"/>
+			</menupopup>
+		</menu>
+		<menuitem id="multipletab-context-saveTabs"
+			label="&popup.context.saveTabs;"
+			oncommand="MultipleTabService.saveTabs([MultipleTabService.getTabBrowserFromChild(this).mContextTab]);"
+			multipletab-insertbefore="tabContextMenu.lastChild"
+			tbattr="tabbrowser-multiple"/>
+		<menu id="multipletab-context-saveTabs:select"
+			label="&popup.context.saveTabs;"
+			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('saveType')));"
+			multipletab-insertbefore="tabContextMenu.lastChild"
+			tbattr="tabbrowser-multiple">
+			<menupopup>
+				<menuitem label="&popup.context.saveTabs.type.default;"
+					saveType="0"/>
+				<menuitem label="&popup.context.saveTabs.type.complete;"
+					saveType="1"/>
+				<menuitem label="&popup.context.saveTabs.type.text;"
+					saveType="2"/>
 			</menupopup>
 		</menu>
 		<menuseparator id="multipletab-context-separator-clipboard"
