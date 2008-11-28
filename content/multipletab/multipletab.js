@@ -1094,8 +1094,9 @@ var MultipleTabService = {
 
 		var fileExistence = {};
 		aTabs.forEach(function(aTab) {
+			var b = aTab.linkedBrowser;
 			var destFile = folder.clone();
-			var uri = aTab.linkedBrowser.currentURI;
+			var uri = b.currentURI;
 			var base = '';
 			var extension = '';
 			try {
@@ -1108,8 +1109,17 @@ var MultipleTabService = {
 			catch(e) {
 			}
 			if (!base) {
-				base = aTab.label;
-				extension = aTab.linkedBrowser.contentDocument.contentType.split('/')[1].split('+')[0];
+				var fileInfo = new FileInfo();
+				initFileInfo(
+					fileInfo,
+					uri.spec,
+					b.contentDocument.characterSet,
+					b.contentDocument,
+					b.contentDocument.contentType,
+					null
+				);
+				base = fileInfo.fileName;
+				extension = '.'+fileInfo.fileExt;
 			}
 			var fileName = '';
 			var count = 2;
