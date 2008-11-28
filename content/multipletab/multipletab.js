@@ -19,7 +19,16 @@ var MultipleTabService = {
 	kSELECTION_MENU        : 'multipletab-selection-menu',
 	kCONTEXT_MENU_TEMPLATE : 'multipletab-tabcontext-menu-template',
 
-	NSResolver : {
+	selectableItems : [
+		{ name : 'clipboard',
+		  key  : 'extensions.multipletab.clipboard.formatType' },
+		{ name : 'clipboardAll',
+		  key  : 'extensions.multipletab.clipboard.formatType' },
+		{ name : 'saveTabs',
+		  key  : 'extensions.multipletab.saveTabs.saveType' }
+	],
+	 
+	NSResolver : { 
 		lookupNamespaceURI : function(aPrefix)
 		{
 			switch (aPrefix)
@@ -60,15 +69,15 @@ var MultipleTabService = {
 		}
 		return xpathResult;
 	},
-
-	get SessionStore() {
+ 
+	get SessionStore() { 
 		if (!this._SessionStore) {
 			this._SessionStore = Components.classes['@mozilla.org/browser/sessionstore;1'].getService(Components.interfaces.nsISessionStore);
 		}
 		return this._SessionStore;
 	},
 	_SessionStore : null,
-	 
+ 
 /* Utilities */ 
 	
 	isEventFiredOnTabIcon : function(aEvent) 
@@ -907,11 +916,19 @@ var MultipleTabService = {
 
 		var label;
 		var key;
-		var selectType = {
-				clipboard    : (this.getPref('extensions.multipletab.clipboard.formatType') == -1),
-				clipboardAll : (this.getPref('extensions.multipletab.clipboard.formatType') == -1),
-				saveTabs     : (this.getPref('extensions.multipletab.saveTabs.saveType') == -1)
-			};
+
+		var selectableItemsRegExp = new RegExp(
+				'^(multipletab-(context|selection)-('+
+				this.selectableItems.map(function(aItem) {
+					return aItem.name;
+				}).join('|')+
+				'))(:select)?$'
+			);
+
+		var selectType = {};
+		this.selectableItems.forEach(function(aItem) {
+			selectType[aItem.name] = this.getPref(aItem.key) == -1;
+		}, this);
 
 		for (var i = 0, maxi = nodes.length; i < maxi; i++)
 		{
@@ -922,7 +939,7 @@ var MultipleTabService = {
 				nodes[i].setAttribute('label', label);
 
 			key = nodes[i].getAttribute('id').replace(/-tabbrowser-.*$/, '');
-			if (/^(multipletab-(context|selection)-(clipboard|clipboardAll|saveTabs))(:select)?$/.test(key)) {
+			if (selectableItemsRegExp.test(key)) {
 				key  = RegExp.$1
 				pref = this.getPref('extensions.multipletab.show.'+key) &&
 						(Boolean(RegExp.$4) == selectType[RegExp.$3]);
@@ -951,7 +968,7 @@ var MultipleTabService = {
 			separator.setAttribute('hidden', true);
 		}
 	},
-	
+	 
 	getSeparators : function(aPopup) 
 	{
 		try {
@@ -985,7 +1002,7 @@ var MultipleTabService = {
 		}
 		return xpathResult.singleNodeValue;
 	},
-  	 
+   
 /* Commands */ 
 	 
 	closeTabs : function(aTabs) 
