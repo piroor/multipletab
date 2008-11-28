@@ -1084,7 +1084,7 @@ var MultipleTabService = {
 		}
 
 		if (aTabs.length == 1) {
-			saveDocument(aTabs[0].linkedBrowser.contentDocument);
+			this.saveOneTab(aTabs[0], null, aSaveType);
 			return;
 		}
 
@@ -1116,16 +1116,7 @@ var MultipleTabService = {
 			}
 			catch(e) {
 			}
-			window.setTimeout(
-				this.saveOneTab,
-				200,
-				uri.spec,
-				new AutoChosen(destFile, uri),
-				uri,
-				(aSaveType == this.kSAVE_TYPE_DEFAULT ? null :
-				 aSaveType == this.kSAVE_TYPE_TEXT ? 'text/plain' :
-				 aTab.linkedBrowser.contentDocument.contentType)
-			);
+			window.setTimeout(this.saveOneTab, 200, aTab, destFile, aSaveType);
 		}, this);
 	},
 	 
@@ -1148,9 +1139,26 @@ var MultipleTabService = {
 		return null;
 	},
  
-	saveOneTab : function(aURI, aChosenData, aBaseURI, aContentType) 
+	saveOneTab : function(aTab, aDestFile, aSaveType) 
 	{
-		internalSave(aURI, null, null, null, aContentType, false, null, aChosenData, aBaseURI);
+		var uri = aTab.linkedBrowser.currentURI;
+		var contentType = aSaveType == this.kSAVE_TYPE_COMPLETE ?
+					aTab.linkedBrowser.contentDocument.contentType :
+				 aSaveType == this.kSAVE_TYPE_TEXT ?
+				 	'text/plain' :
+				 	null ;
+
+		internalSave(
+			uri.spec,
+			null,
+			null,
+			null,
+			contentType,
+			false,
+			null,
+			(aDestFile ? (new AutoChosen(aDestFile, uri)) : null ),
+			uri
+		);
 	},
   
 	addBookmarkFor : function(aTabs) 
