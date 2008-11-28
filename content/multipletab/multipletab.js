@@ -1104,10 +1104,10 @@ var MultipleTabService = {
 				base = base.replace(/\.[^\.]+$/g, '');
 
 				var fileName = '';
-				var count = 0;
+				var count = 2;
 				var existingFile;
 				do {
-					fileName = fileName ? base+'('+(++count)+')'+extension : base+extension ;
+					fileName = fileName ? base+'('+(count++)+')'+extension : base+extension ;
 					destFile = folder.clone();
 					destFile.append(fileName);
 				}
