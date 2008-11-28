@@ -18,7 +18,7 @@
 <!ENTITY popup.context.clipboard.format.default "Simple URI">
 <!ENTITY popup.context.clipboard.format.mozurl  "Page Title and URI">
 <!ENTITY popup.context.clipboard.format.link    "HTML Link">
-<!ENTITY popup.context.saveTabs                   "Save as files">
+<!ENTITY popup.context.saveTabs                   "Save All Tabs">
 <!ENTITY popup.context.saveTabs.type.default      "Exclude embedded resources">
 <!ENTITY popup.context.saveTabs.type.complete     "Include embedded resources">
 <!ENTITY popup.context.saveTabs.type.text         "Convert to Plain Text Files">
