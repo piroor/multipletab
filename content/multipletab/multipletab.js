@@ -927,7 +927,7 @@ var MultipleTabService = {
 
 		var selectType = {};
 		this.selectableItems.forEach(function(aItem) {
-			selectType[aItem.name] = this.getPref(aItem.key) == -1;
+			selectType[aItem.name] = this.getPref(aItem.key) < 0;
 		}, this);
 
 		for (var i = 0, maxi = nodes.length; i < maxi; i++)
