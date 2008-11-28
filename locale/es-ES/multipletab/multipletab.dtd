@@ -46,6 +46,8 @@
 <!ENTITY config.tabs.selectionMenu    "Menú de selección de pestañas">
 <!ENTITY config.selectionMenu.caption "Items disponibles en el menú para las pestañas seleccionadas">
 
+<!ENTITY config.tabs.features "Features">
+
 <!ENTITY config.clopboardFormatType.caption "Formato de texto para &quot;Copiar URIs&quot;">
 <!ENTITY config.clopboardFormatType.select  "Seleccionar desde un menú">
 

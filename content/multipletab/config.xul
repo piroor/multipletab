@@ -31,12 +31,6 @@
 		<preference id="extensions.multipletab.tabclick.mode"
 			name="extensions.multipletab.tabclick.mode"
 			type="int"/>
-		<preference id="extensions.multipletab.clipboard.formatType"
-			name="extensions.multipletab.clipboard.formatType"
-			type="int"/>
-		<preference id="extensions.multipletab.clipboard.formatType"
-			name="extensions.multipletab.clipboard.formatType"
-			type="int"/>
 		<preference id="extensions.multipletab.tabdrag.moveMultipleTabs"
 			name="extensions.multipletab.tabdrag.moveMultipleTabs"
 			type="bool"/>
@@ -90,6 +84,18 @@
 			</radiogroup>
 		</vbox>
 	</groupbox>
+</prefpane>
+
+<prefpane id="prefpane-features" label="&config.tabs.features;"
+	onpaneload="initGeneralPane();">
+	<preferences>
+		<preference id="extensions.multipletab.clipboard.formatType"
+			name="extensions.multipletab.clipboard.formatType"
+			type="int"/>
+		<preference id="extensions.multipletab.saveTabs.saveType"
+			name="extensions.multipletab.saveTabs.saveType"
+			type="int"/>
+	</preferences>
 	<groupbox>
 		<caption label="&config.clopboardFormatType.caption;"/>
 		<vbox>

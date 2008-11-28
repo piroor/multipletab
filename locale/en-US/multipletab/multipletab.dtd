@@ -46,6 +46,8 @@
 <!ENTITY config.tabs.selectionMenu    "Tab Selection Menu">
 <!ENTITY config.selectionMenu.caption "Available items of the popup menu for selected tabs">
 
+<!ENTITY config.tabs.features "Features">
+
 <!ENTITY config.clopboardFormatType.caption "Text Format of &quot;Copy URIs of Tabs&quot; features">
 <!ENTITY config.clopboardFormatType.select  "Select from menu">
 

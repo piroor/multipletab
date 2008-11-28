@@ -47,6 +47,8 @@
 <!ENTITY config.tabs.selectionMenu    "タブ選択時のメニュー">
 <!ENTITY config.selectionMenu.caption "タブ選択時のメニューに表示する項目">
 
+<!ENTITY config.tabs.features "機能">
+
 <!ENTITY config.clopboardFormatType.caption "タブのURIをコピーする時の形式">
 <!ENTITY config.clopboardFormatType.select  "メニューから選択">
 

@@ -46,6 +46,8 @@
 <!ENTITY config.tabs.selectionMenu    "Menu contestuale schede selezionate">
 <!ENTITY config.selectionMenu.caption "Aggiungi le seguenti voci al menu contestuale delle schede selezionate">
 
+<!ENTITY config.tabs.features "Features">
+
 <!ENTITY config.clopboardFormatType.caption "Formato del testo delle funzioni &quot;Copia indirizzo&quot;">
 <!ENTITY config.clopboardFormatType.select  "Seleziona dal menu">
 
