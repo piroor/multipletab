@@ -1,10 +1,10 @@
 <!ENTITY popup.selection.removeTabs  "Cerrar pestañas seleccionadas">
 <!ENTITY popup.selection.reloadTabs  "Refrescar pestañas seleccionadas">
 <!ENTITY popup.selection.addBookmark "Añadirlas a marcadores en una nueva carpeta">
-<!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
 <!ENTITY popup.selection.duplicateTabs "Duplicar pestañas seleccionadas">
 <!ENTITY popup.selection.splitWindow "Moverlas a una nueva ventana">
 <!ENTITY popup.selection.clipboard   "Copiar URIs de las pestañas seleccionadas">
+<!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Cerrar pestañas de la izquierda">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Cerrar pestañas que están encima">

@@ -1,10 +1,10 @@
 <!ENTITY popup.selection.removeTabs  "Kiválasztott lapok bezárása">
 <!ENTITY popup.selection.reloadTabs  "Kiválasztott lapok újratöltése">
 <!ENTITY popup.selection.addBookmark "Kiválasztott lapok könyvjelzőkbe">
-<!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
 <!ENTITY popup.selection.duplicateTabs "Kiválasztott lapok kettőzése">
 <!ENTITY popup.selection.splitWindow "Kiválasztott lapok áthelyezése új ablakba">
 <!ENTITY popup.selection.clipboard   "Kiválasztott lapok adatainak másolása">
+<!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Balra levő lapok bezárása">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Felette levő lapok bezárása">

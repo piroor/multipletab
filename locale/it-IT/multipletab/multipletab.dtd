@@ -1,10 +1,10 @@
 <!ENTITY popup.selection.removeTabs  "Chiudi le schede selezionate">
 <!ENTITY popup.selection.reloadTabs  "Ricarica le schede selezionate">
 <!ENTITY popup.selection.addBookmark "Aggiungi schede selezionate a una nuova cartella nei segnalibri">
-<!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
 <!ENTITY popup.selection.duplicateTabs "Duplica le schede selezionate">
 <!ENTITY popup.selection.splitWindow "Apri in una nuova finestra">
 <!ENTITY popup.selection.clipboard   "Copia l&apos;indirizzo delle schede selezionate">
+<!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Chiudi le schede a sinistra">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Chiudi le schede sopra ">

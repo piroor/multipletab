@@ -1,10 +1,10 @@
 <!ENTITY popup.selection.removeTabs  "Close Selected Tabs">
 <!ENTITY popup.selection.reloadTabs  "Reload Selected Tabs">
 <!ENTITY popup.selection.addBookmark "Bookmark Selected Tabs to New Folder">
-<!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
 <!ENTITY popup.selection.duplicateTabs "Duplicate Selected Tabs">
 <!ENTITY popup.selection.splitWindow "Move to New Window">
 <!ENTITY popup.selection.clipboard   "Copy URIs of Selected Tabs">
+<!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Close Left Tabs">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Close Above Tabs">
