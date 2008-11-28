@@ -1096,27 +1096,34 @@ var MultipleTabService = {
 		aTabs.forEach(function(aTab) {
 			var destFile = folder.clone();
 			var uri = aTab.linkedBrowser.currentURI;
+			var base = '';
+			var extension = '';
 			try {
 				uri.QueryInterface(Components.interfaces.nsIURL);
-				var base = decodeURIComponent(uri.fileName);
-				var extension = base.split('.');
+				base = decodeURIComponent(uri.fileName);
+				extension = base.split('.');
 				extension = extension.length > 1 ? '.'+extension[extension.length-1] : '' ;
 				base = base.replace(/\.[^\.]+$/g, '');
-
-				var fileName = '';
-				var count = 2;
-				var existingFile;
-				do {
-					fileName = fileName ? base+'('+(count++)+')'+extension : base+extension ;
-					destFile = folder.clone();
-					destFile.append(fileName);
-				}
-				while (destFile.exists() || destFile.path in fileExistence);
-				fileExistence[destFile.path] = true;
 			}
 			catch(e) {
 			}
-			window.setTimeout(this.saveOneTab, 200, aTab, destFile, aSaveType);
+			if (!base) {
+				base = aTab.label;
+				extension = aTab.linkedBrowser.contentDocument.contentType.split('/')[1].split('+')[0];
+			}
+			var fileName = '';
+			var count = 2;
+			var existingFile;
+			do {
+				fileName = fileName ? base+'('+(count++)+')'+extension : base+extension ;
+				destFile = folder.clone();
+				destFile.append(fileName);
+			}
+			while (destFile.exists() || destFile.path in fileExistence);
+			fileExistence[destFile.path] = true;
+			window.setTimeout(function(aSelf, aTab, aDestFile, aSaveType) {
+				aSelf.saveOneTab(aTab, aDestFile, aSaveType);
+			}, 200, this, aTab, destFile, aSaveType);
 		}, this);
 	},
 	 
@@ -1141,23 +1148,24 @@ var MultipleTabService = {
  
 	saveOneTab : function(aTab, aDestFile, aSaveType) 
 	{
-		var uri = aTab.linkedBrowser.currentURI;
+		var b = aTab.linkedBrowser;
+		var uri = b.currentURI;
 		var contentType = aSaveType == this.kSAVE_TYPE_COMPLETE ?
-					aTab.linkedBrowser.contentDocument.contentType :
+					b.contentDocument.contentType :
 				 aSaveType == this.kSAVE_TYPE_TEXT ?
 				 	'text/plain' :
 				 	null ;
 
 		internalSave(
 			uri.spec,
-			null,
+			(aSaveType == this.kSAVE_TYPE_COMPLETE ? b.contentDocument : null ),
 			null,
 			null,
 			contentType,
 			false,
 			null,
-			(aDestFile ? (new AutoChosen(aDestFile, uri)) : null ),
-			uri
+			(aDestFile && aSaveType != this.kSAVE_TYPE_TEXT ? new AutoChosen(aDestFile, uri) : null ),
+			b.referringURI
 		);
 	},
   
