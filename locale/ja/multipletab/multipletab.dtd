@@ -1,7 +1,7 @@
 <!ENTITY popup.selection.removeTabs    "すべて閉じる">
 <!ENTITY popup.selection.reloadTabs    "すべて再読み込み">
 <!ENTITY popup.selection.addBookmark   "フォルダにまとめてブックマーク">
-<!ENTITY popup.selection.saveTabs      "ページをファイルとして保存">
+<!ENTITY popup.selection.saveTabs      "ファイルとして保存">
 <!ENTITY popup.selection.duplicateTabs "すべて複製">
 <!ENTITY popup.selection.splitWindow   "新しいウィンドウに移動">
 <!ENTITY popup.selection.clipboard     "すべてのURIをコピー">
@@ -19,10 +19,9 @@
 <!ENTITY popup.context.clipboard.format.mozurl    "ページのタイトルとURI">
 <!ENTITY popup.context.clipboard.format.link      "HTMLのリンク">
 <!ENTITY popup.context.saveTabs                   "すべてのタブを保存">
-<!ENTITY popup.context.saveTabs.type.auto         "ファイルの種類を自動的に判別">
-<!ENTITY popup.context.saveTabs.type.complete     "Webページ、完全">
-<!ENTITY popup.context.saveTabs.type.html         "Webページ、HTMLのみ">
-<!ENTITY popup.context.saveTabs.type.text         "テキストファイル">
+<!ENTITY popup.context.saveTabs.type.default      "埋め込まれた外部リソースを含めない">
+<!ENTITY popup.context.saveTabs.type.complete     "埋め込まれた外部リソースも含める">
+<!ENTITY popup.context.saveTabs.type.text         "テキストファイルに変換する">
 
 
 

@@ -918,7 +918,7 @@ var MultipleTabService = {
 		var key;
 
 		var selectableItemsRegExp = new RegExp(
-				'^(multipletab-(context|selection)-('+
+				'^(multipletab-(?:context|selection)-('+
 				this.selectableItems.map(function(aItem) {
 					return aItem.name;
 				}).join('|')+
@@ -942,7 +942,7 @@ var MultipleTabService = {
 			if (selectableItemsRegExp.test(key)) {
 				key  = RegExp.$1
 				pref = this.getPref('extensions.multipletab.show.'+key) &&
-						(Boolean(RegExp.$4) == selectType[RegExp.$3]);
+						(Boolean(RegExp.$3) == selectType[RegExp.$2]);
 			}
 			else {
 				pref = this.getPref('extensions.multipletab.show.'+key);
@@ -1076,27 +1076,63 @@ var MultipleTabService = {
 
 		aTabs = this.filterBlankTabs(aTabs);
 
+		if (aSaveType === void(0)) {
+			aSaveType = this.getPref('extensions.multipletab.saveTabs.saveType');
+		}
+		if (aSaveType < 0) {
+			aSaveType = this.kSAVE_TYPE_DEFAULT;
+		}
+
 		if (aTabs.length == 1) {
 			saveDocument(aTabs[0].linkedBrowser.contentDocument);
 			return;
 		}
 
-		var folder = this.selectFolder('choose save folder');
+		var title = document.getElementById('multipletab-bundle').getString('saveTabs_chooseFolderTitle');
+		var folder = this.selectFolder(title);
 		if (!folder) return;
 
+		var fileExistence = {};
 		aTabs.forEach(function(aTab) {
 			var destFile = folder.clone();
 			var uri = aTab.linkedBrowser.currentURI;
 			try {
 				uri.QueryInterface(Components.interfaces.nsIURL);
-				destFile.append(decodeURIComponent(uri.fileName));
+				var base = decodeURIComponent(uri.fileName);
+				var extension = base.split('.');
+				extension = extension.length > 1 ? '.'+extension[extension.length-1] : '' ;
+				base = base.replace(/\.[^\.]+$/g, '');
+
+				var fileName = '';
+				var count = 0;
+				var existingFile;
+				do {
+					fileName = fileName ? base+'('+(++count)+')'+extension : base+extension ;
+					destFile = folder.clone();
+					destFile.append(fileName);
+				}
+				while (destFile.exists() || destFile.path in fileExistence);
+				fileExistence[destFile.path] = true;
 			}
 			catch(e) {
 			}
-			window.setTimeout(this.saveOneTab, 200, uri.spec, new AutoChosen(destFile, uri), uri);
+			window.setTimeout(
+				this.saveOneTab,
+				200,
+				uri.spec,
+				new AutoChosen(destFile, uri),
+				uri,
+				(aSaveType == this.kSAVE_TYPE_DEFAULT ? null :
+				 aSaveType == this.kSAVE_TYPE_TEXT ? 'text/plain' :
+				 aTab.linkedBrowser.contentDocument.contentType)
+			);
 		}, this);
 	},
 	 
+	kSAVE_TYPE_DEFAULT  : 0, 
+	kSAVE_TYPE_COMPLETE : 1,
+	kSAVE_TYPE_TEXT     : 2,
+ 
 	selectFolder : function(aTitle) 
 	{
 		var picker = Components
@@ -1112,9 +1148,9 @@ var MultipleTabService = {
 		return null;
 	},
  
-	saveOneTab : function(aURI, aChosenData, aBaseURI) 
+	saveOneTab : function(aURI, aChosenData, aBaseURI, aContentType) 
 	{
-		internalSave(aURI, null, null, null, null, false, null, aChosenData, aBaseURI);
+		internalSave(aURI, null, null, null, aContentType, false, null, aChosenData, aBaseURI);
 	},
   
 	addBookmarkFor : function(aTabs) 
@@ -1493,9 +1529,9 @@ var MultipleTabService = {
 		clipboard.copyString(stringToCopy.join('\r\n'));
 	},
 	 
-	FORMAT_TYPE_DEFAULT : 0, 
-	FORMAT_TYPE_MOZ_URL : 1,
-	FORMAT_TYPE_LINK    : 2,
+	kFORMAT_TYPE_DEFAULT : 0, 
+	kFORMAT_TYPE_MOZ_URL : 1,
+	kFORMAT_TYPE_LINK    : 2,
  
 	formatURIStringForClipboard : function(aURI, aTab, aFormat) 
 	{
@@ -1503,14 +1539,14 @@ var MultipleTabService = {
 		switch (format)
 		{
 			default:
-			case this.FORMAT_TYPE_DEFAULT:
+			case this.kFORMAT_TYPE_DEFAULT:
 				return aURI;
 
-			case this.FORMAT_TYPE_MOZ_URL:
+			case this.kFORMAT_TYPE_MOZ_URL:
 				return (aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label'))+
 					'\r\n'+aURI;
 
-			case this.FORMAT_TYPE_LINK:
+			case this.kFORMAT_TYPE_LINK:
 				return [
 					'<a href="'+aURI.replace(/"/g, '&quot;')+'">',
 					(aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label')),

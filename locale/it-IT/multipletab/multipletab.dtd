@@ -19,10 +19,9 @@
 <!ENTITY popup.context.clipboard.format.mozurl  "Titolo pagina e indirizzo">
 <!ENTITY popup.context.clipboard.format.link    "Collegamento HTML">
 <!ENTITY popup.context.saveTabs                   "Save as files">
-<!ENTITY popup.context.saveTabs.type.auto         "Auto-detect file types">
-<!ENTITY popup.context.saveTabs.type.complete     "Web Page, complete">
-<!ENTITY popup.context.saveTabs.type.html         "Web Page, HTML only">
-<!ENTITY popup.context.saveTabs.type.text         "Text Files">
+<!ENTITY popup.context.saveTabs.type.default      "Exclude embedded resources">
+<!ENTITY popup.context.saveTabs.type.complete     "Include embedded resources">
+<!ENTITY popup.context.saveTabs.type.text         "Convert to Plain Text Files">
 
 
 

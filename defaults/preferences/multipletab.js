@@ -27,8 +27,8 @@ pref("extensions.multipletab.show.multipletab-context-saveTabs",        true);
 
 // 0 = URI, 1 = title+URI, 2 = HTML Link, -1 = select
 pref("extensions.multipletab.clipboard.formatType", -1);
-// 0 = auto, 1 = Web Page (complete), 2 = Web Page (HTML), 3 = Plain Text, -1 = select
-pref("extensions.multipletab.saveTabs.saveType", 0);
+// 0 = default, 1 = complete, 2 = Plain Text, -1 = select
+pref("extensions.multipletab.saveTabs.saveType", 1);
 
 
 pref("extensions.multipletab@piro.sakura.ne.jp.name", "chrome://multipletab/locale/multipletab.properties");

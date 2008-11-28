@@ -14,6 +14,7 @@
 <script src="hacks.js" type="application/x-javascript"/>
 
 <popupset id="mainPopupSet">
+	<stringbundle id="multipletab-bundle" src="chrome://multipletab/locale/multipletab.properties"/>
 
 	<menupopup id="multipletab-selection-menu"
 		oncommand="this.hidePopup();"
@@ -37,15 +38,12 @@
 			label="&popup.selection.saveTabs;"
 			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('saveType')));">
 			<menupopup>
-				<menuitem label="&popup.context.saveTabs.type.auto;"
+				<menuitem label="&popup.context.saveTabs.type.default;"
 					saveType="0"/>
-				<menuseparator/>
 				<menuitem label="&popup.context.saveTabs.type.complete;"
 					saveType="1"/>
-				<menuitem label="&popup.context.saveTabs.type.html;"
-					saveType="2"/>
 				<menuitem label="&popup.context.saveTabs.type.text;"
-					saveType="3"/>
+					saveType="2"/>
 			</menupopup>
 		</menu>
 		<menuseparator id="multipletab-selection-duplicate-separator"/>
@@ -101,15 +99,12 @@
 					tabContextMenu.getElementsByAttribute('anonid', 'undoCloseTabMenuItem')[0]
 			">
 			<menupopup>
-				<menuitem label="&popup.context.saveTabs.type.auto;"
+				<menuitem label="&popup.context.saveTabs.type.default;"
 					saveType="0"/>
-				<menuseparator/>
 				<menuitem label="&popup.context.saveTabs.type.complete;"
 					saveType="1"/>
-				<menuitem label="&popup.context.saveTabs.type.html;"
-					saveType="2"/>
 				<menuitem label="&popup.context.saveTabs.type.text;"
-					saveType="3"/>
+					saveType="2"/>
 			</menupopup>
 		</menu>
 
