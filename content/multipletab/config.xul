@@ -34,6 +34,9 @@
 		<preference id="extensions.multipletab.clipboard.formatType"
 			name="extensions.multipletab.clipboard.formatType"
 			type="int"/>
+		<preference id="extensions.multipletab.clipboard.formatType"
+			name="extensions.multipletab.clipboard.formatType"
+			type="int"/>
 		<preference id="extensions.multipletab.tabdrag.moveMultipleTabs"
 			name="extensions.multipletab.tabdrag.moveMultipleTabs"
 			type="bool"/>
@@ -111,6 +114,30 @@
 			</radiogroup>
 		</vbox>
 	</groupbox>
+	<groupbox>
+		<caption label="&config.saveType.caption;"/>
+		<vbox>
+			<radiogroup id="extensions.multipletab.saveTabs.saveType-radiogroup"
+				preference="extensions.multipletab.saveTabs.saveType">
+				<grid>
+					<columns>
+						<column/>
+						<column/>
+					</columns>
+					<rows>
+						<row>
+							<radio value="-1" label="&config.saveType.select;"/>
+							<radio value="0" label="&popup.context.saveTabs.type.default;"/>
+						</row>
+						<row>
+							<radio value="1" label="&popup.context.saveTabs.type.complete;"/>
+							<radio value="2" label="&popup.context.saveTabs.type.text;"/>
+						</row>
+					</rows>
+				</grid>
+			</radiogroup>
+		</vbox>
+	</groupbox>
 </prefpane>
 
 <prefpane id="prefpane-selection-menu" label="&config.tabs.selectionMenu;">
@@ -132,6 +159,9 @@
 			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-selection-clipboard"
 			name="extensions.multipletab.show.multipletab-selection-clipboard"
+			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-saveTabs"
+			name="extensions.multipletab.show.multipletab-selection-saveTabs"
 			type="bool"/>
 	</preferences>
 	<groupbox flex="1">
@@ -155,6 +185,9 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-clipboard-check"
 				preference="extensions.multipletab.show.multipletab-selection-clipboard"
 				label="&popup.selection.clipboard;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-clipboard-saveTabs"
+				preference="extensions.multipletab.show.multipletab-selection-saveTabs"
+				label="&popup.selection.saveTabs;"/>
 		</vbox>
 	</groupbox>
 </prefpane>
@@ -182,6 +215,9 @@
 		<preference id="extensions.multipletab.show.multipletab-context-clipboardAll"
 			name="extensions.multipletab.show.multipletab-context-clipboardAll"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-context-saveTabs"
+			name="extensions.multipletab.show.multipletab-context-saveTabs"
+			type="bool"/>
 	</preferences>
 	<groupbox flex="1">
 		<caption label="&config.contextMenu.caption;"/>
@@ -207,6 +243,9 @@
 			<checkbox id="extensions.multipletab.show.multipletab-context-clipboardAll"
 				preference="extensions.multipletab.show.multipletab-context-clipboardAll"
 				label="&popup.context.clipboardAll;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-saveTabs"
+				preference="extensions.multipletab.show.multipletab-context-saveTabs"
+				label="&popup.context.saveTabs;"/>
 		</vbox>
 	</groupbox>
 </prefpane>

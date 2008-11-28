@@ -50,6 +50,9 @@
 <!ENTITY config.clopboardFormatType.caption "タブのURIをコピーする時の形式">
 <!ENTITY config.clopboardFormatType.select  "メニューから選択">
 
+<!ENTITY config.saveType.caption "タブをファイルに保存する時の挙動">
+<!ENTITY config.saveType.select  "メニューから選択">
+
 <!ENTITY config.tabs.contextMenu    "タブのコンテキストメニュー">
 <!ENTITY config.contextMenu.caption "タブのコンテキストメニューに追加する項目">
 <!ENTITY config.contextMenu.removeLeftTabs  "左（上）のタブをすべて閉じる">

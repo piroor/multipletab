@@ -49,6 +49,9 @@
 <!ENTITY config.clopboardFormatType.caption "Formato de texto para &quot;Copiar URIs&quot;">
 <!ENTITY config.clopboardFormatType.select  "Seleccionar desde un menú">
 
+<!ENTITY config.saveType.caption "Save mode for tabs">
+<!ENTITY config.saveType.select  "Seleccionar desde un menú">
+
 <!ENTITY config.tabs.contextMenu    "Menú contextual en pestañas">
 <!ENTITY config.contextMenu.caption "Items disponibles en el menú contextual de las pestañas">
 <!ENTITY config.contextMenu.removeLeftTabs  "Cerrar pestañas a la izquierda (Encima)">

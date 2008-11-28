@@ -46,6 +46,9 @@
 <!ENTITY config.clopboardFormatType.caption "A &quot;Lap adatainak másolása&quot; opció művelete">
 <!ENTITY config.clopboardFormatType.select  "Kiválasztás menüből">
 
+<!ENTITY config.saveType.caption "Save mode for tabs">
+<!ENTITY config.saveType.select  "Kiválasztás menüből">
+
 <!ENTITY config.tabs.selectionMenu    "Kiválasztott lapok">
 <!ENTITY config.selectionMenu.caption "A kiválasztott lapok füleinek helyi menüje:">
 
