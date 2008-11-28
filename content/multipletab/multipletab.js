@@ -1097,30 +1097,17 @@ var MultipleTabService = {
 			var b = aTab.linkedBrowser;
 			var destFile = folder.clone();
 			var uri = b.currentURI;
-			var base = '';
-			var extension = '';
-			try {
-				uri.QueryInterface(Components.interfaces.nsIURL);
-				base = decodeURIComponent(uri.fileName);
-				extension = base.split('.');
-				extension = extension.length > 1 ? '.'+extension[extension.length-1] : '' ;
-				base = base.replace(/\.[^\.]+$/g, '');
-			}
-			catch(e) {
-			}
-			if (!base) {
-				var fileInfo = new FileInfo();
-				initFileInfo(
-					fileInfo,
-					uri.spec,
-					b.contentDocument.characterSet,
-					b.contentDocument,
-					b.contentDocument.contentType,
-					null
-				);
-				base = fileInfo.fileName;
-				extension = '.'+fileInfo.fileExt;
-			}
+			var fileInfo = new FileInfo(aTab.label);
+			initFileInfo(
+				fileInfo,
+				uri.spec,
+				b.contentDocument.characterSet,
+				b.contentDocument,
+				b.contentDocument.contentType,
+				null
+			);
+			var base = fileInfo.fileName;
+			var extension = '.'+fileInfo.fileExt;
 			var fileName = '';
 			var count = 2;
 			var existingFile;
