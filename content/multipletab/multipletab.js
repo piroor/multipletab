@@ -688,7 +688,7 @@ var MultipleTabService = {
 				if (delay > 0) {
 					this.cancelDelayedDragStart();
 					this.lastMouseDown = Date.now();
-					this.delayedDragStartTimer = window.setTimeout(this.delayedDragStart, delay, aEvent);
+					this.delayedDragStartTimer = window.setTimeout(this.delayedDragStart, delay, this, aEvent);
 				}
 			}
 		}
@@ -700,12 +700,12 @@ var MultipleTabService = {
 			this.clearSelection();
 	},
 	
-	delayedDragStart : function(aEvent) 
+	delayedDragStart : function(aSelf, aEvent) 
 	{
-		MultipleTabService.clearSelection();
-		MultipleTabService.onTabDragStart(aEvent);
-		MultipleTabService.tabDragging = false; // cancel "dragging" before we start to drag it really.
-		MultipleTabService.delayedDragStartReady = true;
+		aSelf.clearSelection();
+		aSelf.onTabDragStart(aEvent);
+		aSelf.tabDragging = false; // cancel "dragging" before we start to drag it really.
+		aSelf.delayedDragStartReady = true;
 	},
 	cancelDelayedDragStart : function()
 	{
