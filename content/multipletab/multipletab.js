@@ -443,6 +443,13 @@ var MultipleTabService = {
 			aTabBrowser.__multipletab__canDoWindowMove = false;
 		}
 
+		if ('_onDragEnd' in aTabBrowser) {
+			eval('aTabBrowser._onDragEnd = '+aTabBrowser._onDragEnd.toSource().replace(
+				'this._replaceTabWithWindow(',
+				'if (MultipleTabService.isDraggingAllTabs(draggedTab)) return; $&'
+			));
+		}
+
 		this.initTabBrowserContextMenu(aTabBrowser);
 
 		var tabs = aTabBrowser.mTabContainer.childNodes;
@@ -1764,26 +1771,29 @@ var MultipleTabService = {
 	tearOffSelectedTabsFromRemote : function() 
 	{
 		var remoteTab = window.arguments[0];
-		var remoteWindow  = remoteTab.ownerDocument.defaultView;
-		var remoteService = remoteWindow.MultipleTabService;
-		if (remoteService.isSelected(remoteTab)) {
-			var remoteBrowser = remoteService.getTabBrowserFromChild(remoteTab);
-			var selectedTabs = remoteService.getSelectedTabs(remoteBrowser);
-			if (selectedTabs.length > 1) {
-				if (selectedTabs.length == remoteBrowser.mTabContainer.childNodes.length) {
-					window.close();
-				}
-				else {
-					window.setTimeout(function() {
-						remoteService.splitWindowFromTabs(selectedTabs, window);
-					}, 0);
-				}
-				return true;
+		var info = {};
+		var tabs = this.getBundledTabsOf(remoteTab, info);
+		if (tabs.length) {
+			if (this.isDraggingAllTabs(remoteTab)) {
+				window.close();
 			}
+			else {
+				window.setTimeout(function() {
+					info.sourceWindow.MultipleTabService.splitWindowFromTabs(tabs, window);
+				}, 0);
+			}
+			return true;
 		}
 		return false;
 	},
-  
+	
+	isDraggingAllTabs : function(aTab) 
+	{
+		var info = {};
+		var tabs = this.getBundledTabsOf(aTab, info);
+		return tabs.length && tabs.length == info.sourceBrowser.mTabContainer.childNodes.length;
+	},
+   
 /* Tab Selection */ 
 	
 	hasSelection : function(aTabBrowser) 
