@@ -322,7 +322,7 @@ var MultipleTabService = {
 	{
 		window.removeEventListener('DOMContentLoaded', this, false);
 
-		if ('swapBrowsersAndCloseOther' in gBrowser) {
+		if ('swapBrowsersAndCloseOther' in document.getElementById('content')) {
 			eval('window.BrowserStartup = '+window.BrowserStartup.toSource().replace(
 				'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
 				'if (!MultipleTabService.tearOffSelectedTabsFromRemote()) { $& }'
@@ -1770,7 +1770,9 @@ var MultipleTabService = {
 			var remoteBrowser = remoteService.getTabBrowserFromChild(remoteTab);
 			var selectedTabs = remoteService.getSelectedTabs(remoteBrowser);
 			if (selectedTabs.length > 1) {
-				remoteService.splitWindowFromTabs(selectedTabs, window);
+				window.setTimeout(function() {
+					remoteService.splitWindowFromTabs(selectedTabs, window);
+				}, 0);
 				return true;
 			}
 		}
