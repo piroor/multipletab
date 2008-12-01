@@ -325,7 +325,7 @@ var MultipleTabService = {
 		if ('swapBrowsersAndCloseOther' in gBrowser) {
 			eval('window.BrowserStartup = '+window.BrowserStartup.toSource().replace(
 				'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
-				'if (!MultipleTabService.processTearingOffTabs(uriToLoad)) { $& }'
+				'if (!MultipleTabService.tearOffSelectedTabsFromRemote()) { $& }'
 			));
 		}
 
@@ -1761,12 +1761,13 @@ var MultipleTabService = {
 		}, 0);
 	},
  
-	processTearingOffTabs : function(aRemoteTab) 
+	tearOffSelectedTabsFromRemote : function() 
 	{
-		var remoteWindow  = aRemoteTab.ownerDocument.defaultView;
+		var remoteTab = window.arguments[0];
+		var remoteWindow  = remoteTab.ownerDocument.defaultView;
 		var remoteService = remoteWindow.MultipleTabService;
-		if (remoteService.isSelected(aRemoteTab)) {
-			var remoteBrowser = remoteService.getTabBrowserFromChild(aRemoteTab);
+		if (remoteService.isSelected(remoteTab)) {
+			var remoteBrowser = remoteService.getTabBrowserFromChild(remoteTab);
 			var selectedTabs = remoteService.getSelectedTabs(remoteBrowser);
 			if (selectedTabs.length > 1) {
 				remoteService.splitWindowFromTabs(selectedTabs, window);
