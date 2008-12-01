@@ -27,7 +27,7 @@ var MultipleTabService = {
 		{ name : 'saveTabs',
 		  key  : 'extensions.multipletab.saveTabs.saveType' }
 	],
-	 
+	
 	NSResolver : { 
 		lookupNamespaceURI : function(aPrefix)
 		{
@@ -321,6 +321,14 @@ var MultipleTabService = {
 	preInit : function()
 	{
 		window.removeEventListener('DOMContentLoaded', this, false);
+
+		if ('swapBrowsersAndCloseOther' in gBrowser) {
+			eval('window.BrowserStartup = '+window.BrowserStartup.toSource().replace(
+				'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
+				'if (!MultipleTabService.processTearingOffTabs(uriToLoad)) { $& }'
+			));
+		}
+
 		this.overrideExtensionsOnPreInit(); // hacks.js
 	},
 	delayedInit : function()
@@ -838,7 +846,7 @@ var MultipleTabService = {
 	},
   
 /* Popup */ 
-	 
+	
 	get tabSelectionPopup() { 
 		if (!this._tabSelectionPopup) {
 			this._tabSelectionPopup = document.getElementById(this.kSELECTION_MENU);
@@ -968,7 +976,7 @@ var MultipleTabService = {
 			separator.setAttribute('hidden', true);
 		}
 	},
-	 
+	
 	getSeparators : function(aPopup) 
 	{
 		try {
@@ -1004,7 +1012,7 @@ var MultipleTabService = {
 	},
    
 /* Commands */ 
-	 
+	
 	closeTabs : function(aTabs) 
 	{
 		if (!aTabs) return;
@@ -1123,7 +1131,7 @@ var MultipleTabService = {
 			}, 200, this, aTab, destFile, aSaveType);
 		}, this);
 	},
-	 
+	
 	kSAVE_TYPE_DEFAULT  : 0, 
 	kSAVE_TYPE_COMPLETE : 1,
 	kSAVE_TYPE_TEXT     : 2,
@@ -1283,7 +1291,7 @@ var MultipleTabService = {
 		}, 0, this);
 	},
  
-	splitWindowFromTabs : function(aTabs) 
+	splitWindowFromTabs : function(aTabs, aWindow) 
 	{
 		if (!aTabs) return;
 		var max = aTabs.length;
@@ -1302,8 +1310,8 @@ var MultipleTabService = {
 				return selected;
 			}, this);
 
-		var newWin = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
-		newWin.addEventListener('load', function() {
+		var newWin = aWindow;
+		var postProcess = function() {
 			newWin.removeEventListener('load', arguments.callee, false);
 			newWin.MultipleTabService.duplicatingTabs = true;
 			newWin.setTimeout(function() {
@@ -1348,7 +1356,15 @@ var MultipleTabService = {
 				delete newTabs;
 				delete newWin;
 			}, 0);
-		}, false);
+		};
+
+		if (newWin) {
+			postProcess();
+		}
+		else {
+			newWin = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
+			newWin.addEventListener('load', postProcess, false);
+		}
 	},
 	
 	splitWindowFrom : function(aTabs) // old name 
@@ -1541,7 +1557,7 @@ var MultipleTabService = {
 			stringToCopy.push('');
 		clipboard.copyString(stringToCopy.join('\r\n'));
 	},
-	 
+	
 	kFORMAT_TYPE_DEFAULT : 0, 
 	kFORMAT_TYPE_MOZ_URL : 1,
 	kFORMAT_TYPE_LINK    : 2,
@@ -1744,6 +1760,21 @@ var MultipleTabService = {
 			info = null;
 		}, 0);
 	},
+ 
+	processTearingOffTabs : function(aRemoteTab) 
+	{
+		var remoteWindow  = aRemoteTab.ownerDocument.defaultView;
+		var remoteService = remoteWindow.MultipleTabService;
+		if (remoteService.isSelected(aRemoteTab)) {
+			var remoteBrowser = remoteService.getTabBrowserFromChild(aRemoteTab);
+			var selectedTabs = remoteService.getSelectedTabs(remoteBrowser);
+			if (selectedTabs.length > 1) {
+				remoteService.splitWindowFromTabs(selectedTabs, window);
+				return true;
+			}
+		}
+		return false;
+	},
   
 /* Tab Selection */ 
 	
@@ -1773,7 +1804,7 @@ var MultipleTabService = {
 	{
 		return this.setBooleanAttributeToTab(aTab, this.kSELECTED, aState, true);
 	},
-	 
+	
 	setReadyToClose : function(aTab, aState) 
 	{
 		return this.setBooleanAttributeToTab(aTab, this.kREADY_TO_CLOSE, aState, false);
@@ -1887,7 +1918,7 @@ var MultipleTabService = {
 	},
   
 /* Save/Load Prefs */ 
-	 
+	
 	get Prefs() 
 	{
 		if (!this._Prefs) {
