@@ -1770,8 +1770,14 @@ var MultipleTabService = {
 			var remoteBrowser = remoteService.getTabBrowserFromChild(remoteTab);
 			var selectedTabs = remoteService.getSelectedTabs(remoteBrowser);
 			if (selectedTabs.length > 1) {
+				var isAllMove = selectedTabs.length != remoteBrowser.mTabContainer.childNodes.length;
 				window.setTimeout(function() {
-					remoteService.splitWindowFromTabs(selectedTabs, window);
+					if (isAllMove) {
+						window.close();
+					}
+					else {
+						remoteService.splitWindowFromTabs(selectedTabs, window);
+					}
 				}, 0);
 				return true;
 			}
