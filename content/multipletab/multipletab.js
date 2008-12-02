@@ -78,6 +78,14 @@ var MultipleTabService = {
 	},
 	_SessionStore : null,
  
+	get bundle() { 
+		if (!this._bundle) {
+			this._bundle = document.getElementById('multipletab-bundle');
+		}
+		return this._bundle;
+	},
+	_bundle : null,
+ 
 /* Utilities */ 
 	
 	isEventFiredOnTabIcon : function(aEvent) 
@@ -1104,32 +1112,36 @@ var MultipleTabService = {
 		}
 
 		if (aTabs.length == 1) {
+			var saveType = aSaveType;
+			if (aSaveType & this.kSAVE_TYPE_TEXT &&
+				!this.shouldConvertTabToText(aTabs[0], aSaveType)) {
+				aSaveType = this.kSAVE_TYPE_COMPLETE;
+			}
 			this.saveOneTab(aTabs[0], null, aSaveType);
 			return;
 		}
 
-		var title = document.getElementById('multipletab-bundle').getString('saveTabs_chooseFolderTitle');
+		var title = this.bundle.getString('saveTabs_chooseFolderTitle');
 		var folder = this.selectFolder(title);
 		if (!folder) return;
-
-		var isText = aSaveType == this.kSAVE_TYPE_TEXT;
 
 		var fileExistence = {};
 		aTabs.forEach(function(aTab) {
 			var b = aTab.linkedBrowser;
 			var destFile = folder.clone();
 			var uri = b.currentURI;
+			var shouldConvertToText = this.shouldConvertTabToText(aTab, aSaveType);
 			var fileInfo = new FileInfo(aTab.label);
 			initFileInfo(
 				fileInfo,
 				uri.spec,
 				b.contentDocument.characterSet,
 				b.contentDocument,
-				b.contentDocument.contentType,
+				(shouldConvertToText ? 'text/plain' : b.contentDocument.contentType ),
 				null
 			);
 			var base = fileInfo.fileName;
-			var extension = isText ? '.txt' : '.'+fileInfo.fileExt ;
+			var extension = shouldConvertToText ? '.txt' : '.'+fileInfo.fileExt ;
 			if (base.indexOf(extension) == base.length - extension.length) {
 				base = base.substring(0, base.length - extension.length);
 			}
@@ -1143,15 +1155,27 @@ var MultipleTabService = {
 			}
 			while (destFile.exists() || destFile.path in fileExistence);
 			fileExistence[destFile.path] = true;
-			window.setTimeout(function(aSelf, aTab, aDestFile, aSaveType) {
-				aSelf.saveOneTab(aTab, aDestFile, aSaveType);
-			}, 200, this, aTab, destFile, aSaveType);
+			var saveType = aSaveType;
+			if (saveType & this.kSAVE_TYPE_TEXT && !shouldConvertToText) {
+				saveType = this.kSAVE_TYPE_COMPLETE;
+			}
+			window.setTimeout(function(aSelf) {
+				aSelf.saveOneTab(aTab, destFile, saveType);
+			}, 200, this);
 		}, this);
 	},
 	
 	kSAVE_TYPE_DEFAULT  : 0, 
 	kSAVE_TYPE_COMPLETE : 1,
 	kSAVE_TYPE_TEXT     : 2,
+ 
+	shouldConvertTabToText : function(aTab, aSaveType) 
+	{
+		return(
+			aSaveType == this.kSAVE_TYPE_TEXT &&
+			GetSaveModeForContentType(aTab.linkedBrowser.contentDocument.contentType) & SAVEMODE_COMPLETE_TEXT
+		);
+	},
  
 	selectFolder : function(aTitle) 
 	{
