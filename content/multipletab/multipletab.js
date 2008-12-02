@@ -1112,6 +1112,8 @@ var MultipleTabService = {
 		var folder = this.selectFolder(title);
 		if (!folder) return;
 
+		var isText = aSaveType == this.kSAVE_TYPE_TEXT;
+
 		var fileExistence = {};
 		aTabs.forEach(function(aTab) {
 			var b = aTab.linkedBrowser;
@@ -1127,7 +1129,10 @@ var MultipleTabService = {
 				null
 			);
 			var base = fileInfo.fileName;
-			var extension = '.'+fileInfo.fileExt;
+			var extension = isText ? '.txt' : '.'+fileInfo.fileExt ;
+			if (base.indexOf(extension) == base.length - extension.length) {
+				base = base.substring(0, base.length - extension.length);
+			}
 			var fileName = '';
 			var count = 2;
 			var existingFile;
@@ -1181,7 +1186,7 @@ var MultipleTabService = {
 			contentType,
 			false,
 			null,
-			(aDestFile && aSaveType != this.kSAVE_TYPE_TEXT ? new AutoChosen(aDestFile, uri) : null ),
+			(aDestFile ? new AutoChosen(aDestFile, uri) : null ),
 			b.referringURI
 		);
 	},
