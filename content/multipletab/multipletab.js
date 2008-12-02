@@ -320,6 +320,16 @@ var MultipleTabService = {
 		}
 */
 
+		if ('internalSave' in window) {
+			eval('window.internalSave = '+window.internalSave.toSource().replace(
+				/(if \(aChosenData\) \{file = aChosenData.file;)(\})/,
+				'$1 if ("saveAsType" in aChosenData) { saveAsType = aChosenData.saveAsType; } $2'
+			).replace(
+				/(!aChosenData)( && useSaveDocument && saveAsType == kSaveAsType_Text)/,
+				'($1 || "saveAsType" in aChosenData)$2'
+			));
+		}
+
 		this.initTabBrowser(gBrowser);
 
 		this.overrideExtensionsOnInit(); // hacks.js
@@ -1196,21 +1206,21 @@ var MultipleTabService = {
 	{
 		var b = aTab.linkedBrowser;
 		var uri = b.currentURI;
-		var contentType = aSaveType == this.kSAVE_TYPE_COMPLETE ?
-					b.contentDocument.contentType :
-				 aSaveType == this.kSAVE_TYPE_TEXT ?
-				 	'text/plain' :
-				 	null ;
+
+		var autoChosen = aDestFile ? new AutoChosen(aDestFile, uri) : null ;
+		if (autoChosen && aSaveType == this.kSAVE_TYPE_TEXT) {
+			autoChosen.saveAsType = kSaveAsType_Text;
+		}
 
 		internalSave(
 			uri.spec,
 			(aSaveType != this.kSAVE_TYPE_FILE ? b.contentDocument : null ),
 			null,
 			null,
-			contentType,
+			b.contentDocument.contentType,
 			false,
 			null,
-			(aDestFile ? new AutoChosen(aDestFile, uri) : null ),
+			autoChosen,
 			b.referringURI
 		);
 	},
