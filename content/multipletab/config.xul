@@ -133,7 +133,7 @@
 					<rows>
 						<row>
 							<radio value="-1" label="&config.saveType.select;"/>
-							<radio value="0" label="&popup.context.saveTabs.type.default;"/>
+							<radio value="0" label="&popup.context.saveTabs.type.file;"/>
 						</row>
 						<row>
 							<radio value="1" label="&popup.context.saveTabs.type.complete;"/>

@@ -19,7 +19,7 @@
 <!ENTITY popup.context.clipboard.format.mozurl    "ページのタイトルとURI">
 <!ENTITY popup.context.clipboard.format.link      "HTMLのリンク">
 <!ENTITY popup.context.saveTabs                   "すべてのタブを保存">
-<!ENTITY popup.context.saveTabs.type.default      "埋め込まれた外部リソースを含めない">
+<!ENTITY popup.context.saveTabs.type.file      "埋め込まれた外部リソースを含めない">
 <!ENTITY popup.context.saveTabs.type.complete     "埋め込まれた外部リソースも含める">
 <!ENTITY popup.context.saveTabs.type.text         "テキストファイルに変換する">
 

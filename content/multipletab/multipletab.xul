@@ -65,7 +65,7 @@
 			label="&popup.selection.saveTabs;"
 			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('saveType')));">
 			<menupopup>
-				<menuitem label="&popup.context.saveTabs.type.default;"
+				<menuitem label="&popup.context.saveTabs.type.file;"
 					saveType="0"/>
 				<menuitem label="&popup.context.saveTabs.type.complete;"
 					saveType="1"/>
@@ -154,7 +154,7 @@
 			multipletab-insertbefore="tabContextMenu.lastChild"
 			tbattr="tabbrowser-multiple">
 			<menupopup>
-				<menuitem label="&popup.context.saveTabs.type.default;"
+				<menuitem label="&popup.context.saveTabs.type.file;"
 					saveType="0"/>
 				<menuitem label="&popup.context.saveTabs.type.complete;"
 					saveType="1"/>

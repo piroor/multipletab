@@ -1108,7 +1108,7 @@ var MultipleTabService = {
 			aSaveType = this.getPref('extensions.multipletab.saveTabs.saveType');
 		}
 		if (aSaveType < 0) {
-			aSaveType = this.kSAVE_TYPE_DEFAULT;
+			aSaveType = this.kSAVE_TYPE_FILE;
 		}
 
 		if (aTabs.length == 1) {
@@ -1165,7 +1165,7 @@ var MultipleTabService = {
 		}, this);
 	},
 	
-	kSAVE_TYPE_DEFAULT  : 0, 
+	kSAVE_TYPE_FILE     : 0, 
 	kSAVE_TYPE_COMPLETE : 1,
 	kSAVE_TYPE_TEXT     : 2,
  
@@ -1204,7 +1204,7 @@ var MultipleTabService = {
 
 		internalSave(
 			uri.spec,
-			(aSaveType == this.kSAVE_TYPE_COMPLETE ? b.contentDocument : null ),
+			(aSaveType != this.kSAVE_TYPE_FILE ? b.contentDocument : null ),
 			null,
 			null,
 			contentType,

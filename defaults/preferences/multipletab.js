@@ -27,7 +27,7 @@ pref("extensions.multipletab.show.multipletab-context-saveTabs",        true);
 
 // 0 = URI, 1 = title+URI, 2 = HTML Link, -1 = select
 pref("extensions.multipletab.clipboard.formatType", -1);
-// 0 = default, 1 = complete, 2 = Plain Text, -1 = select
+// 0 = single file, 1 = complete (include embedded files), 2 = plain Text, -1 = select
 pref("extensions.multipletab.saveTabs.saveType", 1);
 
 
