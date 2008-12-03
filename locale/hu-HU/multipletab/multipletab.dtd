@@ -4,8 +4,8 @@
 <!ENTITY popup.selection.duplicateTabs "Kiválasztott lapok kettőzése">
 <!ENTITY popup.selection.splitWindow "Kiválasztott lapok áthelyezése új ablakba">
 <!ENTITY popup.selection.clipboard   "Kiválasztott lapok adatainak másolása">
-<!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
-<!ENTITY popup.selection.printTabs     "Print Selected Tabs">
+<!ENTITY popup.selection.saveTabs    "Kiválasztott lapok mentése fájlként">
+<!ENTITY popup.selection.printTabs   "Kiválasztott lapok nyomtatása">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Balra levő lapok bezárása">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Felette levő lapok bezárása">
@@ -19,10 +19,10 @@
 <!ENTITY popup.context.clipboard.format.default "Webcím másolása">
 <!ENTITY popup.context.clipboard.format.mozurl  "Név és webcím másolása">
 <!ENTITY popup.context.clipboard.format.link    "HTML link másolása">
-<!ENTITY popup.context.saveTabs                   "Save All Tabs">
-<!ENTITY popup.context.saveTabs.type.file      "Exclude embedded resources">
-<!ENTITY popup.context.saveTabs.type.complete     "Include embedded resources">
-<!ENTITY popup.context.saveTabs.type.text         "Convert to Plain Text Files">
+<!ENTITY popup.context.saveTabs                 "Mindegyik lap mentése">
+<!ENTITY popup.context.saveTabs.type.file       "Beágyazott források kizárása">
+<!ENTITY popup.context.saveTabs.type.complete   "Beágyazott forrásokkal">
+<!ENTITY popup.context.saveTabs.type.text       "Konvertálás nem formázott fájlokká">
 
 
 
@@ -36,20 +36,20 @@
 <!ENTITY config.tabdrag.mode.switch  "Lapok dinamikus váltása">
 <!ENTITY config.tabdrag.delay-before "Lap áthelyezése áthúzással">
 <!ENTITY config.tabdrag.delay-after  "ezredmp.-ig">
-<!ENTITY config.tabdrag.autopopup     "Helyi menü automatikus megjelenítése">
-<!ENTITY config.tabdrag.autoclear     "Lapok kijelölésének törlése a helyi menü bezárásakor">
+<!ENTITY config.tabdrag.autopopup    "Helyi menü automatikus megjelenítése">
+<!ENTITY config.tabdrag.autoclear    "Lapok kijelölésének törlése a helyi menü bezárásakor">
 <!ENTITY config.tabdrag.moveMultipleTabs "Kiválasztott lapok egyidejű áthelyezése">
 
 <!ENTITY config.tabclickmode.caption "Ctrl+kattintás a lap fülén:">
 <!ENTITY config.tabclickmode.default "Lap bezárása">
 <!ENTITY config.tabclickmode.toggle  "Lap kiválasztása">
 
-<!ENTITY config.tabs.features "Features">
+<!ENTITY config.tabs.features "Funkciók">
 
 <!ENTITY config.clopboardFormatType.caption "A &quot;Lap adatainak másolása&quot; opció művelete">
 <!ENTITY config.clopboardFormatType.select  "Kiválasztás menüből">
 
-<!ENTITY config.saveType.caption "Save mode for tabs">
+<!ENTITY config.saveType.caption "Lapok mentésének módja">
 <!ENTITY config.saveType.select  "Kiválasztás menüből">
 
 <!ENTITY config.tabs.selectionMenu    "Kiválasztott lapok">
