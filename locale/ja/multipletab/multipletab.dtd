@@ -5,6 +5,7 @@
 <!ENTITY popup.selection.splitWindow   "新しいウィンドウに移動">
 <!ENTITY popup.selection.clipboard     "すべてのURIをコピー">
 <!ENTITY popup.selection.saveTabs      "ファイルとして保存">
+<!ENTITY popup.selection.printTabs     "すべて印刷">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "左のタブをすべて閉じる">
 <!ENTITY popup.context.removeLeftTabs.vertical    "上のタブをすべて閉じる">

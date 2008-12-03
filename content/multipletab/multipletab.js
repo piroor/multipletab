@@ -15,6 +15,7 @@ var MultipleTabService = {
 	kSELECTED_DUPLICATING : 'multipletab-selected-duplicating',
 	kREADY_TO_CLOSE  : 'multipletab-ready-to-close',
 	kINSERT_BEFORE   : 'multipletab-insertbefore',
+	kENABLED         : 'multipletab-enabled',
 
 	kSELECTION_MENU        : 'multipletab-selection-menu',
 	kCONTEXT_MENU_TEMPLATE : 'multipletab-tabcontext-menu-template',
@@ -945,15 +946,9 @@ var MultipleTabService = {
  
 	showHideMenuItems : function(aPopup) 
 	{
-		var nodes = aPopup.childNodes;
-		var pref;
-
 		var b   = this.getTabBrowserFromChild(aPopup) || this.browser;
 		var box = b.mTabContainer.mTabstrip || b.mTabContainer ;
 		var isVertical = ((box.getAttribute('orient') || window.getComputedStyle(box, '').getPropertyValue('-moz-box-orient')) == 'vertical');
-
-		var label;
-		var key;
 
 		var selectableItemsRegExp = new RegExp(
 				'^(multipletab-(?:context|selection)-('+
@@ -968,15 +963,16 @@ var MultipleTabService = {
 			selectType[aItem.name] = this.getPref(aItem.key) < 0;
 		}, this);
 
-		for (var i = 0, maxi = nodes.length; i < maxi; i++)
-		{
+		Array.slice(aPopup.childNodes).forEach(function(aNode, aIndex) {
+			var label;
 			if (
-				(isVertical && (label = nodes[i].getAttribute('label-vertical'))) ||
-				(!isVertical && (label = nodes[i].getAttribute('label-horizontal')))
+				(isVertical && (label = aNode.getAttribute('label-vertical'))) ||
+				(!isVertical && (label = aNode.getAttribute('label-horizontal')))
 				)
-				nodes[i].setAttribute('label', label);
+				aNode.setAttribute('label', label);
 
-			key = nodes[i].getAttribute('id').replace(/-tabbrowser-.*$/, '');
+			var key = aNode.getAttribute('id').replace(/-tabbrowser-.*$/, '');
+			var pref;
 			if (selectableItemsRegExp.test(key)) {
 				key  = RegExp.$1
 				pref = this.getPref('extensions.multipletab.show.'+key) &&
@@ -986,13 +982,21 @@ var MultipleTabService = {
 				pref = this.getPref('extensions.multipletab.show.'+key);
 			}
 
-			if (pref === null) continue;
+			var enabled = aNode.getAttribute(this.kENABLED);
+			if (enabled) {
+				eval('enabled = ('+enabled+')');
+				if (!enabled) pref = false;
+			}
 
-			if (pref)
-				nodes[i].removeAttribute('hidden');
-			else
-				nodes[i].setAttribute('hidden', true);
-		}
+			if (pref === null) return;
+
+			if (pref) {
+				aNode.removeAttribute('hidden');
+			}
+			else {
+				aNode.setAttribute('hidden', true);
+			}
+		}, this);
 
 		var separators = this.getSeparators(aPopup);
 		for (var i = separators.snapshotLength-1; i > -1; i--)
@@ -1277,6 +1281,17 @@ var MultipleTabService = {
 	addBookmarkTabsFilter : function(aTab)
 	{
 		return aTab.linkedBrowser.currentURI;
+	},
+ 
+	printTabs : function(aTabs) 
+	{
+		if (!('PrintAllTabs' in window)) return;
+
+		PrintAllTabs.__multipletab__printNodes = aTabs.map(function(aTab) {
+			return aTab._tPos;
+		});
+		PrintAllTabs.onMenuItemCommand(null, false, false);
+		PrintAllTabs.__multipletab__printNodes = null;
 	},
  
 	duplicateTabs : function(aTabs) 

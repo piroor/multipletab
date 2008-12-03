@@ -5,6 +5,7 @@
 <!ENTITY popup.selection.splitWindow "Kiválasztott lapok áthelyezése új ablakba">
 <!ENTITY popup.selection.clipboard   "Kiválasztott lapok adatainak másolása">
 <!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
+<!ENTITY popup.selection.printTabs     "Print Selected Tabs">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Balra levő lapok bezárása">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Felette levő lapok bezárása">

@@ -78,6 +78,16 @@ MultipleTabService.overrideExtensionsOnInit = function() {
 		};
 	}
 
+	// Print All Tabs
+	if ('PrintAllTabs' in window) {
+		eval('PrintAllTabs.onMenuItemCommand = '+
+			PrintAllTabs.onMenuItemCommand.toSource().replace(
+				'this.getTabsToPrint(printAll)',
+				'this.__multipletab__printNodes || $&'
+			)
+		);
+	}
+
 };
 
 MultipleTabService.overrideExtensionsOnDelayedInit = function() {

@@ -73,6 +73,11 @@
 					saveType="2"/>
 			</menupopup>
 		</menu>
+		<menuseparator id="multipletab-selection-print-separator"/>
+		<menuitem id="multipletab-selection-printTabs"
+			label="&popup.selection.printTabs;"
+			oncommand="MultipleTabService.printTabs(MultipleTabService.getSelectedTabs());"
+			multipletab-enabled="'PrintAllTabs' in window"/>
 	</menupopup>
 
 	<menupopup id="multipletab-tabcontext-menu-template">
