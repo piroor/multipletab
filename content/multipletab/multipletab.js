@@ -197,11 +197,20 @@ var MultipleTabService = {
  
 	getTabFromEvent : function(aEvent) 
 	{
-		return this.evaluateXPath(
+		var tab = this.evaluateXPath(
 				'ancestor-or-self::xul:tab[ancestor::xul:tabbrowser]',
 				aEvent.originalTarget || aEvent.target,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
+		if (tab) return tab;
+
+		var b = this.getTabBrowserFromChild(aEvent.originalTarget);
+		if (b &&
+			'treeStyleTab' in b &&
+			'getTabFromTabbarEvent' in b.treeStyleTab) { // Tree Style Tab
+			return b.treeStyleTab.getTabFromTabbarEvent(aEvent);
+		}
+		return null;
 	},
  
 	getTabBrowserFromChild : function(aTab) 
