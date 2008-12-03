@@ -169,6 +169,9 @@
 		<preference id="extensions.multipletab.show.multipletab-selection-saveTabs"
 			name="extensions.multipletab.show.multipletab-selection-saveTabs"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-printTabs"
+			name="extensions.multipletab.show.multipletab-selection-printTabs"
+			type="bool"/>
 	</preferences>
 	<groupbox flex="1">
 		<caption label="&config.selectionMenu.caption;"/>
@@ -194,6 +197,9 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-clipboard-saveTabs"
 				preference="extensions.multipletab.show.multipletab-selection-saveTabs"
 				label="&popup.selection.saveTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-clipboard-printTabs"
+				preference="extensions.multipletab.show.multipletab-selection-printTabs"
+				label="&popup.selection.printTabs;"/>
 		</vbox>
 	</groupbox>
 </prefpane>
