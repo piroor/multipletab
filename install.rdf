@@ -14,6 +14,7 @@
     <em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
     <em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
     <em:translator>tito (es-ES locale)</em:translator>
+    <em:translator>L'Autour (ru-RU locale)</em:translator>
 
 
     <em:updateURL>http://piro.sakura.ne.jp/xul/update.rdf</em:updateURL>
@@ -29,6 +30,7 @@
 		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
+		<em:translator>L'Autour (ru-RU locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -40,6 +42,7 @@
 		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
+		<em:translator>L'Autour (ru-RU locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -51,6 +54,7 @@
 		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
+		<em:translator>L'Autour (ru-RU locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -62,6 +66,7 @@
 		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
+		<em:translator>L'Autour (ru-RU locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -73,6 +78,19 @@
 		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
+		<em:translator>L'Autour (ru-RU locale)</em:translator>
+      </RDF:Description>
+    </em:localized>
+    <em:localized>
+      <RDF:Description em:locale="ru-RU"
+                       em:name="Multiple Tab Handler (Обработка группы вкладок)"
+                       em:description="Обеспечивает возможность закрытия (, перезагрузки, и т.д.) группы вкладок одним действием"
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
+                       em:creator="SHIMODA Hiroshi">
+		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
+		<em:translator>tito (es-ES locale)</em:translator>
+		<em:translator>L'Autour (ru-RU locale)</em:translator>
       </RDF:Description>
     </em:localized>
 
