@@ -4,7 +4,7 @@
 <!ENTITY popup.selection.duplicateTabs "Duplica le schede selezionate">
 <!ENTITY popup.selection.splitWindow "Apri in una nuova finestra">
 <!ENTITY popup.selection.clipboard   "Copia l&apos;indirizzo delle schede selezionate">
-<!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
+<!ENTITY popup.selection.saveTabs      "Salva le schede selezionate come file">
 <!ENTITY popup.selection.printTabs     "Stampa le schede selezionate">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Chiudi le schede a sinistra">
@@ -19,10 +19,10 @@
 <!ENTITY popup.context.clipboard.format.default "Indirizzo semplice">
 <!ENTITY popup.context.clipboard.format.mozurl  "Titolo pagina e indirizzo">
 <!ENTITY popup.context.clipboard.format.link    "Collegamento HTML">
-<!ENTITY popup.context.saveTabs                   "Save All Tabs">
-<!ENTITY popup.context.saveTabs.type.file      "Exclude embedded resources">
-<!ENTITY popup.context.saveTabs.type.complete     "Include embedded resources">
-<!ENTITY popup.context.saveTabs.type.text         "Convert to Plain Text Files">
+<!ENTITY popup.context.saveTabs                   "Salva tutte le schede">
+<!ENTITY popup.context.saveTabs.type.file      "Escludi risorse incorporate">
+<!ENTITY popup.context.saveTabs.type.complete     "Includi risorse incorporate">
+<!ENTITY popup.context.saveTabs.type.text         "Converti in file di testo">
 
 
 
@@ -47,12 +47,12 @@
 <!ENTITY config.tabs.selectionMenu    "Menu contestuale schede selezionate">
 <!ENTITY config.selectionMenu.caption "Aggiungi le seguenti voci al menu contestuale delle schede selezionate">
 
-<!ENTITY config.tabs.features "Features">
+<!ENTITY config.tabs.features "Funzionalità">
 
 <!ENTITY config.clopboardFormatType.caption "Formato del testo delle funzioni &quot;Copia indirizzo&quot;">
 <!ENTITY config.clopboardFormatType.select  "Seleziona dal menu">
 
-<!ENTITY config.saveType.caption "Save mode for tabs">
+<!ENTITY config.saveType.caption "Tipologia di salvataggio per le schede">
 <!ENTITY config.saveType.select  "Seleziona dal menu">
 
 <!ENTITY config.tabs.contextMenu    "Menu contestuale della barra delle schede">
