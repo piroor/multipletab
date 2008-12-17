@@ -98,6 +98,15 @@ var MultipleTabService = {
 			).singleNodeValue ? true : false ;
 	},
  
+	isEventFiredOnClickable : function(aEvent) 
+	{
+		return this.evaluateXPath(
+				'ancestor-or-self::*[contains(" button toolbarbutton scrollbar popup menupopup tooltip ", concat(" ", local-name(), " "))]',
+				aEvent.originalTarget,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue ? true : false ;
+	},
+ 
 	getCloseboxFromEvent : function(aEvent) 
 	{
 		return this.evaluateXPath(
@@ -723,8 +732,11 @@ var MultipleTabService = {
 		if (this.selectionModified && !this.hasSelection())
 			this.selectionModified = false;
 
-		if (!tab || !this.isSelected(tab) ||
-			!this.allowMoveMultipleTabs)
+		if (
+			(!tab && !this.isEventFiredOnClickable(aEvent)) ||
+			(tab && !this.isSelected(tab)) ||
+			!this.allowMoveMultipleTabs
+			)
 			this.clearSelection();
 	},
 	
