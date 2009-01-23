@@ -90,7 +90,7 @@
 		<menuitem id="multipletab-context-removeAll"
 			label="&popup.context.removeAll;"
 			tbattr="tabbrowser-multiple"
-			oncommand="MultipleTabService.closeTabs(MultipleTabService.getTabBrowserFromChild(this).mTabContainer.childNodes);"
+			oncommand="MultipleTabService.closeTabs(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)));"
 			multipletab-insertbefore="tabContextMenu.lastChild.previousSibling"/>
 		<menuitem id="multipletab-context-removeSimilar"
 			label="&popup.context.removeSimilar;"
@@ -131,12 +131,12 @@
 		</menu>
 		<menuitem id="multipletab-context-clipboardAll"
 			label="&popup.context.clipboardAll;"
-			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabBrowserFromChild(this).mTabContainer.childNodes);"
+			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)));"
 			tbattr="tabbrowser-multiple"
 			multipletab-insertbefore="tabContextMenu.lastChild"/>
 		<menu id="multipletab-context-clipboardAll:select"
 			label="&popup.context.clipboardAll;"
-			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabBrowserFromChild(this).mTabContainer.childNodes, Number(event.target.getAttribute('formatType')));"
+			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)), Number(event.target.getAttribute('formatType')));"
 			multipletab-insertbefore="tabContextMenu.lastChild"
 			tbattr="tabbrowser-multiple">
 			<menupopup>

@@ -183,7 +183,7 @@ var MultipleTabService = {
 		if (!aCurrentTab) return resultTabs;
 
 		if (!aTabs)
-			aTabs = this.getTabBrowserFromChild(aCurrentTab).mTabContainer.childNodes;
+			aTabs = this.getTabsArray(this.getTabBrowserFromChild(aCurrentTab));
 
 		try {
 			var currentDomain = aCurrentTab.linkedBrowser.currentURI.host;
@@ -229,6 +229,19 @@ var MultipleTabService = {
 				aTab,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
+	},
+ 
+	getTabs : function(aTabBrowser) 
+	{
+		return this.evaluateXPath(
+				'descendant::xul:tab',
+				aTabBrowser.mTabContainer
+			);
+	},
+ 
+	getTabsArray : function(aTabBrowser)
+	{
+		return this.getArrayFromXPathResult(this.getTabs(aTabBrowser));
 	},
 	
 	// old method (for backward compatibility) 
@@ -375,8 +388,10 @@ var MultipleTabService = {
 		if (!('duplicateTab' in gBrowser)) {
 			gBrowser.duplicateTab = function(aTab, aSourceEvent) {
 				MultipleTabService.duplicateTabs([aTab]);
-				MultipleTabService.fireDuplicateEvent(this.mTabContainer.lastChild, aTab, aSourceEvent);
-				return this.mTabContainer.lastChild;
+				var lastTab = MultipleTabService.getTabsArray(this);
+				lastTab = lastTab[lastTab.length-1];
+				MultipleTabService.fireDuplicateEvent(lastTab, aTab, aSourceEvent);
+				return lastTab;
 			};
 		}
 	},
@@ -489,15 +504,9 @@ var MultipleTabService = {
 
 		this.initTabBrowserContextMenu(aTabBrowser);
 
-		var tabs = aTabBrowser.mTabContainer.childNodes;
-		for (var i = 0, maxi = tabs.length; i < maxi; i++)
-		{
-			this.initTab(tabs[i]);
-		}
-
-		delete i;
-		delete maxi;
-		delete tabs;
+		this.getTabsArray(aTabBrowser).forEach(function(aTab) {
+			this.initTab(aTab);
+		}, this);
 	},
 	
 	initTabBrowserContextMenu : function(aTabBrowser) 
@@ -544,11 +553,9 @@ var MultipleTabService = {
 
 		this.removePrefListener(this);
 
-		var tabs = gBrowser.mTabContainer.childNodes;
-		for (var i = 0, maxi = tabs.length; i < maxi; i++)
-		{
-			this.destroyTab(tabs[i]);
-		}
+		this.getTabsArray(gBrowser).forEach(function(aTab) {
+			this.destroyTab(aTab);
+		}, this);
 
 		var tabContextMenu = document.getAnonymousElementByAttribute(gBrowser, 'anonid', 'tabContextMenu');
 		tabContextMenu.removeEventListener('popupshowing', this, false);
@@ -687,21 +694,20 @@ var MultipleTabService = {
 			if (aEvent.shiftKey) {
 				var tabs = b.mTabContainer.childNodes;
 				var inSelection = false;
-				for (var i = 0, maxi = tabs.length; i < maxi; i++)
-				{
-					if (tabs[i].getAttribute('hidden') == 'true' ||
-						tabs[i].getAttribute('collapsed') == 'true')
-						continue;
+				this.getTabsArray(b).forEach(function(aTab) {
+					if (aTab.getAttribute('hidden') == 'true' ||
+						aTab.getAttribute('collapsed') == 'true')
+						return;
 
-					if (tabs[i] == b.selectedTab ||
-						tabs[i] == tab) {
+					if (aTab == b.selectedTab ||
+						aTab == tab) {
 						inSelection = !inSelection;
-						this.setSelection(tabs[i], true);
+						this.setSelection(aTab, true);
 					}
 					else {
-						this.setSelection(tabs[i], inSelection);
+						this.setSelection(aTab, inSelection);
 					}
-				}
+				}, this);
 				aEvent.preventDefault();
 				aEvent.stopPropagation();
 				return;
@@ -1336,7 +1342,7 @@ var MultipleTabService = {
 				selectedIndex = i;
 		}
 		if (selectedIndex > -1) {
-			selectedIndex += b.mTabContainer.childNodes.length;
+			selectedIndex += this.getTabs(b).snapshotLength;
 		}
 
 		var state = SS.getWindowState(window);
@@ -1364,14 +1370,13 @@ var MultipleTabService = {
 
 		SS.setWindowState(window, state, false);
 
+		var tabs = this.getTabsArray(b);
 		if (selectedIndex > -1)
-			b.selectedTab = b.mTabContainer.childNodes[selectedIndex];
+			b.selectedTab = tabs[selectedIndex];
 
-		var tabs = Array.slice(b.mTabContainer.childNodes).reverse();
-		for (var i = 0, maxi = aTabs.length; i < maxi; i++)
-		{
-			this.setSelection(tabs[i], true);
-		}
+		tabs.reverse().forEach(function(aTab) {
+			this.setSelection(aTab, true);
+		}, this);
 
 		window.setTimeout(function(aSelf) {
 			aSelf.duplicatingTabs = false;
@@ -1402,6 +1407,7 @@ var MultipleTabService = {
 			newWin.removeEventListener('load', arguments.callee, false);
 			newWin.MultipleTabService.duplicatingTabs = true;
 			newWin.setTimeout(function() {
+				var sv = newWin.MultipleTabService;
 				var targetBrowser = newWin.gBrowser;
 				var newTabs = [];
 				aTabs.forEach(function(aTab, aIndex) {
@@ -1413,10 +1419,10 @@ var MultipleTabService = {
 					targetBrowser.setTabTitle(newTab);
 
 					if (!allSelected && selectionState[aIndex])
-						newWin.MultipleTabService.setSelection(newTab, true);
-				}, this);
+						sv.setSelection(newTab, true);
+				});
 
-				Array.slice(targetBrowser.mTabContainer.childNodes).forEach(function(aTab) {
+				sv.getTabsArray(targetBrowser).forEach(function(aTab) {
 					if (newTabs.indexOf(aTab) > -1) return;
 					try {
 						if (aTab.linkedBrowser.sessionHistory)
@@ -1430,12 +1436,12 @@ var MultipleTabService = {
 				});
 
 				newTabs.forEach(function(aTab, aTabIndex) {
-					newWin.MultipleTabService._duplicatedTabPostProcesses.forEach(function(aProcess) {
+					sv._duplicatedTabPostProcesses.forEach(function(aProcess) {
 						aProcess(aTab, aTabIndex);
 					});
 				});
 
-				newWin.MultipleTabService.duplicatingTabs = false;
+				sv.duplicatingTabs = false;
 
 				delete allSelected;
 				delete selectionState;
@@ -1514,17 +1520,13 @@ var MultipleTabService = {
 		}
 		delete tab;
 
-		window.setTimeout(function() {
-			var tabs = b.mTabContainer.childNodes;
-			for (var i = tabs.length-1; i > -1; i--)
-			{
-				if (tabs[i].__multipletab__shouldRemove)
-					b.removeTab(tabs[i]);
-			}
-			delete tabs;
+		window.setTimeout(function(aSelf) {
+			aSelf.getTabsArray(b).reverse().forEach(function(aTab) {
+				if (aTab.__multipletab__shouldRemove)
+					b.removeTab(aTab);
+			});
 			delete b;
-			delete i;
-		}, 0);
+		}, 0, this);
 
 		return this.openNewWindowWithTabs(state, max);
 	},
@@ -1552,7 +1554,10 @@ var MultipleTabService = {
 
 			newWin.setTimeout(function() {
 				var restored = false;
-				var tabs = Array.slice(newWin.gBrowser.mTabContainer.childNodes);
+				var tabs = Array.slice(newWin.gBrowser.mTabContainer.childNodes)
+							.filter(function(aNode) {
+								return aNode.localName == 'tab';
+							});
 				var count = 0;
 				for (var i = tabs.length-1; i > -1; i--)
 				{
@@ -1753,7 +1758,7 @@ var MultipleTabService = {
 
 		var sourceBrowser = info.sourceBrowser;
 		var sourceService = info.sourceWindow.MultipleTabService;
-		var shouldClose = sourceBrowser.mTabContainer.childNodes.length == sourceTabs.length;
+		var shouldClose = sourceService.getTabs(sourceBrowser).snapshotLength == sourceTabs.length;
 
 		var delta = sourceService.calculateDeltaForNewPosition(sourceTabs, aSourceTab._tPos, -1);
 
@@ -1807,7 +1812,7 @@ var MultipleTabService = {
 		var sourceService = info.sourceWindow.MultipleTabService;
 
 		var isMove = aMayBeMove && targetBrowser != sourceBrowser;
-		var shouldClose = isMove && sourceBrowser.mTabContainer.childNodes.length == sourceTabs.length;
+		var shouldClose = isMove && sourceService.getTabs(sourceBrowser).snapshotLength == sourceTabs.length;
 
 		var index = sourceTabs.indexOf(aSourceTab);
 		sourceTabs.splice(index, 1);
@@ -1871,7 +1876,7 @@ var MultipleTabService = {
 	{
 		var info = {};
 		var tabs = this.getBundledTabsOf(aTab, info);
-		return tabs.length && tabs.length == info.sourceBrowser.mTabContainer.childNodes.length;
+		return tabs.length && tabs.length == info.sourceWindow.MultipleTabService.getTabs(info.sourceBrowser).snapshotLength;
 	},
    
 /* Tab Selection */ 
