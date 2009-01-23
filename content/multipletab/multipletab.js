@@ -243,6 +243,24 @@ var MultipleTabService = {
 	{
 		return this.getArrayFromXPathResult(this.getTabs(aTabBrowser));
 	},
+ 
+	getNextTab : function(aTab) 
+	{
+		var xpathResult = this.evaluateXPath(
+				'following-sibling::xul:tab',
+				aTab
+			);
+		return xpathResult.snapshotItem(0);
+	},
+ 
+	getPreviousTab : function(aTab) 
+	{
+		var xpathResult = this.evaluateXPath(
+				'preceding-sibling::xul:tab',
+				aTab
+			);
+		return xpathResult.snapshotItem(xpathResult.snapshotLength-1);
+	},
 	
 	// old method (for backward compatibility) 
 	getTabBrowserFromChildren : function(aTab)
@@ -943,7 +961,7 @@ var MultipleTabService = {
 					null
 				).singleNodeValue;
 			if (removeLeft) {
-				if (tab.previousSibling)
+				if (this.getPreviousTab(tab))
 					removeLeft.removeAttribute('disabled');
 				else
 					removeLeft.setAttribute('disabled', true);
@@ -961,7 +979,7 @@ var MultipleTabService = {
 					null
 				).singleNodeValue;
 			if (removeRight) {
-				if (tab.nextSibling)
+				if (this.getNextTab(tab))
 					removeRight.removeAttribute('disabled');
 				else
 					removeRight.setAttribute('disabled', true);
@@ -1765,7 +1783,7 @@ var MultipleTabService = {
 		targetBrowser.movingSelectedTabs = true;
 		this.clearSelection(targetBrowser);
 
-		var hasNextTab = aNewTab.nextSibling;
+		var hasNextTab = this.getNextTab(aNewTab);
 		sourceTabs.forEach(function(aTab, aIndex) {
 			sourceService.setSelection(aTab, false);
 
@@ -1825,7 +1843,7 @@ var MultipleTabService = {
 			targetBrowser.duplicatingSelectedTabs = true;
 			targetBrowser.movingSelectedTabs = true;
 
-			var hasNextTab = aNewTab.nextSibling;
+			var hasNextTab = sourceService.getNextTab(aNewTab);
 
 			sourceTabs.forEach(function(aTab, aIndex) {
 				sourceService.setSelection(aTab, false);
