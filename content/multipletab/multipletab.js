@@ -246,20 +246,20 @@ var MultipleTabService = {
  
 	getNextTab : function(aTab) 
 	{
-		var xpathResult = this.evaluateXPath(
-				'following-sibling::xul:tab',
-				aTab
-			);
-		return xpathResult.snapshotItem(0);
+		return this.evaluateXPath(
+				'following-sibling::xul:tab[1]',
+				aTab,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue;
 	},
  
 	getPreviousTab : function(aTab) 
 	{
-		var xpathResult = this.evaluateXPath(
-				'preceding-sibling::xul:tab',
-				aTab
-			);
-		return xpathResult.snapshotItem(xpathResult.snapshotLength-1);
+		return this.evaluateXPath(
+				'preceding-sibling::xul:tab[1]',
+				aTab,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue;
 	},
 	
 	// old method (for backward compatibility) 
