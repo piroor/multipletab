@@ -548,10 +548,7 @@ var MultipleTabService = {
 				refNode = null;
 			}
 
-			if (refNode)
-				tabContextMenu.insertBefore(item, refNode);
-			else
-				tabContextMenu.appendChild(item);
+			tabContextMenu.insertBefore(item, refNode);
 		}
 
 		tabContextMenu.addEventListener('popupshowing', this, false);
