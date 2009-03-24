@@ -1,11 +1,13 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-.tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button {
+tabbrowser .tabbrowser-strip .tabbrowser-tabs
+  .tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button {
 	outline: 2px solid Highlight important;
 	background-color: Highlight !important;
 }
 
-.tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button image {
+tabbrowser .tabbrowser-strip .tabbrowser-tabs
+  .tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button image {
 	outline: 0 none important;
 	opacity: 0.6 !important;
 }
