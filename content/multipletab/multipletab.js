@@ -881,11 +881,7 @@ var MultipleTabService = {
 			return;
 
 		if (this.tabDragging || this.tabCloseboxDragging) {
-			if ('treeStyleTab' in this.browser &&
-				'processAutoScroll' in this.browser.treeStyleTab)
-				this.browser.treeStyleTab.processAutoScroll(aEvent);
-			else
-				this.processAutoScroll(aEvent);
+			window['piro.sakura.ne.jp'].autoScroll.processAutoScroll(aEvent);
 		}
 
 		if (this.tabDragging) {
@@ -924,65 +920,6 @@ var MultipleTabService = {
 			var tab = this.getTabFromEvent(aEvent);
 			this.toggleReadyToClose(tab);
 		}
-	},
- 
-	processAutoScroll : function(aEvent) 
-	{
-		var tabs = this.browser.mTabContainer;
-		if (tabs.getAttribute('overflow') != 'true')
-			return false;
-
-		var orientBox = this.scrollBox || b.mTabContainer;
-		var isVertical = (orientBox.getAttribute('orient') || window.getComputedStyle(orientBox, '').getPropertyValue('-moz-box-orient')) == 'vertical';
-
-		var box = tabs.boxObject;
-		var pixels;
-		if (isVertical) {
-			pixels = tabs.childNodes[0].boxObject.height * 0.5;
-			if (aEvent.screenY < box.screenY + this.autoScrollArea) {
-				pixels *= -1;
-			}
-			else if (aEvent.screenY < box.screenY + box.height - this.autoScrollArea) {
-				return false;
-			}
-		}
-		else {
-			pixels = this.scrollBox.scrollIncrement;
-			var ltr = window.getComputedStyle(tabs, null).direction == 'ltr';
-			if (aEvent.screenX < box.screenX + this.autoScrollArea) {
-				pixels *= -1;
-			}
-			else if (aEvent.screenX < box.screenX + box.width - this.autoScrollArea) {
-				return false;
-			}
-			pixels = (ltr ? 1 : -1) * pixels;
-		}
-
-		if ('scrollByPixels' in this.scrollBox) {
-			this.scrollBox.scrollByPixels(pixels);
-		}
-		else { // Tab Mix Plus?
-			if (isVertical)
-				this.scrollBoxObject.scrollBy(0, pixels);
-			else
-				this.scrollBoxObject.scrollBy(pixels, 0);
-		}
-		return true;
-	},
-	autoScrollArea : 20,
-	get scrollBox() 
-	{
-		if (!this._scrollBox) {
-			this._scrollBox = document.getAnonymousElementByAttribute(this.browser.mTabContainer, 'class', 'tabs-frame') || // Tab Mix Plus
-						this.browser.mTabContainer.mTabstrip;
-		}
-		return this._scrollBox;
-	},
-	_scrollBox : null,
-	get scrollBoxObject()
-	{
-		return this.scrollBox.scrollBoxObject ||
-				this.scrollBox.boxObject.QueryInterface(Components.interfaces.nsIScrollBoxObject); // Tab Mix Plus
 	},
   
 /* Popup */ 
