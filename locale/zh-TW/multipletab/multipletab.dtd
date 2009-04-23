@@ -1,0 +1,62 @@
+<!ENTITY popup.selection.removeTabs  "關閉所選分頁">
+<!ENTITY popup.selection.reloadTabs  "重新載入所選分頁">
+<!ENTITY popup.selection.addBookmark "所選分頁以新資料夾加入書籤">
+<!ENTITY popup.selection.duplicateTabs "所選分頁新增副本">
+<!ENTITY popup.selection.splitWindow "移到新視窗">
+<!ENTITY popup.selection.clipboard   "複製所選分頁URI">
+<!ENTITY popup.selection.saveTabs      "存檔所選分頁">
+<!ENTITY popup.selection.printTabs     "列印所選分頁">
+
+<!ENTITY popup.context.removeLeftTabs.horizontal  "關閉左側所有分頁">
+<!ENTITY popup.context.removeLeftTabs.vertical    "關閉上方所有分頁">
+<!ENTITY popup.context.removeRightTabs.horizontal "關閉右側所有分頁">
+<!ENTITY popup.context.removeRightTabs.vertical   "關閉下方所有分頁">
+<!ENTITY popup.context.removeAll                  "關閉所有分頁">
+<!ENTITY popup.context.removeSimilar              "關閉相同分頁">
+<!ENTITY popup.context.duplicate                  "分頁新增副本">
+<!ENTITY popup.context.clipboard                  "複製 URI">
+<!ENTITY popup.context.clipboardAll               "複製所有分頁的URI">
+<!ENTITY popup.context.clipboard.format.default "單純 URI">
+<!ENTITY popup.context.clipboard.format.mozurl  "分頁標題和 URI">
+<!ENTITY popup.context.clipboard.format.link    "HTML 鏈結">
+<!ENTITY popup.context.saveTabs                   "存檔所有分頁">
+<!ENTITY popup.context.saveTabs.type.file      "不包括內嵌來源項目">
+<!ENTITY popup.context.saveTabs.type.complete     "包括內嵌來源項目">
+<!ENTITY popup.context.saveTabs.type.text         "轉換成一般文字檔">
+
+
+
+<!ENTITY config.title        "「複數分頁處理」配置">
+
+<!ENTITY config.tabs.general "一般">
+
+<!ENTITY config.tabdrag.mode.caption "在頁籤上點按拖曳時執行動作">
+<!ENTITY config.tabdrag.mode.default "預設 (移動並重排分頁)">
+<!ENTITY config.tabdrag.mode.select  "選取分頁">
+<!ENTITY config.tabdrag.mode.switch  "機動切換分頁">
+<!ENTITY config.tabdrag.delay-before "頁籤點按拖曳的啟動延時">
+<!ENTITY config.tabdrag.delay-after  "千分秒.">
+<!ENTITY config.tabdrag.autopopup     "自動開啟彈跳選單">
+<!ENTITY config.tabdrag.autoclear     "彈跳選單關閉後自動清除分頁選取">
+<!ENTITY config.tabdrag.moveMultipleTabs "所選分頁移聚同一處">
+
+<!ENTITY config.tabclickmode.caption "Ctrl(Command)-左鍵點按頁籤時執行動作">
+<!ENTITY config.tabclickmode.default "關閉分頁">
+<!ENTITY config.tabclickmode.toggle  "切換分頁的選取">
+
+<!ENTITY config.tabs.selectionMenu    "已選分頁選單">
+<!ENTITY config.selectionMenu.caption "已選分頁彈跳選單可選項目">
+
+<!ENTITY config.tabs.features "功能">
+
+<!ENTITY config.clopboardFormatType.caption "「複製分頁 URIs」功能的文字格式">
+<!ENTITY config.clopboardFormatType.select  "從選單選取">
+
+<!ENTITY config.saveType.caption "分頁存檔方式">
+<!ENTITY config.saveType.select  "從選單選取">
+
+<!ENTITY config.tabs.contextMenu    "分頁右鍵選單">
+<!ENTITY config.contextMenu.caption "分頁右鍵選單可選項目">
+<!ENTITY config.contextMenu.removeLeftTabs  "關閉左側(上方)分頁">
+<!ENTITY config.contextMenu.removeRightTabs "關閉右側(下方)分頁">
+
