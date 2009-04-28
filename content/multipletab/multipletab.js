@@ -2037,7 +2037,7 @@ var MultipleTabService = {
 			aTab.removeAttribute(aAttr);
 			if (aShouldSaveToSession) {
 				try {
-					this.SessionStore.deleteTabValue(aTab, this.kSELECTED);
+					this.SessionStore.deleteTabValue(aTab, aAttr);
 				}
 				catch(e) {
 				}
@@ -2047,7 +2047,7 @@ var MultipleTabService = {
 			aTab.setAttribute(aAttr, true);
 			if (aShouldSaveToSession) {
 				try {
-					this.SessionStore.setTabValue(aTab, this.kSELECTED, 'true');
+					this.SessionStore.setTabValue(aTab, aAttr, 'true');
 				}
 				catch(e) {
 				}
