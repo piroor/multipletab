@@ -1778,8 +1778,17 @@ var MultipleTabService = {
 
 			case this.kFORMAT_TYPE_LINK:
 				return [
-					'<a href="'+aURI.replace(/"/g, '&quot;')+'">',
-					(aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label')),
+					'<a href="',
+					aURI.replace(/&/g, '&amp;')
+						.replace(/"/g, '&quot;')
+						.replace(/</g, '&lt;')
+						.replace(/>/g, '&gt;'),
+					'">',
+					(aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label'))
+						.replace(/&/g, '&amp;')
+						.replace(/"/g, '&quot;')
+						.replace(/</g, '&lt;')
+						.replace(/>/g, '&gt;'),
 					'</a>'
 				].join('');
 		}
