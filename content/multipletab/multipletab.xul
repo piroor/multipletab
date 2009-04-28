@@ -45,7 +45,11 @@
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getSelectedTabs());"/>
 		<menuitem id="multipletab-selection-removeOther"
 			label="&popup.selection.removeOther;"
-			oncommand="MultipleTabService.closeOtherTabs(MultipleTabService.getSelectedTabs());"
+			oncommand="
+				var tabs = MultipleTabService.getSelectedTabs();
+				MultipleTabService.closeOtherTabs(tabs);
+				MultipleTabService.clearSelection(MultipleTabService.getTabBrowserFromChild(tabs[0]));
+			"
 			multipletab-enabled="selectedTabs.length &lt; tabs.length"/>
 		<menuseparator id="multipletab-selection-clipboard-separator"/>
 		<menuitem id="multipletab-selection-clipboard"

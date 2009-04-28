@@ -1234,8 +1234,6 @@ var MultipleTabService = {
 		tabs.forEach(function(aTab) {
 			if (aTabs.indexOf(aTab) < 0) b.removeTab(aTab);
 		});
-
-		this.clearSelection(b);
 	},
  
 	reloadTabs : function(aTabs) 
