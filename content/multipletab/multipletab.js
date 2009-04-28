@@ -2073,7 +2073,6 @@ var MultipleTabService = {
 	{
 		return this.setBooleanAttributeToTab(aTab, aAttr, aTab.getAttribute(aAttr) != 'true', aShouldSaveToSession);
 	},
-
   
 	clearSelection : function(aTabBrowser) 
 	{

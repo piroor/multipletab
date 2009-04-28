@@ -63,74 +63,6 @@ function test_isAccelKeyPressed()
 		assert.isTrue(sv.isAccelKeyPressed(event));
 }
 
-
-function test_getSelectedTabs()
-{
-	assert.equals([], sv.getSelectedTabs());
-	tabs[0].setAttribute(sv.kSELECTED, true);
-	assert.equals([tabs[0]], sv.getSelectedTabs());
-	tabs[2].setAttribute(sv.kSELECTED, true);
-	assert.equals([tabs[0], tabs[2]], sv.getSelectedTabs());
-	tabs[0].setAttribute(sv.kSELECTED, false);
-	tabs[2].setAttribute(sv.kSELECTED, false);
-	assert.equals([], sv.getSelectedTabs());
-	tabs[0].removeAttribute(sv.kSELECTED);
-	tabs[2].removeAttribute(sv.kSELECTED);
-	assert.equals([], sv.getSelectedTabs());
-}
-
-function test_getReadyToCloseTabs()
-{
-	assert.equals([], sv.getReadyToCloseTabs());
-	tabs[0].setAttribute(sv.kREADY_TO_CLOSE, true);
-	assert.equals([tabs[0]], sv.getReadyToCloseTabs());
-	tabs[2].setAttribute(sv.kREADY_TO_CLOSE, true);
-	assert.equals([tabs[0], tabs[2]], sv.getReadyToCloseTabs());
-	tabs[0].setAttribute(sv.kREADY_TO_CLOSE, false);
-	tabs[2].setAttribute(sv.kREADY_TO_CLOSE, false);
-	assert.equals([], sv.getReadyToCloseTabs());
-	tabs[0].removeAttribute(sv.kREADY_TO_CLOSE);
-	tabs[2].removeAttribute(sv.kREADY_TO_CLOSE);
-	assert.equals([], sv.getReadyToCloseTabs());
-}
-
-function test_getLeftTabsOf()
-{
-	assert.equals([], sv.getLeftTabsOf(tabs[0]));
-	assert.equals([tabs[0]], sv.getLeftTabsOf(tabs[1]));
-	assert.equals([tabs[0], tabs[1]], sv.getLeftTabsOf(tabs[2]));
-	assert.equals([], sv.getLeftTabsOf(null));
-}
-
-function test_getRightTabsOf()
-{
-	assert.equals([], sv.getRightTabsOf(tabs[3]));
-	assert.equals([tabs[3]], sv.getRightTabsOf(tabs[2]));
-	assert.equals([tabs[2], tabs[3]], sv.getRightTabsOf(tabs[1]));
-	assert.equals([], sv.getRightTabsOf(null));
-}
-
-test_getSimilarTabsOf.setUp = function() {
-	yield Do(utils.addTab('http://www.example.com'));
-	yield Do(utils.addTab('http://test.example.com/test1'));
-	yield Do(utils.addTab('http://test.example.com/test2'));
-	yield Do(utils.addTab('http://www.example.jp'));
-	tabs = Array.slice(gBrowser.mTabs);
-	assert.equals(8, tabs.length);
-};
-function test_getSimilarTabsOf()
-{
-	this.setPref('extensions.multipletab.useEffectiveTLD', true);
-	assert.equals([], sv.getSimilarTabsOf());
-	assert.equals([tabs[5], tabs[6]], sv.getSimilarTabsOf(tabs[4]));
-	assert.equals([tabs[4], tabs[6]], sv.getSimilarTabsOf(tabs[5]));
-	assert.equals([], sv.getSimilarTabsOf(tabs[7]));
-
-	this.setPref('extensions.multipletab.useEffectiveTLD', false);
-	assert.equals([], sv.getSimilarTabsOf(tabs[4]));
-	assert.equals([tabs[6]], sv.getSimilarTabsOf(tabs[5]));
-}
-
 function test_getDomainFromURI()
 {
 	this.setPref('extensions.multipletab.useEffectiveTLD', true);
@@ -167,32 +99,32 @@ function test_getTabFromEvent()
 function test_getTabBrowserFromChild()
 {
 	var node = tabs[0];
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(createEventStubByClass('tab-icon-image', node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(createEventStubByClass('tab-extra-status', node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(createEventStubByClass('tab-icon', node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(createEventStubByClass('tab-text', node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(createEventStubByClass('tab-close-button', node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(createEventStubFor(node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(createEventStubFor(gBrowser.mTabContainer)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(createEventStubFor(gBrowser)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(createEventStubByClass('tabs-newtab-button', gBrowser.mTabContainer)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(createEventStubByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
-	assert.isNull(sv.getTabBrowserFromChild(createEventStubFor(content.document.documentElement)));
-	assert.isNull(sv.getTabBrowserFromChild(createEventStubFor(gBrowser.parentNode)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tab-icon-image', node)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tab-extra-status', node)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tab-icon', node)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tab-text', node)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tab-close-button', node)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(node));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(gBrowser.mTabContainer));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(gBrowser));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tabs-newtab-button', gBrowser.mTabContainer)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
+	assert.isNull(sv.getTabBrowserFromChild(content.document.documentElement));
+	assert.isNull(sv.getTabBrowserFromChild(gBrowser.parentNode));
 
 	// backward compatibility
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(createEventStubByClass('tab-icon-image', node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(createEventStubByClass('tab-extra-status', node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(createEventStubByClass('tab-icon', node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(createEventStubByClass('tab-text', node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(createEventStubByClass('tab-close-button', node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(createEventStubFor(node)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(createEventStubFor(gBrowser.mTabContainer)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(createEventStubFor(gBrowser)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(createEventStubByClass('tabs-newtab-button', gBrowser.mTabContainer)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(createEventStubByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
-	assert.isNull(sv.getTabBrowserFromChildren(createEventStubFor(content.document.documentElement)));
-	assert.isNull(sv.getTabBrowserFromChildren(createEventStubFor(gBrowser.parentNode)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tab-icon-image', node)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tab-extra-status', node)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tab-icon', node)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tab-text', node)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tab-close-button', node)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(node));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(gBrowser.mTabContainer));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(gBrowser));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tabs-newtab-button', gBrowser.mTabContainer)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
+	assert.isNull(sv.getTabBrowserFromChildren(content.document.documentElement));
+	assert.isNull(sv.getTabBrowserFromChildren(gBrowser.parentNode));
 }
 
 function test_getTabs()
@@ -224,4 +156,27 @@ function test_getPreviousTab()
 	assert.isNull(sv.getPreviousTab(gBrowser.mTabContainer));
 }
 
+function test_filterBlankTabs()
+{
+	assert.equals([tabs[1], tabs[2], tabs[3]], sv.filterBlankTabs(tabs));
+}
 
+function test_formatURIStringForClipboard()
+{
+}
+
+function test_calculateDeltaForNewPosition()
+{
+}
+
+function test_isDraggingAllTabs()
+{
+}
+
+function test_setBooleanAttributeToTab()
+{
+}
+
+function test_toggleBooleanAttributeToTab()
+{
+}
