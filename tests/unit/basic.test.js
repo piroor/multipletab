@@ -183,6 +183,7 @@ function test_calculateDeltaForNewPosition()
 
 function test_isDraggingAllTabs()
 {
+	assert.isFalse(sv.isDraggingAllTabs(tabs[0]));
 	tabs[0].setAttribute(sv.kSELECTED, true);
 	tabs[1].setAttribute(sv.kSELECTED, true);
 	tabs[2].setAttribute(sv.kSELECTED, true);
@@ -192,14 +193,29 @@ function test_isDraggingAllTabs()
 	assert.isFalse(sv.isDraggingAllTabs(tabs[0]));
 }
 
+const SS = Cc['@mozilla.org/browser/sessionstore;1'].getService(Ci.nsISessionStore);;
+
 function test_setBooleanAttributeToTab()
 {
 	var tab = tabs[0];
 	var attr = 'test-attribute-'+parseInt(Math.random() * 65000);
+
 	assert.isTrue(sv.setBooleanAttributeToTab(tab, attr, true));
 	assert.equals('true', tab.getAttribute(attr));
+	assert.equals('', SS.getTabValue(tab, attr));
+
 	assert.isFalse(sv.setBooleanAttributeToTab(tab, attr, false));
 	assert.equals('', tab.getAttribute(attr));
+	assert.equals('', SS.getTabValue(tab, attr));
+	assert.isFalse(tab.hasAttribute(attr));
+
+	assert.isTrue(sv.setBooleanAttributeToTab(tab, attr, true, true));
+	assert.equals('true', tab.getAttribute(attr));
+	assert.equals('true', SS.getTabValue(tab, attr));
+
+	assert.isFalse(sv.setBooleanAttributeToTab(tab, attr, false, true));
+	assert.equals('', tab.getAttribute(attr));
+	assert.equals('', SS.getTabValue(tab, attr));
 	assert.isFalse(tab.hasAttribute(attr));
 }
 
@@ -207,10 +223,23 @@ function test_toggleBooleanAttributeToTab()
 {
 	var tab = tabs[0];
 	var attr = 'test-attribute-'+parseInt(Math.random() * 65000);
+
 	assert.isFalse(tab.hasAttribute(attr));
 	assert.isTrue(sv.toggleBooleanAttributeToTab(tab, attr));
 	assert.equals('true', tab.getAttribute(attr));
+	assert.equals('', SS.getTabValue(tab, attr));
+
 	assert.isFalse(sv.toggleBooleanAttributeToTab(tab, attr));
 	assert.equals('', tab.getAttribute(attr));
+	assert.equals('', SS.getTabValue(tab, attr));
+	assert.isFalse(tab.hasAttribute(attr));
+
+	assert.isTrue(sv.toggleBooleanAttributeToTab(tab, attr, true));
+	assert.equals('true', tab.getAttribute(attr));
+	assert.equals('true', SS.getTabValue(tab, attr));
+
+	assert.isFalse(sv.toggleBooleanAttributeToTab(tab, attr, true));
+	assert.equals('', tab.getAttribute(attr));
+	assert.equals('', SS.getTabValue(tab, attr));
 	assert.isFalse(tab.hasAttribute(attr));
 }
