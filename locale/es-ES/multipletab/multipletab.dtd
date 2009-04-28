@@ -1,4 +1,5 @@
 <!ENTITY popup.selection.removeTabs  "Cerrar pestañas seleccionadas">
+<!ENTITY popup.selection.removeOther "Cerrar las otras pestañas">
 <!ENTITY popup.selection.reloadTabs  "Refrescar pestañas seleccionadas">
 <!ENTITY popup.selection.addBookmark "Añadirlas a marcadores en una nueva carpeta">
 <!ENTITY popup.selection.duplicateTabs "Duplicar pestañas seleccionadas">

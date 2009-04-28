@@ -1,4 +1,5 @@
 <!ENTITY popup.selection.removeTabs  "Close Selected Tabs">
+<!ENTITY popup.selection.removeOther "Close Other Tabs">
 <!ENTITY popup.selection.reloadTabs  "Reload Selected Tabs">
 <!ENTITY popup.selection.addBookmark "Bookmark Selected Tabs to New Folder">
 <!ENTITY popup.selection.duplicateTabs "Duplicate Selected Tabs">

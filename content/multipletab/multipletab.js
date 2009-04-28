@@ -1009,6 +1009,9 @@ var MultipleTabService = {
 			selectType[aItem.name] = this.getPref(aItem.key) < 0;
 		}, this);
 
+		var selectedTabs = this.getSelectedTabs(b);
+		var tabbrowser = b;
+		var tabs = this.getTabsArray(b);
 		Array.slice(aPopup.childNodes).forEach(function(aNode, aIndex) {
 			var label;
 			if (
@@ -1030,6 +1033,9 @@ var MultipleTabService = {
 
 			var enabled = aNode.getAttribute(this.kENABLED);
 			if (enabled) {
+				/* tabbrowser
+				   tabs
+				   selectedTabs */
 				eval('enabled = ('+enabled+')');
 				if (!enabled) pref = false;
 			}
@@ -1143,6 +1149,29 @@ var MultipleTabService = {
 
 		removeTabs.forEach(function(aTab) {
 			b.removeTab(aTab);
+		});
+	},
+ 
+	closeOtherTabs : function(aTabs) 
+	{
+		if (!aTabs || !aTabs.length) return;
+
+		aTabs = Array.slice(aTabs);
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		var tabs = this.getTabsArray(b);
+
+		b.__multipletab__closedTabsNum = tabs.length - aTabs.length;
+		if (
+			b.__multipletab__closedTabsNum > 1 &&
+			!b.warnAboutClosingTabs(true)
+			) {
+			b.__multipletab__closedTabsNum = 0;
+			return;
+		}
+		b.__multipletab__closedTabsNum = 0;
+
+		tabs.forEach(function(aTab) {
+			if (aTabs.indexOf(aTab) < 0) b.removeTab(aTab);
 		});
 	},
  

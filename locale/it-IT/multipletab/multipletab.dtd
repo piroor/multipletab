@@ -1,4 +1,5 @@
 <!ENTITY popup.selection.removeTabs  "Chiudi le schede selezionate">
+<!ENTITY popup.selection.removeOther "Chiudi le altre schede">
 <!ENTITY popup.selection.reloadTabs  "Ricarica le schede selezionate">
 <!ENTITY popup.selection.addBookmark "Aggiungi schede selezionate a una nuova cartella nei segnalibri">
 <!ENTITY popup.selection.duplicateTabs "Duplica le schede selezionate">

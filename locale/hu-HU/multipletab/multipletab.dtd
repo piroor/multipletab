@@ -1,4 +1,5 @@
 <!ENTITY popup.selection.removeTabs  "Kiválasztott lapok bezárása">
+<!ENTITY popup.selection.removeOther "Többi böngészőlap bezárása">
 <!ENTITY popup.selection.reloadTabs  "Kiválasztott lapok újratöltése">
 <!ENTITY popup.selection.addBookmark "Kiválasztott lapok könyvjelzőkbe">
 <!ENTITY popup.selection.duplicateTabs "Kiválasztott lapok kettőzése">

@@ -1,4 +1,5 @@
 <!ENTITY popup.selection.removeTabs  "關閉所選分頁">
+<!ENTITY popup.selection.removeOther "關閉其他分頁">
 <!ENTITY popup.selection.reloadTabs  "重新載入所選分頁">
 <!ENTITY popup.selection.addBookmark "所選分頁以新資料夾加入書籤">
 <!ENTITY popup.selection.duplicateTabs "所選分頁新增副本">

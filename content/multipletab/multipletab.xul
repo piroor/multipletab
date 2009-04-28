@@ -43,6 +43,10 @@
 		<menuitem id="multipletab-selection-removeTabs"
 			label="&popup.selection.removeTabs;"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getSelectedTabs());"/>
+		<menuitem id="multipletab-selection-removeOther"
+			label="&popup.selection.removeOther;"
+			oncommand="MultipleTabService.closeOtherTabs(MultipleTabService.getSelectedTabs());"
+			multipletab-enabled="selectedTabs.length &lt; tabs.length"/>
 		<menuseparator id="multipletab-selection-clipboard-separator"/>
 		<menuitem id="multipletab-selection-clipboard"
 			label="&popup.selection.clipboard;"

@@ -1,4 +1,5 @@
 <!ENTITY popup.selection.removeTabs    "すべて閉じる">
+<!ENTITY popup.selection.removeOther   "他をすべて閉じる">
 <!ENTITY popup.selection.reloadTabs    "すべて再読み込み">
 <!ENTITY popup.selection.addBookmark   "フォルダにまとめてブックマーク">
 <!ENTITY popup.selection.duplicateTabs "すべて複製">
