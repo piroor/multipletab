@@ -56,6 +56,10 @@
 <!ENTITY config.saveType.caption "Save mode for tabs">
 <!ENTITY config.saveType.select  "Select from menu">
 
+<!ENTITY config.useEffectiveTLD.caption  "Detecting method for &quot;similar tabs&quot;">
+<!ENTITY config.useEffectiveTLD.enabled  "by Domain (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are similar tabs)">
+<!ENTITY config.useEffectiveTLD.disabled "by Host (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are not similar tabs)">
+
 <!ENTITY config.tabs.contextMenu    "Tab Context Menu">
 <!ENTITY config.contextMenu.caption "Available items of the context menu on tabs">
 <!ENTITY config.contextMenu.removeLeftTabs  "Close Left (Above) Tabs">

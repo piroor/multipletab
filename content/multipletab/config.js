@@ -1,3 +1,8 @@
+const XULAppInfo = Components.classes['@mozilla.org/xre/app-info;1']
+		.getService(Components.interfaces.nsIXULAppInfo);
+const comparator = Components.classes['@mozilla.org/xpcom/version-comparator;1']
+					.getService(Components.interfaces.nsIVersionComparator);
+
 var gAutoPopupItems = [];
 var gDelayItems = [];
 var gDragModeRadio;
@@ -14,6 +19,17 @@ function initGeneralPane()
 	gAutoPopupItems.push(document.getElementById('extensions.multipletab.tabdrag.autoclear-check'));
 
 	onDragModeChange();
+}
+
+function initFeaturesPane()
+{
+	var useEffectiveTLD = document.getElementById('useEffectiveTLD');
+	if (comparator.compare(XULAppInfo.version, '3.0') < 0) {
+		useEffectiveTLD.setAttribute('collapsed', true);
+	}
+	else {
+		useEffectiveTLD.removeAttribute('collapsed');
+	}
 }
 
 function onDragModeChange()

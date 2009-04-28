@@ -87,7 +87,7 @@
 </prefpane>
 
 <prefpane id="prefpane-features" label="&config.tabs.features;"
-	onpaneload="initGeneralPane();">
+	onpaneload="initFeaturesPane();">
 	<preferences>
 		<preference id="extensions.multipletab.clipboard.formatType"
 			name="extensions.multipletab.clipboard.formatType"
@@ -95,54 +95,62 @@
 		<preference id="extensions.multipletab.saveTabs.saveType"
 			name="extensions.multipletab.saveTabs.saveType"
 			type="int"/>
+		<preference id="extensions.multipletab.useEffectiveTLD"
+			name="extensions.multipletab.useEffectiveTLD"
+			type="bool"/>
 	</preferences>
 	<groupbox>
 		<caption label="&config.clopboardFormatType.caption;"/>
-		<vbox>
-			<radiogroup id="extensions.multipletab.clipboard.formatType-radiogroup"
-				preference="extensions.multipletab.clipboard.formatType">
-				<grid>
-					<columns>
-						<column/>
-						<column/>
-					</columns>
-					<rows>
-						<row>
-							<radio value="-1" label="&config.clopboardFormatType.select;"/>
-							<radio value="0" label="&popup.context.clipboard.format.default;"/>
-						</row>
-						<row>
-							<radio value="1" label="&popup.context.clipboard.format.mozurl;"/>
-							<radio value="2" label="&popup.context.clipboard.format.link;"/>
-						</row>
-					</rows>
-				</grid>
-			</radiogroup>
-		</vbox>
+		<radiogroup id="extensions.multipletab.clipboard.formatType-radiogroup"
+			preference="extensions.multipletab.clipboard.formatType">
+			<grid>
+				<columns>
+					<column/>
+					<column/>
+				</columns>
+				<rows>
+					<row>
+						<radio value="-1" label="&config.clopboardFormatType.select;"/>
+						<radio value="0" label="&popup.context.clipboard.format.default;"/>
+					</row>
+					<row>
+						<radio value="1" label="&popup.context.clipboard.format.mozurl;"/>
+						<radio value="2" label="&popup.context.clipboard.format.link;"/>
+					</row>
+				</rows>
+			</grid>
+		</radiogroup>
 	</groupbox>
 	<groupbox>
 		<caption label="&config.saveType.caption;"/>
-		<vbox>
-			<radiogroup id="extensions.multipletab.saveTabs.saveType-radiogroup"
-				preference="extensions.multipletab.saveTabs.saveType">
-				<grid>
-					<columns>
-						<column/>
-						<column/>
-					</columns>
-					<rows>
-						<row>
-							<radio value="-1" label="&config.saveType.select;"/>
-							<radio value="0" label="&popup.context.saveTabs.type.file;"/>
-						</row>
-						<row>
-							<radio value="1" label="&popup.context.saveTabs.type.complete;"/>
-							<radio value="2" label="&popup.context.saveTabs.type.text;"/>
-						</row>
-					</rows>
-				</grid>
-			</radiogroup>
-		</vbox>
+		<radiogroup id="extensions.multipletab.saveTabs.saveType-radiogroup"
+			preference="extensions.multipletab.saveTabs.saveType">
+			<grid>
+				<columns>
+					<column/>
+					<column/>
+				</columns>
+				<rows>
+					<row>
+						<radio value="-1" label="&config.saveType.select;"/>
+						<radio value="0" label="&popup.context.saveTabs.type.file;"/>
+					</row>
+					<row>
+						<radio value="1" label="&popup.context.saveTabs.type.complete;"/>
+						<radio value="2" label="&popup.context.saveTabs.type.text;"/>
+					</row>
+				</rows>
+			</grid>
+		</radiogroup>
+	</groupbox>
+	<groupbox id="useEffectiveTLD">
+		<caption label="&config.useEffectiveTLD.caption;"/>
+		<radiogroup id="extensions.multipletab.useEffectiveTLD-radiogroup"
+			preference="extensions.multipletab.useEffectiveTLD"
+			orient="vertical">
+			<radio value="true" label="&config.useEffectiveTLD.enabled;"/>
+			<radio value="false" label="&config.useEffectiveTLD.disabled;"/>
+		</radiogroup>
 	</groupbox>
 </prefpane>
 

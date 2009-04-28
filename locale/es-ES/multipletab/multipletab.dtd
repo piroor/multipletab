@@ -56,6 +56,10 @@
 <!ENTITY config.saveType.caption "Save mode for tabs">
 <!ENTITY config.saveType.select  "Seleccionar desde un menú">
 
+<!ENTITY config.useEffectiveTLD.caption  "Detecting method for &quot;similar tabs&quot;">
+<!ENTITY config.useEffectiveTLD.enabled  "by Domain (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are similar tabs)">
+<!ENTITY config.useEffectiveTLD.disabled "by Host (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are not similar tabs)">
+
 <!ENTITY config.tabs.contextMenu    "Menú contextual en pestañas">
 <!ENTITY config.contextMenu.caption "Items disponibles en el menú contextual de las pestañas">
 <!ENTITY config.contextMenu.removeLeftTabs  "Cerrar pestañas a la izquierda (Encima)">

@@ -87,30 +87,54 @@ var MultipleTabService = {
 	},
 	_bundle : null,
  
+	get IOService() 
+	{
+		if (!this._IOService) {
+			this._IOService = Components
+					.classes['@mozilla.org/network/io-service;1']
+					.getService(Components.interfaces.nsIIOService);
+		}
+		return this._IOService;
+	},
+	_IOService : null,
+ 
+	get EffectiveTLD() 
+	{
+		if (!('_EffectiveTLD' in this)) {
+			this._EffectiveTLD = 'nsIEffectiveTLDService' in Components.interfaces ?
+				Components
+					.classes['@mozilla.org/network/effective-tld-service;1']
+					.getService(Components.interfaces.nsIEffectiveTLDService) :
+				null ;
+		}
+		return this._EffectiveTLD;
+	},
+//	_EffectiveTLD : null,
+ 
 /* Utilities */ 
 	
 	isEventFiredOnTabIcon : function(aEvent) 
 	{
 		return this.evaluateXPath(
-				'ancestor-or-self::*[@class="tab-icon"]',
+				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-icon ")]',
 				aEvent.originalTarget || aEvent.target,
-				XPathResult.FIRST_ORDERED_NODE_TYPE
-			).singleNodeValue ? true : false ;
+				XPathResult.BOOLEAN_TYPE
+			).booleanValue;
 	},
  
 	isEventFiredOnClickable : function(aEvent) 
 	{
 		return this.evaluateXPath(
 				'ancestor-or-self::*[contains(" button toolbarbutton scrollbar popup menupopup tooltip ", concat(" ", local-name(), " "))]',
-				aEvent.originalTarget,
-				XPathResult.FIRST_ORDERED_NODE_TYPE
-			).singleNodeValue ? true : false ;
+				aEvent.originalTarget || aEvent.target,
+				XPathResult.BOOLEAN_TYPE
+			).booleanValue;
 	},
  
 	getCloseboxFromEvent : function(aEvent) 
 	{
 		return this.evaluateXPath(
-				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-close-button")]',
+				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-close-button ")]',
 				aEvent.originalTarget || aEvent.target,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
@@ -148,7 +172,7 @@ var MultipleTabService = {
 	getSelectedTabs : function(aTabBrowser) 
 	{
 		return this.getArrayFromXPathResult(this.evaluateXPath(
-				'descendant::xul:tab[@'+this.kSELECTED+' = "true"]',
+				'descendant::xul:tab[@'+this.kSELECTED+'="true"]',
 				(aTabBrowser || this.browser).mTabContainer
 			));
 	},
@@ -156,7 +180,7 @@ var MultipleTabService = {
 	getReadyToCloseTabs : function(aTabBrowser) 
 	{
 		return this.getArrayFromXPathResult(this.evaluateXPath(
-				'descendant::xul:tab[@'+this.kREADY_TO_CLOSE+' = "true"]',
+				'descendant::xul:tab[@'+this.kREADY_TO_CLOSE+'="true"]',
 				(aTabBrowser || this.browser).mTabContainer
 			));
 	},
@@ -186,7 +210,7 @@ var MultipleTabService = {
 			aTabs = this.getTabsArray(this.getTabBrowserFromChild(aCurrentTab));
 
 		try {
-			var currentDomain = aCurrentTab.linkedBrowser.currentURI.host;
+			var currentDomain = this.getDomainFromURI(aCurrentTab.linkedBrowser.currentURI);
 		}
 		catch(e) {
 			return resultTabs;
@@ -195,13 +219,43 @@ var MultipleTabService = {
 		Array.slice(aTabs).forEach(function(aTab) {
 			if (aTab == aCurrentTab) return;
 			try {
-				if (aTab.linkedBrowser.currentURI.host == currentDomain)
+				if (this.getDomainFromURI(aTab.linkedBrowser.currentURI) == currentDomain)
 					resultTabs.push(aTab);
 			}
 			catch(e) {
 			}
-		});
+		}, this);
 		return resultTabs;
+	},
+	getDomainFromURI : function(aURI)
+	{
+		if (!aURI) return null;
+		if (!(aURI instanceof Ci.nsIURI)) aURI = this.makeURIFromSpec(aURI);
+		if (this.getPref('extensions.multipletab.useEffectiveTLD') && this.EffectiveTLD) {
+			try {
+				var domain = this.EffectiveTLD.getBaseDomain(aURI, 0);
+				if (domain) return domain;
+			}
+			catch(e) {
+			}
+		}
+		return aURI.host;
+	},
+	makeURIFromSpec : function(aURI) 
+	{
+		var newURI;
+		aURI = aURI || '';
+		if (aURI && String(aURI).indexOf('file:') == 0) {
+			var fileHandler = this.IOService
+						.getProtocolHandler('file')
+						.QueryInterface(Components.interfaces.nsIFileProtocolHandler);
+			var tempLocalFile = fileHandler.getFileFromURLSpec(aURI);
+			newURI = this.IOService.newFileURI(tempLocalFile);
+		}
+		else {
+			newURI = this.IOService.newURI(aURI, null, null);
+		}
+		return newURI;
 	},
  
 	getTabFromEvent : function(aEvent) 

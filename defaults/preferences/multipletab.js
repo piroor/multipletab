@@ -7,6 +7,7 @@ pref("extensions.multipletab.tabdrag.moveMultipleTabs", true);
 // 0 = default, 1 = toggle selection
 pref("extensions.multipletab.tabclick.mode", 1);
 pref("extensions.multipletab.selectionStyle", "auto");
+pref("extensions.multipletab.useEffectiveTLD", true);
 
 pref("extensions.multipletab.show.multipletab-selection-clipboard", true);
 pref("extensions.multipletab.show.multipletab-selection-reloadTabs", true);

@@ -56,6 +56,10 @@
 <!ENTITY config.saveType.caption "Режим сохранения для вкладок">
 <!ENTITY config.saveType.select  "Выбрать из меню">
 
+<!ENTITY config.useEffectiveTLD.caption  "Detecting method for &quot;similar tabs&quot;">
+<!ENTITY config.useEffectiveTLD.enabled  "by Domain (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are similar tabs)">
+<!ENTITY config.useEffectiveTLD.disabled "by Host (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are not similar tabs)">
+
 <!ENTITY config.tabs.contextMenu    "Контекстное меню вкладки">
 <!ENTITY config.contextMenu.caption "Доступные элементы контекстного меню у вкладок">
 <!ENTITY config.contextMenu.removeLeftTabs  "Закрыть вкладки слева (выше)">

@@ -53,6 +53,10 @@
 <!ENTITY config.saveType.caption "Lapok mentésének módja">
 <!ENTITY config.saveType.select  "Kiválasztás menüből">
 
+<!ENTITY config.useEffectiveTLD.caption  "Detecting method for &quot;similar tabs&quot;">
+<!ENTITY config.useEffectiveTLD.enabled  "by Domain (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are similar tabs)">
+<!ENTITY config.useEffectiveTLD.disabled "by Host (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are not similar tabs)">
+
 <!ENTITY config.tabs.selectionMenu    "Kiválasztott lapok">
 <!ENTITY config.selectionMenu.caption "A kiválasztott lapok füleinek helyi menüje:">
 

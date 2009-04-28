@@ -13,7 +13,7 @@
 <!ENTITY popup.context.removeRightTabs.horizontal "右のタブをすべて閉じる">
 <!ENTITY popup.context.removeRightTabs.vertical   "下のタブをすべて閉じる">
 <!ENTITY popup.context.removeAll                  "すべてのタブを閉じる">
-<!ENTITY popup.context.removeSimilar              "他の似たタブをすべて閉じる">
+<!ENTITY popup.context.removeSimilar              "このタブに似たタブをすべて閉じる">
 <!ENTITY popup.context.duplicate                  "タブを複製">
 <!ENTITY popup.context.clipboard                  "URIをコピー">
 <!ENTITY popup.context.clipboardAll               "すべてのタブのURIをコピー">
@@ -56,6 +56,10 @@
 
 <!ENTITY config.saveType.caption "タブをファイルに保存する時の挙動">
 <!ENTITY config.saveType.select  "メニューから選択">
+
+<!ENTITY config.useEffectiveTLD.caption  "似たタブかどうかの判別方法">
+<!ENTITY config.useEffectiveTLD.enabled  "ドメイン名で判別する（aaa.example.comとbbb.example.comを似たタブと見なす）">
+<!ENTITY config.useEffectiveTLD.disabled "ホスト名で判別する（aaa.example.comとbbb.example.comを似ていないタブと見なす）">
 
 <!ENTITY config.tabs.contextMenu    "タブのコンテキストメニュー">
 <!ENTITY config.contextMenu.caption "タブのコンテキストメニューに追加する項目">
