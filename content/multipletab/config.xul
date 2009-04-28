@@ -163,6 +163,9 @@
 		<preference id="extensions.multipletab.show.multipletab-selection-removeTabs"
 			name="extensions.multipletab.show.multipletab-selection-removeTabs"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-removeOther"
+			name="extensions.multipletab.show.multipletab-selection-removeOther"
+			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-selection-clipboard"
 			name="extensions.multipletab.show.multipletab-selection-clipboard"
 			type="bool"/>
@@ -191,6 +194,9 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-removeTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-removeTabs"
 				label="&popup.selection.removeTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-removeOther-check"
+				preference="extensions.multipletab.show.multipletab-selection-removeOther"
+				label="&popup.selection.removeOther;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-clipboard-check"
 				preference="extensions.multipletab.show.multipletab-selection-clipboard"
 				label="&popup.selection.clipboard;"/>
