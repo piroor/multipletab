@@ -163,6 +163,18 @@ function test_filterBlankTabs()
 
 function test_formatURIStringForClipboard()
 {
+	var tab = tabs[3];
+	var uri = tab.linkedBrowser.currentURI.spec;
+	assert.equals(uri, sv.formatURIStringForClipboard(uri, tab));
+	assert.equals(uri, sv.formatURIStringForClipboard(uri, tab, sv.kFORMAT_TYPE_DEFAULT));
+	assert.equals(
+		'テストケース & <sample>\r\n'+uri,
+		sv.formatURIStringForClipboard(uri, tab, sv.kFORMAT_TYPE_MOZ_URL)
+	);
+	assert.equals(
+		'<a href="'+uri.replace(/&/g, '&amp;')+'">テストケース &amp; &lt;sample&gt;</a>',
+		sv.formatURIStringForClipboard(uri, tab, sv.kFORMAT_TYPE_LINK)
+	);
 }
 
 function test_calculateDeltaForNewPosition()
@@ -171,12 +183,34 @@ function test_calculateDeltaForNewPosition()
 
 function test_isDraggingAllTabs()
 {
+	tabs[0].setAttribute(sv.kSELECTED, true);
+	tabs[1].setAttribute(sv.kSELECTED, true);
+	tabs[2].setAttribute(sv.kSELECTED, true);
+	tabs[3].setAttribute(sv.kSELECTED, true);
+	assert.isTrue(sv.isDraggingAllTabs(tabs[0]));
+	tabs[3].setAttribute(sv.kSELECTED, false);
+	assert.isFalse(sv.isDraggingAllTabs(tabs[0]));
 }
 
 function test_setBooleanAttributeToTab()
 {
+	var tab = tabs[0];
+	var attr = 'test-attribute-'+parseInt(Math.random() * 65000);
+	assert.isTrue(sv.setBooleanAttributeToTab(tab, attr, true));
+	assert.equals('true', tab.getAttribute(attr));
+	assert.isFalse(sv.setBooleanAttributeToTab(tab, attr, false));
+	assert.equals('', tab.getAttribute(attr));
+	assert.isFalse(tab.hasAttribute(attr));
 }
 
 function test_toggleBooleanAttributeToTab()
 {
+	var tab = tabs[0];
+	var attr = 'test-attribute-'+parseInt(Math.random() * 65000);
+	assert.isFalse(tab.hasAttribute(attr));
+	assert.isTrue(sv.toggleBooleanAttributeToTab(tab, attr));
+	assert.equals('true', tab.getAttribute(attr));
+	assert.isFalse(sv.toggleBooleanAttributeToTab(tab, attr));
+	assert.equals('', tab.getAttribute(attr));
+	assert.isFalse(tab.hasAttribute(attr));
 }
