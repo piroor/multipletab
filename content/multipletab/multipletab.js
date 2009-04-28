@@ -1475,7 +1475,7 @@ var MultipleTabService = {
 		}
 		state = state.toSource();
 
-		this.clearSelection();
+		this.clearSelection(b);
 
 		SS.setWindowState(window, state, false);
 
@@ -1483,8 +1483,9 @@ var MultipleTabService = {
 		if (selectedIndex > -1)
 			b.selectedTab = tabs[selectedIndex];
 
-		tabs.reverse().forEach(function(aTab) {
+		tabs.reverse().some(function(aTab, aIndex) {
 			this.setSelection(aTab, true);
+			return aIndex == aTabs.length-1;
 		}, this);
 
 		window.setTimeout(function(aSelf) {
