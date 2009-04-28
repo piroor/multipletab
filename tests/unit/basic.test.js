@@ -177,8 +177,58 @@ function test_formatURIStringForClipboard()
 	);
 }
 
+test_calculateDeltaForNewPosition.setUp = function() {
+	yield Do(utils.addTab('about:blank'));
+	yield Do(utils.addTab('about:blank'));
+	yield Do(utils.addTab('about:blank'));
+	yield Do(utils.addTab('about:blank'));
+	tabs = Array.slice(gBrowser.mTabs);
+	assert.equals(8, tabs.length);
+};
 function test_calculateDeltaForNewPosition()
 {
+	// [0], [1], [*2*], [3], [4], 5, 6, 7
+	// => [0], [1], [3], [4], 5, 6, 7, [*2*]
+	// => 5, 6, 7, [0], [1], [*2*], [3], [4]
+	gBrowser.moveTabTo(tabs[2], 7);
+	assert.equals(7, tabs[2]._tPos);
+	assert.equals(
+		[-1, -1, 0, 1],
+		sv.calculateDeltaForNewPosition([tabs[0], tabs[1], tabs[3], tabs[4]], 2, 7)
+	);
+
+	// 0, 1, 2, [3], [4], [*5*], [6], [7]
+	// => [*5*], 0, 1, 2, [3], [4], [6], [7]
+	// => [3], [4], [*5*], [6], [7], 0, 1, 2
+	tabs = Array.slice(gBrowser.mTabs);
+	gBrowser.moveTabTo(tabs[5], 0);
+	assert.equals(0, tabs[5]._tPos);
+	assert.equals(
+		[0, 0, 1, 2],
+		sv.calculateDeltaForNewPosition([tabs[3], tabs[4], tabs[6], tabs[7]], 5, 0)
+	);
+
+	// [0], 1, [*2*], 3, [4], 5, [6], 7
+	// => [0], 1, 3, [4], 5, [*2*], [6], 7
+	// => 1, 3, 5, [0], [*2*], [4], [6], 7
+	tabs = Array.slice(gBrowser.mTabs);
+	gBrowser.moveTabTo(tabs[2], 5);
+	assert.equals(5, tabs[2]._tPos);
+	assert.equals(
+		[-1, 0, 1],
+		sv.calculateDeltaForNewPosition([tabs[0], tabs[4], tabs[6]], 2, 5)
+	);
+
+	// [0], 1, [2], 3, [*4*], 5, [6], 7
+	// => [0], 1, [*4*], [2], 3, 5, [6], 7
+	// => 1, [0], [2], [*4*], [6], 3, 5, 7
+	tabs = Array.slice(gBrowser.mTabs);
+	gBrowser.moveTabTo(tabs[4], 2);
+	assert.equals(2, tabs[4]._tPos);
+	assert.equals(
+		[0, 0, 1],
+		sv.calculateDeltaForNewPosition([tabs[0], tabs[2], tabs[6]], 4, 2)
+	);
 }
 
 function test_isDraggingAllTabs()
