@@ -218,19 +218,20 @@ var MultipleTabService = {
 
 		Array.slice(aTabs).forEach(function(aTab) {
 			if (aTab == aCurrentTab) return;
-			try {
-				if (this.getDomainFromURI(aTab.linkedBrowser.currentURI) == currentDomain)
-					resultTabs.push(aTab);
-			}
-			catch(e) {
-			}
+			if (this.getDomainFromURI(aTab.linkedBrowser.currentURI) == currentDomain)
+				resultTabs.push(aTab);
 		}, this);
 		return resultTabs;
 	},
 	getDomainFromURI : function(aURI)
 	{
 		if (!aURI) return null;
-		if (!(aURI instanceof Ci.nsIURI)) aURI = this.makeURIFromSpec(aURI);
+		try {
+			if (!(aURI instanceof Ci.nsIURI)) aURI = this.makeURIFromSpec(aURI);
+		}
+		catch(e) {
+			return null;
+		}
 		if (this.getPref('extensions.multipletab.useEffectiveTLD') && this.EffectiveTLD) {
 			try {
 				var domain = this.EffectiveTLD.getBaseDomain(aURI, 0);
@@ -239,7 +240,13 @@ var MultipleTabService = {
 			catch(e) {
 			}
 		}
-		return aURI.host;
+		try {
+			var host = aURI.host;
+			return host;
+		}
+		catch(e) {
+		}
+		return null;
 	},
 	makeURIFromSpec : function(aURI) 
 	{

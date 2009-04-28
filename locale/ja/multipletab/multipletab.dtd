@@ -13,7 +13,7 @@
 <!ENTITY popup.context.removeRightTabs.horizontal "右のタブをすべて閉じる">
 <!ENTITY popup.context.removeRightTabs.vertical   "下のタブをすべて閉じる">
 <!ENTITY popup.context.removeAll                  "すべてのタブを閉じる">
-<!ENTITY popup.context.removeSimilar              "このタブに似たタブをすべて閉じる">
+<!ENTITY popup.context.removeSimilar              "他の似たタブをすべて閉じる">
 <!ENTITY popup.context.duplicate                  "タブを複製">
 <!ENTITY popup.context.clipboard                  "URIをコピー">
 <!ENTITY popup.context.clipboardAll               "すべてのタブのURIをコピー">
