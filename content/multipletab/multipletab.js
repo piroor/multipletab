@@ -1910,13 +1910,15 @@ var MultipleTabService = {
 	{
 		var w = aTabOwner.ownerDocument.defaultView;
 		if (!w) return;
-		if ('SplitBrowser' in w &&
-			'getSubBrowserFromChild' in w.SplitBrowser) {
-			var subbrowser = w.SplitBrowser.getSubBrowserFromChild(aTabOwner);
-			if (subbrowser) {
-				subbrowser.close();
-				return;
+		if ('SplitBrowser' in w) {
+			if ('getSubBrowserFromChild' in w.SplitBrowser) {
+				var subbrowser = w.SplitBrowser.getSubBrowserFromChild(aTabOwner);
+				if (subbrowser) {
+					subbrowser.close();
+					return;
+				}
 			}
+			if (w.SplitBrowser.browsers.length) return;
 		}
 		w.close();
 	},
