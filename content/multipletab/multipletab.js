@@ -1483,6 +1483,10 @@ var MultipleTabService = {
 		if (selectedIndex > -1)
 			b.selectedTab = tabs[selectedIndex];
 
+		aTabs.forEach(function(aTab) {
+			this.setSelection(aTab, false);
+		}, this);
+
 		tabs.reverse().some(function(aTab, aIndex) {
 			this.setSelection(aTab, true);
 			return aIndex == aTabs.length-1;
@@ -1959,6 +1963,7 @@ var MultipleTabService = {
 				if (isMove) sourceBrowser.removeTab(aTab);
 
 				self.setSelection(newTab, true);
+				sourceService.setSelection(aTab, false);
 			});
 
 			if (shouldClose) self.closeOwner(sourceBrowser);
