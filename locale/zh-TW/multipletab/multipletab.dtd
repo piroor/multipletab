@@ -13,7 +13,7 @@
 <!ENTITY popup.context.removeRightTabs.horizontal "關閉右側所有分頁">
 <!ENTITY popup.context.removeRightTabs.vertical   "關閉下方所有分頁">
 <!ENTITY popup.context.removeAll                  "關閉所有分頁">
-<!ENTITY popup.context.removeSimilar              "關閉相同分頁">
+<!ENTITY popup.context.removeSimilar              "關閉同類其他分頁">
 <!ENTITY popup.context.duplicate                  "分頁新增副本">
 <!ENTITY popup.context.clipboard                  "複製 URI">
 <!ENTITY popup.context.clipboardAll               "複製所有分頁的URI">
@@ -56,9 +56,9 @@
 <!ENTITY config.saveType.caption "分頁存檔方式">
 <!ENTITY config.saveType.select  "從選單選取">
 
-<!ENTITY config.useEffectiveTLD.caption  "Detecting method for &quot;similar tabs&quot;">
-<!ENTITY config.useEffectiveTLD.enabled  "by Domain (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are similar tabs)">
-<!ENTITY config.useEffectiveTLD.disabled "by Host (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are not similar tabs)">
+<!ENTITY config.useEffectiveTLD.caption  "「同類其他分頁」定義依據">
+<!ENTITY config.useEffectiveTLD.enabled  "依據網域(&quot;aaa.example.com&quot; 與 &quot;bbb.example.com&quot; 視為同類)">
+<!ENTITY config.useEffectiveTLD.disabled "依據主機(&quot;aaa.example.com&quot; 與 &quot;bbb.example.com&quot; 不算同類)">
 
 <!ENTITY config.tabs.contextMenu    "分頁右鍵選單">
 <!ENTITY config.contextMenu.caption "分頁右鍵選單可選項目">
