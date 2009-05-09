@@ -28,6 +28,8 @@ var MultipleTabService = {
 		{ name : 'saveTabs',
 		  key  : 'extensions.multipletab.saveTabs.saveType' }
 	],
+
+	lineFeed : '\r\n',
 	
 	NSResolver : { 
 		lookupNamespaceURI : function(aPrefix)
@@ -420,6 +422,7 @@ var MultipleTabService = {
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabdrag.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.selectionStyle');
+		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.linefeed');
 
 /*
 		if ('nsDragAndDrop' in window &&
@@ -1761,7 +1764,7 @@ var MultipleTabService = {
 			});
 		if (stringToCopy.length > 1)
 			stringToCopy.push('');
-		clipboard.copyString(stringToCopy.join('\r\n'));
+		clipboard.copyString(stringToCopy.join(this.lineFeed));
 	},
 	
 	kFORMAT_TYPE_DEFAULT : 0, 
@@ -1779,7 +1782,7 @@ var MultipleTabService = {
 
 			case this.kFORMAT_TYPE_MOZ_URL:
 				return (aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label'))+
-					'\r\n'+aURI;
+					this.lineFeed+aURI;
 
 			case this.kFORMAT_TYPE_LINK:
 				return [
@@ -2138,6 +2141,10 @@ var MultipleTabService = {
 							'color' ;
 				}
 				document.documentElement.setAttribute(this.kSELECTION_STYLE, value);
+				break;
+
+			case 'extensions.multipletab.clipboard.linefeed':
+				this.lineFeed = value;
 				break;
 
 			default:
