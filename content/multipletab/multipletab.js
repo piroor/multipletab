@@ -496,9 +496,6 @@ var MultipleTabService = {
 			aTabBrowser.warnAboutClosingTabs.toSource().replace(
 				'var numTabs = ',
 				'var numTabs = this.__multipletab__closedTabsNum || '
-			).replace(
-				'--tabsToClose',
-				'if (numTabs == this.mTabs.length) { $&; }'
 			)
 		);
 
