@@ -160,6 +160,9 @@ var MultipleTabService = {
  
 	getArrayFromXPathResult : function(aXPathResult) 
 	{
+		if (!(aXPathResult instanceof Components.interfaces.nsIDOMXPathResult)) {
+			aXPathResult = this.evaluateXPath.apply(this, arguments);
+		}
 		var max = aXPathResult.snapshotLength;
 		var array = new Array(max);
 		if (!max) return array;
@@ -174,34 +177,34 @@ var MultipleTabService = {
  
 	getSelectedTabs : function(aTabBrowser) 
 	{
-		return this.getArrayFromXPathResult(this.evaluateXPath(
+		return this.getArrayFromXPathResult(
 				'descendant::xul:tab[@'+this.kSELECTED+'="true"]',
 				(aTabBrowser || this.browser).mTabContainer
-			));
+			);
 	},
  
 	getReadyToCloseTabs : function(aTabBrowser) 
 	{
-		return this.getArrayFromXPathResult(this.evaluateXPath(
+		return this.getArrayFromXPathResult(
 				'descendant::xul:tab[@'+this.kREADY_TO_CLOSE+'="true"]',
 				(aTabBrowser || this.browser).mTabContainer
-			));
+			);
 	},
  
 	getLeftTabsOf : function(aTab) 
 	{
-		return this.getArrayFromXPathResult(this.evaluateXPath(
+		return this.getArrayFromXPathResult(
 				'preceding-sibling::xul:tab',
 				aTab
-			));
+			);
 	},
  
 	getRightTabsOf : function(aTab) 
 	{
-		return this.getArrayFromXPathResult(this.evaluateXPath(
+		return this.getArrayFromXPathResult(
 				'following-sibling::xul:tab',
 				aTab
-			));
+			);
 	},
  
 	getSimilarTabsOf : function(aCurrentTab, aTabs) 
@@ -598,37 +601,35 @@ var MultipleTabService = {
 		var suffix = '-tabbrowser-'+(aTabBrowser.id || 'instance-'+parseInt(Math.random() * 65000));
 		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		var template = document.getElementById(this.kCONTEXT_MENU_TEMPLATE);
-		var items = template.childNodes;
-		for (var i = 0, maxi = items.length; i < maxi; i++)
-		{
-			let item = items[i].cloneNode(true);
-			if (item.getAttribute('id'))
-				item.setAttribute('id', item.getAttribute('id')+suffix);
+		this.getArrayFromXPathResult('child::*[starts-with(@id, "multipletab-context-")]', template)
+			.concat(this.getArrayFromXPathResult('child::*[not(@id) or not(starts-with(@id, "multipletab-context-"))]', template))
+			.forEach(function(aItem) {
+				let item = aItem.cloneNode(true);
+				if (item.getAttribute('id'))
+					item.setAttribute('id', item.getAttribute('id')+suffix);
 
-			let refNode = void(0);
+				let refNode = void(0);
 
-			let insertAfter = item.getAttribute(this.kINSERT_AFTER);
-			if (insertAfter) {
-				try {
-					eval('refNode = ('+insertAfter+').nextSibling');
+				let insertAfter = item.getAttribute(this.kINSERT_AFTER);
+				if (insertAfter) {
+					try {
+						eval('refNode = ('+insertAfter+').nextSibling');
+					}
+					catch(e) {
+					}
 				}
-				catch(e) {
-					Application.console.log(e);
-				}
-			}
 
-			let insertBefore = item.getAttribute(this.kINSERT_BEFORE);
-			if (refNode === void(0) && insertBefore) {
-				try {
-					eval('refNode = '+insertBefore);
+				let insertBefore = item.getAttribute(this.kINSERT_BEFORE);
+				if (refNode === void(0) && insertBefore) {
+					try {
+						eval('refNode = '+insertBefore);
+					}
+					catch(e) {
+					}
 				}
-				catch(e) {
-					Application.console.log(e);
-				}
-			}
 
-			tabContextMenu.insertBefore(item, refNode || null);
-		}
+				tabContextMenu.insertBefore(item, refNode || null);
+			}, this);
 
 		tabContextMenu.addEventListener('popupshowing', this, false);
 	},
