@@ -14,6 +14,7 @@ var MultipleTabService = {
 	kSELECTED        : 'multipletab-selected',
 	kSELECTED_DUPLICATING : 'multipletab-selected-duplicating',
 	kREADY_TO_CLOSE  : 'multipletab-ready-to-close',
+	kINSERT_AFTER    : 'multipletab-insertafter',
 	kINSERT_BEFORE   : 'multipletab-insertbefore',
 	kENABLED         : 'multipletab-enabled',
 
@@ -598,22 +599,35 @@ var MultipleTabService = {
 		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		var template = document.getElementById(this.kCONTEXT_MENU_TEMPLATE);
 		var items = template.childNodes;
-		var item;
-		var refNode;
 		for (var i = 0, maxi = items.length; i < maxi; i++)
 		{
-			item = items[i].cloneNode(true);
+			let item = items[i].cloneNode(true);
 			if (item.getAttribute('id'))
 				item.setAttribute('id', item.getAttribute('id')+suffix);
 
-			try {
-				eval('refNode = '+item.getAttribute(this.kINSERT_BEFORE));
-			}
-			catch(e) {
-				refNode = null;
+			let refNode = void(0);
+
+			let insertAfter = item.getAttribute(this.kINSERT_AFTER);
+			if (insertAfter) {
+				try {
+					eval('refNode = ('+insertAfter+').nextSibling');
+				}
+				catch(e) {
+					Application.console.log(e);
+				}
 			}
 
-			tabContextMenu.insertBefore(item, refNode);
+			let insertBefore = item.getAttribute(this.kINSERT_BEFORE);
+			if (refNode === void(0) && insertBefore) {
+				try {
+					eval('refNode = '+insertBefore);
+				}
+				catch(e) {
+					Application.console.log(e);
+				}
+			}
+
+			tabContextMenu.insertBefore(item, refNode || null);
 		}
 
 		tabContextMenu.addEventListener('popupshowing', this, false);

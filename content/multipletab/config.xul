@@ -208,10 +208,10 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-clipboard-check"
 				preference="extensions.multipletab.show.multipletab-selection-clipboard"
 				label="&popup.selection.clipboard;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-selection-clipboard-saveTabs"
+			<checkbox id="extensions.multipletab.show.multipletab-selection-saveTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-saveTabs"
 				label="&popup.selection.saveTabs;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-selection-clipboard-printTabs"
+			<checkbox id="extensions.multipletab.show.multipletab-selection-printTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-printTabs"
 				label="&popup.selection.printTabs;"/>
 		</vbox>
@@ -248,30 +248,33 @@
 	<groupbox flex="1">
 		<caption label="&config.contextMenu.caption;"/>
 		<vbox id="prefpane-context-menu-items" flex="1">
-			<checkbox id="extensions.multipletab.show.multipletab-context-duplicate"
+			<checkbox id="extensions.multipletab.show.multipletab-context-duplicate-check"
 				preference="extensions.multipletab.show.multipletab-context-duplicate"
 				label="&popup.context.duplicate;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-context-removeAll"
-				preference="extensions.multipletab.show.multipletab-context-removeAll"
-				label="&popup.context.removeAll;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-context-removeSimilar"
+			<separator id="multipletab-context-separator-removeSimilar"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-removeSimilar-check"
 				preference="extensions.multipletab.show.multipletab-context-removeSimilar"
 				label="&popup.context.removeSimilar;"/>
+			<separator id="multipletab-context-separator-copyAndSave"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-clipboard-check"
+				preference="extensions.multipletab.show.multipletab-context-clipboard"
+				label="&popup.context.clipboard;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-clipboardAll-check"
+				preference="extensions.multipletab.show.multipletab-context-clipboardAll"
+				label="&popup.context.clipboardAll;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-saveTabs-check"
+				preference="extensions.multipletab.show.multipletab-context-saveTabs"
+				label="&popup.context.saveTabs;"/>
+			<separator id="multipletab-context-separator-removeTabs"/>
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeLeftTabs-check"
 				preference="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 				label="&config.contextMenu.removeLeftTabs;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-context-removeRightTabs"
+			<checkbox id="extensions.multipletab.show.multipletab-context-removeRightTabs-check"
 				preference="extensions.multipletab.show.multipletab-context-removeRightTabs"
 				label="&config.contextMenu.removeRightTabs;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-context-clipboard"
-				preference="extensions.multipletab.show.multipletab-context-clipboard"
-				label="&popup.context.clipboard;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-context-clipboardAll"
-				preference="extensions.multipletab.show.multipletab-context-clipboardAll"
-				label="&popup.context.clipboardAll;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-context-saveTabs"
-				preference="extensions.multipletab.show.multipletab-context-saveTabs"
-				label="&popup.context.saveTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-removeAll-check"
+				preference="extensions.multipletab.show.multipletab-context-removeAll"
+				label="&popup.context.removeAll;"/>
 		</vbox>
 	</groupbox>
 </prefpane>
