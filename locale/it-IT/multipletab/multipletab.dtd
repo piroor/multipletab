@@ -65,3 +65,8 @@
 <!ENTITY config.contextMenu.removeLeftTabs  "Chiudi schede a sinistra (sopra)">
 <!ENTITY config.contextMenu.removeRightTabs "Chiudi schede a destra (sotto)">
 
+
+
+<!ENTITY config.menuEditor.description "You can customize this menu by Menu Editor.">
+<!ENTITY config.menuEditor.link        "Download Menu Editor">
+<!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">

@@ -18,6 +18,7 @@
 	<stringbundle id="multipletab-bundle" src="chrome://multipletab/locale/multipletab.properties"/>
 
 	<menupopup id="multipletab-selection-menu"
+		label="&config.tabs.selectionMenu;"
 		oncommand="this.hidePopup();"
 		onpopupshowing="MultipleTabService.showHideMenuItems(this);"
 		onpopuphidden="

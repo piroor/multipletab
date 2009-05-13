@@ -65,3 +65,8 @@
 <!ENTITY config.contextMenu.removeLeftTabs  "Cerrar pestañas a la izquierda (Encima)">
 <!ENTITY config.contextMenu.removeRightTabs "Cerrar pestañas a la derecha (Debajo)">
 
+
+
+<!ENTITY config.menuEditor.description "You can customize this menu by Menu Editor.">
+<!ENTITY config.menuEditor.link        "Download Menu Editor">
+<!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">

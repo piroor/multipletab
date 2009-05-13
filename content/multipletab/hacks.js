@@ -17,6 +17,17 @@ MultipleTabService.overrideExtensionsOnPreInit = function() {
 		});
 	}
 
+	// Menu Editor
+	if ('MenuEdit' in window &&
+		'getEditableMenus' in MenuEdit) {
+		eval('MenuEdit.getEditableMenus = '+
+			MenuEdit.getEditableMenus.toSource().replace(
+				/return menus;/g,
+				'menus["multipletab-selection-menu"] = MultipleTabService.tabSelectionPopup.getAttribute("label"); $&'
+			)
+		);
+	}
+
 };
 
 MultipleTabService.overrideExtensionsOnInit = function() {

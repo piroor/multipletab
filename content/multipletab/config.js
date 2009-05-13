@@ -3,9 +3,44 @@ const XULAppInfo = Components.classes['@mozilla.org/xre/app-info;1']
 const comparator = Components.classes['@mozilla.org/xpcom/version-comparator;1']
 					.getService(Components.interfaces.nsIVersionComparator);
 
+const MENU_EDITOR_ID = '{EDA7B1D7-F793-4e03-B074-E6F303317FB0}';
+
 var gAutoPopupItems = [];
 var gDelayItems = [];
 var gDragModeRadio;
+
+function init()
+{
+	var installed = window['piro.sakura.ne.jp'].extensions.isInstalled(MENU_EDITOR_ID);
+	var enabled = window['piro.sakura.ne.jp'].extensions.isEnabled(MENU_EDITOR_ID);
+
+	[
+		document.getElementById('menuEditorLink-selection'),
+		document.getElementById('menuEditorLink-context')
+	].forEach(function(aItem) {
+		if (installed)
+			aItem.setAttribute('collapsed', true);
+		else
+			aItem.removeAttribute('collapsed');
+	});
+
+	[
+		document.getElementById('menuEditorConfig-selection'),
+		document.getElementById('menuEditorConfig-context')
+	].forEach(function(aItem) {
+		if (installed)
+			aItem.removeAttribute('collapsed');
+		else
+			aItem.setAttribute('collapsed', true);
+		if (enabled)
+			aItem.removeAttribute('disabled');
+		else
+			aItem.setAttribute('disabled', true);
+	});
+
+
+	sizeToContent();
+}
 
 function initGeneralPane()
 {
@@ -46,4 +81,9 @@ function onDragModeChange()
 		else
 			aItem.setAttribute('disabled', true);
 	});
+}
+
+function openMenuEditorConfig()
+{
+	window['piro.sakura.ne.jp'].extensions.goToOptions(MENU_EDITOR_ID);
 }

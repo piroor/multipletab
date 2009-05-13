@@ -11,7 +11,7 @@
 <prefwindow id="multipletab-config"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	title="&config.title;"
-	onload="sizeToContent();">
+	onload="init();">
 
 <prefpane id="prefpane-general" label="&config.tabs.general;"
 	onpaneload="initGeneralPane();">
@@ -216,6 +216,19 @@
 				label="&popup.selection.printTabs;"/>
 		</vbox>
 	</groupbox>
+	<vbox>
+		<description flex="1">&config.menuEditor.description;</description>
+		<hbox>
+			<label id="menuEditorLink-selection"
+				class="text-link"
+				value="&config.menuEditor.link;"
+				uri="https://addons.mozilla.org/firefox/addon/710"
+				onclick="openURL(this.getAttribute('uri'))"/>
+			<button id="menuEditorConfig-selection"
+				label="&config.menuEditor.config;"
+				oncommand="openMenuEditorConfig()"/>
+		</hbox>
+	</vbox>
 </prefpane>
 
 <prefpane id="prefpane-context-menu" label="&config.tabs.contextMenu;">
@@ -277,8 +290,23 @@
 				label="&popup.context.removeAll;"/>
 		</vbox>
 	</groupbox>
+	<vbox>
+		<description flex="1">&config.menuEditor.description;</description>
+		<hbox>
+			<label id="menuEditorLink-context"
+				class="text-link"
+				value="&config.menuEditor.link;"
+				uri="https://addons.mozilla.org/firefox/addon/710"
+				onclick="openURL(this.getAttribute('uri'))"/>
+			<button id="menuEditorConfig-context"
+				label="&config.menuEditor.config;"
+				oncommand="openMenuEditorConfig()"/>
+		</hbox>
+	</vbox>
 </prefpane>
 
+<script src="chrome://global/content/contentAreaUtils.js" type="application/x-javascript"/>
+<script src="extensions.js" type="application/x-javascript"/>
 <script src="config.js" type="application/x-javascript"/>
 
 </prefwindow>

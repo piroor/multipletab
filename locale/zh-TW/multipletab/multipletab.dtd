@@ -65,3 +65,8 @@
 <!ENTITY config.contextMenu.removeLeftTabs  "關閉左側(上方)分頁">
 <!ENTITY config.contextMenu.removeRightTabs "關閉右側(下方)分頁">
 
+
+
+<!ENTITY config.menuEditor.description "You can customize this menu by Menu Editor.">
+<!ENTITY config.menuEditor.link        "Download Menu Editor">
+<!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">
