@@ -613,7 +613,17 @@ var MultipleTabService = {
 				let insertAfter = item.getAttribute(this.kINSERT_AFTER);
 				if (insertAfter) {
 					try {
-						eval('refNode = ('+insertAfter+').nextSibling');
+						if (/^xpath:/i.test(insertAfter)) {
+							refNode = this.evaluateXPath(
+									insertAfter.replace(/^xpath:\s*/i, ''),
+									tabContextMenu,
+									XPathResult.FIRST_ORDERED_NODE_TYPE
+								).singleNodeValue;
+							if (refNode) refNode = refNode.nextSibling;
+						}
+						else {
+							eval('refNode = ('+insertAfter+').nextSibling');
+						}
 					}
 					catch(e) {
 					}
@@ -622,7 +632,16 @@ var MultipleTabService = {
 				let insertBefore = item.getAttribute(this.kINSERT_BEFORE);
 				if (refNode === void(0) && insertBefore) {
 					try {
-						eval('refNode = '+insertBefore);
+						if (/^xpath:/i.test(insertBefore)) {
+							refNode = this.evaluateXPath(
+									insertBefore.replace(/^xpath:\s*/i, ''),
+									tabContextMenu,
+									XPathResult.FIRST_ORDERED_NODE_TYPE
+								).singleNodeValue;
+						}
+						else {
+							eval('refNode = '+insertBefore);
+						}
 					}
 					catch(e) {
 					}

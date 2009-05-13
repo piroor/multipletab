@@ -95,57 +95,41 @@
 		<menuitem id="multipletab-context-duplicate"
 			label="&popup.context.duplicate;"
 			oncommand="MultipleTabService.duplicateTabs([MultipleTabService.getTabBrowserFromChild(this).mContextTab]);"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'context_newTab')][1] | child::xul:menuitem[1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"/>
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'context_newTab')][1] | child::xul:menuitem[1]"/>
 
 		<menuitem id="multipletab-context-removeSimilar"
 			label="&popup.context.removeSimilar;"
 			tbattr="tabbrowser-multiple"
 			oncommand="MultipleTabService.closeSimilarTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab);"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'context_closeOtherTabs')][1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"/>
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'context_closeOtherTabs')][1]"/>
 
 		<menuseparator id="multipletab-context-separator-removeTabs"
 			tbattr="tabbrowser-multiple"
-			multipletab-insertbefore="MultipleTabService.evaluateXPath(
-				&quot;(descendant::*[starts-with(@id, 'context_closeTab')][1] | child::xul:menuitem[last()])/preceding-sibling::xul:menuseparator[1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"/>
+			multipletab-insertbefore="XPath: descendant::*[starts-with(@id, 'context_closeTab')][1] | child::xul:menuitem[last()])/preceding-sibling::xul:menuseparator[1]"/>
 		<menuitem id="multipletab-context-removeLeftTabs"
 			label-horizontal="&popup.context.removeLeftTabs.horizontal;"
 			label-vertical="&popup.context.removeLeftTabs.vertical;"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getLeftTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab));"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'multipletab-context-separator-removeTabs')][1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"/>
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-separator-removeTabs')][1]"/>
 		<menuitem id="multipletab-context-removeRightTabs"
 			label-horizontal="&popup.context.removeRightTabs.horizontal;"
 			label-vertical="&popup.context.removeRightTabs.vertical;"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getRightTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab));"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'multipletab-context-removeLeftTabs')][1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"/>
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-removeLeftTabs')][1]"/>
 		<menuitem id="multipletab-context-removeAll"
 			label="&popup.context.removeAll;"
 			tbattr="tabbrowser-multiple"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)));"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'multipletab-context-removeRightTabs')][1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"/>
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-removeRightTabs')][1]"/>
 
 		<menuitem id="multipletab-context-clipboard"
 			label="&popup.context.clipboard;"
 			oncommand="MultipleTabService.copyURIsToClipboard([MultipleTabService.getTabBrowserFromChild(this).mContextTab]);"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'context_bookmarkAllTabs')][1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"/>
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'context_bookmarkAllTabs')][1]"/>
 		<menu id="multipletab-context-clipboard:select"
 			label="&popup.context.clipboard;"
 			oncommand="MultipleTabService.copyURIsToClipboard([MultipleTabService.getTabBrowserFromChild(this).mContextTab], Number(event.target.getAttribute('formatType')));"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'multipletab-context-clipboard')][1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue">
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-clipboard')][1]">
 			<menupopup>
 				<menuitem label="&popup.context.clipboard.format.default;"
 					formatType="0"/>
@@ -158,16 +142,12 @@
 		<menuitem id="multipletab-context-clipboardAll"
 			label="&popup.context.clipboardAll;"
 			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)));"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'multipletab-context-clipboard:select')][1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-clipboard:select')][1]"
 			tbattr="tabbrowser-multiple"/>
 		<menu id="multipletab-context-clipboardAll:select"
 			label="&popup.context.clipboardAll;"
 			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)), Number(event.target.getAttribute('formatType')));"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'multipletab-context-clipboardAll')][1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-clipboardAll')][1]"
 			tbattr="tabbrowser-multiple">
 			<menupopup>
 				<menuitem label="&popup.context.clipboard.format.default;"
@@ -181,16 +161,12 @@
 		<menuitem id="multipletab-context-saveTabs"
 			label="&popup.context.saveTabs;"
 			oncommand="MultipleTabService.saveTabs([MultipleTabService.getTabBrowserFromChild(this).mContextTab]);"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'multipletab-context-clipboardAll:select')][1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-clipboardAll:select')][1]"
 			tbattr="tabbrowser-multiple"/>
 		<menu id="multipletab-context-saveTabs:select"
 			label="&popup.context.saveTabs;"
 			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('saveType')));"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'multipletab-context-saveTabs')][1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-saveTabs')][1]"
 			tbattr="tabbrowser-multiple">
 			<menupopup>
 				<menuitem label="&popup.context.saveTabs.type.file;"
@@ -202,9 +178,7 @@
 			</menupopup>
 		</menu>
 		<menuseparator id="multipletab-context-separator-clipboard"
-			multipletab-insertafter="MultipleTabService.evaluateXPath(
-				&quot;descendant::*[starts-with(@id, 'multipletab-context-saveTabs:select')][1]&quot;
-			, tabContextMenu, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue"
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-saveTabs:select')][1]"
 			tbattr="tabbrowser-multiple"/>
 
 	</menupopup>
