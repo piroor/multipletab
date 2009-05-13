@@ -613,9 +613,9 @@ var MultipleTabService = {
 				let insertAfter = item.getAttribute(this.kINSERT_AFTER);
 				if (insertAfter) {
 					try {
-						if (/^xpath:/i.test(insertAfter)) {
+						if (/^\s*xpath:/i.test(insertAfter)) {
 							refNode = this.evaluateXPath(
-									insertAfter.replace(/^xpath:\s*/i, ''),
+									insertAfter.replace(/^\s*xpath:\s*/i, ''),
 									tabContextMenu,
 									XPathResult.FIRST_ORDERED_NODE_TYPE
 								).singleNodeValue;
@@ -632,9 +632,9 @@ var MultipleTabService = {
 				let insertBefore = item.getAttribute(this.kINSERT_BEFORE);
 				if (refNode === void(0) && insertBefore) {
 					try {
-						if (/^xpath:/i.test(insertBefore)) {
+						if (/^\s*xpath:/i.test(insertBefore)) {
 							refNode = this.evaluateXPath(
-									insertBefore.replace(/^xpath:\s*/i, ''),
+									insertBefore.replace(/^\s*xpath:\s*/i, ''),
 									tabContextMenu,
 									XPathResult.FIRST_ORDERED_NODE_TYPE
 								).singleNodeValue;
