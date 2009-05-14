@@ -53,9 +53,9 @@
 <!ENTITY config.saveType.caption "Lapok mentésének módja">
 <!ENTITY config.saveType.select  "Kiválasztás menüből">
 
-<!ENTITY config.useEffectiveTLD.caption  "Detecting method for &quot;similar tabs&quot;">
-<!ENTITY config.useEffectiveTLD.enabled  "by Domain (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are similar tabs)">
-<!ENTITY config.useEffectiveTLD.disabled "by Host (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are not similar tabs)">
+<!ENTITY config.useEffectiveTLD.caption  "&quot;Hasonló lapok&quot; felismerése">
+<!ENTITY config.useEffectiveTLD.enabled  "Tartomány alapján (&quot;aaa.pelda.com&quot; és &quot;bbb.pelda.com&quot; hasonló lapok)">
+<!ENTITY config.useEffectiveTLD.disabled "Kiszolgáló alapján (&quot;aaa.pelda.com&quot; és &quot;bbb.pelda.com&quot; nem hasonló lapok)">
 
 <!ENTITY config.tabs.selectionMenu    "Kiválasztott lapok">
 <!ENTITY config.selectionMenu.caption "A kiválasztott lapok füleinek helyi menüje:">
@@ -67,6 +67,6 @@
 
 
 
-<!ENTITY config.menuEditor.description "You can customize this menu by Menu Editor.">
-<!ENTITY config.menuEditor.link        "Download Menu Editor">
-<!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">
+<!ENTITY config.menuEditor.description "A menü a Menu Editor segítségével testreszabható.">
+<!ENTITY config.menuEditor.link        "Menu Editor letöltése">
+<!ENTITY config.menuEditor.config      "Menu Editor beállítások">
