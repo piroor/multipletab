@@ -10,12 +10,13 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
          xmlns:html="http://www.w3.org/1999/xhtml">
 
-<script src="autoScroll.js" type="application/x-javascript"/>
-<script src="multipletab.js" type="application/x-javascript"/>
-<script src="hacks.js" type="application/x-javascript"/>
+<script src="autoScroll.js" type="application/x-javascript; version=1.7"/>
+<script src="multipletab.js" type="application/x-javascript; version=1.7"/>
+<script src="hacks.js" type="application/x-javascript; version=1.7"/>
 
 <popupset id="mainPopupSet">
 	<stringbundle id="multipletab-bundle" src="chrome://multipletab/locale/multipletab.properties"/>
+	<stringbundle id="multipletab-tabbrowserBundle" src="chrome://browser/locale/tabbrowser.properties"/>
 
 	<menupopup id="multipletab-selection-menu"
 		label="&config.tabs.selectionMenu;"

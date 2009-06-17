@@ -102,20 +102,4 @@ MultipleTabService.overrideExtensionsOnInit = function() {
 };
 
 MultipleTabService.overrideExtensionsOnDelayedInit = function() {
-
-	if ('SessionFix' in window) {
-		eval('gBrowser.warnAboutClosingTabs = '+
-			gBrowser.warnAboutClosingTabs.toSource().replace(
-				'{',
-				'{ var sessionKey = document.getElementById("sessionfix-bundle").getString("sessionKey"); '
-			).replace(
-				'var numTabs = ',
-				'var numTabs = this.__multipletab__closedTabsNum || '
-			).replace(
-				'if (numWindows > 1)',
-				'if (numWindows > 1 || this.__multipletab__closedTabsNum)'
-			)
-		);
-	}
-
 };

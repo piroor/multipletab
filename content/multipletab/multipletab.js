@@ -90,6 +90,14 @@ var MultipleTabService = {
 	},
 	_bundle : null,
  
+	get tabbrowserBundle() { 
+		if (!this._tabbrowserBundle) {
+			this._tabbrowserBundle = document.getElementById('multipletab-tabbrowserBundle');
+		}
+		return this._tabbrowserBundle;
+	},
+	_tabbrowserBundle : null,
+ 
 	get IOService() 
 	{
 		if (!this._IOService) {
@@ -151,6 +159,33 @@ var MultipleTabService = {
 	isDisabled : function() 
 	{
 		return (document.getElementById('cmd_CustomizeToolbars').getAttribute('disabled') == 'true');
+	},
+ 
+	warnAboutClosingTabs : function(aTabsCount)
+	{
+		if (
+			aTabsCount <= 1 ||
+			this.getPref('browser.tabs.warnOnClose')
+			)
+			return true;
+		var promptService = Components
+							.classes['@mozilla.org/embedcomp/prompt-service;1']
+							.getService(Components.interfaces.nsIPromptService);
+		var checked = { value:true };
+		window.focus();
+		var shouldClose = promptService.confirmEx(window,
+				this.tabbrowserBundle.getString('tabs.closeWarningTitle'),
+				this.tabbrowserBundle.getFormattedString('tabs.closeWarningMultipleTabs', [aTabsCount]),
+				(promptService.BUTTON_TITLE_IS_STRING * promptService.BUTTON_POS_0) +
+				(promptService.BUTTON_TITLE_CANCEL * promptService.BUTTON_POS_1),
+				this.tabbrowserBundle.getString('tabs.closeButtonMultiple'),
+				null, null,
+				this.tabbrowserBundle.getString('tabs.closeWarningPromptMe'),
+				checked
+			) == 0;
+		if (shouldClose && !checked.value)
+			this.setPref('browser.tabs.warnOnClose', false);
+		return shouldClose;
 	},
  
 	get browser() 
@@ -494,14 +529,6 @@ var MultipleTabService = {
 		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousemove',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousedown',   this, true);
-
-		eval(
-			'aTabBrowser.warnAboutClosingTabs = '+
-			aTabBrowser.warnAboutClosingTabs.toSource().replace(
-				'var numTabs = ',
-				'var numTabs = this.__multipletab__closedTabsNum || '
-			)
-		);
 
 /*
 		eval(
@@ -1202,23 +1229,13 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return;
 
-		var max = aTabs.length;
-		if (!max) return;
-
-		var b = this.getTabBrowserFromChild(aTabs[0]);
-		b.__multipletab__closedTabsNum = max;
-		if (
-			max > 1 &&
-			!b.warnAboutClosingTabs(true)
-			) {
-			b.__multipletab__closedTabsNum = 0;
+		if (!this.warnAboutClosingTabs(aTabs.length))
 			return;
-		}
-		b.__multipletab__closedTabsNum = 0;
 
 		var tabs = Array.slice(aTabs);
 		tabs.reverse();
 		var selected;
+		var b = this.getTabBrowserFromChild(aTabs[0]);
 		tabs.forEach(function(aTab) {
 			if (aTab.selected)
 				selected = aTab;
@@ -1234,18 +1251,10 @@ var MultipleTabService = {
 		if (!aCurrentTab) return;
 
 		var removeTabs = this.getSimilarTabsOf(aCurrentTab, aTabs);
-		var max = removeTabs.length;
-		var b   = this.getTabBrowserFromChild(aCurrentTab);
-		b.__multipletab__closedTabsNum = max;
-		if (
-			max > 1 &&
-			!b.warnAboutClosingTabs(true)
-			) {
-			b.__multipletab__closedTabsNum = 0;
+		if (!this.warnAboutClosingTabs(removeTabs.length))
 			return;
-		}
-		b.__multipletab__closedTabsNum = 0;
 
+		var b = this.getTabBrowserFromChild(aCurrentTab);
 		removeTabs.forEach(function(aTab) {
 			b.removeTab(aTab);
 		});
@@ -1259,15 +1268,8 @@ var MultipleTabService = {
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		var tabs = this.getTabsArray(b);
 
-		b.__multipletab__closedTabsNum = tabs.length - aTabs.length;
-		if (
-			b.__multipletab__closedTabsNum > 1 &&
-			!b.warnAboutClosingTabs(true)
-			) {
-			b.__multipletab__closedTabsNum = 0;
+		if (!this.warnAboutClosingTabs(tabs.length - aTabs.length))
 			return;
-		}
-		b.__multipletab__closedTabsNum = 0;
 
 		tabs.forEach(function(aTab) {
 			if (aTabs.indexOf(aTab) < 0) b.removeTab(aTab);
