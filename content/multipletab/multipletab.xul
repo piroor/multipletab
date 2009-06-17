@@ -16,7 +16,7 @@
 
 <popupset id="mainPopupSet">
 	<stringbundle id="multipletab-bundle" src="chrome://multipletab/locale/multipletab.properties"/>
-	<stringbundle id="multipletab-tabbrowserBundle" src="chrome://browser/locale/tabbrowser.properties"/>
+	<stringbundle id="multipletab-tabbrowserBundle" src="chrome://global/locale/tabbrowser.properties"/>
 
 	<menupopup id="multipletab-selection-menu"
 		label="&config.tabs.selectionMenu;"
