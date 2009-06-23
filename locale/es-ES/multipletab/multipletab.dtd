@@ -48,13 +48,12 @@
 <!ENTITY config.tabs.selectionMenu    "Menú de selección de pestañas">
 <!ENTITY config.selectionMenu.caption "Items disponibles en el menú para las pestañas seleccionadas">
 
-<!ENTITY config.tabs.close                 "Close Tabs">
+<!ENTITY config.tabs.features "Features">
+
 <!ENTITY config.close.direction.caption    "Order to close multiple tabs">
 <!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
 <!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
 <!ENTITY config.close.selectedTab.last     "Close the current tab at last">
-
-<!ENTITY config.tabs.features "Features">
 
 <!ENTITY config.clopboardFormatType.caption "Formato de texto para &quot;Copiar URIs&quot;">
 <!ENTITY config.clopboardFormatType.select  "Seleccionar desde un menú">
@@ -71,8 +70,11 @@
 <!ENTITY config.contextMenu.removeLeftTabs  "Cerrar pestañas a la izquierda (Encima)">
 <!ENTITY config.contextMenu.removeRightTabs "Cerrar pestañas a la derecha (Debajo)">
 
-
-
 <!ENTITY config.menuEditor.description "You can customize this menu by Menu Editor.">
 <!ENTITY config.menuEditor.link        "Download Menu Editor">
 <!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">
+
+<!ENTITY config.tabs.advanced "Avanzado">
+
+<!ENTITY config.selectAfter.duplicate "Select tabs automatically, after they are duplicated">
+<!ENTITY config.selectAfter.move      "Select tabs automatically, after they are moved to another window">

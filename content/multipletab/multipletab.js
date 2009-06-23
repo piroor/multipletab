@@ -1533,8 +1533,9 @@ var MultipleTabService = {
 			this.setSelection(aTab, false);
 		}, this);
 
+		var selectAfter = this.getPref('extensions.multipletab.selectAfter.duplicate');
 		tabs.reverse().some(function(aTab, aIndex) {
-			this.setSelection(aTab, true);
+			if (selectAfter) this.setSelection(aTab, true);
 			return aIndex == aTabs.length-1;
 		}, this);
 
@@ -1563,6 +1564,7 @@ var MultipleTabService = {
 			}, this);
 
 		var newWin = aWindow;
+		var selectAfter = this.getPref('extensions.multipletab.selectAfter.move');
 		var postProcess = function() {
 			newWin.removeEventListener('load', arguments.callee, false);
 			newWin.MultipleTabService.duplicatingTabs = true;
@@ -1578,7 +1580,9 @@ var MultipleTabService = {
 					targetBrowser.swapBrowsersAndCloseOther(newTab, aTab);
 					targetBrowser.setTabTitle(newTab);
 
-					if (!allSelected && selectionState[aIndex])
+					if (!allSelected &&
+						selectionState[aIndex] &&
+						selectAfter)
 						sv.setSelection(newTab, true);
 				});
 
@@ -1934,6 +1938,8 @@ var MultipleTabService = {
 		targetBrowser.movingSelectedTabs = true;
 		this.clearSelection(targetBrowser);
 
+		var selectAfter = this.getPref('extensions.multipletab.selectAfter.move');
+
 		var hasNextTab = this.getNextTab(aNewTab);
 		sourceTabs.forEach(function(aTab, aIndex) {
 			sourceService.setSelection(aTab, false);
@@ -1947,12 +1953,12 @@ var MultipleTabService = {
 			if (delta[aIndex] > 0 && hasNextTab) delta[aIndex]--;
 			targetBrowser.moveTabTo(newTab, aNewTab._tPos + delta[aIndex] + 1);
 
-			this.setSelection(newTab, true);
+			if (selectAfter) this.setSelection(newTab, true);
 		}, this);
 
 		if (shouldClose) this.closeOwner(sourceBrowser);
 
-		this.setSelection(aNewTab, true);
+		if (selectAfter) this.setSelection(aNewTab, true);
 		targetBrowser.movingSelectedTabs = false;
 	},
  
@@ -1992,6 +1998,7 @@ var MultipleTabService = {
 
 		sourceService.setSelection(aSourceTab, false);
 		var self = this;
+		var selectAfter = this.getPref('extensions.multipletab.selectAfter.duplicate');
 		window.setTimeout(function() {
 			targetBrowser.duplicatingSelectedTabs = true;
 			targetBrowser.movingSelectedTabs = true;
@@ -2008,13 +2015,13 @@ var MultipleTabService = {
 
 				if (isMove) sourceBrowser.removeTab(aTab);
 
-				self.setSelection(newTab, true);
+				if (selectAfter) self.setSelection(newTab, true);
 				sourceService.setSelection(aTab, false);
 			});
 
 			if (shouldClose) self.closeOwner(sourceBrowser);
 
-			self.setSelection(aNewTab, true);
+			if (selectAfter) self.setSelection(aNewTab, true);
 			targetBrowser.movingSelectedTabs = false;
 			targetBrowser.duplicatingSelectedTabs = false;
 			targetBrowser.mTabDropIndicatorBar.collapsed = true; // hide anyway!

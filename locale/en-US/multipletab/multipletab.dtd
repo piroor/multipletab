@@ -48,13 +48,12 @@
 <!ENTITY config.tabs.selectionMenu    "Tab Selection Menu">
 <!ENTITY config.selectionMenu.caption "Available items of the popup menu for selected tabs">
 
-<!ENTITY config.tabs.close                 "Close Tabs">
+<!ENTITY config.tabs.features "Features">
+
 <!ENTITY config.close.direction.caption    "Order to close multiple tabs">
 <!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
 <!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
 <!ENTITY config.close.selectedTab.last     "Close the current tab at last">
-
-<!ENTITY config.tabs.features "Features">
 
 <!ENTITY config.clopboardFormatType.caption "Text Format of &quot;Copy URIs of Tabs&quot; features">
 <!ENTITY config.clopboardFormatType.select  "Select from menu">
@@ -75,3 +74,8 @@
 <!ENTITY config.menuEditor.description "You can customize this menu by Menu Editor.">
 <!ENTITY config.menuEditor.link        "Download Menu Editor">
 <!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">
+
+<!ENTITY config.tabs.advanced "Advanced">
+
+<!ENTITY config.selectAfter.duplicate "Select tabs automatically, after they are duplicated">
+<!ENTITY config.selectAfter.move      "Select tabs automatically, after they are moved to another window">

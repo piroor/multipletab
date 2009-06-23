@@ -13,6 +13,9 @@ pref("extensions.multipletab.close.selectedTab.last", true);
 // 0=left(top) to right(bottom), 1=right(bottom) to left(top)
 pref("extensions.multipletab.close.direction", 1);
 
+pref("extensions.multipletab.selectAfter.duplicate", true);
+pref("extensions.multipletab.selectAfter.move", true);
+
 pref("extensions.multipletab.show.multipletab-selection-clipboard", true);
 pref("extensions.multipletab.show.multipletab-selection-reloadTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-removeTabs", true);

@@ -48,13 +48,12 @@
 <!ENTITY config.tabs.selectionMenu    "Меню выбранных вкладок">
 <!ENTITY config.selectionMenu.caption "Доступные элементы всплывающего меню для выбранных вкладок">
 
-<!ENTITY config.tabs.close                 "Close Tabs">
+<!ENTITY config.tabs.features "Дополнительные свойства">
+
 <!ENTITY config.close.direction.caption    "Order to close multiple tabs">
 <!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
 <!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
 <!ENTITY config.close.selectedTab.last     "Close the current tab at last">
-
-<!ENTITY config.tabs.features "Дополнительные свойства">
 
 <!ENTITY config.clopboardFormatType.caption "Формат текста операции &quot;Копировать URI-ы вкладок&quot;">
 <!ENTITY config.clopboardFormatType.select  "Выбрать из меню">
@@ -71,8 +70,11 @@
 <!ENTITY config.contextMenu.removeLeftTabs  "Закрыть вкладки слева (выше)">
 <!ENTITY config.contextMenu.removeRightTabs "Закрыть вкладки справа (ниже)">
 
-
-
 <!ENTITY config.menuEditor.description "You can customize this menu by Menu Editor.">
 <!ENTITY config.menuEditor.link        "Download Menu Editor">
 <!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">
+
+<!ENTITY config.tabs.advanced "Дополнительные">
+
+<!ENTITY config.selectAfter.duplicate "Select tabs automatically, after they are duplicated">
+<!ENTITY config.selectAfter.move      "Select tabs automatically, after they are moved to another window">

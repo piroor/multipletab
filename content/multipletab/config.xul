@@ -86,31 +86,6 @@
 	</groupbox>
 </prefpane>
 
-<prefpane id="prefpane-close" label="&config.tabs.close;">
-	<preferences>
-		<preference id="extensions.multipletab.close.direction"
-			name="extensions.multipletab.close.direction"
-			type="int"/>
-		<preference id="extensions.multipletab.close.selectedTab.last"
-			name="extensions.multipletab.close.selectedTab.last"
-			type="bool"/>
-	</preferences>
-	<groupbox>
-		<caption label="&config.close.direction.caption;"/>
-		<vbox>
-			<radiogroup id="extensions.multipletab.close.direction-radiogroup"
-				preference="extensions.multipletab.close.direction"
-				orient="vertical">
-				<radio value="0" label="&config.close.direction.startToEnd;"/>
-				<radio value="1" label="&config.close.direction.endToStart;"/>
-			</radiogroup>
-		</vbox>
-		<checkbox id="extensions.multipletab.close.selectedTab.last-check"
-			preference="extensions.multipletab.close.selectedTab.last"
-			label="&config.close.selectedTab.last;"/>
-	</groupbox>
-</prefpane>
-
 <prefpane id="prefpane-features" label="&config.tabs.features;"
 	onpaneload="initFeaturesPane();">
 	<preferences>
@@ -328,6 +303,43 @@
 				oncommand="openMenuEditorConfig()"/>
 		</hbox>
 	</vbox>
+</prefpane>
+
+<prefpane id="prefpane-advanced" label="&config.tabs.advanced;">
+	<preferences>
+		<preference id="extensions.multipletab.close.direction"
+			name="extensions.multipletab.close.direction"
+			type="int"/>
+		<preference id="extensions.multipletab.close.selectedTab.last"
+			name="extensions.multipletab.close.selectedTab.last"
+			type="bool"/>
+		<preference id="extensions.multipletab.selectAfter.duplicate"
+			name="extensions.multipletab.selectAfter.duplicate"
+			type="bool"/>
+		<preference id="extensions.multipletab.selectAfter.move"
+			name="extensions.multipletab.selectAfter.move"
+			type="bool"/>
+	</preferences>
+	<groupbox>
+		<caption label="&config.close.direction.caption;"/>
+		<vbox>
+			<radiogroup id="extensions.multipletab.close.direction-radiogroup"
+				preference="extensions.multipletab.close.direction"
+				orient="horizontal">
+				<radio value="0" label="&config.close.direction.startToEnd;"/>
+				<radio value="1" label="&config.close.direction.endToStart;"/>
+			</radiogroup>
+		</vbox>
+		<checkbox id="extensions.multipletab.close.selectedTab.last-check"
+			preference="extensions.multipletab.close.selectedTab.last"
+			label="&config.close.selectedTab.last;"/>
+	</groupbox>
+	<checkbox id="extensions.multipletab.selectAfter.duplicate-check"
+		preference="extensions.multipletab.selectAfter.duplicate"
+		label="&config.selectAfter.duplicate;"/>
+	<checkbox id="extensions.multipletab.selectAfter.move-check"
+		preference="extensions.multipletab.selectAfter.move"
+		label="&config.selectAfter.move;"/>
 </prefpane>
 
 <script src="chrome://global/content/contentAreaUtils.js" type="application/x-javascript"/>
