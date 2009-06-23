@@ -1233,11 +1233,15 @@ var MultipleTabService = {
 			return;
 
 		var tabs = Array.slice(aTabs);
-		tabs.reverse();
+//		tabs.sort(function(aTabA, aTabB) { return aTabA._tPos - aTabB._tPos; });
+		if (this.getPref('extensions.multipletab.close.direction') == this.CLOSE_DIRECTION_LAST_TO_START)
+			tabs.reverse();
+
+		var closeSelectedLast = this.getPref('extensions.multipletab.close.selectedTab.last');
 		var selected;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		tabs.forEach(function(aTab) {
-			if (aTab.selected)
+			if (closeSelectedLast && aTab.selected)
 				selected = aTab;
 			else
 				b.removeTab(aTab);
@@ -1245,6 +1249,8 @@ var MultipleTabService = {
 		if (selected)
 			b.removeTab(selected);
 	},
+	CLOSE_DIRECTION_START_TO_LAST : 0,
+	CLOSE_DIRECTION_LAST_TO_START : 1,
  
 	closeSimilarTabsOf : function(aCurrentTab, aTabs) 
 	{

@@ -9,6 +9,10 @@ pref("extensions.multipletab.tabclick.mode", 1);
 pref("extensions.multipletab.selectionStyle", "auto");
 pref("extensions.multipletab.useEffectiveTLD", true);
 
+pref("extensions.multipletab.close.selectedTab.last", true);
+// 0=left(top) to right(bottom), 1=right(bottom) to left(top)
+pref("extensions.multipletab.close.direction", 1);
+
 pref("extensions.multipletab.show.multipletab-selection-clipboard", true);
 pref("extensions.multipletab.show.multipletab-selection-reloadTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-removeTabs", true);
