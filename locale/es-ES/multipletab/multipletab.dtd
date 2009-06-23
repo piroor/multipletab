@@ -48,6 +48,12 @@
 <!ENTITY config.tabs.selectionMenu    "Menú de selección de pestañas">
 <!ENTITY config.selectionMenu.caption "Items disponibles en el menú para las pestañas seleccionadas">
 
+<!ENTITY config.tabs.close                 "Close Tabs">
+<!ENTITY config.close.direction.caption    "Order to close multiple tabs">
+<!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
+<!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
+<!ENTITY config.close.selectedTab.last     "Close the current tab at last">
+
 <!ENTITY config.tabs.features "Features">
 
 <!ENTITY config.clopboardFormatType.caption "Formato de texto para &quot;Copiar URIs&quot;">

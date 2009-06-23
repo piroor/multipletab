@@ -48,6 +48,12 @@
 <!ENTITY config.tabs.selectionMenu    "已選分頁選單">
 <!ENTITY config.selectionMenu.caption "已選分頁彈跳選單可選項目">
 
+<!ENTITY config.tabs.close                 "Close Tabs">
+<!ENTITY config.close.direction.caption    "Order to close multiple tabs">
+<!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
+<!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
+<!ENTITY config.close.selectedTab.last     "Close the current tab at last">
+
 <!ENTITY config.tabs.features "功能">
 
 <!ENTITY config.clopboardFormatType.caption "「複製分頁 URIs」功能的文字格式">

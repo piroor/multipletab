@@ -49,6 +49,12 @@
 <!ENTITY config.tabs.selectionMenu    "タブ選択時のメニュー">
 <!ENTITY config.selectionMenu.caption "タブ選択時のメニューに表示する項目">
 
+<!ENTITY config.tabs.close                 "タブを閉じる">
+<!ENTITY config.close.direction.caption    "複数のタブを一度に閉じる時の順番">
+<!ENTITY config.close.direction.startToEnd "左（上）から→右（下）へ">
+<!ENTITY config.close.direction.endToStart "右（下）から→左（上）へ">
+<!ENTITY config.close.selectedTab.last     "現在のタブは最後に閉じる">
+
 <!ENTITY config.tabs.features "機能">
 
 <!ENTITY config.clopboardFormatType.caption "タブのURIをコピーする時の形式">
