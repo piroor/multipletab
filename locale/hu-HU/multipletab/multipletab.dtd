@@ -47,10 +47,10 @@
 
 <!ENTITY config.tabs.features "Funkciók">
 
-<!ENTITY config.close.direction.caption    "Order to close multiple tabs">
-<!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
-<!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
-<!ENTITY config.close.selectedTab.last     "Close the current tab at last">
+<!ENTITY config.close.direction.caption    "Több lap bezárásának sorrendje">
+<!ENTITY config.close.direction.startToEnd "Balról jobbra (felső -> alsó)">
+<!ENTITY config.close.direction.endToStart "Jobbról balra (alsó -> felső)">
+<!ENTITY config.close.selectedTab.last     "Jelenlegi lap bezárása legutoljára">
 
 <!ENTITY config.clopboardFormatType.caption "A &quot;Lap adatainak másolása&quot; opció művelete">
 <!ENTITY config.clopboardFormatType.select  "Kiválasztás menüből">
@@ -76,5 +76,5 @@
 
 <!ENTITY config.tabs.advanced "Haladó">
 
-<!ENTITY config.selectAfter.duplicate "Select tabs automatically, after they are duplicated">
-<!ENTITY config.selectAfter.move      "Select tabs automatically, after they are moved to another window">
+<!ENTITY config.selectAfter.duplicate "Lapok automatikus kijelölése, ha kettőzve voltak">
+<!ENTITY config.selectAfter.move      "Lapok automatikus kijelölése, ha másik ablakba lettek áthelyezve">
