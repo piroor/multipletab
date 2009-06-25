@@ -1535,7 +1535,7 @@ var MultipleTabService = {
 
 		var selectAfter = this.getPref('extensions.multipletab.selectAfter.duplicate');
 		tabs.reverse().some(function(aTab, aIndex) {
-			if (selectAfter) this.setSelection(aTab, true);
+			this.setSelection(aTab, selectAfter);
 			return aIndex == aTabs.length-1;
 		}, this);
 
@@ -1580,10 +1580,14 @@ var MultipleTabService = {
 					targetBrowser.swapBrowsersAndCloseOther(newTab, aTab);
 					targetBrowser.setTabTitle(newTab);
 
-					if (!allSelected &&
-						selectionState[aIndex] &&
-						selectAfter)
-						sv.setSelection(newTab, true);
+					sv.setSelection(
+						newTab,
+						(
+							!allSelected &&
+							selectionState[aIndex] &&
+							selectAfter
+						)
+					);
 				});
 
 				sv.getTabsArray(targetBrowser).forEach(function(aTab) {
@@ -1953,13 +1957,14 @@ var MultipleTabService = {
 			if (delta[aIndex] > 0 && hasNextTab) delta[aIndex]--;
 			targetBrowser.moveTabTo(newTab, aNewTab._tPos + delta[aIndex] + 1);
 
-			if (selectAfter) this.setSelection(newTab, true);
+			this.setSelection(newTab, selectAfter);
 		}, this);
 
 		if (shouldClose) this.closeOwner(sourceBrowser);
 
-		if (selectAfter) this.setSelection(aNewTab, true);
+		this.setSelection(aNewTab, selectAfter);
 		targetBrowser.movingSelectedTabs = false;
+
 	},
  
 	closeOwner : function(aTabOwner) 
@@ -1998,7 +2003,10 @@ var MultipleTabService = {
 
 		sourceService.setSelection(aSourceTab, false);
 		var self = this;
-		var selectAfter = this.getPref('extensions.multipletab.selectAfter.duplicate');
+		var selectAfter = this.getPref(isMove ?
+				'extensions.multipletab.selectAfter.move' :
+				'extensions.multipletab.selectAfter.duplicate'
+			);
 		window.setTimeout(function() {
 			targetBrowser.duplicatingSelectedTabs = true;
 			targetBrowser.movingSelectedTabs = true;
@@ -2015,13 +2023,13 @@ var MultipleTabService = {
 
 				if (isMove) sourceBrowser.removeTab(aTab);
 
-				if (selectAfter) self.setSelection(newTab, true);
+				self.setSelection(newTab, selectAfter);
 				sourceService.setSelection(aTab, false);
 			});
 
 			if (shouldClose) self.closeOwner(sourceBrowser);
 
-			if (selectAfter) self.setSelection(aNewTab, true);
+			self.setSelection(aNewTab, selectAfter);
 			targetBrowser.movingSelectedTabs = false;
 			targetBrowser.duplicatingSelectedTabs = false;
 			targetBrowser.mTabDropIndicatorBar.collapsed = true; // hide anyway!
