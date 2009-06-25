@@ -103,7 +103,7 @@
     <em:localized>
       <RDF:Description em:locale="zh-TW"
                        em:name="Multiple Tab Handler (複數分頁處理)"
-                       em:description="提供同時關閉或重新載入(...)複數分頁的功能。"
+                       em:description="對複數分頁提供同時關閉或重新載入等功能。"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
