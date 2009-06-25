@@ -1707,6 +1707,7 @@ var MultipleTabService = {
 
 		var newWin = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
 		var key = this.kSELECTED;
+		var selectAfter = this.getPref('extensions.multipletab.selectAfter.move');
 		newWin.addEventListener('load', function() {
 			newWin.removeEventListener('load', arguments.callee, false);
 
@@ -1763,13 +1764,15 @@ var MultipleTabService = {
 						catch(e) {
 						}
 
-						if (tabs[i].__multipletab__shouldRemove)
+						if (tabs[i].__multipletab__shouldRemove) {
 							newWin.gBrowser.removeTab(tabs[i]);
+						}
 						else {
 							tabs[i].removeAttribute('collapsed');
 							newWin.MultipleTabService._duplicatedTabPostProcesses.forEach(function(aProcess) {
 								aProcess(tabs[i], i);
 							});
+							newWin.MultipleTabService.setSelection(tabs[i], selectAfter);
 						}
 					}
 
