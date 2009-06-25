@@ -50,10 +50,10 @@
 
 <!ENTITY config.tabs.features "功能">
 
-<!ENTITY config.close.direction.caption    "Order to close multiple tabs">
-<!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
-<!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
-<!ENTITY config.close.selectedTab.last     "Close the current tab at last">
+<!ENTITY config.close.direction.caption    "複數分頁關閉順序">
+<!ENTITY config.close.direction.startToEnd "從左(上)到右(下)">
+<!ENTITY config.close.direction.endToStart "從右(下)到左(上)">
+<!ENTITY config.close.selectedTab.last     "當前分頁留到最後才關閉">
 
 <!ENTITY config.clopboardFormatType.caption "「複製分頁 URIs」功能的文字格式">
 <!ENTITY config.clopboardFormatType.select  "從選單選取">
@@ -70,11 +70,12 @@
 <!ENTITY config.contextMenu.removeLeftTabs  "關閉左側(上方)分頁">
 <!ENTITY config.contextMenu.removeRightTabs "關閉右側(下方)分頁">
 
-<!ENTITY config.menuEditor.description "You can customize this menu by Menu Editor.">
-<!ENTITY config.menuEditor.link        "Download Menu Editor">
-<!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">
+
+<!ENTITY config.menuEditor.description "您可以使用 Menu Editor 自訂此選單。">
+<!ENTITY config.menuEditor.link        "下載 Menu Editor">
+<!ENTITY config.menuEditor.config      "進入 Menu Editor 設定配置">
 
 <!ENTITY config.tabs.advanced "進階">
 
-<!ENTITY config.selectAfter.duplicate "Select tabs automatically, after they are duplicated">
-<!ENTITY config.selectAfter.move      "Select tabs automatically, after they are moved to another window">
+<!ENTITY config.selectAfter.duplicate "自動選取分頁新增的副本">
+<!ENTITY config.selectAfter.move      "自動選取被移到另一視窗的分頁">
