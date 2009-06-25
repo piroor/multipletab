@@ -1,2 +1,0 @@
-skin	tabfx2compatible-platform	classic/1.0	jar:chrome/multipletab.jar!/skin/classic/browser/
-style chrome://browser/content/browser.xul chrome://tabfx2compatible-platform/skin/browser.css	appversion>=3.4
