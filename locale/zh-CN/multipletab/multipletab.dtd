@@ -1,0 +1,81 @@
+<!ENTITY popup.selection.removeTabs  "关闭所选标签">
+<!ENTITY popup.selection.removeOther "关闭其他标签">
+<!ENTITY popup.selection.reloadTabs  "刷新所选标签">
+<!ENTITY popup.selection.addBookmark "将所选标签以新文件夹加入书签">
+<!ENTITY popup.selection.duplicateTabs "克隆所选标签">
+<!ENTITY popup.selection.splitWindow "移动标签到新窗口">
+<!ENTITY popup.selection.clipboard   "复制所选标签的URI">
+<!ENTITY popup.selection.saveTabs      "保存所选标签">
+<!ENTITY popup.selection.printTabs     "打印所选标签">
+
+<!ENTITY popup.context.removeLeftTabs.horizontal  "关闭左侧全部标签">
+<!ENTITY popup.context.removeLeftTabs.vertical    "关闭上方全部标签">
+<!ENTITY popup.context.removeRightTabs.horizontal "关闭右侧全部标签">
+<!ENTITY popup.context.removeRightTabs.vertical   "关闭下方全部标签">
+<!ENTITY popup.context.removeAll                  "关闭所有标签">
+<!ENTITY popup.context.removeSimilar              "关闭相同网站的标签">
+<!ENTITY popup.context.duplicate                  "复制标签">
+<!ENTITY popup.context.clipboard                  "复制 URI">
+<!ENTITY popup.context.clipboardAll               "复制所有标签的 URI">
+<!ENTITY popup.context.clipboard.format.default "纯 URI">
+<!ENTITY popup.context.clipboard.format.mozurl  "标签标题和 URI">
+<!ENTITY popup.context.clipboard.format.link    "HTML 链接">
+<!ENTITY popup.context.saveTabs                   "保存所有标签">
+<!ENTITY popup.context.saveTabs.type.file      "不包括内嵌来源项目">
+<!ENTITY popup.context.saveTabs.type.complete     "包括内嵌来源项目">
+<!ENTITY popup.context.saveTabs.type.text         "保存为纯文本">
+
+
+
+<!ENTITY config.title        "“多标签处理”配置">
+
+<!ENTITY config.tabs.general "一般">
+
+<!ENTITY config.tabdrag.mode.caption "拖曳标签时的动作">
+<!ENTITY config.tabdrag.mode.default "移动、重排标签（默认）">
+<!ENTITY config.tabdrag.mode.select  "选中标签">
+<!ENTITY config.tabdrag.mode.switch  "动态切换标签">
+<!ENTITY config.tabdrag.delay-before "拖动延时">
+<!ENTITY config.tabdrag.delay-after  "毫秒">
+<!ENTITY config.tabdrag.autopopup     "自动弹出上下文菜单">
+<!ENTITY config.tabdrag.autoclear     "关闭上下文菜单时自动取消选中状态">
+<!ENTITY config.tabdrag.moveMultipleTabs "紧邻排列移动后的选中标签">
+
+<!ENTITY config.tabclickmode.caption "Ctrl（Command）-左键点击标签时的动作">
+<!ENTITY config.tabclickmode.default "关闭标签">
+<!ENTITY config.tabclickmode.toggle  "切换标签选中状态">
+
+<!ENTITY config.tabs.selectionMenu    "选中标签菜单">
+<!ENTITY config.selectionMenu.caption "在选中标签的上下文菜单中显示：">
+
+<!ENTITY config.tabs.features "特性">
+
+<!ENTITY config.close.direction.caption    "多个标签的关闭顺序">
+<!ENTITY config.close.direction.startToEnd "从左（上）到右（下）">
+<!ENTITY config.close.direction.endToStart "从右（下）到左（上）">
+<!ENTITY config.close.selectedTab.last     "当前标签留到最后关闭">
+
+<!ENTITY config.clopboardFormatType.caption "“复制标签 URI”的复制格式">
+<!ENTITY config.clopboardFormatType.select  "从子菜单中选择">
+
+<!ENTITY config.saveType.caption "保存标签方式">
+<!ENTITY config.saveType.select  "从子菜单中选择">
+
+<!ENTITY config.useEffectiveTLD.caption  "“相同网站”的标准">
+<!ENTITY config.useEffectiveTLD.enabled  "相同域名（“aaa.example.com”和“bbb.example.com”视为相同网站）">
+<!ENTITY config.useEffectiveTLD.disabled "相同主机（“aaa.example.com”和“bbb.example.com”视为不同网站）">
+
+<!ENTITY config.tabs.contextMenu    "标签右键菜单">
+<!ENTITY config.contextMenu.caption "在标签的上下文菜单中显示：">
+<!ENTITY config.contextMenu.removeLeftTabs  "关闭左侧（上方）标签">
+<!ENTITY config.contextMenu.removeRightTabs "关闭右侧（下方）标签">
+
+
+<!ENTITY config.menuEditor.description "您可以使用 Menu Editor 自定义此菜单。">
+<!ENTITY config.menuEditor.link        "下载 Menu Editor">
+<!ENTITY config.menuEditor.config      "打开 Menu Editor 配置">
+
+<!ENTITY config.tabs.advanced "高级">
+
+<!ENTITY config.selectAfter.duplicate "自动选中克隆出来的标签">
+<!ENTITY config.selectAfter.move      "自动选中移动到另一窗口的标签">

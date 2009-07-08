@@ -16,6 +16,7 @@
     <em:translator>tito (es-ES locale)</em:translator>
     <em:translator>L'Autour (ru-RU locale)</em:translator>
     <em:translator>Tsprajna (zh-TW locale)</em:translator>
+    <em:translator>hzhbest (zh-CN locale)</em:translator>
 
 
     <em:updateURL>http://piro.sakura.ne.jp/xul/update.rdf</em:updateURL>
@@ -33,6 +34,7 @@
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
+		<em:translator>hzhbest (zh-CN locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -46,6 +48,7 @@
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
+		<em:translator>hzhbest (zh-CN locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -59,6 +62,7 @@
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
+		<em:translator>hzhbest (zh-CN locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -72,6 +76,7 @@
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
+		<em:translator>hzhbest (zh-CN locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -85,6 +90,7 @@
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
+		<em:translator>hzhbest (zh-CN locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -98,6 +104,7 @@
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
+		<em:translator>hzhbest (zh-CN locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -111,6 +118,21 @@
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
+		<em:translator>hzhbest (zh-CN locale)</em:translator>
+      </RDF:Description>
+    </em:localized>
+    <em:localized>
+      <RDF:Description em:locale="zh-CN"
+                       em:name="MultipleTabHandler (多标签处理)"
+                       em:description="对多个标签提供同时关闭或刷新等功能。"
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
+                       em:creator="SHIMODA Hiroshi">
+		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
+		<em:translator>tito (es-ES locale)</em:translator>
+		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>Tsprajna (zh-TW locale)</em:translator>
+		<em:translator>hzhbest (zh-CN locale)</em:translator>
       </RDF:Description>
     </em:localized>
 
