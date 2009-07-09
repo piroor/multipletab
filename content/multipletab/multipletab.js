@@ -1411,7 +1411,7 @@ var MultipleTabService = {
 		);
 	},
   
-	addBookmarkFor : function(aTabs) 
+	addBookmarkFor : function(aTabs, aFolderName) 
 	{
 		if (!aTabs) return;
 
@@ -1453,7 +1453,7 @@ var MultipleTabService = {
 			(aTabs.length == 1 ?
 				tabsInfo[0] :
 				{
-					name             : gNavigatorBundle.getString('bookmarkAllTabsDefault'),
+					name             : (aFolderName || gNavigatorBundle.getString('bookmarkAllTabsDefault')),
 					bBookmarkAllTabs : true,
 					objGroup         : tabsInfo
 				}
