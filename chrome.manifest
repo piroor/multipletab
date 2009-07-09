@@ -2,6 +2,8 @@ content	multipletab	jar:chrome/multipletab.jar!/content/multipletab/
 
 overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/multipletab.xul
 overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/multipletab-fx3.xul	appversion>=3.0
+overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/bookmarkMultipleTabs.xul
+overlay	chrome://browser/content/places/bookmarkProperties2.xul	chrome://multipletab/content/bookmarkMultipleTabs_bookmarkPropertiesOverlay.xul
 
 locale	multipletab	en-US	jar:chrome/multipletab.jar!/locale/en-US/multipletab/
 locale	multipletab	ja	jar:chrome/multipletab.jar!/locale/ja/multipletab/

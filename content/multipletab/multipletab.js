@@ -1413,56 +1413,7 @@ var MultipleTabService = {
   
 	addBookmarkFor : function(aTabs, aFolderName) 
 	{
-		if (!aTabs) return;
-
-		var b = this.getTabBrowserFromChild(aTabs[0]);
-
-		if ('PlacesUIUtils' in window || 'PlacesUtils' in window) { // Firefox 3
-			var utils = 'PlacesUIUtils' in window ? PlacesUIUtils : PlacesUtils ;
-			utils.showMinimalAddMultiBookmarkUI(Array.slice(aTabs).map(this.addBookmarkTabsFilter));
-			return;
-		}
-
-		var currentTabInfo;
-		var tabsInfo = Array.slice(aTabs).map(function(aTab) {
-				var webNav = aTab.linkedBrowser.webNavigation;
-				var url    = webNav.currentURI.spec;
-				var name   = '';
-				var charSet, description;
-				try {
-					var doc = webNav.document;
-					name = doc.title || url;
-					charSet = doc.characterSet;
-					description = BookmarksUtils.getDescriptionFromDocument(doc);
-				}
-				catch (e) {
-					name = url;
-				}
-				return {
-					name        : name,
-					url         : url,
-					charset     : charSet,
-					description : description
-				};
-			});
-
-		window.openDialog(
-			'chrome://browser/content/bookmarks/addBookmark2.xul',
-			'',
-			BROWSER_ADD_BM_FEATURES,
-			(aTabs.length == 1 ?
-				tabsInfo[0] :
-				{
-					name             : (aFolderName || gNavigatorBundle.getString('bookmarkAllTabsDefault')),
-					bBookmarkAllTabs : true,
-					objGroup         : tabsInfo
-				}
-			)
-		);
-	},
-	addBookmarkTabsFilter : function(aTab)
-	{
-		return aTab.linkedBrowser.currentURI;
+		window['piro.sakura.ne.jp'].bookmarkMultipleTabs.addBookmarkFor(aTabs, aFolderName);
 	},
  
 	printTabs : function(aTabs) 
