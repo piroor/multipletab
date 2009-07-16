@@ -15,9 +15,10 @@ function init()
 	var enabled = window['piro.sakura.ne.jp'].extensions.isEnabled(MENU_EDITOR_ID);
 
 	[
-		document.getElementById('menuEditorLink-selection'),
-		document.getElementById('menuEditorLink-context')
+		'menuEditorLink-selection',
+		'menuEditorLink-context'
 	].forEach(function(aItem) {
+		aItem = document.getElementById(aItem);
 		if (installed)
 			aItem.setAttribute('collapsed', true);
 		else
@@ -25,9 +26,10 @@ function init()
 	});
 
 	[
-		document.getElementById('menuEditorConfig-selection'),
-		document.getElementById('menuEditorConfig-context')
+		'menuEditorConfig-selection',
+		'menuEditorConfig-context'
 	].forEach(function(aItem) {
+		aItem = document.getElementById(aItem);
 		if (installed)
 			aItem.removeAttribute('collapsed');
 		else
@@ -38,6 +40,30 @@ function init()
 			aItem.setAttribute('disabled', true);
 	});
 
+
+	[
+		{
+			id    : 'printalltabs@peculier.com',
+			items : ['extensions.multipletab.show.multipletab-selection-printTabs-check']
+		},
+		{
+			id    : '{dc572301-7619-498c-a57d-39143191b318}', // Tab Mix Plus
+			items : [
+				'extensions.multipletab.show.multipletab-selection-freezeTabs-check',
+				'extensions.multipletab.show.multipletab-selection-protectTabs-check',
+				'extensions.multipletab.show.multipletab-selection-lockTabs-check'
+			]
+		}
+	].forEach(function(aDefinition) {
+		var enabled = window['piro.sakura.ne.jp'].extensions.isInstalled(aDefinition.id) &&
+						window['piro.sakura.ne.jp'].extensions.isEnabled(aDefinition.id);
+		aDefinition.items
+			.map(document.getElementById, document)
+			.forEach(enabled ?
+				function(aItem) { aItem.removeAttribute('disabled'); } :
+				function(aItem) { aItem.setAttribute('disabled', true); }
+			);
+	});
 
 //	sizeToContent();
 }
