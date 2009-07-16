@@ -183,6 +183,15 @@
 		<preference id="extensions.multipletab.show.multipletab-selection-printTabs"
 			name="extensions.multipletab.show.multipletab-selection-printTabs"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-freezeTabs"
+			name="extensions.multipletab.show.multipletab-selection-freezeTabs"
+			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-protectTabs"
+			name="extensions.multipletab.show.multipletab-selection-protectTabs"
+			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-lockTabs"
+			name="extensions.multipletab.show.multipletab-selection-lockTabs"
+			type="bool"/>
 	</preferences>
 	<groupbox flex="1">
 		<caption label="&config.selectionMenu.caption;"/>
@@ -190,30 +199,44 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-reloadTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-reloadTabs"
 				label="&popup.selection.reloadTabs;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-selection-addBookmark-check"
-				preference="extensions.multipletab.show.multipletab-selection-addBookmark"
-				label="&popup.selection.addBookmark;"/>
+			<separator id="multipletab-selection-separator-duplicateTabs"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-duplicateTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-duplicateTabs"
 				label="&popup.selection.duplicateTabs;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-splitWindow-check"
 				preference="extensions.multipletab.show.multipletab-selection-splitWindow"
 				label="&popup.selection.splitWindow;"/>
+			<separator id="multipletab-selection-separator-removeTabs"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-removeTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-removeTabs"
 				label="&popup.selection.removeTabs;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-removeOther-check"
 				preference="extensions.multipletab.show.multipletab-selection-removeOther"
 				label="&popup.selection.removeOther;"/>
+			<separator id="multipletab-selection-separator-saveTabs"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-clipboard-check"
 				preference="extensions.multipletab.show.multipletab-selection-clipboard"
 				label="&popup.selection.clipboard;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-saveTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-saveTabs"
 				label="&popup.selection.saveTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-addBookmark-check"
+				preference="extensions.multipletab.show.multipletab-selection-addBookmark"
+				label="&popup.selection.addBookmark;"/>
+			<separator id="multipletab-selection-separator-printTabs"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-printTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-printTabs"
 				label="&popup.selection.printTabs;"/>
+			<separator id="multipletab-selection-separator-lockTabs"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-freezeTabs-check"
+				preference="extensions.multipletab.show.multipletab-selection-freezeTabs"
+				label="&popup.selection.freezeTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-protectTabs-check"
+				preference="extensions.multipletab.show.multipletab-selection-protectTabs"
+				label="&popup.selection.protectTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-lockTabs-check"
+				preference="extensions.multipletab.show.multipletab-selection-lockTabs"
+				label="&popup.selection.lockTabs;"/>
 		</vbox>
 	</groupbox>
 	<vbox>

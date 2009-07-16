@@ -7,6 +7,9 @@
 <!ENTITY popup.selection.clipboard   "Copiar URIs de las pestañas seleccionadas">
 <!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
 <!ENTITY popup.selection.printTabs     "Imprimir pestañas seleccionadas">
+<!ENTITY popup.selection.freezeTabs  "Congelar pestaña">
+<!ENTITY popup.selection.protectTabs "Proteger pestaña">
+<!ENTITY popup.selection.lockTabs    "Bloquear pestaña">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Cerrar pestañas de la izquierda">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Cerrar pestañas que están encima">

@@ -161,7 +161,7 @@ var MultipleTabService = {
 		return (document.getElementById('cmd_CustomizeToolbars').getAttribute('disabled') == 'true');
 	},
  
-	warnAboutClosingTabs : function(aTabsCount)
+	warnAboutClosingTabs : function(aTabsCount) 
 	{
 		if (
 			aTabsCount <= 1 ||
@@ -289,7 +289,7 @@ var MultipleTabService = {
 		}
 		return null;
 	},
-	makeURIFromSpec : function(aURI) 
+	makeURIFromSpec : function(aURI)
 	{
 		var newURI;
 		aURI = aURI || '';
@@ -341,7 +341,7 @@ var MultipleTabService = {
 			);
 	},
  
-	getTabsArray : function(aTabBrowser)
+	getTabsArray : function(aTabBrowser) 
 	{
 		return this.getArrayFromXPathResult(this.getTabs(aTabBrowser));
 	},
@@ -482,6 +482,18 @@ var MultipleTabService = {
 				'($1 || "saveAsType" in aChosenData)$2'
 			));
 		}
+
+		[
+			'tm-freezeTab\tmultipletab-selection-freezeTabs',
+			'tm-protectTab\tmultipletab-selection-protectTabs',
+			'tm-lockTab\tmultipletab-selection-lockTabs'
+		].forEach(function(aIDs) {
+			aIDs = aIDs.split('\t');
+			var source = document.getElementById(aIDs[0]);
+			var target = document.getElementById(aIDs[1]);
+			if (source)
+				target.setAttribute('label', source.getAttribute('label'));
+		}, this);
 
 		this.initTabBrowser(gBrowser);
 
@@ -821,6 +833,7 @@ var MultipleTabService = {
 				}
 				this.enableMenuItems(aEvent.target);
 				this.showHideMenuItems(aEvent.target);
+				this.updateMenuItems(aEvent.target);
 				break;
 		}
 	},
@@ -1073,6 +1086,41 @@ var MultipleTabService = {
 				aEvent.screenY - document.documentElement.boxObject.screenY,
 				'popup'
 			);
+	},
+ 
+	updateMenuItems : function(aPopup) 
+	{
+		if (aPopup == this.tabSelectionPopup) {
+			var lockedItem = document.getElementById('multipletab-selection-lockTabs');
+			var protectItem = document.getElementById('multipletab-selection-protectTabs');
+			var freezeItem = document.getElementById('multipletab-selection-freezeTabs');
+			var tabs = this.getSelectedTabs();
+
+			var locked = (lockedItem.getAttribute('hidden') == 'true') ?
+						false :
+						tabs.every(this._isTabLocked) ;
+			var protected = (protectItem.getAttribute('hidden') == 'true') ?
+						false :
+						tabs.every(this._isTabProtected) ;
+			var freezed = (freezeItem.getAttribute('hidden') == 'true') ?
+						false :
+						tabs.every(this._isTabFreezed) ;
+
+			if (locked)
+				lockedItem.setAttribute('checked', true);
+			else
+				lockedItem.removeAttribute('checked');
+
+			if (protected)
+				protectItem.setAttribute('checked', true);
+			else
+				protectItem.removeAttribute('checked');
+
+			if (freezed)
+				freezeItem.setAttribute('checked', true);
+			else
+				freezeItem.removeAttribute('checked');
+		}
 	},
  
 	enableMenuItems : function(aPopup) 
@@ -1805,6 +1853,53 @@ var MultipleTabService = {
 					'</a>'
 				].join('');
 		}
+	},
+  
+	// Tab Mix Plus commands 
+	
+	toggleTabsFreezed : function(aTabs, aNewState) 
+	{
+		if (aNewState === void(0))
+			aNewState = !tabs.every(this._isTabFreezed);
+
+		aTabs.forEach(function(aTab) {
+			if (aNewState != this._isTabFreezed(aTab))
+				gBrowser.freezeTab(aTab);
+		}, this);
+	},
+	_isTabFreezed : function(aTab)
+	{
+		return aTab.hasAttribute('protected') && aTab.hasAttribute('locked');
+	},
+ 
+	toggleTabsProtected : function(aTabs, aNewState) 
+	{
+		if (aNewState === void(0))
+			aNewState = !tabs.every(this._isTabProtected);
+
+		aTabs.forEach(function(aTab) {
+			if (aNewState != this._isTabProtected(aTab))
+				gBrowser.protectTab(aTab);
+		}, this);
+	},
+	_isTabProtected : function(aTab)
+	{
+		return aTab.hasAttribute('protected');
+	},
+ 
+	toggleTabsLocked : function(aTabs, aNewState) 
+	{
+		if (aNewState === void(0))
+			aNewState = !tabs.every(this._isTabLocked);
+
+		aTabs.forEach(function(aTab) {
+			if (aNewState != this._isTabLocked(aTab))
+				gBrowser.lockTab(aTab);
+		}, this);
+	},
+	_isTabLocked : function(aTab)
+	{
+		return aTab.hasAttribute('locked');
 	},
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 

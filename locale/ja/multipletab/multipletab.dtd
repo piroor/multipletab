@@ -7,6 +7,9 @@
 <!ENTITY popup.selection.clipboard     "すべてのURIをコピー">
 <!ENTITY popup.selection.saveTabs      "ファイルとして保存">
 <!ENTITY popup.selection.printTabs     "すべて印刷">
+<!ENTITY popup.selection.freezeTabs  "タブを凍結">
+<!ENTITY popup.selection.protectTabs "タブを保護">
+<!ENTITY popup.selection.lockTabs    "タブをロック">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "左のタブをすべて閉じる">
 <!ENTITY popup.context.removeLeftTabs.vertical    "上のタブをすべて閉じる">

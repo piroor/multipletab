@@ -7,6 +7,9 @@
 <!ENTITY popup.selection.clipboard   "Kiválasztott lapok adatainak másolása">
 <!ENTITY popup.selection.saveTabs    "Kiválasztott lapok mentése fájlként">
 <!ENTITY popup.selection.printTabs   "Kiválasztott lapok nyomtatása">
+<!ENTITY popup.selection.freezeTabs  "Lapfagyasztás">
+<!ENTITY popup.selection.protectTabs "Lapvédelem">
+<!ENTITY popup.selection.lockTabs    "Lapzárolás">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Balra levő lapok bezárása">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Felette levő lapok bezárása">

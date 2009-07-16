@@ -7,6 +7,9 @@
 <!ENTITY popup.selection.clipboard   "複製所選分頁URI">
 <!ENTITY popup.selection.saveTabs      "存檔所選分頁">
 <!ENTITY popup.selection.printTabs     "列印所選分頁">
+<!ENTITY popup.selection.freezeTabs  "保護並鎖定分頁">
+<!ENTITY popup.selection.protectTabs "保護分頁">
+<!ENTITY popup.selection.lockTabs    "鎖定分頁">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "關閉左側所有分頁">
 <!ENTITY popup.context.removeLeftTabs.vertical    "關閉上方所有分頁">

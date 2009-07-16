@@ -25,6 +25,9 @@ pref("extensions.multipletab.show.multipletab-selection-saveTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-duplicateTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-splitWindow", true);
 pref("extensions.multipletab.show.multipletab-selection-printTabs", true);
+pref("extensions.multipletab.show.multipletab-selection-freezeTabs", false);
+pref("extensions.multipletab.show.multipletab-selection-protectTabs", true);
+pref("extensions.multipletab.show.multipletab-selection-lockTabs", true);
 
 pref("extensions.multipletab.show.multipletab-context-removeLeftTabs",  true);
 pref("extensions.multipletab.show.multipletab-context-removeRightTabs", true);

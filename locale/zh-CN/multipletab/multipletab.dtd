@@ -7,6 +7,9 @@
 <!ENTITY popup.selection.clipboard   "复制所选标签的URI">
 <!ENTITY popup.selection.saveTabs      "保存所选标签">
 <!ENTITY popup.selection.printTabs     "打印所选标签">
+<!ENTITY popup.selection.freezeTabs  "冻结标签页">
+<!ENTITY popup.selection.protectTabs "保护标签页">
+<!ENTITY popup.selection.lockTabs    "锁定标签页">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "关闭左侧全部标签">
 <!ENTITY popup.context.removeLeftTabs.vertical    "关闭上方全部标签">

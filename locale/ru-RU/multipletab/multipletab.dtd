@@ -7,6 +7,9 @@
 <!ENTITY popup.selection.clipboard   "Копировать URI-ы выбранные вкладок">
 <!ENTITY popup.selection.saveTabs      "Сохранить выбранные вкладки">
 <!ENTITY popup.selection.printTabs     "Печать выбранных вкладок">
+<!ENTITY popup.selection.freezeTabs  "Заморозить вкладку">
+<!ENTITY popup.selection.protectTabs "Защитить вкладку">
+<!ENTITY popup.selection.lockTabs    "Заблокировать вкладку">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Закрыть вкладки слева">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Закрыть вкладки выше">

@@ -21,7 +21,10 @@
 	<menupopup id="multipletab-selection-menu"
 		label="&config.tabs.selectionMenu;"
 		oncommand="this.hidePopup();"
-		onpopupshowing="MultipleTabService.showHideMenuItems(this);"
+		onpopupshowing="
+			MultipleTabService.showHideMenuItems(this);
+			MultipleTabService.updateMenuItems(this);
+		"
 		onpopuphidden="
 			if (event.target != this) return;
 			if (this.autoClearSelection)
@@ -89,6 +92,25 @@
 			label="&popup.selection.printTabs;"
 			oncommand="MultipleTabService.printTabs(MultipleTabService.getSelectedTabs());"
 			multipletab-enabled="'PrintAllTabs' in window"/>
+		<menuseparator id="multipletab-selection-lock-separator"/>
+		<menuitem id="multipletab-selection-freezeTabs"
+			label="&popup.selection.freezeTabs;"
+			type="checkbox" autocheck="false"
+			oncommand="MultipleTabService.toggleTabsFreezed(MultipleTabService.getSelectedTabs(),
+				this.getAttribute('checked') != 'true');"
+			multipletab-enabled="'freezeTab' in gBrowser"/>
+		<menuitem id="multipletab-selection-protectTabs"
+			label="&popup.selection.protectTabs;"
+			type="checkbox" autocheck="false"
+			oncommand="MultipleTabService.toggleTabsProtected(MultipleTabService.getSelectedTabs(),
+				this.getAttribute('checked') != 'true');"
+			multipletab-enabled="'protectTab' in gBrowser"/>
+		<menuitem id="multipletab-selection-lockTabs"
+			label="&popup.selection.lockTabs;"
+			type="checkbox" autocheck="false"
+			oncommand="MultipleTabService.toggleTabsLocked(MultipleTabService.getSelectedTabs(),
+				this.getAttribute('checked') != 'true');"
+			multipletab-enabled="'lockTab' in gBrowser"/>
 	</menupopup>
 
 	<menupopup id="multipletab-tabcontext-menu-template">

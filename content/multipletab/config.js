@@ -39,7 +39,7 @@ function init()
 	});
 
 
-	sizeToContent();
+//	sizeToContent();
 }
 
 function initGeneralPane()
