@@ -420,6 +420,7 @@
 
 <script src="chrome://global/content/contentAreaUtils.js" type="application/x-javascript"/>
 <script src="extensions.js" type="application/x-javascript"/>
+<script src="arrowScrollBoxScrollHelper.js" type="application/x-javascript"/>
 <script src="config.js" type="application/x-javascript"/>
 
 </prefwindow>
