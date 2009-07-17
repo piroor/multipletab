@@ -248,8 +248,13 @@ function addNewFormat(aLabel, aFormat)
 	var radio = getRadioFromRow(newRow);
 	if (gFormatsRadio.mRadioChildren) gFormatsRadio.mRadioChildren = null; // for Firefox 2
 
-	if (aLabel) getLabelFieldFromRow(newRow).value = aLabel;
-	if (aFormat) getFormatFieldFromRow(newRow).value = aFormat;
+	if (aLabel) {
+		getLabelFieldFromRow(newRow).value = aLabel;
+	}
+	if (aFormat) {
+		getFormatFieldFromRow(newRow).value = aFormat;
+		onFormatInput(newRow);
+	}
 
 	if (!aLabel && !aFormat) {
 		window.setTimeout(function() {
@@ -299,4 +304,18 @@ function initCustomFormats()
 			[format, label] = aFormat.split('/').map(decodeURIComponent);
 			addNewFormat(label, format);
 		});
+}
+
+function onFormatInput(aRow)
+{
+	var radio = getRadioFromRow(aRow);
+	var format = getFormatFieldFromRow(aRow);
+	if (format.value) {
+		radio.removeAttribute('disabled');
+	}
+	else {
+		radio.setAttribute('disabled', true);
+		if (radio == gFormatsRadio.selectedItem)
+			gFormatsRadio.value = -1;
+	}
 }

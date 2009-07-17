@@ -191,14 +191,15 @@
 							class="customFormat-row"
 							align="center">
 							<hbox align="center">
-								<radio value="999"/>
+								<radio value="999" disabled="true"/>
 								<textbox class="customFormat-label-textbox"
 									emptytext="&config.clipboardFormatType.default.label;"
 									tooltiptext="&config.clipboardFormatType.description;"/>
 							</hbox>
 							<textbox class="customFormat-format-textbox"
 								emptytext="&config.clipboardFormatType.default.format;"
-								tooltiptext="&config.clipboardFormatType.description;"/>
+								tooltiptext="&config.clipboardFormatType.description;"
+								oninput="onFormatInput(this.parentNode);"/>
 							<button class="delete-button"
 								label="&config.clipboardFormatType.remove.label;"
 								tooltiptext="&config.clipboardFormatType.remove.tooltip;"
