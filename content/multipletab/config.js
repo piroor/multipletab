@@ -207,8 +207,8 @@ function updateCustomFormats()
 	{
 		value.push(
 			[
-				getFormatFieldFromRow(aRow).value,
-				getLabelFieldFromRow(aRow).value
+				getFormatFieldFromRow(row).value,
+				getLabelFieldFromRow(row).value
 			]
 			.map(encodeURIComponent)
 			.join('/')
