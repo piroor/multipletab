@@ -21,6 +21,10 @@ var MultipleTabService = {
 	kSELECTION_MENU        : 'multipletab-selection-menu',
 	kCONTEXT_MENU_TEMPLATE : 'multipletab-tabcontext-menu-template',
 
+	kCUSTOM_TYPE_OFFSET    : 1000,
+	customFormats          : [],
+	customFormatsTimeStamp : -1,
+
 	selectableItems : [
 		{ name : 'clipboard',
 		  key  : 'extensions.multipletab.clipboard.formatType' },
@@ -462,6 +466,7 @@ var MultipleTabService = {
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.selectionStyle');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.linefeed');
+		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.customFormats');
 
 /*
 		if ('nsDragAndDrop' in window &&
@@ -1270,7 +1275,36 @@ var MultipleTabService = {
 		}
 		return xpathResult.singleNodeValue;
 	},
-   
+  
+	initCopyFormatItems : function(aPopup) 
+	{
+		if (aPopup.customFormatsTimeStamp == this.customFormatsTimeStamp) return;
+
+		aPopup.customFormatsTimeStamp = this.customFormatsTimeStamp;
+
+		var separator = aPopup.getElementsByTagName('menuseparator')[0];
+		var range = document.createRange();
+		range.selectNodeContents(aPopup);
+		range.setStartAfter(separator);
+		range.deleteContents();
+		if (this.customFormats.length) {
+			separator.removeAttribute('hidden');
+			let fragment = document.createDocumentFragment();
+			this.customFormats.forEach(function(aItem) {
+				let item = document.createElement('menuitem');
+				item.setAttribute('label', aItem.label);
+				item.setAttribute('value', aItem.format);
+				item.setAttribute('format-type', aItem.typeID);
+				fragment.appendChild(item);
+			}, this);
+			range.insertNode(fragment);
+		}
+		else {
+			separator.setAttribute('hidden', true);
+		}
+		range.detach();
+	},
+  
 /* Commands */ 
 	
 	closeTabs : function(aTabs) 
@@ -1805,53 +1839,70 @@ var MultipleTabService = {
 	},
 	_duplicatedTabPostProcesses : [],
   
-	copyURIsToClipboard : function(aTabs, aFormat) 
+	copyURIsToClipboard : function(aTabs, aFormatType, aFormat) 
 	{
 		if (!aTabs) return;
 
-		var clipboard = Components.classes['@mozilla.org/widget/clipboardhelper;1']
-								.getService(Components.interfaces.nsIClipboardHelper);
-		var self = this;
+		var format = aFormat || this.getClopboardFormatForType(aFormatType);
+
+		var now = new Date();
+		var timeUTC = now.toUTCString();
+		var timeLocal = now.toLocaleString();
+
 		var stringToCopy = Array.slice(aTabs).map(function(aTab) {
-				return self.formatURIStringForClipboard(aTab.linkedBrowser.currentURI.spec, aTab, aFormat);
-			});
+				let uri = aTab.linkedBrowser.currentURI.spec;
+				let title = aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label');
+				let escapedURI = uri
+								.replace(/&/g, '&amp;')
+								.replace(/"/g, '&quot;')
+								.replace(/</g, '&lt;')
+								.replace(/>/g, '&gt;');
+				let escapedTitle = title
+								.replace(/&/g, '&amp;')
+								.replace(/"/g, '&quot;')
+								.replace(/</g, '&lt;')
+								.replace(/>/g, '&gt;');
+				return format
+						.replace(/%(URL|RLINK)%/gi, uri)
+						.replace(/%(TITLE|SEL)%/gi, title)
+						.replace(/%EOL%/gi, this.lineFeed)
+						.replace(/%(URL_HTMLIFIED|RLINK_HTMLIFIED)%/gi, escapedURI)
+						.replace(/%(TITLE_HTMLIFIED|SEL_HTMLIFIED)%/gi, escapedTitle)
+						.replace(/%UTC_TIME%/gi, timeUTC)
+						.replace(/%LOCAL_TIME%/gi, timeLocal);
+			}, this);
 		if (stringToCopy.length > 1)
 			stringToCopy.push('');
-		clipboard.copyString(stringToCopy.join(this.lineFeed));
+
+		Components
+			.classes['@mozilla.org/widget/clipboardhelper;1']
+			.getService(Components.interfaces.nsIClipboardHelper)
+			.copyString(stringToCopy.join(this.lineFeed));
 	},
 	
 	kFORMAT_TYPE_DEFAULT : 0, 
 	kFORMAT_TYPE_MOZ_URL : 1,
 	kFORMAT_TYPE_LINK    : 2,
  
-	formatURIStringForClipboard : function(aURI, aTab, aFormat) 
+	getClopboardFormatForType : function(aFormatType) 
 	{
-		var format = aFormat || this.getPref('extensions.multipletab.clipboard.formatType');
-		switch (format)
+		if (aFormatType === void(0))
+			aFormatType = this.getPref('extensions.multipletab.clipboard.formatType');
+
+		switch (aFormatType)
 		{
 			default:
+				for (let i in this.customFormats)
+				{
+					if (this.customFormats[i].typeID == aFormatType)
+						return this.customFormats[i].format;
+				}
 			case this.kFORMAT_TYPE_DEFAULT:
-				return aURI;
-
+				return '%URL%';
 			case this.kFORMAT_TYPE_MOZ_URL:
-				return (aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label'))+
-					this.lineFeed+aURI;
-
+				return '%TITLE%%EOL%%URL%';
 			case this.kFORMAT_TYPE_LINK:
-				return [
-					'<a href="',
-					aURI.replace(/&/g, '&amp;')
-						.replace(/"/g, '&quot;')
-						.replace(/</g, '&lt;')
-						.replace(/>/g, '&gt;'),
-					'">',
-					(aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label'))
-						.replace(/&/g, '&amp;')
-						.replace(/"/g, '&quot;')
-						.replace(/</g, '&lt;')
-						.replace(/>/g, '&gt;'),
-					'</a>'
-				].join('');
+				return '<a href="%URL_HTMLIFIED%">%TITLE_HTMLIFIED%</a>';
 		}
 	},
   
@@ -2252,6 +2303,25 @@ var MultipleTabService = {
 
 			case 'extensions.multipletab.clipboard.linefeed':
 				this.lineFeed = value;
+				break;
+
+			case 'extensions.multipletab.clipboard.customFormats':
+				this.customFormats = [];
+				this.customFormatsTimeStamp = Date.now();
+				value.split('|').forEach(function(aPart, aIndex) {
+					try {
+						let format, label;
+						[format, label] = aPart.split('/').map(decodeURIComponent);
+						if (!label) label = format;
+						this.customFormats.push({
+							typeID : aIndex + this.kCUSTOM_TYPE_OFFSET,
+							label  : label,
+							format : format
+						});
+					}
+					catch(e) {
+					}
+				}, this);
 				break;
 
 			default:

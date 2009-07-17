@@ -62,14 +62,15 @@
 			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getSelectedTabs());"/>
 		<menu id="multipletab-selection-clipboard:select"
 			label="&popup.selection.clipboard;"
-			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('formatType')));">
-			<menupopup>
+			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('format-type')), event.target.getAttribute('value'));">
+			<menupopup onpopupshowing="MultipleTabService.initCopyFormatItems(this);">
 				<menuitem label="&popup.context.clipboard.format.default;"
-					formatType="0"/>
+					format-type="0"/>
 				<menuitem label="&popup.context.clipboard.format.mozurl;"
-					formatType="1"/>
+					format-type="1"/>
 				<menuitem label="&popup.context.clipboard.format.link;"
-					formatType="2"/>
+					format-type="2"/>
+				<menuseparator hidden="true"/>
 			</menupopup>
 		</menu>
 		<menuitem id="multipletab-selection-saveTabs"
@@ -77,14 +78,14 @@
 			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs());"/>
 		<menu id="multipletab-selection-saveTabs:select"
 			label="&popup.selection.saveTabs;"
-			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('saveType')));">
+			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('save-type')));">
 			<menupopup>
 				<menuitem label="&popup.context.saveTabs.type.file;"
-					saveType="0"/>
+					save-type="0"/>
 				<menuitem label="&popup.context.saveTabs.type.complete;"
-					saveType="1"/>
+					save-type="1"/>
 				<menuitem label="&popup.context.saveTabs.type.text;"
-					saveType="2"/>
+					save-type="2"/>
 			</menupopup>
 		</menu>
 		<menuseparator id="multipletab-selection-print-separator"/>
@@ -151,15 +152,16 @@
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'context_bookmarkAllTabs')][1]"/>
 		<menu id="multipletab-context-clipboard:select"
 			label="&popup.context.clipboard;"
-			oncommand="MultipleTabService.copyURIsToClipboard([MultipleTabService.getTabBrowserFromChild(this).mContextTab], Number(event.target.getAttribute('formatType')));"
+			oncommand="MultipleTabService.copyURIsToClipboard([MultipleTabService.getTabBrowserFromChild(this).mContextTab], Number(event.target.getAttribute('format-type')), event.target.getAttribute('value'));"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-clipboard')][1]">
-			<menupopup>
+			<menupopup onpopupshowing="MultipleTabService.initCopyFormatItems(this);">
 				<menuitem label="&popup.context.clipboard.format.default;"
-					formatType="0"/>
+					format-type="0"/>
 				<menuitem label="&popup.context.clipboard.format.mozurl;"
-					formatType="1"/>
+					format-type="1"/>
 				<menuitem label="&popup.context.clipboard.format.link;"
-					formatType="2"/>
+					format-type="2"/>
+				<menuseparator hidden="true"/>
 			</menupopup>
 		</menu>
 		<menuitem id="multipletab-context-clipboardAll"
@@ -169,16 +171,17 @@
 			tbattr="tabbrowser-multiple"/>
 		<menu id="multipletab-context-clipboardAll:select"
 			label="&popup.context.clipboardAll;"
-			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)), Number(event.target.getAttribute('formatType')));"
+			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)), Number(event.target.getAttribute('format-type')), event.target.getAttribute('value'));"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-clipboardAll')][1]"
 			tbattr="tabbrowser-multiple">
-			<menupopup>
+			<menupopup onpopupshowing="MultipleTabService.initCopyFormatItems(this);">
 				<menuitem label="&popup.context.clipboard.format.default;"
-					formatType="0"/>
+					format-type="0"/>
 				<menuitem label="&popup.context.clipboard.format.mozurl;"
-					formatType="1"/>
+					format-type="1"/>
 				<menuitem label="&popup.context.clipboard.format.link;"
-					formatType="2"/>
+					format-type="2"/>
+				<menuseparator hidden="true"/>
 			</menupopup>
 		</menu>
 		<menuitem id="multipletab-context-saveTabs"
@@ -188,16 +191,16 @@
 			tbattr="tabbrowser-multiple"/>
 		<menu id="multipletab-context-saveTabs:select"
 			label="&popup.context.saveTabs;"
-			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('saveType')));"
+			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('save-type')));"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-saveTabs')][1]"
 			tbattr="tabbrowser-multiple">
 			<menupopup>
 				<menuitem label="&popup.context.saveTabs.type.file;"
-					saveType="0"/>
+					save-type="0"/>
 				<menuitem label="&popup.context.saveTabs.type.complete;"
-					saveType="1"/>
+					save-type="1"/>
 				<menuitem label="&popup.context.saveTabs.type.text;"
-					saveType="2"/>
+					save-type="2"/>
 			</menupopup>
 		</menu>
 		<menuseparator id="multipletab-context-separator-clipboard"
