@@ -48,18 +48,7 @@
 <!ENTITY config.tabclickmode.default "Cerrar pestaña">
 <!ENTITY config.tabclickmode.toggle  "Cambiar selección de pestañas">
 
-<!ENTITY config.tabs.selectionMenu    "Menú de selección de pestañas">
-<!ENTITY config.selectionMenu.caption "Items disponibles en el menú para las pestañas seleccionadas">
-
 <!ENTITY config.tabs.features "Features">
-
-<!ENTITY config.close.direction.caption    "Order to close multiple tabs">
-<!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
-<!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
-<!ENTITY config.close.selectedTab.last     "Close the current tab at last">
-
-<!ENTITY config.clopboardFormatType.caption "Formato de texto para &quot;Copiar URIs&quot;">
-<!ENTITY config.clopboardFormatType.select  "Seleccionar desde un menú">
 
 <!ENTITY config.saveType.caption "Save mode for tabs">
 <!ENTITY config.saveType.select  "Seleccionar desde un menú">
@@ -67,6 +56,20 @@
 <!ENTITY config.useEffectiveTLD.caption  "Detecting method for &quot;similar tabs&quot;">
 <!ENTITY config.useEffectiveTLD.enabled  "by Domain (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are similar tabs)">
 <!ENTITY config.useEffectiveTLD.disabled "by Host (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are not similar tabs)">
+
+<!ENTITY config.tabs.clipboard "Copy">
+
+<!ENTITY config.clipboardFormatType.caption "Formato de texto para &quot;Copiar URIs&quot;">
+<!ENTITY config.clipboardFormatType.select  "Seleccionar desde un menú">
+<!ENTITY config.clipboardFormatType.add.label      "Add Custom Format">
+<!ENTITY config.clipboardFormatType.remove.label   "&#xD7;">
+<!ENTITY config.clipboardFormatType.remove.tooltip "Remove This Format">
+<!ENTITY config.clipboardFormatType.default.label  "Name">
+<!ENTITY config.clipboardFormatType.default.format "Format">
+<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;EOL&#x25;=Line Feed">
+
+<!ENTITY config.tabs.selectionMenu    "Menú de selección de pestañas">
+<!ENTITY config.selectionMenu.caption "Items disponibles en el menú para las pestañas seleccionadas">
 
 <!ENTITY config.tabs.contextMenu    "Menú contextual en pestañas">
 <!ENTITY config.contextMenu.caption "Items disponibles en el menú contextual de las pestañas">
@@ -78,6 +81,11 @@
 <!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">
 
 <!ENTITY config.tabs.advanced "Avanzado">
+
+<!ENTITY config.close.direction.caption    "Order to close multiple tabs">
+<!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
+<!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
+<!ENTITY config.close.selectedTab.last     "Close the current tab at last">
 
 <!ENTITY config.selectAfter.duplicate "Select tabs automatically, after they are duplicated">
 <!ENTITY config.selectAfter.move      "Select tabs automatically, after they are moved to another window">

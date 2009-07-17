@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <?xml-stylesheet href="chrome://global/skin/"?>
-<?xml-stylesheet href="chrome://multipletab/skin/config.css"?>
+<?xml-stylesheet href="config.css"?>
 
 <!DOCTYPE prefwindow [
 <!ENTITY % mainDTD SYSTEM "chrome://multipletab/locale/multipletab.dtd">
@@ -89,9 +89,6 @@
 <prefpane id="prefpane-features" label="&config.tabs.features;"
 	onpaneload="initFeaturesPane();">
 	<preferences>
-		<preference id="extensions.multipletab.clipboard.formatType"
-			name="extensions.multipletab.clipboard.formatType"
-			type="int"/>
 		<preference id="extensions.multipletab.saveTabs.saveType"
 			name="extensions.multipletab.saveTabs.saveType"
 			type="int"/>
@@ -99,28 +96,6 @@
 			name="extensions.multipletab.useEffectiveTLD"
 			type="bool"/>
 	</preferences>
-	<groupbox>
-		<caption label="&config.clopboardFormatType.caption;"/>
-		<radiogroup id="extensions.multipletab.clipboard.formatType-radiogroup"
-			preference="extensions.multipletab.clipboard.formatType">
-			<grid>
-				<columns>
-					<column/>
-					<column/>
-				</columns>
-				<rows>
-					<row>
-						<radio value="-1" label="&config.clopboardFormatType.select;"/>
-						<radio value="0" label="&popup.context.clipboard.format.default;"/>
-					</row>
-					<row>
-						<radio value="1" label="&popup.context.clipboard.format.mozurl;"/>
-						<radio value="2" label="&popup.context.clipboard.format.link;"/>
-					</row>
-				</rows>
-			</grid>
-		</radiogroup>
-	</groupbox>
 	<groupbox>
 		<caption label="&config.saveType.caption;"/>
 		<radiogroup id="extensions.multipletab.saveTabs.saveType-radiogroup"
@@ -151,6 +126,80 @@
 			<radio value="true" label="&config.useEffectiveTLD.enabled;"/>
 			<radio value="false" label="&config.useEffectiveTLD.disabled;"/>
 		</radiogroup>
+	</groupbox>
+</prefpane>
+
+<prefpane id="prefpane-clipboard" label="&config.tabs.clipboard;"
+	onpaneload="initClipboardPane()">
+	<preferences>
+		<preference id="extensions.multipletab.clipboard.formatType"
+			name="extensions.multipletab.clipboard.formatType"
+			type="int"/>
+		<preference id="extensions.multipletab.clipboard.customFormats"
+			name="extensions.multipletab.clipboard.customFormats"
+			type="string"/>
+	</preferences>
+	<groupbox>
+		<caption label="&config.clipboardFormatType.caption;"/>
+		<arrowscrollbox id="formatTypeBox" orient="vertical">
+			<radiogroup id="extensions.multipletab.clipboard.formatType-radiogroup"
+				preference="extensions.multipletab.clipboard.formatType"
+				orient="vertical">
+				<hbox>
+					<radio value="-1" label="&config.clipboardFormatType.select;"/>
+				</hbox>
+				<grid>
+					<columns>
+						<column/>
+						<column flex="1"/>
+						<column/>
+					</columns>
+					<rows id="customFormats-box" oninput="updateCustomFormats()">
+						<row align="center">
+							<radio value="0" label="&popup.context.clipboard.format.default;"/>
+							<textbox readonly="true"
+								value="%URL%"/>
+							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
+						</row>
+						<row align="center">
+							<radio value="1" label="&popup.context.clipboard.format.mozurl;"/>
+							<textbox readonly="true"
+								value="%TITLE%%EOL%%URL%"/>
+							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
+						</row>
+						<row align="center">
+							<radio value="2" label="&popup.context.clipboard.format.link;"/>
+							<textbox readonly="true"
+								value="&lt;a href=&quot;%URL_HTMLFIED%&quot;&gt;%TITLE_HTMLFIED%&lt;/a&gt;"/>
+							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
+						</row>
+						<row id="customFormat-template"
+							class="customFormat-row"
+							align="center">
+							<hbox align="center">
+								<radio value="999"/>
+								<textbox class="customFormat-label-textbox"
+									emptytext="&config.clipboardFormatType.default.label;"
+									tooltiptext="&config.clipboardFormatType.description;"/>
+							</hbox>
+							<textbox class="customFormat-format-textbox"
+								emptytext="&config.clipboardFormatType.default.format;"
+								tooltiptext="&config.clipboardFormatType.description;"/>
+							<button class="delete-button"
+								label="&config.clipboardFormatType.remove.label;"
+								tooltiptext="&config.clipboardFormatType.remove.tooltip;"
+								oncommand="removeFormat(this.parentNode);"/>
+						</row>
+					</rows>
+				</grid>
+			</radiogroup>
+		</arrowscrollbox>
+		<hbox>
+			<button id="customFormats-add"
+				flex="1"
+				label="&config.clipboardFormatType.add.label;"
+				oncommand="addNewFormat();"/>
+		</hbox>
 	</groupbox>
 </prefpane>
 
@@ -193,9 +242,10 @@
 			name="extensions.multipletab.show.multipletab-selection-lockTabs"
 			type="bool"/>
 	</preferences>
-	<groupbox flex="1">
+	<groupbox>
 		<caption label="&config.selectionMenu.caption;"/>
-		<vbox id="prefpane-selection-menu-items" flex="1">
+		<arrowscrollbox id="selectionMenuItemsBox" orient="vertical">
+		<vbox id="prefpane-selection-menu-items">
 			<checkbox id="extensions.multipletab.show.multipletab-selection-reloadTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-reloadTabs"
 				label="&popup.selection.reloadTabs;"/>
@@ -238,6 +288,7 @@
 				preference="extensions.multipletab.show.multipletab-selection-lockTabs"
 				label="&popup.selection.lockTabs;"/>
 		</vbox>
+		</arrowscrollbox>
 	</groupbox>
 	<vbox>
 		<description flex="1">&config.menuEditor.description;</description>
@@ -281,9 +332,10 @@
 			name="extensions.multipletab.show.multipletab-context-saveTabs"
 			type="bool"/>
 	</preferences>
-	<groupbox flex="1">
+	<groupbox>
 		<caption label="&config.contextMenu.caption;"/>
-		<vbox id="prefpane-context-menu-items" flex="1">
+		<arrowscrollbox id="contextMenuItemsBox" orient="vertical">
+		<vbox id="prefpane-context-menu-items">
 			<checkbox id="extensions.multipletab.show.multipletab-context-duplicate-check"
 				preference="extensions.multipletab.show.multipletab-context-duplicate"
 				label="&popup.context.duplicate;"/>
@@ -312,6 +364,7 @@
 				preference="extensions.multipletab.show.multipletab-context-removeAll"
 				label="&popup.context.removeAll;"/>
 		</vbox>
+		</arrowscrollbox>
 	</groupbox>
 	<vbox>
 		<description flex="1">&config.menuEditor.description;</description>

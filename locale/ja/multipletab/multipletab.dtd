@@ -49,18 +49,7 @@
 <!ENTITY config.tabclickmode.default "タブを閉じる">
 <!ENTITY config.tabclickmode.toggle  "タブを選択する">
 
-<!ENTITY config.tabs.selectionMenu    "タブ選択時のメニュー">
-<!ENTITY config.selectionMenu.caption "タブ選択時のメニューに表示する項目">
-
 <!ENTITY config.tabs.features "機能">
-
-<!ENTITY config.close.direction.caption    "複数のタブを一度に閉じる時の順番">
-<!ENTITY config.close.direction.startToEnd "左（上）から→右（下）へ">
-<!ENTITY config.close.direction.endToStart "右（下）から→左（上）へ">
-<!ENTITY config.close.selectedTab.last     "現在のタブは最後に閉じる">
-
-<!ENTITY config.clopboardFormatType.caption "タブのURIをコピーする時の形式">
-<!ENTITY config.clopboardFormatType.select  "メニューから選択">
 
 <!ENTITY config.saveType.caption "タブをファイルに保存する時の挙動">
 <!ENTITY config.saveType.select  "メニューから選択">
@@ -68,6 +57,20 @@
 <!ENTITY config.useEffectiveTLD.caption  "似たタブかどうかの判別方法">
 <!ENTITY config.useEffectiveTLD.enabled  "ドメイン名で判別する（aaa.example.comとbbb.example.comを似たタブと見なす）">
 <!ENTITY config.useEffectiveTLD.disabled "ホスト名で判別する（aaa.example.comとbbb.example.comを似ていないタブと見なす）">
+
+<!ENTITY config.tabs.clipboard "コピー">
+
+<!ENTITY config.clipboardFormatType.caption "タブのURIをコピーする時の形式">
+<!ENTITY config.clipboardFormatType.select  "メニューから選択">
+<!ENTITY config.clipboardFormatType.add.label      "形式を追加">
+<!ENTITY config.clipboardFormatType.remove.label   "&#xD7;">
+<!ENTITY config.clipboardFormatType.remove.tooltip "この形式を削除">
+<!ENTITY config.clipboardFormatType.default.label  "名前">
+<!ENTITY config.clipboardFormatType.default.format "書式">
+<!ENTITY config.clipboardFormatType.description    "書式には以下のプレースホルダを使えます：&#x25;URL&#x25;=ページのURL, &#x25;TITLE&#x25;=ページのタイトル, &#x25;URL_HTMLIFIED&#x25;=HTML用にエスケープされたURL, &#x25;TITLE_HTMLIFIED&#x25;=HTML用にエスケープされたタイトル, &#x25;EOL&#x25;=改行">
+
+<!ENTITY config.tabs.selectionMenu    "タブ選択時のメニュー">
+<!ENTITY config.selectionMenu.caption "タブ選択時のメニューに表示する項目">
 
 <!ENTITY config.tabs.contextMenu    "タブのコンテキストメニュー">
 <!ENTITY config.contextMenu.caption "タブのコンテキストメニューに追加する項目">
@@ -79,6 +82,11 @@
 <!ENTITY config.menuEditor.config      "Menu Editorの設定を開く">
 
 <!ENTITY config.tabs.advanced "詳細">
+
+<!ENTITY config.close.direction.caption    "複数のタブを一度に閉じる時の順番">
+<!ENTITY config.close.direction.startToEnd "左（上）から→右（下）へ">
+<!ENTITY config.close.direction.endToStart "右（下）から→左（上）へ">
+<!ENTITY config.close.selectedTab.last     "現在のタブは最後に閉じる">
 
 <!ENTITY config.selectAfter.duplicate "タブを複製した後、自動的に選択する">
 <!ENTITY config.selectAfter.move      "タブを別のウィンドウに移動した後、自動的に選択する">

@@ -48,18 +48,7 @@
 <!ENTITY config.tabclickmode.default "Chiudi scheda"> 
 <!ENTITY config.tabclickmode.toggle  "Inverti selezione della scheda">
 
-<!ENTITY config.tabs.selectionMenu    "Menu contestuale schede selezionate">
-<!ENTITY config.selectionMenu.caption "Aggiungi le seguenti voci al menu contestuale delle schede selezionate">
-
 <!ENTITY config.tabs.features "Funzionalità">
-
-<!ENTITY config.close.direction.caption    "Ordine di chiusura delle schede selezionate">
-<!ENTITY config.close.direction.startToEnd "Da sinistra verso destra/dall&apos;alto verso il basso">
-<!ENTITY config.close.direction.endToStart "Da destra verso sinistra/dal basso verso l&apos;alto">
-<!ENTITY config.close.selectedTab.last     "Chiudi per ultima la scheda attiva">
-
-<!ENTITY config.clopboardFormatType.caption "Formato del testo delle funzioni &quot;Copia indirizzo&quot;">
-<!ENTITY config.clopboardFormatType.select  "Seleziona dal menu">
 
 <!ENTITY config.saveType.caption "Tipologia di salvataggio per le schede">
 <!ENTITY config.saveType.select  "Seleziona dal menu">
@@ -67,6 +56,20 @@
 <!ENTITY config.useEffectiveTLD.caption  "Metodo di individuazione per le schede simili">
 <!ENTITY config.useEffectiveTLD.enabled  "Per dominio (&quot;aaa.example.com&quot; e &quot;bbb.example.com&quot; sono schede simili)">
 <!ENTITY config.useEffectiveTLD.disabled "Per indirizzo (&quot;aaa.example.com&quot; e &quot;bbb.example.com&quot; non sono schede simili)">
+
+<!ENTITY config.tabs.clipboard "Copy">
+
+<!ENTITY config.clipboardFormatType.caption "Formato del testo delle funzioni &quot;Copia indirizzo&quot;">
+<!ENTITY config.clipboardFormatType.select  "Seleziona dal menu">
+<!ENTITY config.clipboardFormatType.add.label      "Add Custom Format">
+<!ENTITY config.clipboardFormatType.remove.label   "&#xD7;">
+<!ENTITY config.clipboardFormatType.remove.tooltip "Remove This Format">
+<!ENTITY config.clipboardFormatType.default.label  "Name">
+<!ENTITY config.clipboardFormatType.default.format "Format">
+<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;EOL&#x25;=Line Feed">
+
+<!ENTITY config.tabs.selectionMenu    "Menu contestuale schede selezionate">
+<!ENTITY config.selectionMenu.caption "Aggiungi le seguenti voci al menu contestuale delle schede selezionate">
 
 <!ENTITY config.tabs.contextMenu    "Menu contestuale della barra delle schede">
 <!ENTITY config.contextMenu.caption "Aggiungi le seguenti voci al menu contestuale della barra delle schede">
@@ -78,6 +81,11 @@
 <!ENTITY config.menuEditor.config      "Opzioni di Menu Editor...">
 
 <!ENTITY config.tabs.advanced "Avanzate">
+
+<!ENTITY config.close.direction.caption    "Ordine di chiusura delle schede selezionate">
+<!ENTITY config.close.direction.startToEnd "Da sinistra verso destra/dall&apos;alto verso il basso">
+<!ENTITY config.close.direction.endToStart "Da destra verso sinistra/dal basso verso l&apos;alto">
+<!ENTITY config.close.selectedTab.last     "Chiudi per ultima la scheda attiva">
 
 <!ENTITY config.selectAfter.duplicate "Seleziona automaticamente le schede duplicate">
 <!ENTITY config.selectAfter.move      "Seleziona automaticamente le schede spostate in un&apos;altra finestra">

@@ -48,18 +48,7 @@
 <!ENTITY config.tabclickmode.default "關閉分頁">
 <!ENTITY config.tabclickmode.toggle  "切換分頁的選取">
 
-<!ENTITY config.tabs.selectionMenu    "已選分頁選單">
-<!ENTITY config.selectionMenu.caption "已選分頁彈跳選單可選項目">
-
 <!ENTITY config.tabs.features "功能">
-
-<!ENTITY config.close.direction.caption    "複數分頁關閉順序">
-<!ENTITY config.close.direction.startToEnd "從左(上)到右(下)">
-<!ENTITY config.close.direction.endToStart "從右(下)到左(上)">
-<!ENTITY config.close.selectedTab.last     "當前分頁留到最後才關閉">
-
-<!ENTITY config.clopboardFormatType.caption "「複製分頁 URIs」功能的文字格式">
-<!ENTITY config.clopboardFormatType.select  "從選單選取">
 
 <!ENTITY config.saveType.caption "分頁存檔方式">
 <!ENTITY config.saveType.select  "從選單選取">
@@ -68,17 +57,35 @@
 <!ENTITY config.useEffectiveTLD.enabled  "依據網域(&quot;aaa.example.com&quot; 與 &quot;bbb.example.com&quot; 視為同類)">
 <!ENTITY config.useEffectiveTLD.disabled "依據主機(&quot;aaa.example.com&quot; 與 &quot;bbb.example.com&quot; 不算同類)">
 
+<!ENTITY config.tabs.clipboard "Copy">
+
+<!ENTITY config.clipboardFormatType.caption "「複製分頁 URIs」功能的文字格式">
+<!ENTITY config.clipboardFormatType.select  "從選單選取">
+<!ENTITY config.clipboardFormatType.add.label      "Add Custom Format">
+<!ENTITY config.clipboardFormatType.remove.label   "&#xD7;">
+<!ENTITY config.clipboardFormatType.remove.tooltip "Remove This Format">
+<!ENTITY config.clipboardFormatType.default.label  "Name">
+<!ENTITY config.clipboardFormatType.default.format "Format">
+<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;EOL&#x25;=Line Feed">
+
+<!ENTITY config.tabs.selectionMenu    "已選分頁選單">
+<!ENTITY config.selectionMenu.caption "已選分頁彈跳選單可選項目">
+
 <!ENTITY config.tabs.contextMenu    "分頁右鍵選單">
 <!ENTITY config.contextMenu.caption "分頁右鍵選單可選項目">
 <!ENTITY config.contextMenu.removeLeftTabs  "關閉左側(上方)分頁">
 <!ENTITY config.contextMenu.removeRightTabs "關閉右側(下方)分頁">
-
 
 <!ENTITY config.menuEditor.description "您可以使用 Menu Editor 自訂此選單。">
 <!ENTITY config.menuEditor.link        "下載 Menu Editor">
 <!ENTITY config.menuEditor.config      "進入 Menu Editor 設定配置">
 
 <!ENTITY config.tabs.advanced "進階">
+
+<!ENTITY config.close.direction.caption    "複數分頁關閉順序">
+<!ENTITY config.close.direction.startToEnd "從左(上)到右(下)">
+<!ENTITY config.close.direction.endToStart "從右(下)到左(上)">
+<!ENTITY config.close.selectedTab.last     "當前分頁留到最後才關閉">
 
 <!ENTITY config.selectAfter.duplicate "自動選取分頁新增的副本">
 <!ENTITY config.selectAfter.move      "自動選取被移到另一視窗的分頁">

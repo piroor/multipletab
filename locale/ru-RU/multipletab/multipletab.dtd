@@ -48,18 +48,7 @@
 <!ENTITY config.tabclickmode.default "Закрыть вкладку">
 <!ENTITY config.tabclickmode.toggle  "Переключить выбор вкладки">
 
-<!ENTITY config.tabs.selectionMenu    "Меню выбранных вкладок">
-<!ENTITY config.selectionMenu.caption "Доступные элементы всплывающего меню для выбранных вкладок">
-
 <!ENTITY config.tabs.features "Дополнительные свойства">
-
-<!ENTITY config.close.direction.caption    "Order to close multiple tabs">
-<!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
-<!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
-<!ENTITY config.close.selectedTab.last     "Close the current tab at last">
-
-<!ENTITY config.clopboardFormatType.caption "Формат текста операции &quot;Копировать URI-ы вкладок&quot;">
-<!ENTITY config.clopboardFormatType.select  "Выбрать из меню">
 
 <!ENTITY config.saveType.caption "Режим сохранения для вкладок">
 <!ENTITY config.saveType.select  "Выбрать из меню">
@@ -67,6 +56,20 @@
 <!ENTITY config.useEffectiveTLD.caption  "Detecting method for &quot;similar tabs&quot;">
 <!ENTITY config.useEffectiveTLD.enabled  "by Domain (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are similar tabs)">
 <!ENTITY config.useEffectiveTLD.disabled "by Host (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are not similar tabs)">
+
+<!ENTITY config.tabs.clipboard "Copy">
+
+<!ENTITY config.clipboardFormatType.caption "Формат текста операции &quot;Копировать URI-ы вкладок&quot;">
+<!ENTITY config.clipboardFormatType.select  "Выбрать из меню">
+<!ENTITY config.clipboardFormatType.add.label      "Add Custom Format">
+<!ENTITY config.clipboardFormatType.remove.label   "&#xD7;">
+<!ENTITY config.clipboardFormatType.remove.tooltip "Remove This Format">
+<!ENTITY config.clipboardFormatType.default.label  "Name">
+<!ENTITY config.clipboardFormatType.default.format "Format">
+<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;EOL&#x25;=Line Feed">
+
+<!ENTITY config.tabs.selectionMenu    "Меню выбранных вкладок">
+<!ENTITY config.selectionMenu.caption "Доступные элементы всплывающего меню для выбранных вкладок">
 
 <!ENTITY config.tabs.contextMenu    "Контекстное меню вкладки">
 <!ENTITY config.contextMenu.caption "Доступные элементы контекстного меню у вкладок">
@@ -78,6 +81,11 @@
 <!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">
 
 <!ENTITY config.tabs.advanced "Дополнительные">
+
+<!ENTITY config.close.direction.caption    "Order to close multiple tabs">
+<!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
+<!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
+<!ENTITY config.close.selectedTab.last     "Close the current tab at last">
 
 <!ENTITY config.selectAfter.duplicate "Select tabs automatically, after they are duplicated">
 <!ENTITY config.selectAfter.move      "Select tabs automatically, after they are moved to another window">

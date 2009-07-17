@@ -1865,7 +1865,7 @@ var MultipleTabService = {
 				return format
 						.replace(/%(RLINK|RLINK_HTMLIFIED|SEL|SEL_HTMLIFIED)%/gi, '')
 						.replace(/%URL%/gi, uri)
-						.replace(/%TITLE%/gi, title)
+						.replace(/%(TITLE|TEXT)%/gi, title)
 						.replace(/%URL_HTMLIFIED%/gi, escapedURI)
 						.replace(/%TITLE_HTMLIFIED%/gi, escapedTitle)
 						.replace(/%UTC_TIME%/gi, timeUTC)
@@ -2313,6 +2313,7 @@ var MultipleTabService = {
 					try {
 						let format, label;
 						[format, label] = aPart.split('/').map(decodeURIComponent);
+						if (!format) return;
 						if (!label) label = format;
 						this.customFormats.push({
 							typeID : aIndex + this.kCUSTOM_TYPE_OFFSET,

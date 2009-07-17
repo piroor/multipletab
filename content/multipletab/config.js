@@ -113,3 +113,123 @@ function openMenuEditorConfig()
 {
 	window['piro.sakura.ne.jp'].extensions.goToOptions(MENU_EDITOR_ID);
 }
+
+
+
+var gFormatsPref;
+var gFormatsBox;
+var gFormatsRadio;
+var gFormatTemplate;
+var gAddFormatButton;
+
+function initClipboardPane()
+{
+	gFormatsPref     = document.getElementById('extensions.multipletab.clipboard.customFormats');
+	gFormatsBox      = document.getElementById('customFormats-box');
+	gFormatsRadio    = document.getElementById('extensions.multipletab.clipboard.formatType-radiogroup');
+	gFormatTemplate  = document.getElementById('customFormat-template');
+	gAddFormatButton = document.getElementById('customFormats-add');
+
+	initCustomFormats();
+	gFormatsRadio.value = document.getElementById('extensions.multipletab.clipboard.formatType').value;
+}
+
+function getRadioFromRow(aRow)
+{
+	return aRow.getElementsByTagName('radio')[0];
+}
+function getLabelFieldFromRow(aRow)
+{
+	return aRow.getElementsByTagName('textbox')[0];
+}
+function getFormatFieldFromRow(aRow)
+{
+	return aRow.getElementsByTagName('textbox')[1];
+}
+
+
+const kROW_ID_PREFIX = 'customFormat-';
+
+function removeFormat(aRow)
+{
+	var typeID       = getRadioFromRow(aRow).getAttribute('value');
+	var selected     = parseInt(gFormatsRadio.value);
+	var selectedItem = gFormatsRadio.selectedItem;
+
+	var nextRow = aRow.nextSibling;
+	while (nextRow)
+	{
+		let radio = getRadioFromRow(nextRow);
+		let typeID = radio.getAttribute('value');
+		typeID = parseInt(typeID)-1;
+		radio.setAttribute('value', typeID);
+		nextRow.setAttribute('id', kROW_ID_PREFIX+typeID);
+		nextRow = nextRow.nextSibling;
+	}
+	gFormatsBox.removeChild(aRow);
+
+	if (selected == typeID) {
+		gFormatsRadio.value = -1;
+	}
+	else if (selected >= 1000) {
+		gFormatsRadio.selectedItem = selectedItem;
+	}
+
+	updateCustomFormats();
+}
+
+function addNewFormat(aLabel, aFormat)
+{
+	var typeID = parseInt(getRadioFromRow(gFormatsBox.lastChild).getAttribute('value')) + 1;
+
+	var newRow = gFormatTemplate.cloneNode(true);
+	getRadioFromRow(newRow).setAttribute('value', typeID);
+	newRow.setAttribute('id', kROW_ID_PREFIX+typeID);
+
+	gFormatsBox.appendChild(newRow);
+
+	if (aLabel) getLabelFieldFromRow(newRow).value = aLabel;
+	if (aFormat) getFormatFieldFromRow(newRow).value = aFormat;
+
+	if (!aLabel && !aFormat) {
+		window.setTimeout(function() {
+			getLabelFieldFromRow(newRow).focus();
+			updateCustomFormats();
+		}, 0);
+	}
+}
+
+function updateCustomFormats()
+{
+	var value = Array.slice(gFormatsBox.childNodes, 1)
+			.map(function(aRow) {
+				return [
+						getFormatFieldFromRow(aRow).value,
+						getLabelFieldFromRow(aRow).value
+					]
+					.map(encodeURIComponent)
+					.join('/');
+			})
+			.join('|')
+			.replace(/(\|\/)+$/, '').replace(/\|$/, ''); // delete last blank rows
+	if (value != gFormatsPref.value)
+		gFormatsPref.value = value;
+}
+
+function initCustomFormats()
+{
+	var range = document.createRange();
+	range.selectNodeContents(gFormatsBox);
+	range.setStartAfter(gFormatTemplate);
+	range.deleteContents();
+	range.detach();
+	var value = gFormatsPref.value
+		.replace(/(\|\/)+$/, '').replace(/\|$/, ''); // delete last blank rows
+	if (!value) return;
+	value.split('|')
+		.forEach(function(aFormat) {
+			let format, label;
+			[format, label] = aFormat.split('/').map(decodeURIComponent);
+			addNewFormat(label, format);
+		});
+}

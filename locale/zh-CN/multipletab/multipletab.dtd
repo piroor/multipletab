@@ -48,18 +48,7 @@
 <!ENTITY config.tabclickmode.default "关闭标签">
 <!ENTITY config.tabclickmode.toggle  "切换标签选中状态">
 
-<!ENTITY config.tabs.selectionMenu    "选中标签菜单">
-<!ENTITY config.selectionMenu.caption "在选中标签的上下文菜单中显示：">
-
 <!ENTITY config.tabs.features "特性">
-
-<!ENTITY config.close.direction.caption    "多个标签的关闭顺序">
-<!ENTITY config.close.direction.startToEnd "从左（上）到右（下）">
-<!ENTITY config.close.direction.endToStart "从右（下）到左（上）">
-<!ENTITY config.close.selectedTab.last     "当前标签留到最后关闭">
-
-<!ENTITY config.clopboardFormatType.caption "“复制标签 URI”的复制格式">
-<!ENTITY config.clopboardFormatType.select  "从子菜单中选择">
 
 <!ENTITY config.saveType.caption "保存标签方式">
 <!ENTITY config.saveType.select  "从子菜单中选择">
@@ -68,17 +57,35 @@
 <!ENTITY config.useEffectiveTLD.enabled  "相同域名（“aaa.example.com”和“bbb.example.com”视为相同网站）">
 <!ENTITY config.useEffectiveTLD.disabled "相同主机（“aaa.example.com”和“bbb.example.com”视为不同网站）">
 
+<!ENTITY config.tabs.clipboard "Copy">
+
+<!ENTITY config.clipboardFormatType.caption "“复制标签 URI”的复制格式">
+<!ENTITY config.clipboardFormatType.select  "从子菜单中选择">
+<!ENTITY config.clipboardFormatType.add.label      "Add Custom Format">
+<!ENTITY config.clipboardFormatType.remove.label   "&#xD7;">
+<!ENTITY config.clipboardFormatType.remove.tooltip "Remove This Format">
+<!ENTITY config.clipboardFormatType.default.label  "Name">
+<!ENTITY config.clipboardFormatType.default.format "Format">
+<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;EOL&#x25;=Line Feed">
+
+<!ENTITY config.tabs.selectionMenu    "选中标签菜单">
+<!ENTITY config.selectionMenu.caption "在选中标签的上下文菜单中显示：">
+
 <!ENTITY config.tabs.contextMenu    "标签右键菜单">
 <!ENTITY config.contextMenu.caption "在标签的上下文菜单中显示：">
 <!ENTITY config.contextMenu.removeLeftTabs  "关闭左侧（上方）标签">
 <!ENTITY config.contextMenu.removeRightTabs "关闭右侧（下方）标签">
-
 
 <!ENTITY config.menuEditor.description "您可以使用 Menu Editor 自定义此菜单。">
 <!ENTITY config.menuEditor.link        "下载 Menu Editor">
 <!ENTITY config.menuEditor.config      "打开 Menu Editor 配置">
 
 <!ENTITY config.tabs.advanced "高级">
+
+<!ENTITY config.close.direction.caption    "多个标签的关闭顺序">
+<!ENTITY config.close.direction.startToEnd "从左（上）到右（下）">
+<!ENTITY config.close.direction.endToStart "从右（下）到左（上）">
+<!ENTITY config.close.selectedTab.last     "当前标签留到最后关闭">
 
 <!ENTITY config.selectAfter.duplicate "自动选中克隆出来的标签">
 <!ENTITY config.selectAfter.move      "自动选中移动到另一窗口的标签">

@@ -48,18 +48,7 @@
 <!ENTITY config.tabclickmode.default "Close Tab">
 <!ENTITY config.tabclickmode.toggle  "Toggle Selection of Tab">
 
-<!ENTITY config.tabs.selectionMenu    "Tab Selection Menu">
-<!ENTITY config.selectionMenu.caption "Available items of the popup menu for selected tabs">
-
 <!ENTITY config.tabs.features "Features">
-
-<!ENTITY config.close.direction.caption    "Order to close multiple tabs">
-<!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
-<!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
-<!ENTITY config.close.selectedTab.last     "Close the current tab at last">
-
-<!ENTITY config.clopboardFormatType.caption "Text Format of &quot;Copy URIs of Tabs&quot; features">
-<!ENTITY config.clopboardFormatType.select  "Select from menu">
 
 <!ENTITY config.saveType.caption "Save mode for tabs">
 <!ENTITY config.saveType.select  "Select from menu">
@@ -68,17 +57,35 @@
 <!ENTITY config.useEffectiveTLD.enabled  "by Domain (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are similar tabs)">
 <!ENTITY config.useEffectiveTLD.disabled "by Host (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are not similar tabs)">
 
+<!ENTITY config.tabs.clipboard "Copy">
+
+<!ENTITY config.clipboardFormatType.caption "Text Format of &quot;Copy URIs of Tabs&quot; features">
+<!ENTITY config.clipboardFormatType.select  "Select from menu">
+<!ENTITY config.clipboardFormatType.add.label      "Add Custom Format">
+<!ENTITY config.clipboardFormatType.remove.label   "&#xD7;">
+<!ENTITY config.clipboardFormatType.remove.tooltip "Remove This Format">
+<!ENTITY config.clipboardFormatType.default.label  "Name">
+<!ENTITY config.clipboardFormatType.default.format "Format">
+<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;EOL&#x25;=Line Feed">
+
+<!ENTITY config.tabs.selectionMenu    "Tab Selection Menu">
+<!ENTITY config.selectionMenu.caption "Available items of the popup menu for selected tabs">
+
 <!ENTITY config.tabs.contextMenu    "Tab Context Menu">
 <!ENTITY config.contextMenu.caption "Available items of the context menu on tabs">
 <!ENTITY config.contextMenu.removeLeftTabs  "Close Left (Above) Tabs">
 <!ENTITY config.contextMenu.removeRightTabs "Close Right (Below) Tabs">
-
 
 <!ENTITY config.menuEditor.description "You can customize this menu by Menu Editor.">
 <!ENTITY config.menuEditor.link        "Download Menu Editor">
 <!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">
 
 <!ENTITY config.tabs.advanced "Advanced">
+
+<!ENTITY config.close.direction.caption    "Order to close multiple tabs">
+<!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
+<!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
+<!ENTITY config.close.selectedTab.last     "Close the current tab at last">
 
 <!ENTITY config.selectAfter.duplicate "Select tabs automatically, after they are duplicated">
 <!ENTITY config.selectAfter.move      "Select tabs automatically, after they are moved to another window">

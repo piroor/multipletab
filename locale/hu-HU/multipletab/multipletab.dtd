@@ -50,20 +50,23 @@
 
 <!ENTITY config.tabs.features "Funkciók">
 
-<!ENTITY config.close.direction.caption    "Több lap bezárásának sorrendje">
-<!ENTITY config.close.direction.startToEnd "Balról jobbra (felső -> alsó)">
-<!ENTITY config.close.direction.endToStart "Jobbról balra (alsó -> felső)">
-<!ENTITY config.close.selectedTab.last     "Jelenlegi lap bezárása legutoljára">
-
-<!ENTITY config.clopboardFormatType.caption "A &quot;Lap adatainak másolása&quot; opció művelete">
-<!ENTITY config.clopboardFormatType.select  "Kiválasztás menüből">
-
 <!ENTITY config.saveType.caption "Lapok mentésének módja">
 <!ENTITY config.saveType.select  "Kiválasztás menüből">
 
 <!ENTITY config.useEffectiveTLD.caption  "&quot;Hasonló lapok&quot; felismerése">
 <!ENTITY config.useEffectiveTLD.enabled  "Tartomány alapján (&quot;aaa.pelda.com&quot; és &quot;bbb.pelda.com&quot; hasonló lapok)">
 <!ENTITY config.useEffectiveTLD.disabled "Kiszolgáló alapján (&quot;aaa.pelda.com&quot; és &quot;bbb.pelda.com&quot; nem hasonló lapok)">
+
+<!ENTITY config.tabs.clipboard "Copy">
+
+<!ENTITY config.clipboardFormatType.caption "A &quot;Lap adatainak másolása&quot; opció művelete">
+<!ENTITY config.clipboardFormatType.select  "Kiválasztás menüből">
+<!ENTITY config.clipboardFormatType.add.label      "Add Custom Format">
+<!ENTITY config.clipboardFormatType.remove.label   "&#xD7;">
+<!ENTITY config.clipboardFormatType.remove.tooltip "Remove This Format">
+<!ENTITY config.clipboardFormatType.default.label  "Name">
+<!ENTITY config.clipboardFormatType.default.format "Format">
+<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;EOL&#x25;=Line Feed">
 
 <!ENTITY config.tabs.selectionMenu    "Kiválasztott lapok">
 <!ENTITY config.selectionMenu.caption "A kiválasztott lapok füleinek helyi menüje:">
@@ -78,6 +81,11 @@
 <!ENTITY config.menuEditor.config      "Menu Editor beállítások">
 
 <!ENTITY config.tabs.advanced "Haladó">
+
+<!ENTITY config.close.direction.caption    "Több lap bezárásának sorrendje">
+<!ENTITY config.close.direction.startToEnd "Balról jobbra (felső -> alsó)">
+<!ENTITY config.close.direction.endToStart "Jobbról balra (alsó -> felső)">
+<!ENTITY config.close.selectedTab.last     "Jelenlegi lap bezárása legutoljára">
 
 <!ENTITY config.selectAfter.duplicate "Lapok automatikus kijelölése, ha kettőzve voltak">
 <!ENTITY config.selectAfter.move      "Lapok automatikus kijelölése, ha másik ablakba lettek áthelyezve">

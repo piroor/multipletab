@@ -1,0 +1,35 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#formatTypeBox,
+#selectionMenuItemsBox,
+#contextMenuItemsBox {
+	max-height: 20em;
+}
+
+.dummy-button {
+	visibility: hidden;
+}
+
+#formatTypeBox textbox[readonly="true"] {
+	color: graytext;
+}
+
+#customFormat-template,
+.customFormat-row radio .radio-label-box,
+.customFormat-row radio label {
+	visibility: collapse;
+}
+
+.customFormat-label-textbox,
+.customFormat-format-textbox {
+	min-width: 0;
+}
+
+.customFormat-label-textbox {
+	max-width: 11em;
+}
+
+#formatTypeBox .delete-button {
+	min-width: 0;
+	min-height: 0;
+}
