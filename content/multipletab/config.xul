@@ -156,9 +156,7 @@
 			<radiogroup id="extensions.multipletab.clipboard.formatType-radiogroup"
 				preference="extensions.multipletab.clipboard.formatType"
 				orient="vertical">
-				<hbox>
-					<radio value="-1" label="&config.clipboardFormatType.select;"/>
-				</hbox>
+				<radio value="-1" label="&config.clipboardFormatType.select;"/>
 				<grid>
 					<columns>
 						<column/>
