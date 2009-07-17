@@ -1863,13 +1863,14 @@ var MultipleTabService = {
 								.replace(/</g, '&lt;')
 								.replace(/>/g, '&gt;');
 				return format
-						.replace(/%(URL|RLINK)%/gi, uri)
-						.replace(/%(TITLE|SEL)%/gi, title)
-						.replace(/%EOL%/gi, this.lineFeed)
-						.replace(/%(URL_HTMLIFIED|RLINK_HTMLIFIED)%/gi, escapedURI)
-						.replace(/%(TITLE_HTMLIFIED|SEL_HTMLIFIED)%/gi, escapedTitle)
+						.replace(/%(RLINK|RLINK_HTMLIFIED|SEL|SEL_HTMLIFIED)%/gi, '')
+						.replace(/%URL%/gi, uri)
+						.replace(/%TITLE%/gi, title)
+						.replace(/%URL_HTMLIFIED%/gi, escapedURI)
+						.replace(/%TITLE_HTMLIFIED%/gi, escapedTitle)
 						.replace(/%UTC_TIME%/gi, timeUTC)
-						.replace(/%LOCAL_TIME%/gi, timeLocal);
+						.replace(/%LOCAL_TIME%/gi, timeLocal)
+						.replace(/%EOL%/gi, this.lineFeed);
 			}, this);
 		if (stringToCopy.length > 1)
 			stringToCopy.push('');
