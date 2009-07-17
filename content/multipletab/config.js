@@ -9,6 +9,40 @@ var gAutoPopupItems = [];
 var gDelayItems = [];
 var gDragModeRadio;
 
+
+function ArrowScrollBoxDOMMouseScrollHandler(aID, aScrollTargetType)
+{
+	this.type = aScrollTargetType;
+	this.box  = document.getElementById(aID);
+	this.box.addEventListener('DOMMouseScroll', this, true);
+	window.addEventListener('unload', this, false);
+}
+ArrowScrollBoxDOMMouseScrollHandler.prototype = {
+	handleEvent : function(aEvent)
+	{
+		switch (aEvent.type)
+		{
+			case 'unload':
+				this.box.removeEventListener('DOMMouseScroll', this, true);
+				window.removeEventListener('unload', this, false);
+				return;
+
+			case 'DOMMouseScroll':
+				if ('axis' in aEvent &&
+					aEvent.axis == aEvent.HORIZONTAL_AXIS &&
+					this.box.orient == 'vertical')
+					return;
+
+				var targetBox = this.box.getElementsByTagName(this.type)[0].boxObject;
+
+				this.box.scrollByPixels(targetBox.height * aEvent.detail);
+				aEvent.stopPropagation();
+				break;
+		}
+	}
+};
+
+
 function init()
 {
 	var installed = window['piro.sakura.ne.jp'].extensions.isInstalled(MENU_EDITOR_ID);
@@ -64,6 +98,10 @@ function init()
 				function(aItem) { aItem.setAttribute('disabled', true); }
 			);
 	});
+
+	new ArrowScrollBoxDOMMouseScrollHandler('formatTypeBox', 'radio');
+	new ArrowScrollBoxDOMMouseScrollHandler('selectionMenuItemsBox', 'checkbox');
+	new ArrowScrollBoxDOMMouseScrollHandler('contextMenuItemsBox', 'checkbox');
 
 //	sizeToContent();
 }
