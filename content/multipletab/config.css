@@ -6,6 +6,12 @@
 	max-height: 20em;
 }
 
+#formatTypeBox > scrollbox,
+#selectionMenuItemsBox > scrollbox,
+#contextMenuItemsBox > scrollbox {
+	overflow-y: auto !important;
+}
+
 .dummy-button {
 	visibility: hidden;
 }
