@@ -168,21 +168,24 @@
 							<radio value="0" label="&popup.context.clipboard.format.default;"/>
 							<textbox readonly="true"
 								id="extensions.multipletab.clipboard.format.0-textbox"
-								preference="extensions.multipletab.clipboard.format.0"/>
+								preference="extensions.multipletab.clipboard.format.0"
+								tooltiptext="&config.clipboardFormatType.description;"/>
 							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
 						</row>
 						<row align="center">
 							<radio value="1" label="&popup.context.clipboard.format.mozurl;"/>
 							<textbox readonly="true"
 								id="extensions.multipletab.clipboard.format.1-textbox"
-								preference="extensions.multipletab.clipboard.format.1"/>
+								preference="extensions.multipletab.clipboard.format.1"
+								tooltiptext="&config.clipboardFormatType.description;"/>
 							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
 						</row>
 						<row align="center">
 							<radio value="2" label="&popup.context.clipboard.format.link;"/>
 							<textbox readonly="true"
 								id="extensions.multipletab.clipboard.format.2-textbox"
-								preference="extensions.multipletab.clipboard.format.2"/>
+								preference="extensions.multipletab.clipboard.format.2"
+								tooltiptext="&config.clipboardFormatType.description;"/>
 							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
 						</row>
 						<row id="customFormat-template"
