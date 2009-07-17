@@ -6,6 +6,8 @@
 <!DOCTYPE prefwindow [
 <!ENTITY % mainDTD SYSTEM "chrome://multipletab/locale/multipletab.dtd">
 %mainDTD;
+<!ENTITY % editDTD SYSTEM "chrome://global/locale/editMenuOverlay.dtd" >
+%editDTD;
 ]>
 
 <prefwindow id="multipletab-config"
@@ -211,6 +213,10 @@
 				flex="1"
 				label="&config.clipboardFormatType.add.label;"
 				oncommand="addNewFormat();"/>
+			<button id="customFormats-undo"
+				label="&undoCmd.label;"
+				disabled="true"
+				oncommand="undoRemoveFormat();"/>
 		</hbox>
 	</groupbox>
 </prefpane>

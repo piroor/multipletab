@@ -120,11 +120,15 @@ function openMenuEditorConfig()
 
 
 
+const kROW_ID_PREFIX = 'customFormat-';
+
 var gFormatsPref;
 var gFormatsBox;
 var gFormatsRadio;
 var gFormatTemplate;
 var gAddFormatButton;
+var gUndoRemoveFormatButton;
+var gFormatsUndoCache = [];
 
 function initClipboardPane()
 {
@@ -133,11 +137,16 @@ function initClipboardPane()
 	gFormatsRadio    = document.getElementById('extensions.multipletab.clipboard.formatType-radiogroup');
 	gFormatTemplate  = document.getElementById('customFormat-template');
 	gAddFormatButton = document.getElementById('customFormats-add');
+	gUndoRemoveFormatButton = document.getElementById('customFormats-undo');
 
 	initCustomFormats();
 	gFormatsRadio.value = document.getElementById('extensions.multipletab.clipboard.formatType').value;
 }
 
+function getRowByTypeId(aID)
+{
+	return document.getElementById(kROW_ID_PREFIX+aID);
+}
 function getRadioFromRow(aRow)
 {
 	return aRow.getElementsByTagName('radio')[0];
@@ -151,14 +160,21 @@ function getFormatFieldFromRow(aRow)
 	return aRow.getElementsByTagName('textbox')[1];
 }
 
-
-const kROW_ID_PREFIX = 'customFormat-';
-
 function removeFormat(aRow)
 {
 	var typeID       = getRadioFromRow(aRow).getAttribute('value');
 	var selected     = parseInt(gFormatsRadio.value);
 	var selectedItem = gFormatsRadio.selectedItem;
+
+	var cache = {
+			typeID : typeID,
+			label  : getLabelFieldFromRow(aRow).value,
+			format : getFormatFieldFromRow(aRow).value
+		};
+	if (cache.label || cache.format) {
+		gFormatsUndoCache.push(cache);
+		gUndoRemoveFormatButton.removeAttribute('disabled');
+	}
 
 	var nextRow = aRow.nextSibling;
 	while (nextRow)
@@ -174,12 +190,49 @@ function removeFormat(aRow)
 
 	if (selected == typeID) {
 		gFormatsRadio.value = -1;
+		cache.selected = true;
 	}
 	else if (selected >= 1000) {
 		gFormatsRadio.selectedItem = selectedItem;
 	}
 
 	updateCustomFormats();
+}
+
+function undoRemoveFormat()
+{
+	if (!gFormatsUndoCache.length) return;
+
+	var cache = gFormatsUndoCache.pop();
+	var newRow = addNewFormat(cache.label, cache.format);
+
+	var row = getRowByTypeId(cache.typeID);
+	if (row && row != newRow) {
+		(function(aRow) {
+			let nextRow = aRow.nextSibling;
+			if (!nextRow) return;
+
+			arguments.callee(nextRow);
+
+			getLabelFieldFromRow(nextRow).value = getLabelFieldFromRow(aRow).value;
+			getFormatFieldFromRow(nextRow).value = getFormatFieldFromRow(aRow).value;
+
+			if (!cache.selected) {
+				let radio = getRadioFromRow(aRow);
+				if (radio == gFormatsRadio.selectedItem)
+					gFormatsRadio.selectedItem = getRadioFromRow(nextRow);
+			}
+		})(row);
+		getLabelFieldFromRow(row).value = cache.label;
+		getFormatFieldFromRow(row).value = cache.format;
+		if (cache.selected)
+			gFormatsRadio.selectedItem = getRadioFromRow(row);
+	}
+
+	updateCustomFormats();
+
+	if (!gFormatsUndoCache.length)
+		gUndoRemoveFormatButton.setAttribute('disabled', true);
 }
 
 function addNewFormat(aLabel, aFormat)
@@ -192,6 +245,9 @@ function addNewFormat(aLabel, aFormat)
 
 	gFormatsBox.appendChild(newRow);
 
+	var radio = getRadioFromRow(newRow);
+	if (gFormatsRadio.mRadioChildren) gFormatsRadio.mRadioChildren = null; // for Firefox 2
+
 	if (aLabel) getLabelFieldFromRow(newRow).value = aLabel;
 	if (aFormat) getFormatFieldFromRow(newRow).value = aFormat;
 
@@ -201,6 +257,8 @@ function addNewFormat(aLabel, aFormat)
 			updateCustomFormats();
 		}, 0);
 	}
+
+	return newRow;
 }
 
 function updateCustomFormats()

@@ -35,7 +35,8 @@
 	max-width: 11em;
 }
 
-#formatTypeBox .delete-button {
+#formatTypeBox .delete-button,
+#customFormats-undo {
 	min-width: 0;
 	min-height: 0;
 }
