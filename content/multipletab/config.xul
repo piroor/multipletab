@@ -135,6 +135,15 @@
 		<preference id="extensions.multipletab.clipboard.formatType"
 			name="extensions.multipletab.clipboard.formatType"
 			type="int"/>
+		<preference id="extensions.multipletab.clipboard.format.0"
+			name="extensions.multipletab.clipboard.format.0"
+			type="string"/>
+		<preference id="extensions.multipletab.clipboard.format.1"
+			name="extensions.multipletab.clipboard.format.1"
+			type="string"/>
+		<preference id="extensions.multipletab.clipboard.format.2"
+			name="extensions.multipletab.clipboard.format.2"
+			type="string"/>
 		<preference id="extensions.multipletab.clipboard.customFormats"
 			name="extensions.multipletab.clipboard.customFormats"
 			type="string"/>
@@ -158,19 +167,22 @@
 						<row align="center">
 							<radio value="0" label="&popup.context.clipboard.format.default;"/>
 							<textbox readonly="true"
-								value="%URL%"/>
+								id="extensions.multipletab.clipboard.format.0-textbox"
+								preference="extensions.multipletab.clipboard.format.0"/>
 							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
 						</row>
 						<row align="center">
 							<radio value="1" label="&popup.context.clipboard.format.mozurl;"/>
 							<textbox readonly="true"
-								value="%TITLE%%EOL%%URL%"/>
+								id="extensions.multipletab.clipboard.format.1-textbox"
+								preference="extensions.multipletab.clipboard.format.1"/>
 							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
 						</row>
 						<row align="center">
 							<radio value="2" label="&popup.context.clipboard.format.link;"/>
 							<textbox readonly="true"
-								value="&lt;a href=&quot;%URL_HTMLFIED%&quot;&gt;%TITLE_HTMLFIED%&lt;/a&gt;"/>
+								id="extensions.multipletab.clipboard.format.2-textbox"
+								preference="extensions.multipletab.clipboard.format.2"/>
 							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
 						</row>
 						<row id="customFormat-template"

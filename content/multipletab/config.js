@@ -220,7 +220,7 @@ function updateCustomFormats()
 		row = row.nextSibling;
 	}
 	value = value.join('|')
-			.replace(/(\|\/)+$/, '').replace(/\|$/, ''); // delete last blank rows
+			.replace(/[\|\/]+$/, ''); // delete last blank rows
 	if (value != gFormatsPref.value)
 		gFormatsPref.value = value;
 }
@@ -233,7 +233,7 @@ function initCustomFormats()
 	range.deleteContents();
 	range.detach();
 	var value = gFormatsPref.value
-		.replace(/(\|\/)+$/, '').replace(/\|$/, ''); // delete last blank rows
+		.replace(/[\|\/]+$/, ''); // delete last blank rows
 	if (!value) return;
 	value.split('|')
 		.forEach(function(aFormat) {

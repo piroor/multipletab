@@ -1899,11 +1899,9 @@ var MultipleTabService = {
 						return this.customFormats[i].format;
 				}
 			case this.kFORMAT_TYPE_DEFAULT:
-				return '%URL%';
 			case this.kFORMAT_TYPE_MOZ_URL:
-				return '%TITLE%%EOL%%URL%';
 			case this.kFORMAT_TYPE_LINK:
-				return '<a href="%URL_HTMLIFIED%">%TITLE_HTMLIFIED%</a>';
+				return this.getPref('extensions.multipletab.clipboard.format.'+aFormatType);
 		}
 	},
   
