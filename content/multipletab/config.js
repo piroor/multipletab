@@ -201,16 +201,21 @@ function addNewFormat(aLabel, aFormat)
 
 function updateCustomFormats()
 {
-	var value = Array.slice(gFormatsBox.childNodes, 1)
-			.map(function(aRow) {
-				return [
-						getFormatFieldFromRow(aRow).value,
-						getLabelFieldFromRow(aRow).value
-					]
-					.map(encodeURIComponent)
-					.join('/');
-			})
-			.join('|')
+	var value = [];
+	var row = gFormatTemplate.nextSibling;
+	while (row)
+	{
+		value.push(
+			[
+				getFormatFieldFromRow(aRow).value,
+				getLabelFieldFromRow(aRow).value
+			]
+			.map(encodeURIComponent)
+			.join('/')
+		);
+		row = row.nextSibling;
+	}
+	value = value.join('|')
 			.replace(/(\|\/)+$/, '').replace(/\|$/, ''); // delete last blank rows
 	if (value != gFormatsPref.value)
 		gFormatsPref.value = value;
