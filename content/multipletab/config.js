@@ -120,7 +120,7 @@ function openMenuEditorConfig()
 
 
 
-const kROW_ID_PREFIX = 'customFormat-';
+const kROW_ID_PREFIX = 'format-';
 
 var gFormatsPref;
 var gFormatsBox;
@@ -132,18 +132,18 @@ var gFormatsUndoCache = [];
 
 function initClipboardPane()
 {
-	gFormatsPref     = document.getElementById('extensions.multipletab.clipboard.customFormats');
-	gFormatsBox      = document.getElementById('customFormats-box');
+	gFormatsPref     = document.getElementById('extensions.multipletab.clipboard.formats');
+	gFormatsBox      = document.getElementById('formats-box');
 	gFormatsRadio    = document.getElementById('extensions.multipletab.clipboard.formatType-radiogroup');
-	gFormatTemplate  = document.getElementById('customFormat-template');
-	gAddFormatButton = document.getElementById('customFormats-add');
-	gUndoRemoveFormatButton = document.getElementById('customFormats-undo');
+	gFormatTemplate  = document.getElementById('format-template');
+	gAddFormatButton = document.getElementById('formats-add');
+	gUndoRemoveFormatButton = document.getElementById('formats-undo');
 
 	initCustomFormats();
 	gFormatsRadio.value = document.getElementById('extensions.multipletab.clipboard.formatType').value;
 }
 
-function getRowByTypeId(aID)
+function getRowById(aID)
 {
 	return document.getElementById(kROW_ID_PREFIX+aID);
 }
@@ -162,12 +162,12 @@ function getFormatFieldFromRow(aRow)
 
 function removeFormat(aRow)
 {
-	var typeID       = getRadioFromRow(aRow).getAttribute('value');
+	var id           = getRadioFromRow(aRow).getAttribute('value');
 	var selected     = parseInt(gFormatsRadio.value);
 	var selectedItem = gFormatsRadio.selectedItem;
 
 	var cache = {
-			typeID : typeID,
+			id     : id,
 			label  : getLabelFieldFromRow(aRow).value,
 			format : getFormatFieldFromRow(aRow).value
 		};
@@ -180,15 +180,15 @@ function removeFormat(aRow)
 	while (nextRow)
 	{
 		let radio = getRadioFromRow(nextRow);
-		let typeID = radio.getAttribute('value');
-		typeID = parseInt(typeID)-1;
-		radio.setAttribute('value', typeID);
-		nextRow.setAttribute('id', kROW_ID_PREFIX+typeID);
+		let id = radio.getAttribute('value');
+		id = parseInt(id)-1;
+		radio.setAttribute('value', id);
+		nextRow.setAttribute('id', kROW_ID_PREFIX+id);
 		nextRow = nextRow.nextSibling;
 	}
 	gFormatsBox.removeChild(aRow);
 
-	if (selected == typeID) {
+	if (selected == id) {
 		gFormatsRadio.value = -1;
 		cache.selected = true;
 	}
@@ -206,7 +206,7 @@ function undoRemoveFormat()
 	var cache = gFormatsUndoCache.pop();
 	var newRow = addNewFormat(cache.label, cache.format);
 
-	var row = getRowByTypeId(cache.typeID);
+	var row = getRowById(cache.id);
 	if (row && row != newRow) {
 		(function(aRow) {
 			let nextRow = aRow.nextSibling;
@@ -237,11 +237,11 @@ function undoRemoveFormat()
 
 function addNewFormat(aLabel, aFormat)
 {
-	var typeID = parseInt(getRadioFromRow(gFormatsBox.lastChild).getAttribute('value')) + 1;
+	var id = parseInt(getRadioFromRow(gFormatsBox.lastChild).getAttribute('value')) + 1;
 
 	var newRow = gFormatTemplate.cloneNode(true);
-	getRadioFromRow(newRow).setAttribute('value', typeID);
-	newRow.setAttribute('id', kROW_ID_PREFIX+typeID);
+	getRadioFromRow(newRow).setAttribute('value', id);
+	newRow.setAttribute('id', kROW_ID_PREFIX+id);
 
 	gFormatsBox.appendChild(newRow);
 

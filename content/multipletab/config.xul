@@ -146,8 +146,8 @@
 		<preference id="extensions.multipletab.clipboard.format.2"
 			name="extensions.multipletab.clipboard.format.2"
 			type="string"/>
-		<preference id="extensions.multipletab.clipboard.customFormats"
-			name="extensions.multipletab.clipboard.customFormats"
+		<preference id="extensions.multipletab.clipboard.formats"
+			name="extensions.multipletab.clipboard.formats"
 			type="string"/>
 	</preferences>
 	<groupbox>
@@ -163,7 +163,7 @@
 						<column flex="1"/>
 						<column/>
 					</columns>
-					<rows id="customFormats-box" oninput="updateCustomFormats()">
+					<rows id="formats-box" oninput="updateCustomFormats()">
 						<row align="center">
 							<radio value="0" label="&popup.context.clipboard.format.default;"/>
 							<textbox readonly="true"
@@ -188,16 +188,16 @@
 								tooltiptext="&config.clipboardFormatType.description;"/>
 							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
 						</row>
-						<row id="customFormat-template"
-							class="customFormat-row"
+						<row id="format-template"
+							class="format-row"
 							align="center">
 							<hbox align="center">
 								<radio value="999" disabled="true"/>
-								<textbox class="customFormat-label-textbox"
+								<textbox class="format-label-textbox"
 									emptytext="&config.clipboardFormatType.default.label;"
 									tooltiptext="&config.clipboardFormatType.description;"/>
 							</hbox>
-							<textbox class="customFormat-format-textbox"
+							<textbox class="format-textbox"
 								emptytext="&config.clipboardFormatType.default.format;"
 								tooltiptext="&config.clipboardFormatType.description;"
 								oninput="onFormatInput(this.parentNode);"/>
@@ -211,11 +211,11 @@
 			</radiogroup>
 		</arrowscrollbox>
 		<hbox>
-			<button id="customFormats-add"
+			<button id="formats-add"
 				flex="1"
 				label="&config.clipboardFormatType.add.label;"
 				oncommand="addNewFormat();"/>
-			<button id="customFormats-undo"
+			<button id="formats-undo"
 				label="&undoCmd.label;"
 				disabled="true"
 				oncommand="undoRemoveFormat();"/>

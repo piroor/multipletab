@@ -22,8 +22,8 @@ var MultipleTabService = {
 	kCONTEXT_MENU_TEMPLATE : 'multipletab-tabcontext-menu-template',
 
 	kCUSTOM_TYPE_OFFSET    : 1000,
-	customFormats          : [],
-	customFormatsTimeStamp : -1,
+	formats          : [],
+	formatsTimeStamp : -1,
 
 	selectableItems : [
 		{ name : 'clipboard',
@@ -466,7 +466,7 @@ var MultipleTabService = {
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.selectionStyle');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.linefeed');
-		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.customFormats');
+		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.formats');
 
 /*
 		if ('nsDragAndDrop' in window &&
@@ -1278,23 +1278,23 @@ var MultipleTabService = {
   
 	initCopyFormatItems : function(aPopup) 
 	{
-		if (aPopup.customFormatsTimeStamp == this.customFormatsTimeStamp) return;
+		if (aPopup.formatsTimeStamp == this.formatsTimeStamp) return;
 
-		aPopup.customFormatsTimeStamp = this.customFormatsTimeStamp;
+		aPopup.formatsTimeStamp = this.formatsTimeStamp;
 
 		var separator = aPopup.getElementsByTagName('menuseparator')[0];
 		var range = document.createRange();
 		range.selectNodeContents(aPopup);
 		range.setStartAfter(separator);
 		range.deleteContents();
-		if (this.customFormats.length) {
+		if (this.formats.length) {
 			separator.removeAttribute('hidden');
 			let fragment = document.createDocumentFragment();
-			this.customFormats.forEach(function(aItem) {
+			this.formats.forEach(function(aItem) {
 				let item = document.createElement('menuitem');
 				item.setAttribute('label', aItem.label);
 				item.setAttribute('value', aItem.format);
-				item.setAttribute('format-type', aItem.typeID);
+				item.setAttribute('format-type', aItem.id);
 				fragment.appendChild(item);
 			}, this);
 			range.insertNode(fragment);
@@ -1893,10 +1893,10 @@ var MultipleTabService = {
 		switch (aFormatType)
 		{
 			default:
-				for (let i in this.customFormats)
+				for (let i in this.formats)
 				{
-					if (this.customFormats[i].typeID == aFormatType)
-						return this.customFormats[i].format;
+					if (this.formats[i].id == aFormatType)
+						return this.formats[i].format;
 				}
 			case this.kFORMAT_TYPE_DEFAULT:
 			case this.kFORMAT_TYPE_MOZ_URL:
@@ -2304,17 +2304,17 @@ var MultipleTabService = {
 				this.lineFeed = value;
 				break;
 
-			case 'extensions.multipletab.clipboard.customFormats':
-				this.customFormats = [];
-				this.customFormatsTimeStamp = Date.now();
+			case 'extensions.multipletab.clipboard.formats':
+				this.formats = [];
+				this.formatsTimeStamp = Date.now();
 				value.split('|').forEach(function(aPart, aIndex) {
 					try {
 						let format, label;
 						[format, label] = aPart.split('/').map(decodeURIComponent);
 						if (!format) return;
 						if (!label) label = format;
-						this.customFormats.push({
-							typeID : aIndex + this.kCUSTOM_TYPE_OFFSET,
+						this.formats.push({
+							id     : aIndex + this.kCUSTOM_TYPE_OFFSET,
 							label  : label,
 							format : format
 						});
