@@ -1863,11 +1863,11 @@ var MultipleTabService = {
 								.replace(/</g, '&lt;')
 								.replace(/>/g, '&gt;');
 				return format
-						.replace(/%(RLINK|RLINK_HTMLIFIED|SEL|SEL_HTMLIFIED)%/gi, '')
+						.replace(/%(RLINK|RLINK_HTML(IFIED)?|SEL|SEL_HTML(IFIED)?)%/gi, '')
 						.replace(/%URL%/gi, uri)
 						.replace(/%(TITLE|TEXT)%/gi, title)
-						.replace(/%URL_HTMLIFIED%/gi, escapedURI)
-						.replace(/%TITLE_HTMLIFIED%/gi, escapedTitle)
+						.replace(/%URL_HTML(IFIED)?%/gi, escapedURI)
+						.replace(/%TITLE_HTML(IFIED)?%/gi, escapedTitle)
 						.replace(/%UTC_TIME%/gi, timeUTC)
 						.replace(/%LOCAL_TIME%/gi, timeLocal)
 						.replace(/%EOL%/gi, this.lineFeed);

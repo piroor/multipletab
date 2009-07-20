@@ -43,7 +43,7 @@ pref("extensions.multipletab.clipboard.formatType", -1);
 pref("extensions.multipletab.clipboard.linefeed", "\r\n");
 pref("extensions.multipletab.clipboard.format.0", "%URL%");
 pref("extensions.multipletab.clipboard.format.1", "%TITLE%%EOL%%URL%");
-pref("extensions.multipletab.clipboard.format.2", "<a href=\"%URL_HTMLFIED%\">%TITLE_HTMLFIED%</a>");
+pref("extensions.multipletab.clipboard.format.2", "<a href=\"%URL_HTMLIFIED%\">%TITLE_HTMLIFIED%</a>");
 pref("extensions.multipletab.clipboard.customFormats", "");
 // 0 = single file, 1 = complete (include embedded files), 2 = plain Text, -1 = select
 pref("extensions.multipletab.saveTabs.saveType", 1);
