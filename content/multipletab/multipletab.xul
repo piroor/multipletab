@@ -92,26 +92,26 @@
 		<menuitem id="multipletab-selection-printTabs"
 			label="&popup.selection.printTabs;"
 			oncommand="MultipleTabService.printTabs(MultipleTabService.getSelectedTabs());"
-			multipletab-enabled="'PrintAllTabs' in window"/>
+			multipletab-available="'PrintAllTabs' in window"/>
 		<menuseparator id="multipletab-selection-lock-separator"/>
 		<menuitem id="multipletab-selection-freezeTabs"
 			label="&popup.selection.freezeTabs;"
 			type="checkbox" autocheck="false"
 			oncommand="MultipleTabService.toggleTabsFreezed(MultipleTabService.getSelectedTabs(),
 				this.getAttribute('checked') != 'true');"
-			multipletab-enabled="'freezeTab' in gBrowser"/>
+			multipletab-available="'freezeTab' in gBrowser"/>
 		<menuitem id="multipletab-selection-protectTabs"
 			label="&popup.selection.protectTabs;"
 			type="checkbox" autocheck="false"
 			oncommand="MultipleTabService.toggleTabsProtected(MultipleTabService.getSelectedTabs(),
 				this.getAttribute('checked') != 'true');"
-			multipletab-enabled="'protectTab' in gBrowser"/>
+			multipletab-available="'protectTab' in gBrowser"/>
 		<menuitem id="multipletab-selection-lockTabs"
 			label="&popup.selection.lockTabs;"
 			type="checkbox" autocheck="false"
 			oncommand="MultipleTabService.toggleTabsLocked(MultipleTabService.getSelectedTabs(),
 				this.getAttribute('checked') != 'true');"
-			multipletab-enabled="'lockTab' in gBrowser"/>
+			multipletab-available="'lockTab' in gBrowser"/>
 	</menupopup>
 
 	<menupopup id="multipletab-tabcontext-menu-template">

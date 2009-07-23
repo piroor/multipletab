@@ -16,6 +16,7 @@ var MultipleTabService = {
 	kREADY_TO_CLOSE  : 'multipletab-ready-to-close',
 	kINSERT_AFTER    : 'multipletab-insertafter',
 	kINSERT_BEFORE   : 'multipletab-insertbefore',
+	kAVAILABLE       : 'multipletab-available',
 	kENABLED         : 'multipletab-enabled',
 
 	kSELECTION_MENU        : 'multipletab-selection-menu',
@@ -1210,19 +1211,30 @@ var MultipleTabService = {
 				pref = this.getPref('extensions.multipletab.show.'+key);
 			}
 
-			var enabled = aNode.getAttribute(this.kENABLED);
-			if (enabled) {
+			var available = aNode.getAttribute(this.kAVAILABLE);
+			if (available) {
 				/* tabbrowser
 				   tabs
 				   selectedTabs */
-				eval('enabled = ('+enabled+')');
-				if (!enabled) pref = false;
+				eval('available = ('+available+')');
+				if (!available) pref = false;
 			}
 
 			if (pref === null) return;
 
 			if (pref) {
 				aNode.removeAttribute('hidden');
+				var enabled = aNode.getAttribute(this.kENABLED);
+				if (enabled) {
+					/* tabbrowser
+					   tabs
+					   selectedTabs */
+					eval('enabled = ('+enabled+')');
+					if (enabled)
+						aNode.removeAttribute('disabled');
+					else
+						aNode.setAttribute('disabled', true);
+				}
 			}
 			else {
 				aNode.setAttribute('hidden', true);
