@@ -1507,7 +1507,20 @@ var MultipleTabService = {
   
 	addBookmarkFor : function(aTabs, aFolderName) 
 	{
-		window['piro.sakura.ne.jp'].bookmarkMultipleTabs.addBookmarkFor(aTabs, aFolderName);
+		var isTSTBookmarksTreeStructureAvailable = (
+				'TreeStyleTabService' in window &&
+				'beginAddBookmarksFromTabs' in TreeStyleTabService &&
+				'endAddBookmarksFromTabs' in TreeStyleTabService
+			);
+		if (isTSTBookmarksTreeStructureAvailable)
+			TreeStyleTabService.beginAddBookmarksFromTabs(aTabs);
+		try {
+			window['piro.sakura.ne.jp'].bookmarkMultipleTabs.addBookmarkFor(aTabs, aFolderName);
+		}
+		catch(e) {
+		}
+		if (isTSTBookmarksTreeStructureAvailable)
+			TreeStyleTabService.endAddBookmarksFromTabs();
 	},
  
 	printTabs : function(aTabs) 
