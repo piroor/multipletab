@@ -57,16 +57,16 @@
 <!ENTITY config.useEffectiveTLD.enabled  "Tartomány alapján (&quot;aaa.pelda.com&quot; és &quot;bbb.pelda.com&quot; hasonló lapok)">
 <!ENTITY config.useEffectiveTLD.disabled "Kiszolgáló alapján (&quot;aaa.pelda.com&quot; és &quot;bbb.pelda.com&quot; nem hasonló lapok)">
 
-<!ENTITY config.tabs.clipboard "Copy">
+<!ENTITY config.tabs.clipboard "Másolás">
 
 <!ENTITY config.clipboardFormatType.caption "A &quot;Lap adatainak másolása&quot; opció művelete">
 <!ENTITY config.clipboardFormatType.select  "Kiválasztás menüből">
-<!ENTITY config.clipboardFormatType.add.label      "Add Custom Format">
+<!ENTITY config.clipboardFormatType.add.label      "Saját formátum hozzáadása">
 <!ENTITY config.clipboardFormatType.remove.label   "&#xD7;">
-<!ENTITY config.clipboardFormatType.remove.tooltip "Remove This Format">
-<!ENTITY config.clipboardFormatType.default.label  "Name">
-<!ENTITY config.clipboardFormatType.default.format "Format">
-<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;EOL&#x25;=Line Feed">
+<!ENTITY config.clipboardFormatType.remove.tooltip "Formátum eltávolítása">
+<!ENTITY config.clipboardFormatType.default.label  "Név">
+<!ENTITY config.clipboardFormatType.default.format "Formátum">
+<!ENTITY config.clipboardFormatType.description    "Elérhető formázás: &#x25;URL&#x25;=Oldal webcíme, &#x25;TITLE&#x25;=Oldalcím, &#x25;URL_HTMLIFIED&#x25;=Webcím HTML-ként, &#x25;TITLE_HTMLIFIED&#x25;=Oldalcím HTML-ként, &#x25;EOL&#x25;=Sorvégjel">
 
 <!ENTITY config.tabs.selectionMenu    "Kiválasztott lapok">
 <!ENTITY config.selectionMenu.caption "A kiválasztott lapok füleinek helyi menüje:">
