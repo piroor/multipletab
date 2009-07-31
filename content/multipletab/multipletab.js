@@ -1508,19 +1508,19 @@ var MultipleTabService = {
 	addBookmarkFor : function(aTabs, aFolderName) 
 	{
 		var isTSTBookmarksTreeStructureAvailable = (
-				'TreeStyleTabService' in window &&
-				'beginAddBookmarksFromTabs' in TreeStyleTabService &&
-				'endAddBookmarksFromTabs' in TreeStyleTabService
+				'TreeStyleTabBookmarksService' in window &&
+				'beginAddBookmarksFromTabs' in TreeStyleTabBookmarksService &&
+				'endAddBookmarksFromTabs' in TreeStyleTabBookmarksService
 			);
 		if (isTSTBookmarksTreeStructureAvailable)
-			TreeStyleTabService.beginAddBookmarksFromTabs(aTabs);
+			TreeStyleTabBookmarksService.beginAddBookmarksFromTabs(aTabs);
 		try {
 			window['piro.sakura.ne.jp'].bookmarkMultipleTabs.addBookmarkFor(aTabs, aFolderName);
 		}
 		catch(e) {
 		}
 		if (isTSTBookmarksTreeStructureAvailable)
-			TreeStyleTabService.endAddBookmarksFromTabs();
+			TreeStyleTabBookmarksService.endAddBookmarksFromTabs();
 	},
  
 	printTabs : function(aTabs) 
