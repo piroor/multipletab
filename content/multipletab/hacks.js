@@ -76,19 +76,6 @@ MultipleTabService.overrideExtensionsOnInit = function() {
 			);
 	}
 
-	// Tab Mix Plus
-	if ('TMP_Places' in window &&
-		'getTabFixedTitle' in TMP_Places) {
-		MultipleTabService.addBookmarkTabsFilter = function(aTab) {
-			var b = aTab.linkedBrowser;
-			var uri = b.currentURI;
-			return {
-				uri   : uri,
-				title : TMP_Places.getTabFixedTitle(b, uri)
-			};
-		};
-	}
-
 	// Print All Tabs
 	if ('PrintAllTabs' in window) {
 		eval('PrintAllTabs.onMenuItemCommand = '+
