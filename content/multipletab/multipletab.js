@@ -1737,6 +1737,7 @@ var MultipleTabService = {
 		for (var i = max-1; i > -1; i--)
 		{
 			tab = aTabs[i];
+			SS.setTabValue(tab, this.kSELECTED, '');
 			SS.deleteTabValue(tab, this.kSELECTED);
 			if (tab.linkedBrowser.sessionHistory)
 				tab.linkedBrowser.sessionHistory.PurgeHistory(tab.linkedBrowser.sessionHistory.count);
@@ -1817,6 +1818,7 @@ var MultipleTabService = {
 					for (var i = tabs.length-1; i > -1; i--)
 					{
 						try {
+							SS.setTabValue(tabs[i], key, '');
 							SS.deleteTabValue(tabs[i], key);
 						}
 						catch(e) {
@@ -2230,6 +2232,7 @@ var MultipleTabService = {
 			aTab.removeAttribute(aAttr);
 			if (aShouldSaveToSession) {
 				try {
+					this.SessionStore.setTabValue(aTab, aAttr, '');
 					this.SessionStore.deleteTabValue(aTab, aAttr);
 				}
 				catch(e) {
@@ -2290,6 +2293,7 @@ var MultipleTabService = {
 		{
 			aTabs[i].removeAttribute(aAttr);
 			try {
+				this.SessionStore.setTabValue(aTabs[i], aAttr, '');
 				this.SessionStore.deleteTabValue(aTabs[i], aAttr);
 			}
 			catch(e) {
