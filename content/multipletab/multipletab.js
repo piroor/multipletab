@@ -1550,7 +1550,7 @@ var MultipleTabService = {
 		var selectedIndex = -1;
 		for (var i = max-1; i > -1; i--)
 		{
-			SS.setTabValue(aTabs[i], this.kSELECTED, 'true');
+			this.setTabValue(aTabs[i], this.kSELECTED, 'true');
 			if (aTabs[i] == b.selectedTab)
 				selectedIndex = i;
 		}
@@ -1706,7 +1706,7 @@ var MultipleTabService = {
 
 		for (var i = max-1; i > -1; i--)
 		{
-			SS.setTabValue(aTabs[i], this.kSELECTED, 'true');
+			this.setTabValue(aTabs[i], this.kSELECTED, 'true');
 		}
 
 		var state = SS.getWindowState(window);
@@ -1737,8 +1737,7 @@ var MultipleTabService = {
 		for (var i = max-1; i > -1; i--)
 		{
 			tab = aTabs[i];
-			SS.setTabValue(tab, this.kSELECTED, '');
-			SS.deleteTabValue(tab, this.kSELECTED);
+			this.deleteTabValue(tab, this.kSELECTED);
 			if (tab.linkedBrowser.sessionHistory)
 				tab.linkedBrowser.sessionHistory.PurgeHistory(tab.linkedBrowser.sessionHistory.count);
 			tab.linkedBrowser.contentWindow.location.replace('about:blank');
@@ -1818,8 +1817,7 @@ var MultipleTabService = {
 					for (var i = tabs.length-1; i > -1; i--)
 					{
 						try {
-							SS.setTabValue(tabs[i], key, '');
-							SS.deleteTabValue(tabs[i], key);
+							newWin.MultipleTabService.deleteTabValue(tabs[i], key);
 						}
 						catch(e) {
 						}
@@ -2230,24 +2228,13 @@ var MultipleTabService = {
 	{
 		if (!aState) {
 			aTab.removeAttribute(aAttr);
-			if (aShouldSaveToSession) {
-				try {
-					this.SessionStore.setTabValue(aTab, aAttr, '');
-					this.SessionStore.deleteTabValue(aTab, aAttr);
-				}
-				catch(e) {
-				}
-			}
+			if (aShouldSaveToSession)
+				this.deleteTabValue(aTab, aAttr);
 		}
 		else {
 			aTab.setAttribute(aAttr, true);
-			if (aShouldSaveToSession) {
-				try {
-					this.SessionStore.setTabValue(aTab, aAttr, 'true');
-				}
-				catch(e) {
-				}
-			}
+			if (aShouldSaveToSession)
+				this.setTabValue(aTab, aAttr, 'true');
 		}
 		this.selectionModified = true;
 
@@ -2262,6 +2249,42 @@ var MultipleTabService = {
 		}
 
 		return aState;
+	},
+ 
+	setTabValue : function(aTab, aKey, aValue) 
+	{
+		if (!aValue) return this.deleteTabValue(aTab, aKey);
+
+		aTab.setAttribute(aKey, aValue);
+		try {
+			this.checkCachedSessionDataExpiration(aTab);
+			this.SessionStore.setTabValue(aTab, aKey, aValue);
+		}
+		catch(e) {
+		}
+
+		return aValue;
+	},
+ 
+	deleteTabValue : function(aTab, aKey) 
+	{
+		aTab.removeAttribute(aKey);
+		try {
+			this.checkCachedSessionDataExpiration(aTab);
+			this.SessionStore.setTabValue(aTab, aKey, '');
+			this.SessionStore.deleteTabValue(aTab, aKey);
+		}
+		catch(e) {
+		}
+	},
+ 
+	// workaround for http://piro.sakura.ne.jp/latest/blosxom/mozilla/extension/treestyletab/2009-09-29_debug.htm
+	checkCachedSessionDataExpiration : function(aTab) 
+	{
+		if (aTab.linkedBrowser.parentNode.__SS_data &&
+			aTab.linkedBrowser.parentNode.__SS_data._tabStillLoading &&
+			aTab.getAttribute('busy') != 'true')
+			aTab.linkedBrowser.parentNode.__SS_data._tabStillLoading = false;
 	},
   
 	toggleSelection : function(aTab) 
