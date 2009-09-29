@@ -2255,7 +2255,6 @@ var MultipleTabService = {
 	{
 		if (!aValue) return this.deleteTabValue(aTab, aKey);
 
-		aTab.setAttribute(aKey, aValue);
 		try {
 			this.checkCachedSessionDataExpiration(aTab);
 			this.SessionStore.setTabValue(aTab, aKey, aValue);
@@ -2268,7 +2267,6 @@ var MultipleTabService = {
  
 	deleteTabValue : function(aTab, aKey) 
 	{
-		aTab.removeAttribute(aKey);
 		try {
 			this.checkCachedSessionDataExpiration(aTab);
 			this.SessionStore.setTabValue(aTab, aKey, '');
