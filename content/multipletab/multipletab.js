@@ -322,14 +322,14 @@ var MultipleTabService = {
 		return newURI;
 	},
  
-	getTabFromEvent : function(aEvent) 
+	getTabFromEvent : function(aEvent, aReallyOnTab) 
 	{
 		var tab = this.evaluateXPath(
 				'ancestor-or-self::xul:tab[ancestor::xul:tabbrowser]',
 				aEvent.originalTarget || aEvent.target,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
-		if (tab) return tab;
+		if (tab || aReallyOnTab) return tab;
 
 		var b = this.getTabBrowserFromChild(aEvent.originalTarget);
 		if (b &&
@@ -1035,7 +1035,7 @@ var MultipleTabService = {
 		}
 
 		if (this.tabDragging) {
-			var tab = this.getTabFromEvent(aEvent);
+			var tab = this.getTabFromEvent(aEvent, true);
 			if (tab == this.lastMouseOverTarget) return;
 
 			if (!tab) {
@@ -1067,7 +1067,7 @@ var MultipleTabService = {
 
 			if (!this.getCloseboxFromEvent(aEvent)) return;
 
-			var tab = this.getTabFromEvent(aEvent);
+			var tab = this.getTabFromEvent(aEvent, true);
 			this.toggleReadyToClose(tab);
 		}
 	},
