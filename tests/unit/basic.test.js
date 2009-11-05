@@ -92,7 +92,7 @@ function test_getTabFromEvent()
 	assert.equals(node, sv.getTabFromEvent(createEventStubFor(node)));
 	assert.isNull(sv.getTabFromEvent(createEventStubFor(gBrowser.mTabContainer)));
 	assert.isNull(sv.getTabFromEvent(createEventStubFor(gBrowser)));
-	assert.isNull(sv.getTabFromEvent(createEventStubByClass('tabs-newtab-button', gBrowser.mTabContainer)));
+	assert.isNull(sv.getTabFromEvent(createEventStubByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
 	assert.isNull(sv.getTabFromEvent(createEventStubByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
 }
 
@@ -107,7 +107,7 @@ function test_getTabBrowserFromChild()
 	assert.equals(gBrowser, sv.getTabBrowserFromChild(node));
 	assert.equals(gBrowser, sv.getTabBrowserFromChild(gBrowser.mTabContainer));
 	assert.equals(gBrowser, sv.getTabBrowserFromChild(gBrowser));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tabs-newtab-button', gBrowser.mTabContainer)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
 	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
 	assert.isNull(sv.getTabBrowserFromChild(content.document.documentElement));
 	assert.isNull(sv.getTabBrowserFromChild(gBrowser.parentNode));
@@ -121,7 +121,7 @@ function test_getTabBrowserFromChild()
 	assert.equals(gBrowser, sv.getTabBrowserFromChildren(node));
 	assert.equals(gBrowser, sv.getTabBrowserFromChildren(gBrowser.mTabContainer));
 	assert.equals(gBrowser, sv.getTabBrowserFromChildren(gBrowser));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tabs-newtab-button', gBrowser.mTabContainer)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
 	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
 	assert.isNull(sv.getTabBrowserFromChildren(content.document.documentElement));
 	assert.isNull(sv.getTabBrowserFromChildren(gBrowser.parentNode));
