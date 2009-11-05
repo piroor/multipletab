@@ -161,22 +161,6 @@ function test_filterBlankTabs()
 	assert.equals([tabs[1], tabs[2], tabs[3]], sv.filterBlankTabs(tabs));
 }
 
-function getLineFeed()
-{
-	if (navigator.platform.toLowerCase().indexOf('win') > -1)
-		return '\r\n';
-	else
-		return '\n';
-}
-
-function escapeForHTML(aString)
-{
-	return aString
-			.replace(/&/g, '&amp;')
-			.replace(/</g, '&lt;')
-			.replace(/>/g, '&gt;');
-}
-
 function test_formatURIsForClipboard()
 {
 	var tab = tabs[3];

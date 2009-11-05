@@ -57,3 +57,20 @@ function createEventStubFor(aNode)
 		shiftKey       : false
 	};
 }
+
+function getLineFeed()
+{
+	if (navigator.platform.toLowerCase().indexOf('win') > -1)
+		return '\r\n';
+	else
+		return '\n';
+}
+
+function escapeForHTML(aString)
+{
+	return aString
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;');
+}
+

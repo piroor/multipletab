@@ -235,13 +235,63 @@ function test_duplicateTabs()
 	assert.equals(resultTabs[4], gBrowser.selectedTab);
 }
 
+var newWin;
+test_splitWindowFromTabs.setUp = function() {
+	newWin = null;
+};
+test_splitWindowFromTabs.tearDown = function() {
+	if (newWin) {
+		if (newWin.gBrowser) {
+			Array.slice(newWin.gBrowser.mTabs).forEach(function(aTab, aIndex) {
+				if (aIndex) newWin.gBrowser.removeTab(aTab);
+			});
+		}
+		newWin.close();
+	}
+};
 function test_splitWindowFromTabs()
 {
-	// splitWindowFrom (backward compatibility)
+	var oldCount = utils.getChromeWindows({ type : 'navigator:browser' }).length;
+	var restTabs = [tabs[0], tabs[3]];
+	var movedTabs = [tabs[1], tabs[2]].map(function(aTab) {
+			return aTab.label+'\n'+aTab.linkedBrowser.currentURI.spec;
+		});
+
+	newWin = sv.splitWindowFromTabs([tabs[1], tabs[2]]);
+	assert.isDefined(newWin);
+	assert.isNotNull(newWin);
+	assert.implementsInterface(Ci.nsIDOMWindow, newWin);
+	yield (function() { return newWin.MultipleTabService ? true : false ; });
+	yield 2000;
+	assert.equals(oldCount+1, utils.getChromeWindows({ type : 'navigator:browser' }).length);
+
+	assert.equals(restTabs, Array.slice(tabs[0].ownerDocument.defaultView.gBrowser.mTabs));
+
+	var newTabs = Array.slice(newWin.gBrowser.mTabs);
+	assert.equals(
+		movedTabs,
+		newTabs.map(function(aTab) {
+			return aTab.label+'\n'+aTab.linkedBrowser.currentURI.spec;
+		})
+	);
 }
 
+test_copyURIsToClipboard.setUp = function() {
+	utils.setClipBoard(' ');
+	assert.equals(' ', utils.getClipBoard());
+};
 function test_copyURIsToClipboard()
 {
+	var copiedTabs = [tabs[0], tabs[1], tabs[2]];
+	sv.copyURIsToClipboard(copiedTabs, sv.kFORMAT_TYPE_DEFAULT);
+	assert.equals(
+		copiedTabs
+			.map(function(aTab) {
+				return aTab.linkedBrowser.currentURI.spec;
+			})
+			.join('\n')+'\n',
+		utils.getClipBoard()
+	);
 }
 
 function test_getBundledTabsOf()
