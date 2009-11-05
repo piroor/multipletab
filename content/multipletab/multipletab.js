@@ -1563,8 +1563,7 @@ var MultipleTabService = {
 			selectedIndex += this.getTabs(b).snapshotLength;
 		}
 
-		var state = SS.getWindowState(window);
-		state = this.evalInSandbox(state);
+		var state = this.evalInSandbox('('+SS.getWindowState(window)+')');
 
 		// delete obsolete data
 		delete state.windows[0]._closedTabs;
@@ -1714,8 +1713,7 @@ var MultipleTabService = {
 			this.setTabValue(aTabs[i], this.kSELECTED, 'true');
 		}
 
-		var state = SS.getWindowState(window);
-		state = this.evalInSandbox(state);
+		var state = this.evalInSandbox('('+SS.getWindowState(window)+')');
 
 		// delete obsolete data
 		delete state.windows[0]._closedTabs;
