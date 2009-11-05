@@ -11,7 +11,7 @@ function test_isEventFiredOnTabIcon()
 	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubFor(node)));
 	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubFor(gBrowser.mTabContainer)));
 	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubFor(gBrowser)));
-	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubByClass('tabs-newtab-button', gBrowser.mTabContainer)));
+	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
 	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
 }
 
@@ -26,7 +26,7 @@ function test_isEventFiredOnClickable()
 	assert.isFalse(sv.isEventFiredOnClickable(createEventStubFor(node)));
 	assert.isFalse(sv.isEventFiredOnClickable(createEventStubFor(gBrowser.mTabContainer)));
 	assert.isFalse(sv.isEventFiredOnClickable(createEventStubFor(gBrowser)));
-	assert.isTrue(sv.isEventFiredOnClickable(createEventStubByClass('tabs-newtab-button', gBrowser.mTabContainer)));
+	assert.isTrue(sv.isEventFiredOnClickable(createEventStubByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
 	assert.isTrue(sv.isEventFiredOnClickable(createEventStubByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
 }
 
@@ -41,7 +41,7 @@ function test_getCloseboxFromEvent()
 	assert.isNull(sv.getCloseboxFromEvent(createEventStubFor(node)));
 	assert.isNull(sv.getCloseboxFromEvent(createEventStubFor(gBrowser.mTabContainer)));
 	assert.isNull(sv.getCloseboxFromEvent(createEventStubFor(gBrowser)));
-	assert.isNull(sv.getCloseboxFromEvent(createEventStubByClass('tabs-newtab-button', gBrowser.mTabContainer)));
+	assert.isNull(sv.getCloseboxFromEvent(createEventStubByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
 	assert.isNull(sv.getCloseboxFromEvent(createEventStubByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
 }
 
