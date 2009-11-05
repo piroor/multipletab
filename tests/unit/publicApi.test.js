@@ -76,8 +76,36 @@ function test_closeTabs()
 	assert.equals(restTabs, Array.slice(gBrowser.mTabs));
 }
 
-function test_closeSimilarTabsOf()
+test_closeSimilarTabsOf_useEffectiveTLD.setUp = function() {
+	yield Do(utils.addTab('http://www.example.com'));
+	yield Do(utils.addTab('http://test.example.com/test1'));
+	yield Do(utils.addTab('http://test.example.com/test2'));
+	yield Do(utils.addTab('http://www.example.jp'));
+	tabs = Array.slice(gBrowser.mTabs);
+	assert.equals(8, tabs.length);
+	this.setPref('extensions.multipletab.useEffectiveTLD', true);
+};
+function test_closeSimilarTabsOf_useEffectiveTLD()
 {
+	var restTabs = [tabs[0], tabs[1], tabs[2], tabs[3], tabs[4], tabs[7]];
+	sv.closeSimilarTabsOf(tabs[4]);
+	assert.equals(restTabs, Array.slice(gBrowser.mTabs));
+}
+
+test_closeSimilarTabsOf_nouseEffectiveTLD.setUp = function() {
+	yield Do(utils.addTab('http://www.example.com'));
+	yield Do(utils.addTab('http://test.example.com/test1'));
+	yield Do(utils.addTab('http://test.example.com/test2'));
+	yield Do(utils.addTab('http://www.example.jp'));
+	tabs = Array.slice(gBrowser.mTabs);
+	assert.equals(8, tabs.length);
+	this.setPref('extensions.multipletab.useEffectiveTLD', false);
+};
+function test_closeSimilarTabsOf_nouseEffectiveTLD()
+{
+	var restTabs = [tabs[0], tabs[1], tabs[2], tabs[3], tabs[4], tabs[5], tabs[7]];
+	sv.closeSimilarTabsOf(tabs[5]);
+	assert.equals(restTabs, Array.slice(gBrowser.mTabs));
 }
 
 function test_closeOtherTabs()
@@ -90,6 +118,39 @@ function test_closeOtherTabs()
 
 function test_reloadTabs()
 {
+	var titlesAfterReload = [
+			tabs[0].linkedBrowser.contentDocument.title,
+			tabs[1].linkedBrowser.contentDocument.title,
+			'READY TO RELOAD',
+			'READY TO RELOAD'
+		];
+	tabs[0].linkedBrowser.contentDocument.title = 'READY TO RELOAD';
+	tabs[1].linkedBrowser.contentDocument.title = 'READY TO RELOAD';
+	tabs[2].linkedBrowser.contentDocument.title = 'READY TO RELOAD';
+	tabs[3].linkedBrowser.contentDocument.title = 'READY TO RELOAD';
+
+	var loadedCount = 0;
+	tabs[0].linkedBrowser.addEventListener('load', function(aEvent) {
+		aEvent.currentTarget.removeEventListener('load', arguments.callee, true);
+		loadedCount++;
+	}, true);
+	tabs[1].linkedBrowser.addEventListener('load', function(aEvent) {
+		aEvent.currentTarget.removeEventListener('load', arguments.callee, true);
+		loadedCount++;
+	}, true);
+
+	sv.reloadTabs([tabs[0], tabs[1]]);
+	yield (function() { return loadedCount >= 2; });
+
+	assert.equals(
+		titlesAfterReload,
+		[
+			tabs[0].linkedBrowser.contentDocument.title,
+			tabs[1].linkedBrowser.contentDocument.title,
+			tabs[2].linkedBrowser.contentDocument.title,
+			tabs[3].linkedBrowser.contentDocument.title
+		]
+	);
 }
 
 function test_saveTabs()
