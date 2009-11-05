@@ -26,7 +26,16 @@
 }
 
 :root tabbrowser .tabbrowser-strip .tabbrowser-tabs
+  .tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button {
+	outline: 2px solid Highlight important;
+	background-color: Highlight !important;
+}
+
+:root tabbrowser .tabbrowser-strip .tabbrowser-tabs
   .tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button image {
 	outline: 2px solid /*invert*/ important;
 	background-color: Highlight !important;
+	outline: 0 none important;
+	opacity: 0.6 !important;
 }
+

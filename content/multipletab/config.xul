@@ -88,8 +88,7 @@
 	</groupbox>
 </prefpane>
 
-<prefpane id="prefpane-features" label="&config.tabs.features;"
-	onpaneload="initFeaturesPane();">
+<prefpane id="prefpane-features" label="&config.tabs.features;">
 	<preferences>
 		<preference id="extensions.multipletab.saveTabs.saveType"
 			name="extensions.multipletab.saveTabs.saveType"

@@ -1,7 +1,6 @@
 content	multipletab	jar:chrome/multipletab.jar!/content/multipletab/
 
 overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/multipletab.xul
-overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/multipletab-fx3.xul	appversion>=3.0
 overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/bookmarkMultipleTabs.xul
 overlay	chrome://browser/content/places/bookmarkProperties2.xul	chrome://multipletab/content/bookmarkMultipleTabs_bookmarkPropertiesOverlay.xul
 
@@ -15,4 +14,3 @@ locale	multipletab	zh-TW	jar:chrome/multipletab.jar!/locale/zh-TW/multipletab/
 locale	multipletab	zh-CN	jar:chrome/multipletab.jar!/locale/zh-CN/multipletab/
 
 skin	multipletab	classic/1.0	jar:chrome/multipletab.jar!/skin/classic/multipletab/
-skin	multipletab-fx3	classic/1.0	jar:chrome/multipletab.jar!/skin/classic/multipletab/	appversion>=3.0b5pre

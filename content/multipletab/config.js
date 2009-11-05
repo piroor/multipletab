@@ -86,17 +86,6 @@ function initGeneralPane()
 	onDragModeChange();
 }
 
-function initFeaturesPane()
-{
-	var useEffectiveTLD = document.getElementById('useEffectiveTLD');
-	if (comparator.compare(XULAppInfo.version, '3.0') < 0) {
-		useEffectiveTLD.setAttribute('collapsed', true);
-	}
-	else {
-		useEffectiveTLD.removeAttribute('collapsed');
-	}
-}
-
 function onDragModeChange()
 {
 	gDelayItems.forEach(function(aItem) {

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
- Bookmark Multiple Tabs library for Firefox 2 or later
+ Bookmark Multiple Tabs library for Firefox 3 or later
 
  Usage:
    in chrome.manifest:
@@ -24,7 +24,7 @@
 window.addEventListener('DOMContentLoaded', function() {
 	window.removeEventListener('DOMContentLoaded', arguments.callee, true);
 
-	const currentRevision = 3;
+	const currentRevision = 4;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -55,69 +55,16 @@ window.addEventListener('DOMContentLoaded', function() {
 		{
 			if (!aTabs) return;
 
-			var b = this.getTabBrowserFromChild(aTabs[0]);
-
-			if ('PlacesUIUtils' in window || 'PlacesUtils' in window) { // Firefox 3
-				if (aFolderName)
-					this.Prefs.setCharPref('temp.showMinimalAddMultiBookmarkUI.folderName', unescape(encodeURIComponent(aFolderName)));
-				var utils = 'PlacesUIUtils' in window ? PlacesUIUtils : PlacesUtils ;
-				utils.showMinimalAddMultiBookmarkUI(Array.slice(aTabs).map(this.addBookmarkTabsFilter));
-				this.Prefs.clearUserPref('temp.showMinimalAddMultiBookmarkUI.folderName');
-				return;
-			}
-
-			var currentTabInfo;
-			var tabsInfo = Array.slice(aTabs).map(function(aTab) {
-					var webNav = aTab.linkedBrowser.webNavigation;
-					var url    = webNav.currentURI.spec;
-					var name   = '';
-					var charSet, description;
-					try {
-						var doc = webNav.document;
-						name = doc.title || url;
-						charSet = doc.characterSet;
-						description = BookmarksUtils.getDescriptionFromDocument(doc);
-					}
-					catch (e) {
-						name = url;
-					}
-					return {
-						name        : name,
-						url         : url,
-						charset     : charSet,
-						description : description
-					};
-				});
-
-			window.openDialog(
-				'chrome://browser/content/bookmarks/addBookmark2.xul',
-				'',
-				BROWSER_ADD_BM_FEATURES,
-				(aTabs.length == 1 ?
-					tabsInfo[0] :
-					{
-						name             : (aFolderName || gNavigatorBundle.getString('bookmarkAllTabsDefault')),
-						bBookmarkAllTabs : true,
-						objGroup         : tabsInfo
-					}
-				)
-			);
+			if (aFolderName)
+				this.Prefs.setCharPref('temp.showMinimalAddMultiBookmarkUI.folderName', unescape(encodeURIComponent(aFolderName)));
+			var utils = 'PlacesUIUtils' in window ? PlacesUIUtils : PlacesUtils ;
+			utils.showMinimalAddMultiBookmarkUI(Array.slice(aTabs).map(this.addBookmarkTabsFilter));
+			this.Prefs.clearUserPref('temp.showMinimalAddMultiBookmarkUI.folderName');
 		},
 		addBookmarkTabsFilter : addBookmarkTabsFilter,
 
 		Prefs : Components.classes['@mozilla.org/preferences;1']
-					.getService(Components.interfaces.nsIPrefBranch),
-
-		getTabBrowserFromChild : function(aTab) 
-		{
-			return aTab.ownerDocument.evaluate(
-					'ancestor-or-self::*[local-name()="tabbrowser"]',
-					aTab,
-					null,
-					XPathResult.FIRST_ORDERED_NODE_TYPE,
-					null
-				).singleNodeValue;
-		}
+					.getService(Components.interfaces.nsIPrefBranch)
 	};
 }, true);
 
