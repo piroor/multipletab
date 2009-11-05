@@ -161,19 +161,63 @@ function test_filterBlankTabs()
 	assert.equals([tabs[1], tabs[2], tabs[3]], sv.filterBlankTabs(tabs));
 }
 
-function test_formatURIStringForClipboard()
+function getLineFeed()
+{
+	if (navigator.platform.toLowerCase().indexOf('win') > -1)
+		return '\r\n';
+	else
+		return '\n';
+}
+
+function escapeForHTML(aString)
+{
+	return aString
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;');
+}
+
+function test_formatURIsForClipboard()
 {
 	var tab = tabs[3];
 	var uri = tab.linkedBrowser.currentURI.spec;
-	assert.equals(uri, sv.formatURIStringForClipboard(uri, tab));
-	assert.equals(uri, sv.formatURIStringForClipboard(uri, tab, sv.kFORMAT_TYPE_DEFAULT));
+	var title = tab.label;
+	assert.equals(uri, sv.formatURIsForClipboard(tab));
+	assert.equals(uri, sv.formatURIsForClipboard(tab, sv.kFORMAT_TYPE_DEFAULT));
+
 	assert.equals(
-		'テストケース & <sample>\r\n'+uri,
-		sv.formatURIStringForClipboard(uri, tab, sv.kFORMAT_TYPE_MOZ_URL)
+		title+getLineFeed()+uri,
+		sv.formatURIsForClipboard(tab, sv.kFORMAT_TYPE_MOZ_URL)
 	);
+
 	assert.equals(
-		'<a href="'+uri.replace(/&/g, '&amp;')+'">テストケース &amp; &lt;sample&gt;</a>',
-		sv.formatURIStringForClipboard(uri, tab, sv.kFORMAT_TYPE_LINK)
+		'<a href="'+escapeForHTML(uri)+'">'+escapeForHTML(title)+'</a>',
+		sv.formatURIsForClipboard(tab, sv.kFORMAT_TYPE_LINK)
+	);
+}
+
+function test_formatURIsForClipboard_tabs()
+{
+	var uris = tabs.map(function(aTab) {
+			return aTab.linkedBrowser.currentURI.spec;
+		}).join(getLineFeed())+getLineFeed();
+	assert.equals(uris, sv.formatURIsForClipboard(tabs));
+	assert.equals(uris, sv.formatURIsForClipboard(tabs, sv.kFORMAT_TYPE_DEFAULT));
+
+	var mozURLs = tabs.map(function(aTab) {
+			return aTab.label+getLineFeed()+aTab.linkedBrowser.currentURI.spec;
+		}).join(getLineFeed())+getLineFeed();
+	assert.equals(
+		mozURLs,
+		sv.formatURIsForClipboard(tabs, sv.kFORMAT_TYPE_MOZ_URL)
+	);
+
+	var links = tabs.map(function(aTab) {
+			return '<a href="'+escapeForHTML(aTab.linkedBrowser.currentURI.spec)+'">'+escapeForHTML(aTab.label)+'</a>';
+		}).join(getLineFeed())+getLineFeed();
+	assert.equals(
+		links,
+		sv.formatURIsForClipboard(tabs, sv.kFORMAT_TYPE_LINK)
 	);
 }
 

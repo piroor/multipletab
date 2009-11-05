@@ -1563,7 +1563,8 @@ var MultipleTabService = {
 			selectedIndex += this.getTabs(b).snapshotLength;
 		}
 
-		var state = this.evalInSandbox(SS.getWindowState(window));
+		var state = SS.getWindowState(window);
+		state = this.evalInSandbox(state);
 
 		// delete obsolete data
 		delete state.windows[0]._closedTabs;
@@ -1713,7 +1714,8 @@ var MultipleTabService = {
 			this.setTabValue(aTabs[i], this.kSELECTED, 'true');
 		}
 
-		var state = this.evalInSandbox(SS.getWindowState(window));
+		var state = SS.getWindowState(window);
+		state = this.evalInSandbox(state);
 
 		// delete obsolete data
 		delete state.windows[0]._closedTabs;
@@ -1870,8 +1872,20 @@ var MultipleTabService = {
 	copyURIsToClipboard : function(aTabs, aFormatType, aFormat) 
 	{
 		if (!aTabs) return;
+		var string = this.formatURIsForClipboard(aTabs, aFormatType, aFormat);
+		Components
+			.classes['@mozilla.org/widget/clipboardhelper;1']
+			.getService(Components.interfaces.nsIClipboardHelper)
+			.copyString(string);
+	},
+	formatURIsForClipboard : function(aTabs, aFormatType, aFormat) 
+	{
+		if (!aTabs) return '';
+
+		if (aTabs instanceof Components.interfaces.nsIDOMNode) aTabs = [aTabs];
 
 		var format = aFormat || this.getClopboardFormatForType(aFormatType);
+		if (!format) format = '%URL%';
 
 		var now = new Date();
 		var timeUTC = now.toUTCString();
@@ -1903,10 +1917,7 @@ var MultipleTabService = {
 		if (stringToCopy.length > 1)
 			stringToCopy.push('');
 
-		Components
-			.classes['@mozilla.org/widget/clipboardhelper;1']
-			.getService(Components.interfaces.nsIClipboardHelper)
-			.copyString(stringToCopy.join(this.lineFeed));
+		return stringToCopy.join(this.lineFeed);
 	},
 	
 	kFORMAT_TYPE_DEFAULT : 0, 

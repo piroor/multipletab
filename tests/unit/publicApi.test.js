@@ -70,6 +70,10 @@ function test_getSimilarTabsOf()
 
 function test_closeTabs()
 {
+	var closedTabs = [tabs[0], tabs[1]];
+	var restTabs = [tabs[2], tabs[3]];
+	sv.closeTabs(closedTabs);
+	assert.equals(restTabs, Array.slice(gBrowser.mTabs));
 }
 
 function test_closeSimilarTabsOf()
@@ -78,6 +82,10 @@ function test_closeSimilarTabsOf()
 
 function test_closeOtherTabs()
 {
+	var closedTabs = [tabs[0], tabs[1]];
+	var restTabs = [tabs[2], tabs[3]];
+	sv.closeOtherTabs(restTabs);
+	assert.equals(restTabs, Array.slice(gBrowser.mTabs));
 }
 
 function test_reloadTabs()
