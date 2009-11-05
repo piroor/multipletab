@@ -1499,13 +1499,15 @@ var MultipleTabService = {
 		internalSave(
 			uri.spec,
 			(aSaveType != this.kSAVE_TYPE_FILE ? b.contentDocument : null ),
-			null,
-			null,
+			null, // default file name
+			null, // content disposition
 			b.contentDocument.contentType,
-			false,
-			null,
+			false, // should bypass cache?
+			null, // title of picker
 			autoChosen,
-			b.referringURI
+			b.referringURI, // referrer
+			true, // skip prompt?
+			null // cache key
 		);
 	},
   

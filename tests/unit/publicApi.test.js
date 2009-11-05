@@ -153,8 +153,35 @@ function test_reloadTabs()
 	);
 }
 
-function test_saveTabs()
+var tempFolder;
+test_saveTabs.parameters = {
+	'file'     : { type : 0, count : 3 },
+	'complete' : { type : 1, count : 4 },
+	'text'     : { type : 2, count : 3 }
+};
+test_saveTabs.setUp = function() {
+	utils.setPref('browser.download.manager.showWhenStarting', false);
+	utils.setPref('browser.download.manager.showAlertOnComplete', false);
+	utils.setPref('browser.download.manager.closeWhenDone', true);
+	tempFolder = utils.makeTempFolder();
+};
+test_saveTabs.tearDown = function() {
+	utils.scheduleToRemove(tempFolder);
+};
+function test_saveTabs(aParameter)
 {
+	sv.saveTabs(tabs, aParameter.type, tempFolder);
+	yield 3000;
+	var files = tempFolder.directoryEntries;
+	var count = 0;
+	var fileNames = [];
+	while (files.hasMoreElements() && count < 100)
+	{
+		let file = files.getNext().QueryInterface(Ci.nsILocalFile);
+		fileNames.push(file.leafName);
+		count++;
+	}
+	assert.equals(aParameter.count, count, fileNames.join(', '));
 }
 
 function test_addBookmarkFor()
