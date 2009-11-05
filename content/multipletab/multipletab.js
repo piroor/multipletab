@@ -1393,7 +1393,7 @@ var MultipleTabService = {
 		});
 	},
  
-	saveTabs : function(aTabs, aSaveType) 
+	saveTabs : function(aTabs, aSaveType, aFolder) 
 	{
 		if (!aTabs) return;
 
@@ -1416,8 +1416,7 @@ var MultipleTabService = {
 			return;
 		}
 
-		var title = this.bundle.getString('saveTabs_chooseFolderTitle');
-		var folder = this.selectFolder(title);
+		var folder = aFolder || this.selectFolder(this.bundle.getString('saveTabs_chooseFolderTitle'));
 		if (!folder) return;
 
 		var fileExistence = {};
