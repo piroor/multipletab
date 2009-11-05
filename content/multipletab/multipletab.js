@@ -1614,15 +1614,13 @@ var MultipleTabService = {
  
 	splitWindowFromTabs : function(aTabs, aWindow) 
 	{
-		if (!aTabs) return;
+		if (!aTabs) return null;
 		var max = aTabs.length;
-		if (!max) return;
+		if (!max) return null;
 		var b  = this.getTabBrowserFromChild(aTabs[0]);
 
-		if (!b.__multipletab__canDoWindowMove) {
-			this.splitWindowFromTabsOld(aTabs);
-			return;
-		}
+		if (!b.__multipletab__canDoWindowMove)
+			return this.splitWindowFromTabsOld(aTabs);
 
 		var allSelected = true;
 		var selectionState = aTabs.map(function(aTab) {
@@ -1694,19 +1692,21 @@ var MultipleTabService = {
 			newWin = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
 			newWin.addEventListener('load', postProcess, false);
 		}
+
+		return newWin;
 	},
 	
 	splitWindowFrom : function(aTabs) // old name 
 	{
-		this.splitWindowFromTabs(aTabs);
+		return this.splitWindowFromTabs(aTabs);
 	},
   
 	splitWindowFromTabsOld : function(aTabs) 
 	{
-		if (!aTabs) return;
+		if (!aTabs) return null;
 
 		var max = aTabs.length;
-		if (!max) return;
+		if (!max) return null;
 
 
 		// Step 1: get window state
