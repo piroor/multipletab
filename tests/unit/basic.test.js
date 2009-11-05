@@ -189,10 +189,22 @@ function test_formatURIsForClipboard()
 		title+getLineFeed()+uri,
 		sv.formatURIsForClipboard(tab, sv.kFORMAT_TYPE_MOZ_URL)
 	);
+	assert.equals(
+		title+getLineFeed()+uri,
+		sv.formatURIsForClipboard(tab, 0, '%TITLE%%EOL%%URL%')
+	);
 
 	assert.equals(
 		'<a href="'+escapeForHTML(uri)+'">'+escapeForHTML(title)+'</a>',
 		sv.formatURIsForClipboard(tab, sv.kFORMAT_TYPE_LINK)
+	);
+	assert.equals(
+		'<a href="'+escapeForHTML(uri)+'">'+escapeForHTML(title)+'</a>',
+		sv.formatURIsForClipboard(tab, 0, '<a href="%URL_HTML%">%TITLE_HTML%</a>')
+	);
+	assert.equals(
+		'<a href="'+escapeForHTML(uri)+'">'+escapeForHTML(title)+'</a>',
+		sv.formatURIsForClipboard(tab, 0, '<a href="%URL_HTMLIFIED%">%TITLE_HTMLIFIED%</a>')
 	);
 }
 
@@ -211,6 +223,10 @@ function test_formatURIsForClipboard_tabs()
 		mozURLs,
 		sv.formatURIsForClipboard(tabs, sv.kFORMAT_TYPE_MOZ_URL)
 	);
+	assert.equals(
+		mozURLs,
+		sv.formatURIsForClipboard(tabs, 0, '%TITLE%%EOL%%URL%')
+	);
 
 	var links = tabs.map(function(aTab) {
 			return '<a href="'+escapeForHTML(aTab.linkedBrowser.currentURI.spec)+'">'+escapeForHTML(aTab.label)+'</a>';
@@ -218,6 +234,14 @@ function test_formatURIsForClipboard_tabs()
 	assert.equals(
 		links,
 		sv.formatURIsForClipboard(tabs, sv.kFORMAT_TYPE_LINK)
+	);
+	assert.equals(
+		links,
+		sv.formatURIsForClipboard(tabs, 0, '<a href="%URL_HTML%">%TITLE_HTML%</a>')
+	);
+	assert.equals(
+		links,
+		sv.formatURIsForClipboard(tabs, 0, '<a href="%URL_HTMLIFIED%">%TITLE_HTMLIFIED%</a>')
 	);
 }
 
