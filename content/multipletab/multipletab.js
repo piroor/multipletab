@@ -492,8 +492,13 @@ var MultipleTabService = {
 
 		if ('internalSave' in window) {
 			eval('window.internalSave = '+window.internalSave.toSource().replace(
-				/(if \(aChosenData\) \{file = aChosenData.file;)(\})/,
-				'$1 if ("saveAsType" in aChosenData) { saveAsType = aChosenData.saveAsType; } $2'
+				'var useSaveDocument =',
+				<![CDATA[
+					if (aChosenData && 'saveAsType' in aChosenData) {
+						saveAsType = aChosenData.saveAsType;
+						saveMode = SAVEMODE_FILEONLY | SAVEMODE_COMPLETE_TEXT;
+					}
+				$&]]>
 			).replace(
 				/(!aChosenData)( && useSaveDocument && saveAsType == kSaveAsType_Text)/,
 				'($1 || "saveAsType" in aChosenData)$2'
@@ -1467,7 +1472,7 @@ var MultipleTabService = {
 	{
 		return(
 			aSaveType == this.kSAVE_TYPE_TEXT &&
-			GetSaveModeForContentType(aTab.linkedBrowser.contentDocument.contentType) & SAVEMODE_COMPLETE_TEXT
+			GetSaveModeForContentType(aTab.linkedBrowser.contentDocument.contentType, aTab.linkedBrowser.contentDocument) & SAVEMODE_COMPLETE_TEXT
 		);
 	},
  

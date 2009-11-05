@@ -12,9 +12,11 @@ function setUp()
 	sv = win.MultipleTabService;
 
 	gBrowser.removeAllTabsBut(gBrowser.selectedTab);
+	yield Do(utils.addTab('about:blank'));
 	yield Do(utils.addTab('about:logo'));
 	yield Do(utils.addTab('about:config'));
 	yield Do(utils.addTab('../fixtures/test.html?query1=value1&query2=value2'));
+	gBrowser.removeTab(gBrowser.selectedTab);
 	tabs = Array.slice(gBrowser.mTabs);
 	assert.equals(4, tabs.length);
 }

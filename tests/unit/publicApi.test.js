@@ -155,9 +155,9 @@ function test_reloadTabs()
 
 var tempFolder;
 test_saveTabs.parameters = {
-	'file'     : { type : 0, count : 3 },
-	'complete' : { type : 1, count : 4 },
-	'text'     : { type : 2, count : 3 }
+	'file'     : { type : 0, files : ['test.html', /.+\.png/, 'about config.xul'] },
+	'complete' : { type : 1, files : ['test.html', 'test_files', /.+\.png/, 'about config.xul'] },
+	'text'     : { type : 2, files : ['test.html.txt', /.+\.png/, 'about config.xul'] }
 };
 test_saveTabs.setUp = function() {
 	utils.setPref('browser.download.manager.showWhenStarting', false);
@@ -174,14 +174,21 @@ function test_saveTabs(aParameter)
 	yield 3000;
 	var files = tempFolder.directoryEntries;
 	var count = 0;
-	var fileNames = [];
 	while (files.hasMoreElements() && count < 100)
 	{
 		let file = files.getNext().QueryInterface(Ci.nsILocalFile);
-		fileNames.push(file.leafName);
+		let matched = false;
+		for (let i in aParameter.files)
+		{
+			if (file.leafName.match(aParameter.files[i])) {
+				matched = true;
+				break;
+			}
+		}
+		assert.isTrue(matched, file.leafName);
 		count++;
 	}
-	assert.equals(aParameter.count, count, fileNames.join(', '));
+	assert.equals(aParameter.files.length, count);
 }
 
 function test_addBookmarkFor()
