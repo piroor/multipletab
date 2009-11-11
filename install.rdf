@@ -11,12 +11,6 @@
                    em:homepageURL="http://piro.sakura.ne.jp/xul/multipletab/"
                    em:iconURL="chrome://multipletab/content/icon32.png"
                    em:optionsURL="chrome://multipletab/content/config.xul">
-    <em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
-    <em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
-    <em:translator>tito (es-ES locale)</em:translator>
-    <em:translator>L'Autour (ru-RU locale)</em:translator>
-    <em:translator>Tsprajna (zh-TW locale)</em:translator>
-    <em:translator>hzhbest (zh-CN locale)</em:translator>
 
 
     <em:updateURL>http://piro.sakura.ne.jp/xul/update.rdf</em:updateURL>
@@ -35,6 +29,7 @@
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
+		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -49,6 +44,7 @@
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
+		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -63,6 +59,7 @@
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
+		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -77,6 +74,7 @@
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
+		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -91,6 +89,7 @@
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
+		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -105,6 +104,7 @@
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
+		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -119,6 +119,7 @@
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
+		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -133,6 +134,22 @@
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
+		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
+      </RDF:Description>
+    </em:localized>
+    <em:localized>
+      <RDF:Description em:locale="pl-PL"
+                       em:name="MultipleTabHandler"
+                       em:description="Umożliwia operacje (zamknięcie, odświeżenie itp.) wielu kart na raz."
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
+                       em:creator="SHIMODA Hiroshi">
+		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
+		<em:translator>tito (es-ES locale)</em:translator>
+		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>Tsprajna (zh-TW locale)</em:translator>
+		<em:translator>hzhbest (zh-CN locale)</em:translator>
+		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
       </RDF:Description>
     </em:localized>
 
