@@ -2256,9 +2256,14 @@ var MultipleTabService = {
 		}
 		this.selectionModified = true;
 
-		if ('TreeStyleTabService' in window &&
+		if (
+			'TreeStyleTabService' in window &&
 			'getDescendantTabs' in TreeStyleTabService &&
-			aTab.getAttribute(TreeStyleTabService.kSUBTREE_COLLAPSED) == 'true') {
+			('isCollapsed' in TreeStyleTabService ?
+				TreeStyleTabService.isCollapsed(aTab) :
+				aTab.getAttribute(TreeStyleTabService.kSUBTREE_COLLAPSED) == 'true'
+			)
+			) {
 			var tabs = TreeStyleTabService.getDescendantTabs(aTab);
 			for (var i = 0, maxi = tabs.length; i < maxi; i++)
 			{
