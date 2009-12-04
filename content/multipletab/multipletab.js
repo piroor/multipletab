@@ -2260,7 +2260,7 @@ var MultipleTabService = {
 			'TreeStyleTabService' in window &&
 			'getDescendantTabs' in TreeStyleTabService &&
 			('isCollapsed' in TreeStyleTabService ?
-				TreeStyleTabService.isCollapsed(aTab) :
+				TreeStyleTabService.isSubtreeCollapsed(aTab) :
 				aTab.getAttribute(TreeStyleTabService.kSUBTREE_COLLAPSED) == 'true'
 			)
 			) {
