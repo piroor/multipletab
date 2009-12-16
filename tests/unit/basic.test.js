@@ -161,6 +161,11 @@ function test_filterBlankTabs()
 	assert.equals([tabs[1], tabs[2], tabs[3]], sv.filterBlankTabs(tabs));
 }
 
+test_formatURIsForClipboard.setUp = function() {
+	yield Do(utils.addTab('data:text/html,<title>$1</title>hello'));
+	tabs = Array.slice(gBrowser.mTabs);
+	assert.equals(5, tabs.length);
+};
 function test_formatURIsForClipboard()
 {
 	var tab = tabs[3];
@@ -189,6 +194,14 @@ function test_formatURIsForClipboard()
 	assert.equals(
 		'<a href="'+escapeForHTML(uri)+'">'+escapeForHTML(title)+'</a>',
 		sv.formatURIsForClipboard(tab, 0, '<a href="%URL_HTMLIFIED%">%TITLE_HTMLIFIED%</a>')
+	);
+
+	tab = tabs[4];
+	uri = tab.linkedBrowser.currentURI.spec;
+	title = tab.label;
+	assert.equals(
+		title+getLineFeed()+uri,
+		sv.formatURIsForClipboard(tab, 0, '%TITLE%%EOL%%URL%')
 	);
 }
 
