@@ -408,6 +408,15 @@ var MultipleTabService = {
 		aNewTab.dispatchEvent(event);
 	},
  
+	fireTabsCloseEvent : function(aType, aTarget, aTabs, aCount) 
+	{
+		var event = document.createEvent('Events');
+		event.initEvent(aType, true, true);
+		event.tabs = aTabs;
+		event.count = aCount;
+		aTarget.dispatchEvent(event);
+	},
+ 
 	createDragFeedbackImage : function(aNode) 
 	{
 		var tabs = this.getDraggedTabs(aNode);
@@ -1336,14 +1345,19 @@ var MultipleTabService = {
 		if (!this.warnAboutClosingTabs(aTabs.length))
 			return;
 
-		var tabs = Array.slice(aTabs);
+		var tabs  = Array.slice(aTabs);
+		var b     = this.getTabBrowserFromChild(aTabs[0]);
+		var count = tabs.length;
+
+		/* PUBLIC API */
+		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosing', b, tabs, count);
+
 //		tabs.sort(function(aTabA, aTabB) { return aTabA._tPos - aTabB._tPos; });
 		if (this.getPref('extensions.multipletab.close.direction') == this.CLOSE_DIRECTION_LAST_TO_START)
 			tabs.reverse();
 
 		var closeSelectedLast = this.getPref('extensions.multipletab.close.selectedTab.last');
 		var selected;
-		var b = this.getTabBrowserFromChild(aTabs[0]);
 		tabs.forEach(function(aTab) {
 			if (closeSelectedLast && aTab.selected)
 				selected = aTab;
@@ -1352,6 +1366,9 @@ var MultipleTabService = {
 		});
 		if (selected)
 			b.removeTab(selected);
+
+		/* PUBLIC API */
+		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosed', b, [], count);
 	},
 	CLOSE_DIRECTION_START_TO_LAST : 0,
 	CLOSE_DIRECTION_LAST_TO_START : 1,
@@ -1364,10 +1381,18 @@ var MultipleTabService = {
 		if (!this.warnAboutClosingTabs(removeTabs.length))
 			return;
 
+		var count = removeTabs.length;
+
+		/* PUBLIC API */
+		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosing', b, removeTabs, count);
+
 		var b = this.getTabBrowserFromChild(aCurrentTab);
 		removeTabs.forEach(function(aTab) {
 			b.removeTab(aTab);
 		});
+
+		/* PUBLIC API */
+		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosed', b, [], count);
 	},
  
 	closeOtherTabs : function(aTabs) 
@@ -1377,13 +1402,26 @@ var MultipleTabService = {
 		aTabs = Array.slice(aTabs);
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		var tabs = this.getTabsArray(b);
+		var count = tabs.length - aTabs.length;
 
-		if (!this.warnAboutClosingTabs(tabs.length - aTabs.length))
+		if (!this.warnAboutClosingTabs(count))
 			return;
 
+		var removeTabs = [];
 		tabs.forEach(function(aTab) {
-			if (aTabs.indexOf(aTab) < 0) b.removeTab(aTab);
+			if (aTabs.indexOf(aTab) < 0) removeTabs.push(aTab);
+
 		});
+
+		/* PUBLIC API */
+		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosing', b, removeTabs, count);
+
+		removeTabs.forEach(function(aTab) {
+			b.removeTab(aTab);
+		});
+
+		/* PUBLIC API */
+		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosed', b, [], count);
 	},
  
 	reloadTabs : function(aTabs) 
@@ -1882,7 +1920,7 @@ var MultipleTabService = {
 			.getService(Components.interfaces.nsIClipboardHelper)
 			.copyString(string);
 	},
-	formatURIsForClipboard : function(aTabs, aFormatType, aFormat) 
+	formatURIsForClipboard : function(aTabs, aFormatType, aFormat)
 	{
 		if (!aTabs) return '';
 
