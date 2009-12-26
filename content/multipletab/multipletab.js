@@ -391,10 +391,10 @@ var MultipleTabService = {
 		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
 	},
  
-	fireDuplicateEvent : function(aNewTab, aSourceTab, aSourceEvent) 
+	fireDuplicatedEvent : function(aNewTab, aSourceTab, aSourceEvent) 
 	{
-		var event = aNewTab.ownerDocument.createEvent('UIEvents');
-		event.initEvent('MultipleTabHandler:TabDuplicate', true, false, aNewTab.ownerDocument.defaultView, 0);
+		var event = aNewTab.ownerDocument.createEvent('Events');
+		event.initEvent('MultipleTabHandler:TabDuplicate', true, false);
 		event.sourceTab = aSourceTab;
 		event.mayBeMove = aSourceEvent && !this.isAccelKeyPressed(aSourceEvent);
 		aNewTab.dispatchEvent(event);
@@ -571,7 +571,7 @@ var MultipleTabService = {
 				MultipleTabService.duplicateTabs([aTab]);
 				var lastTab = MultipleTabService.getTabsArray(this);
 				lastTab = lastTab[lastTab.length-1];
-				MultipleTabService.fireDuplicateEvent(lastTab, aTab, aSourceEvent);
+				MultipleTabService.fireDuplicatedEvent(lastTab, aTab, aSourceEvent);
 				return lastTab;
 			};
 		}
