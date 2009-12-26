@@ -393,8 +393,8 @@ var MultipleTabService = {
  
 	fireDuplicateEvent : function(aNewTab, aSourceTab, aSourceEvent) 
 	{
-		var event = document.createEvent('Events');
-		event.initEvent('MultipleTabHandler:TabDuplicate', true, false);
+		var event = aNewTab.ownerDocument.createEvent('UIEvents');
+		event.initEvent('MultipleTabHandler:TabDuplicate', true, false, aNewTab.ownerDocument.defaultView, 0);
 		event.sourceTab = aSourceTab;
 		event.mayBeMove = aSourceEvent && !this.isAccelKeyPressed(aSourceEvent);
 		aNewTab.dispatchEvent(event);
@@ -410,8 +410,11 @@ var MultipleTabService = {
  
 	fireTabsClosingEvent : function(aTabs) 
 	{
-		var event = document.createEvent('Events');
-		event.initEvent('MultipleTabHandlerTabsClosing', true, true);
+		if (!aTabs || !aTabs.length) return false;
+		var d = aTabs[0].ownerDocument;
+		/* PUBLIC API */
+		var event = d.createEvent('UIEvents');
+		event.initEvent('MultipleTabHandlerTabsClosing', true, true, d.defaultView, aTabs.length);
 		event.tabs = aTabs;
 		event.count = aTabs.length;
 		this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
@@ -420,9 +423,12 @@ var MultipleTabService = {
  
 	fireTabsClosedEvent : function(aTabs) 
 	{
+		if (!aTabs || !aTabs.length) return false;
 		aTabs = aTabs.filter(function(aTab) { return !aTab.parentNode; });
-		var event = document.createEvent('Events');
-		event.initEvent('MultipleTabHandlerTabsClosed', true, false);
+		var d = aTabs[0].ownerDocument;
+		/* PUBLIC API */
+		var event = d.createEvent('UIEvents');
+		event.initEvent('MultipleTabHandlerTabsClosed', true, false, d.defaultView, aTabs.length);
 		event.tabs = aTabs;
 		event.count = aTabs.length;
 		this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
