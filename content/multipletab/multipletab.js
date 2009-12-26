@@ -418,8 +418,9 @@ var MultipleTabService = {
 		return event.getPreventDefault();
 	},
  
-	fireTabsClosedEvent : function(aTarget, aTabs) 
+	fireTabsClosedEvent : function(aTabs) 
 	{
+		aTabs = aTabs.filter(function(aTab) { return !aTab.parentNode; });
 		var event = document.createEvent('Events');
 		event.initEvent('MultipleTabHandlerTabsClosed', true, false);
 		event.tabs = aTabs;
