@@ -408,13 +408,23 @@ var MultipleTabService = {
 		aNewTab.dispatchEvent(event);
 	},
  
-	fireTabsCloseEvent : function(aType, aTarget, aTabs, aCount) 
+	fireTabsClosingEvent : function(aTabs) 
 	{
 		var event = document.createEvent('Events');
-		event.initEvent(aType, true, true);
+		event.initEvent('MultipleTabHandlerTabsClosing', true, true);
 		event.tabs = aTabs;
-		event.count = aCount;
-		aTarget.dispatchEvent(event);
+		event.count = aTabs.length;
+		this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
+		return event.getPreventDefault();
+	},
+ 
+	fireTabsClosedEvent : function(aTarget, aTabs) 
+	{
+		var event = document.createEvent('Events');
+		event.initEvent('MultipleTabHandlerTabsClosed', true, false);
+		event.tabs = aTabs;
+		event.count = aTabs.length;
+		this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
 	},
  
 	createDragFeedbackImage : function(aNode) 
@@ -1345,12 +1355,12 @@ var MultipleTabService = {
 		if (!this.warnAboutClosingTabs(aTabs.length))
 			return;
 
-		var tabs  = Array.slice(aTabs);
-		var b     = this.getTabBrowserFromChild(aTabs[0]);
-		var count = tabs.length;
+		var tabs = Array.slice(aTabs);
+		var b    = this.getTabBrowserFromChild(aTabs[0]);
 
 		/* PUBLIC API */
-		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosing', b, tabs, count);
+		if (this.fireTabsClosingEvent(tabs))
+			return;
 
 //		tabs.sort(function(aTabA, aTabB) { return aTabA._tPos - aTabB._tPos; });
 		if (this.getPref('extensions.multipletab.close.direction') == this.CLOSE_DIRECTION_LAST_TO_START)
@@ -1368,7 +1378,7 @@ var MultipleTabService = {
 			b.removeTab(selected);
 
 		/* PUBLIC API */
-		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosed', b, [], count);
+		this.fireTabsClosedEvent(tabs);
 	},
 	CLOSE_DIRECTION_START_TO_LAST : 0,
 	CLOSE_DIRECTION_LAST_TO_START : 1,
@@ -1384,7 +1394,8 @@ var MultipleTabService = {
 		var count = removeTabs.length;
 
 		/* PUBLIC API */
-		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosing', b, removeTabs, count);
+		if (this.fireTabsClosingEvent(removeTabs))
+			return;
 
 		var b = this.getTabBrowserFromChild(aCurrentTab);
 		removeTabs.forEach(function(aTab) {
@@ -1392,7 +1403,7 @@ var MultipleTabService = {
 		});
 
 		/* PUBLIC API */
-		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosed', b, [], count);
+		this.fireTabsClosedEvent(removeTabs);
 	},
  
 	closeOtherTabs : function(aTabs) 
@@ -1414,14 +1425,15 @@ var MultipleTabService = {
 		});
 
 		/* PUBLIC API */
-		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosing', b, removeTabs, count);
+		if (this.fireTabsClosingEvent(removeTabs))
+			return;
 
 		removeTabs.forEach(function(aTab) {
 			b.removeTab(aTab);
 		});
 
 		/* PUBLIC API */
-		this.fireTabsCloseEvent('MultipleTabHandlerTabsClosed', b, [], count);
+		this.fireTabsClosedEvent(removeTabs);
 	},
  
 	reloadTabs : function(aTabs) 
