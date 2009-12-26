@@ -415,7 +415,7 @@ var MultipleTabService = {
 		event.tabs = aTabs;
 		event.count = aTabs.length;
 		this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
-		return event.getPreventDefault();
+		return !event.getPreventDefault();
 	},
  
 	fireTabsClosedEvent : function(aTabs) 
@@ -1360,7 +1360,7 @@ var MultipleTabService = {
 		var b    = this.getTabBrowserFromChild(aTabs[0]);
 
 		/* PUBLIC API */
-		if (this.fireTabsClosingEvent(tabs))
+		if (!this.fireTabsClosingEvent(tabs))
 			return;
 
 //		tabs.sort(function(aTabA, aTabB) { return aTabA._tPos - aTabB._tPos; });
@@ -1395,7 +1395,7 @@ var MultipleTabService = {
 		var count = removeTabs.length;
 
 		/* PUBLIC API */
-		if (this.fireTabsClosingEvent(removeTabs))
+		if (!this.fireTabsClosingEvent(removeTabs))
 			return;
 
 		var b = this.getTabBrowserFromChild(aCurrentTab);
@@ -1426,7 +1426,7 @@ var MultipleTabService = {
 		});
 
 		/* PUBLIC API */
-		if (this.fireTabsClosingEvent(removeTabs))
+		if (!this.fireTabsClosingEvent(removeTabs))
 			return;
 
 		removeTabs.forEach(function(aTab) {
