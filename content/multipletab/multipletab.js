@@ -414,24 +414,24 @@ var MultipleTabService = {
 		var d = aTabs[0].ownerDocument;
 		/* PUBLIC API */
 		var event = d.createEvent('UIEvents');
-		event.initEvent('MultipleTabHandlerTabsClosing', true, true, d.defaultView, aTabs.length);
+		event.initUIEvent('MultipleTabHandlerTabsClosing', true, true, d.defaultView, aTabs.length);
 		event.tabs = aTabs;
 		event.count = aTabs.length;
 		this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
 		return !event.getPreventDefault();
 	},
  
-	fireTabsClosedEvent : function(aTabs) 
+	fireTabsClosedEvent : function(aTabBrowser, aTabs) 
 	{
 		if (!aTabs || !aTabs.length) return false;
 		aTabs = aTabs.filter(function(aTab) { return !aTab.parentNode; });
-		var d = aTabs[0].ownerDocument;
+		var d = aTabBrowser.ownerDocument;
 		/* PUBLIC API */
 		var event = d.createEvent('UIEvents');
-		event.initEvent('MultipleTabHandlerTabsClosed', true, false, d.defaultView, aTabs.length);
+		event.initUIEvent('MultipleTabHandlerTabsClosed', true, false, d.defaultView, aTabs.length);
 		event.tabs = aTabs;
 		event.count = aTabs.length;
-		this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
+		aTabBrowser.dispatchEvent(event);
 	},
  
 	createDragFeedbackImage : function(aNode) 
@@ -1385,7 +1385,7 @@ var MultipleTabService = {
 			b.removeTab(selected);
 
 		/* PUBLIC API */
-		this.fireTabsClosedEvent(tabs);
+		this.fireTabsClosedEvent(b, tabs);
 	},
 	CLOSE_DIRECTION_START_TO_LAST : 0,
 	CLOSE_DIRECTION_LAST_TO_START : 1,
@@ -1410,7 +1410,7 @@ var MultipleTabService = {
 		});
 
 		/* PUBLIC API */
-		this.fireTabsClosedEvent(removeTabs);
+		this.fireTabsClosedEvent(b, removeTabs);
 	},
  
 	closeOtherTabs : function(aTabs) 
@@ -1440,7 +1440,7 @@ var MultipleTabService = {
 		});
 
 		/* PUBLIC API */
-		this.fireTabsClosedEvent(removeTabs);
+		this.fireTabsClosedEvent(b, removeTabs);
 	},
  
 	reloadTabs : function(aTabs) 
