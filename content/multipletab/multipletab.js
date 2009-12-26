@@ -413,10 +413,23 @@ var MultipleTabService = {
 		if (!aTabs || !aTabs.length) return false;
 		var d = aTabs[0].ownerDocument;
 		/* PUBLIC API */
-		var event = d.createEvent('UIEvents');
-		event.initUIEvent('MultipleTabHandlerTabsClosing', true, true, d.defaultView, aTabs.length);
+		var event = d.createEvent('Events');
+		event.initEvent('MultipleTabHandlerTabsClosing', true, true);
 		event.tabs = aTabs;
 		event.count = aTabs.length;
+		if (!event.getPreventDefault) {
+			// getPreventDefault is available on any event on Gecko 1.9.2 or later.
+			// on Gecko 1.9.1 or before, UIEvents only have the method...
+			event.__original__preventDefault = event.preventDefault;
+			event.__canceled = false;
+			event.preventDefault = function() {
+				this.__original__preventDefault();
+				this.__canceled = true;
+			};
+			event.getPreventDefault = function() {
+				return this.__canceled;
+			};
+		}
 		this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
 		return !event.getPreventDefault();
 	},
@@ -427,8 +440,8 @@ var MultipleTabService = {
 		aTabs = aTabs.filter(function(aTab) { return !aTab.parentNode; });
 		var d = aTabBrowser.ownerDocument;
 		/* PUBLIC API */
-		var event = d.createEvent('UIEvents');
-		event.initUIEvent('MultipleTabHandlerTabsClosed', true, false, d.defaultView, aTabs.length);
+		var event = d.createEvent('Events');
+		event.initEvent('MultipleTabHandlerTabsClosed', true, false);
 		event.tabs = aTabs;
 		event.count = aTabs.length;
 		aTabBrowser.dispatchEvent(event);
