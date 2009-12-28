@@ -1390,6 +1390,8 @@ var MultipleTabService = {
 		if (this.getPref('extensions.multipletab.close.direction') == this.CLOSE_DIRECTION_LAST_TO_START)
 			tabs.reverse();
 
+		window['piro.sakura.ne.jp'].stopRendering.stop();
+
 		var closeSelectedLast = this.getPref('extensions.multipletab.close.selectedTab.last');
 		var selected;
 		tabs.forEach(function(aTab) {
@@ -1400,6 +1402,8 @@ var MultipleTabService = {
 		});
 		if (selected)
 			b.removeTab(selected);
+
+		window['piro.sakura.ne.jp'].stopRendering.start();
 
 		/* PUBLIC API */
 		this.fireTabsClosedEvent(b, tabs);
