@@ -8,11 +8,11 @@ MultipleTabBookmarkService = {
 				PlacesControllerDragHelper.onDrop.toSource().replace(
 					// for Firefox 3.0
 					'var session = this.getSession();',
-					'$& session = new MultipleTabDragSessionProxy(session, true);'
+					'$& session = new MultipleTabDragSessionProxy(session, insertionPoint._index > -1);'
 				).replace(
 					// for Firefox 3.5 or later
 					'var dt = this.currentDataTransfer;',
-					'$& dt = new MultipleTabDOMDataTransferProxy(dt, true);'
+					'$& dt = new MultipleTabDOMDataTransferProxy(dt, insertionPoint._index > -1);'
 				)
 			);
 		}
