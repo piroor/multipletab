@@ -8,14 +8,27 @@ MultipleTabBookmarkService = {
 				PlacesControllerDragHelper.onDrop.toSource().replace(
 					// for Firefox 3.0
 					'var session = this.getSession();',
-					'$& session = new MultipleTabDragSessionProxy(session, insertionPoint._index > -1);'
+					'$& session = new MultipleTabDragSessionProxy(session, insertionPoint);'
 				).replace(
 					// for Firefox 3.5 or later
 					'var dt = this.currentDataTransfer;',
-					'$& dt = new MultipleTabDOMDataTransferProxy(dt, insertionPoint._index > -1);'
+					'$& dt = new MultipleTabDOMDataTransferProxy(dt, insertionPoint);'
 				)
 			);
 		}
+	},
+ 
+	willBeInsertedBeforeExistingNode : function MTBS_willBeInsertedBeforeExistingNode(aInsertionPoint) 
+	{
+		// drop on folder in the bookmarks menu
+		if (aInsertionPoint.dropNearItemId === void(0))
+			return false;
+
+		// drop on folder in the places organizer
+		if (aInsertionPoint._index < 0 && aInsertionPoint.dropNearItemId < 0)
+			return false;
+
+		return true;
 	},
  
 	handleEvent : function MTBS_handleEvent(aEvent) 
@@ -34,7 +47,7 @@ MultipleTabBookmarkService = {
 window.addEventListener('load', MultipleTabBookmarkService, false);
   
 // for Firefox 3.0
-function MultipleTabDragSessionProxy(aSession, aForInsertBefore) 
+function MultipleTabDragSessionProxy(aSession, aInsertionPoint) 
 {
 	// Don't proxy it because it is not a drag of tabs.
 	if (aSession.numDropItems != 1 ||
@@ -54,7 +67,7 @@ function MultipleTabDragSessionProxy(aSession, aForInsertBefore)
 	this._source = aSession;
 	this._tabs = tabs;
 
-	if (aForInsertBefore)
+	if (MultipleTabBookmarkService.willBeInsertedBeforeExistingNode(aInsertionPoint))
 		this._tabs.reverse();
 }
 
@@ -116,7 +129,7 @@ MultipleTabDragSessionProxy.prototype = {
 }; 
   
 // for Firefox 3.5 or later
-function MultipleTabDOMDataTransferProxy(aDataTransfer, aForInsertBefore) 
+function MultipleTabDOMDataTransferProxy(aDataTransfer, aInsertionPoint) 
 {
 	// Don't proxy it because it is not a drag of tabs.
 	if (aDataTransfer.mozItemCount != 1 ||
@@ -133,7 +146,7 @@ function MultipleTabDOMDataTransferProxy(aDataTransfer, aForInsertBefore)
 	this._source = aDataTransfer;
 	this._tabs = tabs;
 
-	if (aForInsertBefore)
+	if (MultipleTabBookmarkService.willBeInsertedBeforeExistingNode(aInsertionPoint))
 		this._tabs.reverse();
 }
 
