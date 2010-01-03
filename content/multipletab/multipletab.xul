@@ -12,6 +12,7 @@
 <script src="autoScroll.js" type="application/x-javascript; version=1.7"/>
 <script src="stopRendering.js" type="application/x-javascript; version=1.7"/>
 <script src="multipletab.js" type="application/x-javascript; version=1.7"/>
+<script src="bookmarksOverlay.js" type="application/x-javascript; version=1.7"/>
 <script src="hacks.js" type="application/x-javascript; version=1.7"/>
 
 <popupset id="mainPopupSet">
