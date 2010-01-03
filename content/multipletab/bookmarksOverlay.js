@@ -8,11 +8,21 @@ MultipleTabBookmarkService = {
 				PlacesControllerDragHelper.onDrop.toSource().replace(
 					// for Firefox 3.0
 					'var session = this.getSession();',
-					'$& session = new MultipleTabDragSessionProxy(session, insertionPoint);'
+					'$& var multipleTabsProxy = session = new MultipleTabDragSessionProxy(session, insertionPoint);'
 				).replace(
 					// for Firefox 3.5 or later
 					'var dt = this.currentDataTransfer;',
-					'$& dt = new MultipleTabDOMDataTransferProxy(dt, insertionPoint);'
+					'$& var multipleTabsProxy = dt = new MultipleTabDOMDataTransferProxy(dt, insertionPoint);'
+				).replace( // for Tree Style Tab (save tree structure to bookmarks)
+					'PlacesUIUtils.ptm.doTransaction(txn);',
+					<![CDATA[
+						if ('_tabs' in multipleTabsProxy &&
+							'TreeStyleTabBookmarksService' in window)
+							TreeStyleTabBookmarksService.beginAddBookmarksFromTabs(multipleTabsProxy._tabs);
+						$&
+						if ('TreeStyleTabBookmarksService' in window)
+							TreeStyleTabBookmarksService.endAddBookmarksFromTabs();
+					]]>
 				)
 			);
 		}
