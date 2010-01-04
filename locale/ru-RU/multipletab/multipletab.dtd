@@ -1,46 +1,46 @@
-<!ENTITY popup.selection.removeTabs  "Закрыть выбраные вкладки">
+<!ENTITY popup.selection.removeTabs  "Закрыть выбранные вкладки">
 <!ENTITY popup.selection.removeOther "Закрыть другие вкладки">
 <!ENTITY popup.selection.reloadTabs  "Перезагрузить выбранные вкладки">
 <!ENTITY popup.selection.addBookmark "Добавить выбранные вкладки в новую папку закладок">
-<!ENTITY popup.selection.duplicateTabs "Дублировать выбранные вкладки">
+<!ENTITY popup.selection.duplicateTabs "Клонировать выбранные вкладки">
 <!ENTITY popup.selection.splitWindow "Переместить в новое окно">
-<!ENTITY popup.selection.clipboard   "Копировать URI-ы выбранные вкладок">
-<!ENTITY popup.selection.saveTabs      "Сохранить выбранные вкладки">
+<!ENTITY popup.selection.clipboard   "Копировать URL-ы выбранных вкладок">
+<!ENTITY popup.selection.saveTabs      "Сохранить выбранные вкладки как файлы">
 <!ENTITY popup.selection.printTabs     "Печать выбранных вкладок">
-<!ENTITY popup.selection.freezeTabs  "Заморозить вкладку">
-<!ENTITY popup.selection.protectTabs "Защитить вкладку">
-<!ENTITY popup.selection.lockTabs    "Заблокировать вкладку">
+<!ENTITY popup.selection.freezeTabs  "Заморозить выбранные вкладки">
+<!ENTITY popup.selection.protectTabs "Защитить выбранные вкладки">
+<!ENTITY popup.selection.lockTabs    "Заблокировать выбранные вкладки">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Закрыть вкладки слева">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Закрыть вкладки выше">
 <!ENTITY popup.context.removeRightTabs.horizontal "Закрыть вкладки справа">
 <!ENTITY popup.context.removeRightTabs.vertical   "Закрыть вкладки ниже">
 <!ENTITY popup.context.removeAll                  "Закрыть все вкладки">
-<!ENTITY popup.context.removeSimilar              "Закрыть дубликаты вкладок">
-<!ENTITY popup.context.duplicate                  "Дублировать вкладку">
-<!ENTITY popup.context.clipboard                  "Копировать URI">
-<!ENTITY popup.context.clipboardAll               "Копировать URI-ы всех вкладок">
-<!ENTITY popup.context.clipboard.format.default "Простой URI">
-<!ENTITY popup.context.clipboard.format.mozurl  "Заголовок страницы и URI">
-<!ENTITY popup.context.clipboard.format.link    "HTML ссылку">
+<!ENTITY popup.context.removeSimilar              "Закрыть схожие вкладки">
+<!ENTITY popup.context.duplicate                  "Клонировать вкладку">
+<!ENTITY popup.context.clipboard                  "Копировать URL">
+<!ENTITY popup.context.clipboardAll               "Копировать URL-ы всех вкладок">
+<!ENTITY popup.context.clipboard.format.default "Простой URL">
+<!ENTITY popup.context.clipboard.format.mozurl  "Заголовок страницы и URL">
+<!ENTITY popup.context.clipboard.format.link    "HTML-ссылка">
 <!ENTITY popup.context.saveTabs                   "Сохранить все вкладки">
-<!ENTITY popup.context.saveTabs.type.file      "Исключая встроенные ресурсы">
-<!ENTITY popup.context.saveTabs.type.complete     "Включая встроенные ресурсы">
-<!ENTITY popup.context.saveTabs.type.text         "Преобразовывать в простой текст">
+<!ENTITY popup.context.saveTabs.type.file      "Исключать встроенные ресурсы">
+<!ENTITY popup.context.saveTabs.type.complete     "Включать встроенные ресурсы">
+<!ENTITY popup.context.saveTabs.type.text         "Преобразовывать в текстовые файлы">
 
 
 
 <!ENTITY config.title        "Настройки обработки группы вкладок">
 
-<!ENTITY config.tabs.general "Главные">
+<!ENTITY config.tabs.general "Общие">
 
 <!ENTITY config.tabdrag.mode.caption "Действие при перетаскивании вкладок">
 <!ENTITY config.tabdrag.mode.default "По умолчанию (перемещение и перестановка вкладок)">
 <!ENTITY config.tabdrag.mode.select  "Выбор вкладок">
-<!ENTITY config.tabdrag.mode.switch  "Переключатся по вкладкам при наведении">
+<!ENTITY config.tabdrag.mode.switch  "Переключение между вкладками при наведении">
 <!ENTITY config.tabdrag.delay-before "Перемещать вкладку при начале перетаскивания не позднее">
-<!ENTITY config.tabdrag.delay-after  "мсек.">
-<!ENTITY config.tabdrag.autopopup     "Открывать всплывающее меню">
+<!ENTITY config.tabdrag.delay-after  "мсек">
+<!ENTITY config.tabdrag.autopopup     "Открывать всплывающее меню автоматически">
 <!ENTITY config.tabdrag.autoclear     "Сбрасывать выбор вкладок после закрытия всплывающего меню">
 <!ENTITY config.tabdrag.moveMultipleTabs "Переносить выбранные вкладки вместе">
 
@@ -48,25 +48,25 @@
 <!ENTITY config.tabclickmode.default "Закрыть вкладку">
 <!ENTITY config.tabclickmode.toggle  "Переключить выбор вкладки">
 
-<!ENTITY config.tabs.features "Дополнительные свойства">
+<!ENTITY config.tabs.features "Возможности">
 
 <!ENTITY config.saveType.caption "Режим сохранения для вкладок">
-<!ENTITY config.saveType.select  "Выбрать из меню">
+<!ENTITY config.saveType.select  "Выбирать из меню">
 
-<!ENTITY config.useEffectiveTLD.caption  "Detecting method for &quot;similar tabs&quot;">
-<!ENTITY config.useEffectiveTLD.enabled  "by Domain (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are similar tabs)">
-<!ENTITY config.useEffectiveTLD.disabled "by Host (&quot;aaa.example.com&quot; and &quot;bbb.example.com&quot; are not similar tabs)">
+<!ENTITY config.useEffectiveTLD.caption  "Способ определения &quot;схожих вкладок&quot;">
+<!ENTITY config.useEffectiveTLD.enabled  "по домену (&quot;aaa.example.com&quot; и &quot;bbb.example.com&quot; считаются схожими вкладками)">
+<!ENTITY config.useEffectiveTLD.disabled "по хосту (&quot;aaa.example.com&quot; и &quot;bbb.example.com&quot; не считаются схожими вкладками)">
 
-<!ENTITY config.tabs.clipboard "Copy">
+<!ENTITY config.tabs.clipboard "Копирование">
 
-<!ENTITY config.clipboardFormatType.caption "Формат текста операции &quot;Копировать URI-ы вкладок&quot;">
-<!ENTITY config.clipboardFormatType.select  "Выбрать из меню">
-<!ENTITY config.clipboardFormatType.add.label      "Add Custom Format">
+<!ENTITY config.clipboardFormatType.caption "Формат текста операции &quot;Копировать URL-ы вкладок&quot;">
+<!ENTITY config.clipboardFormatType.select  "Выбирать из меню">
+<!ENTITY config.clipboardFormatType.add.label      "Добавить пользовательский формат">
 <!ENTITY config.clipboardFormatType.remove.label   "&#xD7;">
-<!ENTITY config.clipboardFormatType.remove.tooltip "Remove This Format">
-<!ENTITY config.clipboardFormatType.default.label  "Name">
-<!ENTITY config.clipboardFormatType.default.format "Format">
-<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;EOL&#x25;=Line Feed">
+<!ENTITY config.clipboardFormatType.remove.tooltip "Удалить этот формат">
+<!ENTITY config.clipboardFormatType.default.label  "Название">
+<!ENTITY config.clipboardFormatType.default.format "Формат">
+<!ENTITY config.clipboardFormatType.description    "Доступные заполнители для форматов: &#x25;URL&#x25;=URL страницы, &#x25;TITLE&#x25;=Заголовок страницы, &#x25;URL_HTMLIFIED&#x25;=URL в HTML-формате, &#x25;TITLE_HTMLIFIED&#x25;=Заголовок в HTML-формате, &#x25;EOL&#x25;=Перевод строки">
 
 <!ENTITY config.tabs.selectionMenu    "Меню выбранных вкладок">
 <!ENTITY config.selectionMenu.caption "Доступные элементы всплывающего меню для выбранных вкладок">
@@ -76,16 +76,16 @@
 <!ENTITY config.contextMenu.removeLeftTabs  "Закрыть вкладки слева (выше)">
 <!ENTITY config.contextMenu.removeRightTabs "Закрыть вкладки справа (ниже)">
 
-<!ENTITY config.menuEditor.description "You can customize this menu by Menu Editor.">
-<!ENTITY config.menuEditor.link        "Download Menu Editor">
-<!ENTITY config.menuEditor.config      "Go to Menu Editor Configuration">
+<!ENTITY config.menuEditor.description "Вы можете настроить это меню с помощью Menu Editor.">
+<!ENTITY config.menuEditor.link        "Скачать Menu Editor">
+<!ENTITY config.menuEditor.config      "Открыть настройки Menu Editor">
 
 <!ENTITY config.tabs.advanced "Дополнительные">
 
-<!ENTITY config.close.direction.caption    "Order to close multiple tabs">
-<!ENTITY config.close.direction.startToEnd "Left (Top) to Right (Bottom)">
-<!ENTITY config.close.direction.endToStart "Right (Bottom) to Left (Top)">
-<!ENTITY config.close.selectedTab.last     "Close the current tab at last">
+<!ENTITY config.close.direction.caption    "Порядок закрытия выбранных вкладок">
+<!ENTITY config.close.direction.startToEnd "Слева (сверху) направо (вниз)">
+<!ENTITY config.close.direction.endToStart "Справа (снизу) налево (вверх)">
+<!ENTITY config.close.selectedTab.last     "Закрывать текущую вкладку последней">
 
-<!ENTITY config.selectAfter.duplicate "Select tabs automatically, after they are duplicated">
-<!ENTITY config.selectAfter.move      "Select tabs automatically, after they are moved to another window">
+<!ENTITY config.selectAfter.duplicate "Автоматически выбирать клонированную группу вкладок">
+<!ENTITY config.selectAfter.move      "Автоматически выбирать группу вкладок, перенесенную в другое окно">

@@ -27,6 +27,7 @@
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>B. Arkhipov (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
@@ -43,6 +44,7 @@
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>B. Arkhipov (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
@@ -59,6 +61,7 @@
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>B. Arkhipov (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
@@ -75,6 +78,7 @@
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>B. Arkhipov (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
@@ -91,6 +95,7 @@
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>B. Arkhipov (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
@@ -100,13 +105,14 @@
     <em:localized>
       <RDF:Description em:locale="ru-RU"
                        em:name="Multiple Tab Handler (Обработка группы вкладок)"
-                       em:description="Обеспечивает возможность закрытия (, перезагрузки, и т.д.) группы вкладок одним действием"
+                       em:description="Обеспечивает возможность закрытия, перезагрузки, сохранения и т. д. группы вкладок одним действием."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>B. Arkhipov (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
@@ -123,6 +129,7 @@
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>B. Arkhipov (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
@@ -139,6 +146,7 @@
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>B. Arkhipov (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
@@ -155,6 +163,7 @@
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>B. Arkhipov (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
@@ -171,6 +180,7 @@
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
+		<em:translator>B. Arkhipov (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
