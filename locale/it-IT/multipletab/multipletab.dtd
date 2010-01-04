@@ -44,9 +44,13 @@
 <!ENTITY config.tabdrag.autoclear     "Annulla la selezione delle schede alla chiusura del menu contestuale">
 <!ENTITY config.tabdrag.moveMultipleTabs "Raggruppa e sposta le schede selezionate">
 
-<!ENTITY config.tabclickmode.caption "Azione per Ctrl+Clic sulle schede">
-<!ENTITY config.tabclickmode.default "Chiudi scheda"> 
-<!ENTITY config.tabclickmode.toggle  "Inverti selezione della scheda">
+<!ENTITY config.tabclickmode.accel.caption "Azione per Ctrl+Clic sulle schede">
+<!ENTITY config.tabclickmode.accel.default "Chiudi scheda (Firefox default)"> 
+<!ENTITY config.tabclickmode.accel.select  "Inverti selezione della scheda">
+
+<!ENTITY config.tabclickmode.shift.caption "Azione per Shift+Clic sulle schede">
+<!ENTITY config.tabclickmode.shift.default "Ignore (Firefox default)">
+<!ENTITY config.tabclickmode.shift.select  "Select Tabs">
 
 <!ENTITY config.tabs.features "Funzionalità">
 

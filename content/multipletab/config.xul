@@ -30,8 +30,11 @@
 		<preference id="extensions.multipletab.tabdrag.delay"
 			name="extensions.multipletab.tabdrag.delay"
 			type="int"/>
-		<preference id="extensions.multipletab.tabclick.mode"
-			name="extensions.multipletab.tabclick.mode"
+		<preference id="extensions.multipletab.tabclick.accel.mode"
+			name="extensions.multipletab.tabclick.accel.mode"
+			type="int"/>
+		<preference id="extensions.multipletab.tabclick.shift.mode"
+			name="extensions.multipletab.tabclick.shift.mode"
 			type="int"/>
 		<preference id="extensions.multipletab.tabdrag.moveMultipleTabs"
 			name="extensions.multipletab.tabdrag.moveMultipleTabs"
@@ -76,13 +79,24 @@
 		</vbox>
 	</groupbox>
 	<groupbox>
-		<caption label="&config.tabclickmode.caption;"/>
+		<caption label="&config.tabclickmode.accel.caption;"/>
 		<vbox>
-			<radiogroup id="extensions.multipletab.tabclick.mode-radiogroup"
-				preference="extensions.multipletab.tabclick.mode"
+			<radiogroup id="extensions.multipletab.tabclick.accel.mode-radiogroup"
+				preference="extensions.multipletab.tabclick.accel.mode"
 				orient="horizontal">
-				<radio value="0" label="&config.tabclickmode.default;"/>
-				<radio value="1" label="&config.tabclickmode.toggle;"/>
+				<radio value="0" label="&config.tabclickmode.accel.default;"/>
+				<radio value="1" label="&config.tabclickmode.accel.select;"/>
+			</radiogroup>
+		</vbox>
+	</groupbox>
+	<groupbox>
+		<caption label="&config.tabclickmode.shift.caption;"/>
+		<vbox>
+			<radiogroup id="extensions.multipletab.tabclick.shift.mode-radiogroup"
+				preference="extensions.multipletab.tabclick.shift.mode"
+				orient="horizontal">
+				<radio value="0" label="&config.tabclickmode.shift.default;"/>
+				<radio value="1" label="&config.tabclickmode.shift.select;"/>
 			</radiogroup>
 		</vbox>
 	</groupbox>

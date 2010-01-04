@@ -6,9 +6,10 @@ var MultipleTabService = {
 	TAB_DRAG_MODE_SELECT  : 1,
 	TAB_DRAG_MODE_SWITCH  : 2,
 
-	tabClickMode : -1,
+	tabAccelClickMode : -1,
+	tabShiftClickMode : -1,
 	TAB_CLICK_MODE_DEFAULT : 0,
-	TAB_CLICK_MODE_TOGGLE  : 1,
+	TAB_CLICK_MODE_SELECT  : 1,
 
 	kSELECTION_STYLE : 'multipletab-selection-style',
 	kSELECTED        : 'multipletab-selected',
@@ -125,6 +126,17 @@ var MultipleTabService = {
 	},
 	_IOService : null,
  
+	get PromptService() 
+	{
+		if (!this._PromptService) {
+			this._PromptService = Components
+					.classes['@mozilla.org/embedcomp/prompt-service;1']
+					.getService(Components.interfaces.nsIPromptService);
+		}
+		return this._PromptService;
+	},
+	_PromptService : null,
+ 
 	get EffectiveTLD() 
 	{
 		if (!('_EffectiveTLD' in this)) {
@@ -184,16 +196,13 @@ var MultipleTabService = {
 			!this.getPref('browser.tabs.warnOnClose')
 			)
 			return true;
-		var promptService = Components
-							.classes['@mozilla.org/embedcomp/prompt-service;1']
-							.getService(Components.interfaces.nsIPromptService);
 		var checked = { value:true };
 		window.focus();
-		var shouldClose = promptService.confirmEx(window,
+		var shouldClose = this.PromptService.confirmEx(window,
 				this.tabbrowserBundle.getString('tabs.closeWarningTitle'),
 				this.tabbrowserBundle.getFormattedString('tabs.closeWarningMultipleTabs', [aTabsCount]),
-				(promptService.BUTTON_TITLE_IS_STRING * promptService.BUTTON_POS_0) +
-				(promptService.BUTTON_TITLE_CANCEL * promptService.BUTTON_POS_1),
+				(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_0) +
+				(this.PromptService.BUTTON_TITLE_CANCEL * this.PromptService.BUTTON_POS_1),
 				this.tabbrowserBundle.getString('tabs.closeButtonMultiple'),
 				null, null,
 				this.tabbrowserBundle.getString('tabs.closeWarningPromptMe'),
@@ -527,7 +536,8 @@ var MultipleTabService = {
 
 		this.addPrefListener(this);
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabdrag.mode');
-		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.mode');
+		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.accel.mode');
+		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.shift.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.selectionStyle');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.linefeed');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.formats');
@@ -916,6 +926,8 @@ var MultipleTabService = {
 		if (tab) {
 			var b = this.getTabBrowserFromChild(tab);
 			if (aEvent.shiftKey) {
+				if (this.tabShiftClickMode != this.TAB_CLICK_MODE_SELECT)
+					return;
 				var tabs = b.mTabContainer.childNodes;
 				var inSelection = false;
 				this.getTabsArray(b).forEach(function(aTab) {
@@ -937,7 +949,7 @@ var MultipleTabService = {
 				return;
 			}
 			else if (this.isAccelKeyPressed(aEvent)) {
-				if (this.tabClickMode != this.TAB_CLICK_MODE_TOGGLE) {
+				if (this.tabAccelClickMode != this.TAB_CLICK_MODE_SELECT) {
 					b.removeTab(tab);
 					return;
 				}
@@ -2450,8 +2462,12 @@ var MultipleTabService = {
 				this.tabDragMode = value;
 				break;
 
-			case 'extensions.multipletab.tabclick.mode':
-				this.tabClickMode = value;
+			case 'extensions.multipletab.tabclick.accel.mode':
+				this.tabAccelClickMode = value;
+				break;
+
+			case 'extensions.multipletab.tabclick.shift.mode':
+				this.tabShiftClickMode = value;
 				break;
 
 			case 'extensions.multipletab.selectionStyle':

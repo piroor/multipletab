@@ -4,8 +4,9 @@ pref("extensions.multipletab.tabdrag.delay",     400);
 pref("extensions.multipletab.tabdrag.autopopup", true);
 pref("extensions.multipletab.tabdrag.autoclear", true);
 pref("extensions.multipletab.tabdrag.moveMultipleTabs", true);
-// 0 = default, 1 = toggle selection
-pref("extensions.multipletab.tabclick.mode", 1);
+// 0 = default, 1 = change selection
+pref("extensions.multipletab.tabclick.accel.mode", 1);
+pref("extensions.multipletab.tabclick.shift.mode", 1);
 pref("extensions.multipletab.selectionStyle", "auto");
 pref("extensions.multipletab.useEffectiveTLD", true);
 
@@ -47,6 +48,9 @@ pref("extensions.multipletab.clipboard.format.2", "<a href=\"%URL_HTMLIFIED%\">%
 pref("extensions.multipletab.clipboard.formats", "");
 // 0 = single file, 1 = complete (include embedded files), 2 = plain Text, -1 = select
 pref("extensions.multipletab.saveTabs.saveType", 1);
+
+
+pref("extensions.multipletab.compatibility.TMP.warnForClickActions", true);
 
 
 pref("extensions.multipletab@piro.sakura.ne.jp.name", "chrome://multipletab/locale/multipletab.properties");

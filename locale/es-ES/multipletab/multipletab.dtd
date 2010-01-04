@@ -44,9 +44,13 @@
 <!ENTITY config.tabdrag.autoclear     "Limpiar la selección de pestañas luego de que el menú sea cerrado">
 <!ENTITY config.tabdrag.moveMultipleTabs "Mover juntas las pestañas seleccionadas">
 
-<!ENTITY config.tabclickmode.caption "Acción para Ctrl(Comando)-Click en las pestañas">
-<!ENTITY config.tabclickmode.default "Cerrar pestaña">
-<!ENTITY config.tabclickmode.toggle  "Cambiar selección de pestañas">
+<!ENTITY config.tabclickmode.accel.caption "Acción para Ctrl(Comando)-Click en las pestañas">
+<!ENTITY config.tabclickmode.accel.default "Cerrar pestaña (Firefox default)">
+<!ENTITY config.tabclickmode.accel.select  "Cambiar selección de pestañas">
+
+<!ENTITY config.tabclickmode.shift.caption "Acción para Shift-Click en las pestañas">
+<!ENTITY config.tabclickmode.shift.default "Ignore (Firefox default)">
+<!ENTITY config.tabclickmode.shift.select  "Select Tabs">
 
 <!ENTITY config.tabs.features "Features">
 

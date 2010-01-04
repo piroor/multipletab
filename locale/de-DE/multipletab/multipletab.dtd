@@ -44,9 +44,13 @@
 <!ENTITY config.tabdrag.autoclear     "Tab-Auswahl nach dem Schlie&#223;en des Popup-Men&#252;s aufheben">
 <!ENTITY config.tabdrag.moveMultipleTabs "Ausgew&#228;hlte Tabs gemeinsam verschieben">
 
-<!ENTITY config.tabclickmode.caption "Verhalten bei Ctrl(Command)-Klick auf Tabs">
-<!ENTITY config.tabclickmode.default "Tab schlie&#223;en">
-<!ENTITY config.tabclickmode.toggle  "Zwischen ausgew&#228;hlten Tabs hin- und her schalten">
+<!ENTITY config.tabclickmode.accel.caption "Verhalten bei Ctrl(Command)-Klick auf Tabs">
+<!ENTITY config.tabclickmode.accel.default "Tab schlie&#223;en (Firefox default)">
+<!ENTITY config.tabclickmode.accel.select  "Zwischen ausgew&#228;hlten Tabs hin- und her schalten">
+
+<!ENTITY config.tabclickmode.shift.caption "Verhalten bei Shift-Klick auf Tabs">
+<!ENTITY config.tabclickmode.shift.default "Ignore (Firefox default)">
+<!ENTITY config.tabclickmode.shift.select  "Select Tabs">
 
 <!ENTITY config.tabs.features "Features">
 

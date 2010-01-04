@@ -44,9 +44,13 @@
 <!ENTITY config.tabdrag.autoclear     "Сбрасывать выбор вкладок после закрытия всплывающего меню">
 <!ENTITY config.tabdrag.moveMultipleTabs "Переносить выбранные вкладки вместе">
 
-<!ENTITY config.tabclickmode.caption "Действие для использования Ctrl-Click на вкладках">
-<!ENTITY config.tabclickmode.default "Закрыть вкладку">
-<!ENTITY config.tabclickmode.toggle  "Переключить выбор вкладки">
+<!ENTITY config.tabclickmode.accel.caption "Действие для использования Ctrl-Click на вкладках">
+<!ENTITY config.tabclickmode.accel.default "Закрыть вкладку (Firefox default)">
+<!ENTITY config.tabclickmode.accel.select  "Переключить выбор вкладки">
+
+<!ENTITY config.tabclickmode.shift.caption "Действие для использования Shift-Click на вкладках">
+<!ENTITY config.tabclickmode.shift.default "Ignore (Firefox default)">
+<!ENTITY config.tabclickmode.shift.select  "Select Tabs">
 
 <!ENTITY config.tabs.features "Возможности">
 

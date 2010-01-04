@@ -44,9 +44,13 @@
 <!ENTITY config.tabdrag.autoclear     "Wyczyść zaznaczenie kart po zamknięciu menu kontekstowego">
 <!ENTITY config.tabdrag.moveMultipleTabs "Przesuwaj razem zaznaczone karty">
 
-<!ENTITY config.tabclickmode.caption "Akcja dla Ctrl(Command)-Klik w kartę">
-<!ENTITY config.tabclickmode.default "Zamknij kartę">
-<!ENTITY config.tabclickmode.toggle  "Przełącz zaznaczenie karty">
+<!ENTITY config.tabclickmode.accel.caption "Akcja dla Ctrl(Command)-Klik w kartę">
+<!ENTITY config.tabclickmode.accel.default "Zamknij kartę (Firefox default)">
+<!ENTITY config.tabclickmode.accel.select  "Przełącz zaznaczenie karty">
+
+<!ENTITY config.tabclickmode.shift.caption "Akcja dla Shift-Klik w kartę">
+<!ENTITY config.tabclickmode.shift.default "Ignore (Firefox default)">
+<!ENTITY config.tabclickmode.shift.select  "Select Tabs">
 
 <!ENTITY config.tabs.features "Funkcje">
 

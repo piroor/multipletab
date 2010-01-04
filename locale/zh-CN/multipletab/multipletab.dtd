@@ -44,9 +44,13 @@
 <!ENTITY config.tabdrag.autoclear     "关闭上下文菜单时自动取消选中状态">
 <!ENTITY config.tabdrag.moveMultipleTabs "紧邻排列移动后的选中标签">
 
-<!ENTITY config.tabclickmode.caption "Ctrl（Command）-左键点击标签时的动作">
-<!ENTITY config.tabclickmode.default "关闭标签">
-<!ENTITY config.tabclickmode.toggle  "切换标签选中状态">
+<!ENTITY config.tabclickmode.accel.caption "Ctrl（Command）-左键点击标签时的动作">
+<!ENTITY config.tabclickmode.accel.default "关闭标签 (Firefox default)">
+<!ENTITY config.tabclickmode.accel.select  "切换标签选中状态">
+
+<!ENTITY config.tabclickmode.shift.caption "Shift-左键点击标签时的动作">
+<!ENTITY config.tabclickmode.shift.default "Ignore (Firefox default)">
+<!ENTITY config.tabclickmode.shift.select  "Select Tabs">
 
 <!ENTITY config.tabs.features "特性">
 
