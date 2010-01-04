@@ -38,7 +38,7 @@ var MultipleTabService = {
 	lineFeed : '\r\n',
 	
 	NSResolver : { 
-		lookupNamespaceURI : function(aPrefix)
+		lookupNamespaceURI : function MTS_lookupNamespaceURI(aPrefix)
 		{
 			switch (aPrefix)
 			{
@@ -54,7 +54,7 @@ var MultipleTabService = {
 			}
 		}
 	},
-	evaluateXPath : function(aExpression, aContext, aType)
+	evaluateXPath : function MTS_evaluateXPath(aExpression, aContext, aType)
 	{
 		if (!aType) aType = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
 		try {
@@ -71,7 +71,7 @@ var MultipleTabService = {
 			return {
 				singleNodeValue : null,
 				snapshotLength  : 0,
-				snapshotItem    : function() {
+				snapshotItem    : function MTS_snapshotItem() {
 					return null
 				}
 			};
@@ -79,7 +79,7 @@ var MultipleTabService = {
 		return xpathResult;
 	},
  
-	evalInSandbox : function(aCode, aOwner) 
+	evalInSandbox : function MTS_evalInSandbox(aCode, aOwner) 
 	{
 		try {
 			var sandbox = new Components.utils.Sandbox(aOwner || 'about:blank');
@@ -140,7 +140,7 @@ var MultipleTabService = {
  
 /* Utilities */ 
 	
-	isEventFiredOnTabIcon : function(aEvent) 
+	isEventFiredOnTabIcon : function MTS_isEventFiredOnTabIcon(aEvent) 
 	{
 		return this.evaluateXPath(
 				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-icon ")]',
@@ -149,7 +149,7 @@ var MultipleTabService = {
 			).booleanValue;
 	},
  
-	isEventFiredOnClickable : function(aEvent) 
+	isEventFiredOnClickable : function MTS_isEventFiredOnClickable(aEvent) 
 	{
 		return this.evaluateXPath(
 				'ancestor-or-self::*[contains(" button toolbarbutton scrollbar popup menupopup tooltip ", concat(" ", local-name(), " "))]',
@@ -158,7 +158,7 @@ var MultipleTabService = {
 			).booleanValue;
 	},
  
-	getCloseboxFromEvent : function(aEvent) 
+	getCloseboxFromEvent : function MTS_getCloseboxFromEvent(aEvent) 
 	{
 		return this.evaluateXPath(
 				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-close-button ")]',
@@ -167,17 +167,17 @@ var MultipleTabService = {
 			).singleNodeValue;
 	},
  
-	isAccelKeyPressed : function(aEvent) 
+	isAccelKeyPressed : function MTS_isAccelKeyPressed(aEvent) 
 	{
 		return navigator.platform.toLowerCase().indexOf('mac') > -1 ? aEvent.metaKey : aEvent.ctrlKey ;
 	},
  
-	isDisabled : function() 
+	isDisabled : function MTS_isDisabled() 
 	{
 		return (document.getElementById('cmd_CustomizeToolbars').getAttribute('disabled') == 'true');
 	},
  
-	warnAboutClosingTabs : function(aTabsCount) 
+	warnAboutClosingTabs : function MTS_warnAboutClosingTabs(aTabsCount) 
 	{
 		if (
 			aTabsCount <= 1 ||
@@ -209,7 +209,7 @@ var MultipleTabService = {
 		return gBrowser;
 	},
  
-	getArrayFromXPathResult : function(aXPathResult) 
+	getArrayFromXPathResult : function MTS_getArrayFromXPathResult(aXPathResult) 
 	{
 		if (!(aXPathResult instanceof Components.interfaces.nsIDOMXPathResult)) {
 			aXPathResult = this.evaluateXPath.apply(this, arguments);
@@ -226,7 +226,7 @@ var MultipleTabService = {
 		return array;
 	},
  
-	getSelectedTabs : function(aTabBrowser) 
+	getSelectedTabs : function MTS_getSelectedTabs(aTabBrowser) 
 	{
 		return this.getArrayFromXPathResult(
 				'descendant::xul:tab[@'+this.kSELECTED+'="true"]',
@@ -234,7 +234,7 @@ var MultipleTabService = {
 			);
 	},
  
-	getReadyToCloseTabs : function(aTabBrowser) 
+	getReadyToCloseTabs : function MTS_getReadyToCloseTabs(aTabBrowser) 
 	{
 		return this.getArrayFromXPathResult(
 				'descendant::xul:tab[@'+this.kREADY_TO_CLOSE+'="true"]',
@@ -242,7 +242,7 @@ var MultipleTabService = {
 			);
 	},
  
-	getLeftTabsOf : function(aTab) 
+	getLeftTabsOf : function MTS_getLeftTabsOf(aTab) 
 	{
 		return this.getArrayFromXPathResult(
 				'preceding-sibling::xul:tab',
@@ -250,7 +250,7 @@ var MultipleTabService = {
 			);
 	},
  
-	getRightTabsOf : function(aTab) 
+	getRightTabsOf : function MTS_getRightTabsOf(aTab) 
 	{
 		return this.getArrayFromXPathResult(
 				'following-sibling::xul:tab',
@@ -258,7 +258,7 @@ var MultipleTabService = {
 			);
 	},
  
-	getSimilarTabsOf : function(aCurrentTab, aTabs) 
+	getSimilarTabsOf : function MTS_getSimilarTabsOf(aCurrentTab, aTabs) 
 	{
 		var resultTabs = [];
 		if (!aCurrentTab) return resultTabs;
@@ -280,7 +280,7 @@ var MultipleTabService = {
 		}, this);
 		return resultTabs;
 	},
-	getDomainFromURI : function(aURI)
+	getDomainFromURI : function MTS_getDomainFromURI(aURI)
 	{
 		if (!aURI) return null;
 		try {
@@ -305,7 +305,7 @@ var MultipleTabService = {
 		}
 		return null;
 	},
-	makeURIFromSpec : function(aURI)
+	makeURIFromSpec : function MTS_makeURIFromSpec(aURI)
 	{
 		var newURI;
 		aURI = aURI || '';
@@ -322,7 +322,7 @@ var MultipleTabService = {
 		return newURI;
 	},
  
-	getTabFromEvent : function(aEvent, aReallyOnTab) 
+	getTabFromEvent : function MTS_getTabFromEvent(aEvent, aReallyOnTab) 
 	{
 		var tab = this.evaluateXPath(
 				'ancestor-or-self::xul:tab[ancestor::xul:tabbrowser]',
@@ -340,7 +340,7 @@ var MultipleTabService = {
 		return null;
 	},
  
-	getTabFromChild : function(aNode) 
+	getTabFromChild : function MTS_getTabFromChild(aNode) 
 	{
 		return this.evaluateXPath(
 				'ancestor-or-self::xul:tab[ancestor::xul:tabbrowser]',
@@ -349,7 +349,7 @@ var MultipleTabService = {
 			).singleNodeValue;
 	},
  
-	getTabBrowserFromChild : function(aTab) 
+	getTabBrowserFromChild : function MTS_getTabBrowserFromChild(aTab) 
 	{
 		return this.evaluateXPath(
 				'ancestor-or-self::xul:tabbrowser',
@@ -358,7 +358,7 @@ var MultipleTabService = {
 			).singleNodeValue;
 	},
  
-	getTabs : function(aTabBrowser) 
+	getTabs : function MTS_getTabs(aTabBrowser) 
 	{
 		return this.evaluateXPath(
 				'descendant::xul:tab',
@@ -366,12 +366,12 @@ var MultipleTabService = {
 			);
 	},
  
-	getTabsArray : function(aTabBrowser) 
+	getTabsArray : function MTS_getTabsArray(aTabBrowser) 
 	{
 		return this.getArrayFromXPathResult(this.getTabs(aTabBrowser));
 	},
  
-	getNextTab : function(aTab) 
+	getNextTab : function MTS_getNextTab(aTab) 
 	{
 		return this.evaluateXPath(
 				'following-sibling::xul:tab[1]',
@@ -380,7 +380,7 @@ var MultipleTabService = {
 			).singleNodeValue;
 	},
  
-	getPreviousTab : function(aTab) 
+	getPreviousTab : function MTS_getPreviousTab(aTab) 
 	{
 		return this.evaluateXPath(
 				'preceding-sibling::xul:tab[1]',
@@ -390,7 +390,7 @@ var MultipleTabService = {
 	},
 	
 	// old method (for backward compatibility) 
-	getTabBrowserFromChildren : function(aTab)
+	getTabBrowserFromChildren : function MTS_getTabBrowserFromChildren(aTab)
 	{
 		return this.getTabBrowserFromChild(aTab);
 	},
@@ -400,7 +400,7 @@ var MultipleTabService = {
 		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
 	},
  
-	fireDuplicatedEvent : function(aNewTab, aSourceTab, aSourceEvent) 
+	fireDuplicatedEvent : function MTS_fireDuplicatedEvent(aNewTab, aSourceTab, aSourceEvent) 
 	{
 		var event = aNewTab.ownerDocument.createEvent('Events');
 		event.initEvent('MultipleTabHandler:TabDuplicate', true, false);
@@ -409,7 +409,7 @@ var MultipleTabService = {
 		aNewTab.dispatchEvent(event);
 	},
  
-	fireWindowMoveEvent : function(aNewTab, aSourceTab) 
+	fireWindowMoveEvent : function MTS_fireWindowMoveEvent(aNewTab, aSourceTab) 
 	{
 		var event = document.createEvent('Events');
 		event.initEvent('MultipleTabHandler:TabWindowMove', true, false);
@@ -417,7 +417,7 @@ var MultipleTabService = {
 		aNewTab.dispatchEvent(event);
 	},
  
-	fireTabsClosingEvent : function(aTabs) 
+	fireTabsClosingEvent : function MTS_fireTabsClosingEvent(aTabs) 
 	{
 		if (!aTabs || !aTabs.length) return false;
 		var d = aTabs[0].ownerDocument;
@@ -431,7 +431,7 @@ var MultipleTabService = {
 		return !event.getPreventDefault();
 	},
  
-	fireTabsClosedEvent : function(aTabBrowser, aTabs) 
+	fireTabsClosedEvent : function MTS_fireTabsClosedEvent(aTabBrowser, aTabs) 
 	{
 		if (!aTabs || !aTabs.length) return false;
 		aTabs = aTabs.filter(function(aTab) { return !aTab.parentNode; });
@@ -444,7 +444,7 @@ var MultipleTabService = {
 		aTabBrowser.dispatchEvent(event);
 	},
  
-	ensureEventCancelable : function(aEvent) 
+	ensureEventCancelable : function MTS_ensureEventCancelable(aEvent) 
 	{
 		if (aEvent.getPreventDefault) return;
 		// getPreventDefault is available on any event on Gecko 1.9.2 or later.
@@ -460,7 +460,7 @@ var MultipleTabService = {
 		};
 	},
  
-	createDragFeedbackImage : function(aNode) 
+	createDragFeedbackImage : function MTS_createDragFeedbackImage(aNode) 
 	{
 		var tabs = this.getDraggedTabs(aNode);
 		if (tabs.length < 2) return null;
@@ -488,26 +488,26 @@ var MultipleTabService = {
 			return null;
 		}
 	},
-	getDragFeedbackImageX : function(aNode)
+	getDragFeedbackImageX : function MTS_getDragFeedbackImageX(aNode)
 	{
 		var tabs = this.getDraggedTabs(aNode);
 		if (tabs.length < 2) return 0;
 		return 16;
 	},
-	getDragFeedbackImageY : function(aNode)
+	getDragFeedbackImageY : function MTS_getDragFeedbackImageY(aNode)
 	{
 		var tabs = this.getDraggedTabs(aNode);
 		if (tabs.length < 2) return 0;
 		return 16;
 	},
-	getDraggedTabs : function(aNode)
+	getDraggedTabs : function MTS_getDraggedTabs(aNode)
 	{
 		var b = this.getTabBrowserFromChild(aNode);
 		var tabs = b ? this.getSelectedTabs(b) : [] ;
 		return tabs;
 	},
  
-	filterBlankTabs : function(aTabs) 
+	filterBlankTabs : function MTS_filterBlankTabs(aTabs) 
 	{
 		return aTabs.filter(function(aTab) {
 				return aTab.linkedBrowser.currentURI.spec != 'about:blank';
@@ -516,7 +516,7 @@ var MultipleTabService = {
   
 /* Initializing */ 
 	
-	init : function() 
+	init : function MTS_init() 
 	{
 		if (!('gBrowser' in window)) return;
 
@@ -576,7 +576,7 @@ var MultipleTabService = {
 		window.setTimeout(function(aSelf) { aSelf.delayedInit(); }, 0, this);
 	},
 	
-	preInit : function() 
+	preInit : function MTS_preInit() 
 	{
 		window.removeEventListener('DOMContentLoaded', this, false);
 
@@ -590,7 +590,7 @@ var MultipleTabService = {
 		this.overrideExtensionsOnPreInit(); // hacks.js
 	},
  
-	delayedInit : function() 
+	delayedInit : function MTS_delayedInit() 
 	{
 		this.overrideExtensionsOnDelayedInit(); // hacks.js
 
@@ -605,7 +605,7 @@ var MultipleTabService = {
 		}
 	},
  
-	initTabBrowser : function(aTabBrowser) 
+	initTabBrowser : function MTS_initTabBrowser(aTabBrowser) 
 	{
 		aTabBrowser.addEventListener('TabOpen', this, true);
 		aTabBrowser.addEventListener('TabClose', this, true);
@@ -705,7 +705,7 @@ var MultipleTabService = {
 		}, this);
 	},
 	
-	initTabBrowserContextMenu : function(aTabBrowser) 
+	initTabBrowserContextMenu : function MTS_initTabBrowserContextMenu(aTabBrowser) 
 	{
 		var suffix = '-tabbrowser-'+(aTabBrowser.id || 'instance-'+parseInt(Math.random() * 65000));
 		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
@@ -762,12 +762,12 @@ var MultipleTabService = {
 		tabContextMenu.addEventListener('popupshowing', this, false);
 	},
   
-	initTab : function(aTab) 
+	initTab : function MTS_initTab(aTab) 
 	{
 		aTab.addEventListener('mousemove', this, true);
 	},
   
-	destroy : function() 
+	destroy : function MTS_destroy() 
 	{
 		this.destroyTabBrowser(gBrowser);
 		window.addEventListener('mouseup', this, true);
@@ -784,7 +784,7 @@ var MultipleTabService = {
 		tabContextMenu.removeEventListener('popupshowing', this, false);
 	},
 	
-	destroyTabBrowser : function(aTabBrowser) 
+	destroyTabBrowser : function MTS_destroyTabBrowser(aTabBrowser) 
 	{
 		aTabBrowser.removeEventListener('TabOpen', this, true);
 		aTabBrowser.removeEventListener('TabClose', this, true);
@@ -801,7 +801,7 @@ var MultipleTabService = {
 		tabContextMenu.removeEventListener('popupshowing', this, false);
 	},
  
-	destroyTab : function(aTab) 
+	destroyTab : function MTS_destroyTab(aTab) 
 	{
 		this.setSelection(aTab, false);
 		if (!this.hasSelection())
@@ -812,7 +812,7 @@ var MultipleTabService = {
    
 /* Event Handling */ 
 	
-	handleEvent : function(aEvent) 
+	handleEvent : function MTS_handleEvent(aEvent) 
 	{
 		switch (aEvent.type)
 		{
@@ -908,7 +908,7 @@ var MultipleTabService = {
 		}
 	},
  
-	onTabClick : function(aEvent) 
+	onTabClick : function MTS_onTabClick(aEvent) 
 	{
 		if (aEvent.button != 0) return;
 
@@ -970,14 +970,14 @@ var MultipleTabService = {
 			this.clearSelection();
 	},
 	
-	delayedDragStart : function(aSelf, aEvent) 
+	delayedDragStart : function MTS_delayedDragStart(aSelf, aEvent) 
 	{
 		aSelf.clearSelection();
 		aSelf.tabDragging = false; // cancel "dragging" before we start to drag it really.
 		aSelf.delayedDragStartReady = true;
 		aSelf.onTabDragStart(aEvent, true);
 	},
-	cancelDelayedDragStart : function()
+	cancelDelayedDragStart : function MTS_cancelDelayedDragStart()
 	{
 		if (this.delayedDragStartTimer) {
 			window.clearTimeout(this.delayedDragStartTimer);
@@ -986,7 +986,7 @@ var MultipleTabService = {
 	},
 	delayedDragStartTimer : null,
   
-	onTabDragStart : function(aEvent, aIsTimeout) 
+	onTabDragStart : function MTS_onTabDragStart(aEvent, aIsTimeout) 
 	{
 		this.cancelDelayedDragStart();
 
@@ -1035,7 +1035,7 @@ var MultipleTabService = {
 	lastMouseOverTarget : null,
 	lastMouseDown       : 0,
  
-	onTabDragEnd : function(aEvent) 
+	onTabDragEnd : function MTS_onTabDragEnd(aEvent) 
 	{
 		this.cancelDelayedDragStart();
 
@@ -1063,7 +1063,7 @@ var MultipleTabService = {
 		this.lastMouseOverTarget = null;
 	},
  
-	onTabDragEnter : function(aEvent) 
+	onTabDragEnter : function MTS_onTabDragEnter(aEvent) 
 	{
 		if (!(
 				this.tabDragging ||
@@ -1081,7 +1081,7 @@ var MultipleTabService = {
 		}
 	},
  
-	onTabDragOver : function(aEvent) 
+	onTabDragOver : function MTS_onTabDragOver(aEvent) 
 	{
 		if (!(
 				this.tabDragging ||
@@ -1141,7 +1141,7 @@ var MultipleTabService = {
 	},
 	_tabSelectionPopup : null,
  
-	showSelectionPopup : function(aEvent, aAutoClearSelection) 
+	showSelectionPopup : function MTS_showSelectionPopup(aEvent, aAutoClearSelection) 
 	{
 		var popup = this.tabSelectionPopup;
 		popup.hidePopup();
@@ -1158,7 +1158,7 @@ var MultipleTabService = {
 			);
 	},
  
-	updateMenuItems : function(aPopup) 
+	updateMenuItems : function MTS_updateMenuItems(aPopup) 
 	{
 		if (aPopup == this.tabSelectionPopup) {
 			var lockedItem = document.getElementById('multipletab-selection-lockTabs');
@@ -1193,7 +1193,7 @@ var MultipleTabService = {
 		}
 	},
  
-	enableMenuItems : function(aPopup) 
+	enableMenuItems : function MTS_enableMenuItems(aPopup) 
 	{
 		var tab = this.browser.mContextTab || this.browser.selectedTab;
 
@@ -1234,7 +1234,7 @@ var MultipleTabService = {
 		}
 	},
  
-	showHideMenuItems : function(aPopup) 
+	showHideMenuItems : function MTS_showHideMenuItems(aPopup) 
 	{
 		var b   = this.getTabBrowserFromChild(aPopup) || this.browser;
 		var box = b.mTabContainer.mTabstrip || b.mTabContainer ;
@@ -1318,7 +1318,7 @@ var MultipleTabService = {
 		}
 	},
 	
-	getSeparators : function(aPopup) 
+	getSeparators : function MTS_getSeparators(aPopup) 
 	{
 		try {
 			var xpathResult = document.evaluate(
@@ -1335,7 +1335,7 @@ var MultipleTabService = {
 		return xpathResult;
 	},
  
-	getObsoleteSeparator : function(aPopup) 
+	getObsoleteSeparator : function MTS_getObsoleteSeparator(aPopup) 
 	{
 		try {
 			var xpathResult = document.evaluate(
@@ -1352,7 +1352,7 @@ var MultipleTabService = {
 		return xpathResult.singleNodeValue;
 	},
   
-	initCopyFormatItems : function(aPopup) 
+	initCopyFormatItems : function MTS_initCopyFormatItems(aPopup) 
 	{
 		if (aPopup.formatsTimeStamp == this.formatsTimeStamp) return;
 
@@ -1383,7 +1383,7 @@ var MultipleTabService = {
   
 /* Commands */ 
 	
-	closeTabs : function(aTabs) 
+	closeTabs : function MTS_closeTabs(aTabs) 
 	{
 		if (!aTabs) return;
 
@@ -1422,7 +1422,7 @@ var MultipleTabService = {
 	CLOSE_DIRECTION_START_TO_LAST : 0,
 	CLOSE_DIRECTION_LAST_TO_START : 1,
  
-	closeSimilarTabsOf : function(aCurrentTab, aTabs) 
+	closeSimilarTabsOf : function MTS_closeSimilarTabsOf(aCurrentTab, aTabs) 
 	{
 		if (!aCurrentTab) return;
 
@@ -1445,7 +1445,7 @@ var MultipleTabService = {
 		this.fireTabsClosedEvent(b, removeTabs);
 	},
  
-	closeOtherTabs : function(aTabs) 
+	closeOtherTabs : function MTS_closeOtherTabs(aTabs) 
 	{
 		if (!aTabs || !aTabs.length) return;
 
@@ -1475,7 +1475,7 @@ var MultipleTabService = {
 		this.fireTabsClosedEvent(b, removeTabs);
 	},
  
-	reloadTabs : function(aTabs) 
+	reloadTabs : function MTS_reloadTabs(aTabs) 
 	{
 		if (!aTabs) return;
 
@@ -1487,7 +1487,7 @@ var MultipleTabService = {
 		});
 	},
  
-	saveTabs : function(aTabs, aSaveType, aFolder) 
+	saveTabs : function MTS_saveTabs(aTabs, aSaveType, aFolder) 
 	{
 		if (!aTabs) return;
 
@@ -1557,7 +1557,7 @@ var MultipleTabService = {
 	kSAVE_TYPE_COMPLETE : 1,
 	kSAVE_TYPE_TEXT     : 2,
  
-	shouldConvertTabToText : function(aTab, aSaveType) 
+	shouldConvertTabToText : function MTS_shouldConvertTabToText(aTab, aSaveType) 
 	{
 		return(
 			aSaveType == this.kSAVE_TYPE_TEXT &&
@@ -1565,7 +1565,7 @@ var MultipleTabService = {
 		);
 	},
  
-	selectFolder : function(aTitle) 
+	selectFolder : function MTS_selectFolder(aTitle) 
 	{
 		var picker = Components
 						.classes['@mozilla.org/filepicker;1']
@@ -1580,7 +1580,7 @@ var MultipleTabService = {
 		return null;
 	},
  
-	saveOneTab : function(aTab, aDestFile, aSaveType) 
+	saveOneTab : function MTS_saveOneTab(aTab, aDestFile, aSaveType) 
 	{
 		var b = aTab.linkedBrowser;
 		var uri = b.currentURI;
@@ -1605,7 +1605,7 @@ var MultipleTabService = {
 		);
 	},
   
-	addBookmarkFor : function(aTabs, aFolderName) 
+	addBookmarkFor : function MTS_addBookmarkFor(aTabs, aFolderName) 
 	{
 		var isTSTBookmarksTreeStructureAvailable = (
 				'TreeStyleTabBookmarksService' in window &&
@@ -1623,7 +1623,7 @@ var MultipleTabService = {
 			TreeStyleTabBookmarksService.endAddBookmarksFromTabs();
 	},
  
-	printTabs : function(aTabs) 
+	printTabs : function MTS_printTabs(aTabs) 
 	{
 		if (!('PrintAllTabs' in window)) return;
 
@@ -1634,7 +1634,7 @@ var MultipleTabService = {
 		PrintAllTabs.__multipletab__printNodes = null;
 	},
  
-	duplicateTabs : function(aTabs) 
+	duplicateTabs : function MTS_duplicateTabs(aTabs) 
 	{
 		if (!aTabs) return;
 
@@ -1701,7 +1701,7 @@ var MultipleTabService = {
 		}, 0, this);
 	},
  
-	splitWindowFromTabs : function(aTabs, aWindow) 
+	splitWindowFromTabs : function MTS_splitWindowFromTabs(aTabs, aWindow) 
 	{
 		if (!aTabs) return null;
 		var max = aTabs.length;
@@ -1785,12 +1785,12 @@ var MultipleTabService = {
 		return newWin;
 	},
 	
-	splitWindowFrom : function(aTabs) // old name 
+	splitWindowFrom : function MTS_splitWindowFrom(aTabs) // old name 
 	{
 		return this.splitWindowFromTabs(aTabs);
 	},
   
-	splitWindowFromTabsOld : function(aTabs) 
+	splitWindowFromTabsOld : function MTS_splitWindowFromTabsOld(aTabs) 
 	{
 		if (!aTabs) return null;
 
@@ -1855,7 +1855,7 @@ var MultipleTabService = {
 		return this.openNewWindowWithTabs(state, max);
 	},
 	
-	openNewWindowWithTabs : function(aState, aNumTabs) 
+	openNewWindowWithTabs : function MTS_openNewWindowWithTabs(aState, aNumTabs) 
 	{
 		// Step 3: Restore state in new window
 
@@ -1950,19 +1950,19 @@ var MultipleTabService = {
 		return newWin;
 	},
  
-	registerClearTabValueKey : function(aKey) 
+	registerClearTabValueKey : function MTS_registerClearTabValueKey(aKey) 
 	{
 		this._clearTabValueKeys.push(aKey);
 	},
 	_clearTabValueKeys : [],
  
-	registerDuplicatedTabPostProcess : function(aProcess) 
+	registerDuplicatedTabPostProcess : function MTS_registerDuplicatedTabPostProcess(aProcess) 
 	{
 		this._duplicatedTabPostProcesses.push(aProcess);
 	},
 	_duplicatedTabPostProcesses : [],
   
-	copyURIsToClipboard : function(aTabs, aFormatType, aFormat) 
+	copyURIsToClipboard : function MTS_copyURIsToClipboard(aTabs, aFormatType, aFormat) 
 	{
 		if (!aTabs) return;
 		var string = this.formatURIsForClipboard(aTabs, aFormatType, aFormat);
@@ -1971,7 +1971,7 @@ var MultipleTabService = {
 			.getService(Components.interfaces.nsIClipboardHelper)
 			.copyString(string);
 	},
-	formatURIsForClipboard : function(aTabs, aFormatType, aFormat)
+	formatURIsForClipboard : function MTS_formatURIsForClipboard(aTabs, aFormatType, aFormat)
 	{
 		if (!aTabs) return '';
 
@@ -2017,7 +2017,7 @@ var MultipleTabService = {
 	kFORMAT_TYPE_MOZ_URL : 1,
 	kFORMAT_TYPE_LINK    : 2,
  
-	getClopboardFormatForType : function(aFormatType) 
+	getClopboardFormatForType : function MTS_getClopboardFormatForType(aFormatType) 
 	{
 		if (aFormatType === void(0))
 			aFormatType = this.getPref('extensions.multipletab.clipboard.formatType');
@@ -2039,7 +2039,7 @@ var MultipleTabService = {
   
 	// Tab Mix Plus commands 
 	
-	toggleTabsFreezed : function(aTabs, aNewState) 
+	toggleTabsFreezed : function MTS_toggleTabsFreezed(aTabs, aNewState) 
 	{
 		if (aNewState === void(0))
 			aNewState = !tabs.every(this._isTabFreezed);
@@ -2049,12 +2049,12 @@ var MultipleTabService = {
 				gBrowser.freezeTab(aTab);
 		}, this);
 	},
-	_isTabFreezed : function(aTab)
+	_isTabFreezed : function MTS__isTabFreezed(aTab)
 	{
 		return aTab.hasAttribute('protected') && aTab.hasAttribute('locked');
 	},
  
-	toggleTabsProtected : function(aTabs, aNewState) 
+	toggleTabsProtected : function MTS_toggleTabsProtected(aTabs, aNewState) 
 	{
 		if (aNewState === void(0))
 			aNewState = !tabs.every(this._isTabProtected);
@@ -2064,12 +2064,12 @@ var MultipleTabService = {
 				gBrowser.protectTab(aTab);
 		}, this);
 	},
-	_isTabProtected : function(aTab)
+	_isTabProtected : function MTS__isTabProtected(aTab)
 	{
 		return aTab.hasAttribute('protected');
 	},
  
-	toggleTabsLocked : function(aTabs, aNewState) 
+	toggleTabsLocked : function MTS_toggleTabsLocked(aTabs, aNewState) 
 	{
 		if (aNewState === void(0))
 			aNewState = !tabs.every(this._isTabLocked);
@@ -2079,14 +2079,14 @@ var MultipleTabService = {
 				gBrowser.lockTab(aTab);
 		}, this);
 	},
-	_isTabLocked : function(aTab)
+	_isTabLocked : function MTS__isTabLocked(aTab)
 	{
 		return aTab.hasAttribute('locked');
 	},
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 
 	
-	getBundledTabsOf : function(aTab, aInfo) 
+	getBundledTabsOf : function MTS_getBundledTabsOf(aTab, aInfo) 
 	{
 		if (!aInfo) aInfo = {};
 		aInfo.sourceWindow = null;
@@ -2108,7 +2108,7 @@ var MultipleTabService = {
 		return w.MultipleTabService.getSelectedTabs(b);
 	},
  
-	calculateDeltaForNewPosition : function(aTabs, aOriginalPos, aNewPos) 
+	calculateDeltaForNewPosition : function MTS_calculateDeltaForNewPosition(aTabs, aOriginalPos, aNewPos) 
 	{
 		var isMove = aNewPos > -1;
 		var movedToLeft = isMove && (aNewPos - aOriginalPos < 0);
@@ -2135,7 +2135,7 @@ var MultipleTabService = {
 			});
 	},
  
-	moveBundledTabsOf : function(aMovedTab, aEvent) 
+	moveBundledTabsOf : function MTS_moveBundledTabsOf(aMovedTab, aEvent) 
 	{
 		var b = this.getTabBrowserFromChild(aMovedTab);
 		var tabs = this.getSelectedTabs(b);
@@ -2149,7 +2149,7 @@ var MultipleTabService = {
 		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 	},
  
-	windowMoveBundledTabsOf : function(aNewTab, aSourceTab) 
+	windowMoveBundledTabsOf : function MTS_windowMoveBundledTabsOf(aNewTab, aSourceTab) 
 	{
 		var targetBrowser = this.getTabBrowserFromChild(aNewTab);
 
@@ -2198,7 +2198,7 @@ var MultipleTabService = {
 
 	},
  
-	closeOwner : function(aTabOwner) 
+	closeOwner : function MTS_closeOwner(aTabOwner) 
 	{
 		var w = aTabOwner.ownerDocument.defaultView;
 		if (!w) return;
@@ -2215,7 +2215,7 @@ var MultipleTabService = {
 		w.close();
 	},
  
-	duplicateBundledTabsOf : function(aNewTab, aSourceTab, aMayBeMove) 
+	duplicateBundledTabsOf : function MTS_duplicateBundledTabsOf(aNewTab, aSourceTab, aMayBeMove) 
 	{
 		var info = {};
 		var sourceTabs = this.getBundledTabsOf(aSourceTab, info);
@@ -2271,7 +2271,7 @@ var MultipleTabService = {
 		}, 0);
 	},
  
-	tearOffSelectedTabsFromRemote : function() 
+	tearOffSelectedTabsFromRemote : function MTS_tearOffSelectedTabsFromRemote() 
 	{
 		var remoteTab = window.arguments[0];
 		var info = {};
@@ -2290,7 +2290,7 @@ var MultipleTabService = {
 		return false;
 	},
 	
-	isDraggingAllTabs : function(aTab) 
+	isDraggingAllTabs : function MTS_isDraggingAllTabs(aTab) 
 	{
 		var info = {};
 		var tabs = this.getBundledTabsOf(aTab, info);
@@ -2299,7 +2299,7 @@ var MultipleTabService = {
    
 /* Tab Selection */ 
 	
-	hasSelection : function(aTabBrowser) 
+	hasSelection : function MTS_hasSelection(aTabBrowser) 
 	{
 		try {
 			var xpathResult = document.evaluate(
@@ -2316,22 +2316,22 @@ var MultipleTabService = {
 		return false;
 	},
  
-	isSelected : function(aTab) 
+	isSelected : function MTS_isSelected(aTab) 
 	{
 		return aTab.getAttribute(this.kSELECTED) == 'true';
 	},
  
-	setSelection : function(aTab, aState) 
+	setSelection : function MTS_setSelection(aTab, aState) 
 	{
 		return this.setBooleanAttributeToTab(aTab, this.kSELECTED, aState, true);
 	},
 	
-	setReadyToClose : function(aTab, aState) 
+	setReadyToClose : function MTS_setReadyToClose(aTab, aState) 
 	{
 		return this.setBooleanAttributeToTab(aTab, this.kREADY_TO_CLOSE, aState, false);
 	},
  
-	setBooleanAttributeToTab : function(aTab, aAttr, aState, aShouldSaveToSession) 
+	setBooleanAttributeToTab : function MTS_setBooleanAttributeToTab(aTab, aAttr, aState, aShouldSaveToSession) 
 	{
 		if (!aState) {
 			aTab.removeAttribute(aAttr);
@@ -2363,7 +2363,7 @@ var MultipleTabService = {
 		return aState;
 	},
  
-	setTabValue : function(aTab, aKey, aValue) 
+	setTabValue : function MTS_setTabValue(aTab, aKey, aValue) 
 	{
 		if (!aValue) return this.deleteTabValue(aTab, aKey);
 
@@ -2377,7 +2377,7 @@ var MultipleTabService = {
 		return aValue;
 	},
  
-	deleteTabValue : function(aTab, aKey) 
+	deleteTabValue : function MTS_deleteTabValue(aTab, aKey) 
 	{
 		try {
 			this.checkCachedSessionDataExpiration(aTab);
@@ -2389,7 +2389,7 @@ var MultipleTabService = {
 	},
  
 	// workaround for http://piro.sakura.ne.jp/latest/blosxom/mozilla/extension/treestyletab/2009-09-29_debug.htm
-	checkCachedSessionDataExpiration : function(aTab) 
+	checkCachedSessionDataExpiration : function MTS_checkCachedSessionDataExpiration(aTab) 
 	{
 		if (aTab.linkedBrowser.parentNode.__SS_data &&
 			aTab.linkedBrowser.parentNode.__SS_data._tabStillLoading &&
@@ -2397,28 +2397,28 @@ var MultipleTabService = {
 			aTab.linkedBrowser.parentNode.__SS_data._tabStillLoading = false;
 	},
   
-	toggleSelection : function(aTab) 
+	toggleSelection : function MTS_toggleSelection(aTab) 
 	{
 		return this.toggleBooleanAttributeToTab(aTab, this.kSELECTED, true);
 	},
 	
-	toggleReadyToClose : function(aTab) 
+	toggleReadyToClose : function MTS_toggleReadyToClose(aTab) 
 	{
 		return this.toggleBooleanAttributeToTab(aTab, this.kREADY_TO_CLOSE, false);
 	},
  
-	toggleBooleanAttributeToTab : function(aTab, aAttr, aShouldSaveToSession) 
+	toggleBooleanAttributeToTab : function MTS_toggleBooleanAttributeToTab(aTab, aAttr, aShouldSaveToSession) 
 	{
 		return this.setBooleanAttributeToTab(aTab, aAttr, aTab.getAttribute(aAttr) != 'true', aShouldSaveToSession);
 	},
   
-	clearSelection : function(aTabBrowser) 
+	clearSelection : function MTS_clearSelection(aTabBrowser) 
 	{
 		this.clearSelectionSub(this.getSelectedTabs(aTabBrowser), this.kSELECTED);
 		this.clearSelectionSub(this.getReadyToCloseTabs(aTabBrowser), this.kREADY_TO_CLOSE);
 		this.selectionModified = false;
 	},
-	clearSelectionSub : function(aTabs, aAttr)
+	clearSelectionSub : function MTS_clearSelectionSub(aTabs, aAttr)
 	{
 		if (!aTabs || !aTabs.length) return;
 
@@ -2439,7 +2439,7 @@ var MultipleTabService = {
 	
 	domain : 'extensions.multipletab', 
  
-	observe : function(aSubject, aTopic, aPrefName) 
+	observe : function MTS_observe(aSubject, aTopic, aPrefName) 
 	{
 		if (aTopic != 'nsPref:changed') return;
 
@@ -2502,7 +2502,7 @@ var MultipleTabService = {
 	},
 	_Prefs : null,
  
-	getPref : function(aPrefstring, aInterface) 
+	getPref : function MTS_getPref(aPrefstring, aInterface) 
 	{
 		try {
 			if (aInterface) {
@@ -2528,7 +2528,7 @@ var MultipleTabService = {
 		return null;
 	},
  
-	setPref : function(aPrefstring, aNewValue) 
+	setPref : function MTS_setPref(aPrefstring, aNewValue) 
 	{
 		var pref = this.Prefs ;
 		var type;
@@ -2554,7 +2554,7 @@ var MultipleTabService = {
 		return true;
 	},
  
-	clearPref : function(aPrefstring) 
+	clearPref : function MTS_clearPref(aPrefstring) 
 	{
 		try {
 			this.Prefs.clearUserPref(aPrefstring);
@@ -2565,7 +2565,7 @@ var MultipleTabService = {
 		return;
 	},
  
-	addPrefListener : function(aObserver) 
+	addPrefListener : function MTS_addPrefListener(aObserver) 
 	{
 		var domains = ('domains' in aObserver) ? aObserver.domains : [aObserver.domain] ;
 		try {
@@ -2577,7 +2577,7 @@ var MultipleTabService = {
 		}
 	},
  
-	removePrefListener : function(aObserver) 
+	removePrefListener : function MTS_removePrefListener(aObserver) 
 	{
 		var domains = ('domains' in aObserver) ? aObserver.domains : [aObserver.domain] ;
 		try {

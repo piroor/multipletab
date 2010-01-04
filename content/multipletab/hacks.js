@@ -1,4 +1,4 @@
-MultipleTabService.overrideExtensionsOnPreInit = function() {
+MultipleTabService.overrideExtensionsOnPreInit = function MTS_overrideExtensionsOnPreInit() {
 
 	// Tab Groups
 	if ('TG_Tab_SSTabRestoring_Event' in window) {
@@ -30,7 +30,7 @@ MultipleTabService.overrideExtensionsOnPreInit = function() {
 
 };
 
-MultipleTabService.overrideExtensionsOnInit = function() {
+MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnInit() {
 
 	// Tab Groups
 	if ('TG_Group_DnD_Observer' in window) {
@@ -88,5 +88,5 @@ MultipleTabService.overrideExtensionsOnInit = function() {
 
 };
 
-MultipleTabService.overrideExtensionsOnDelayedInit = function() {
+MultipleTabService.overrideExtensionsOnDelayedInit = function MTS_overrideExtensionsOnDelayedInit() {
 };
