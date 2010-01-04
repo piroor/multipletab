@@ -534,6 +534,7 @@ var MultipleTabService = {
 		window.removeEventListener('load', this, false);
 		window.addEventListener('unload', MultipleTabService, false);
 
+		this.migratePrefs();
 		this.addPrefListener(this);
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabdrag.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.accel.mode');
@@ -613,6 +614,23 @@ var MultipleTabService = {
 				return lastTab;
 			};
 		}
+	},
+ 
+	kPREF_VERSION : 1,
+	migratePrefs : function MTS_migratePrefs() 
+	{
+		switch (this.getPref('extensions.multipletab.prefsVersion') || 0)
+		{
+			case 0:
+				var clickModeValue = this.getPref('extensions.multipletab.tabclick.mode');
+				if (clickModeValue !== null) {
+					this.setPref('extensions.multipletab.tabclick.accel.mode', clickModeValue);
+				}
+				this.clearPref('extensions.multipletab.tabclick.mode');
+			default:
+				break;
+		}
+		this.setPref('extensions.multipletab.prefsVersion', this.kPREF_VERSION);
 	},
  
 	initTabBrowser : function MTS_initTabBrowser(aTabBrowser) 
