@@ -86,6 +86,50 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 		);
 	}
 
+	// Tab Mix Plus
+	var TMPWarnPref = 'extensions.multipletab.compatibility.TMP.warnForClickActions';
+	if (
+		'TM_checkClick' in window &&
+		this.getPref(TMPWarnPref) &&
+		(
+			(
+				this.getPref('extensions.tabmix.ctrlClickTab') != 0 &&
+				this.getPref('extensions.multipletab.tabclick.accel.mode') != 0
+			) ||
+			(
+				this.getPref('extensions.tabmix.shiftClickTab') != 0 &&
+				this.getPref('extensions.multipletab.tabclick.shift.mode') != 0
+			)
+		)
+		) {
+		let checked = { value : false };
+		switch (this.PromptService.confirmEx(
+				null,
+				this.bundle.getString('compatibility_TMP_warning_title'),
+				this.bundle.getString(/mac/i.test(navigator.platform) ? 'compatibility_TMP_warning_text_mac' : 'compatibility_TMP_warning_text' ),
+				(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_0) +
+				(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_1) +
+				(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_2),
+				this.bundle.getString('compatibility_TMP_warning_use_multipletab'),
+				this.bundle.getString('compatibility_TMP_warning_use_TMP'),
+				this.bundle.getString('compatibility_TMP_warning_keep'),
+				this.bundle.getString('compatibility_TMP_warning_never'),
+				checked
+			))
+		{
+			case 0:
+				this.setPref('extensions.tabmix.ctrlClickTab', 0);
+				this.setPref('extensions.tabmix.shiftClickTab', 0);
+				break;
+			case 1:
+				this.setPref('extensions.multipletab.tabclick.accel.mode', 0);
+				this.setPref('extensions.multipletab.tabclick.shift.mode', 0);
+				break;
+		}
+		if (checked.value)
+			this.setPref(TMPWarnPref, false);
+	}
+
 };
 
 MultipleTabService.overrideExtensionsOnDelayedInit = function MTS_overrideExtensionsOnDelayedInit() {
