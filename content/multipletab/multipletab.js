@@ -2081,92 +2081,73 @@ var MultipleTabService = {
 		return this.splitWindowFromTabs(aTabs);
 	},
   
-	importTabs : function MTS_importTabs(aTabs, aTabBrowser) 
+	importTabs : function MTS_importTabs() 
 	{
+		var aTabs = [],
+			aTabBrowser,
+			aClone;
+		Array.slice(arguments).forEach(function(aArg) {
+			if (typeof aArg == 'boolean') {
+				aClone = aArg;
+			}
+			else if (!aArg) {
+				return;
+			}
+			else if (aArg instanceof Components.interfaces.nsIDOMNode) {
+				if (aArg.localName == 'tabbrowser')
+					aTabBrowser = aArg;
+				else if (aArg.localName == 'tab')
+					aTabs.push(aArg);
+			}
+			else if (typeof aArg == 'object') {
+				aTabs = aTabs.concat(aArg);
+			}
+		});
+
 		var importedTabs = [];
-		if (!aTabs || !aTabs.length)
+		if (!aTabs.length)
 			return importedTabs;
 
 		this.duplicatingTabs = true;
 
-		if (!aTabBrowser)
-			aTabBrowser = this.browser;
+		var targetBrowser = aTabBrowser || this.browser;
+		var targetWindow  = targetBrowser.ownerDocument.defaultView;
+		var sourceWindow  = aTabs[0].ownerDocument.defaultView;
+		var sourceService = sourceWindow.MultipleTabService;
+		var sourceBrowser = sourceService.getTabBrowserFromChild(aTabs[0]);
 
-		var remoteWindow  = aTabs[0].ownerDocument.defaultView;
-		var remoteService = remoteWindow.MultipleTabService;
-		var remoteBrowser = remoteService.getTabBrowserFromChild(aTabs[0]);
-		var targetWindow  = aTabBrowser.ownerDocument.defaultView;
+		targetWindow['piro.sakura.ne.jp'].stopRendering.stop();
+		sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
 
-		if (aTabBrowser.__multipletab__canDoWindowMove) {// for Firefox 3.5 or later
-			targetWindow['piro.sakura.ne.jp'].stopRendering.stop();
-			remoteWindow['piro.sakura.ne.jp'].stopRendering.stop();
-
+		if (targetBrowser.__multipletab__canDoWindowMove && !aClone) {// move tabs, for Firefox 3.5 or later
 			aTabs.forEach(function(aTab, aIndex) {
-				var newTab = aTabBrowser.addTab();
+				var newTab = targetBrowser.addTab();
 				importedTabs.push(newTab);
 				newTab.linkedBrowser.stop();
 				newTab.linkedBrowser.docShell;
-				aTabBrowser.swapBrowsersAndCloseOther(newTab, aTab);
-				aTabBrowser.setTabTitle(newTab);
-			});
-
-			importedTabs.forEach(function(aTab, aTabIndex) {
+				targetBrowser.swapBrowsersAndCloseOther(newTab, aTab);
+				targetBrowser.setTabTitle(newTab);
 				this._duplicatedTabPostProcesses.forEach(function(aProcess) {
-					aProcess(aTab, aTabIndex);
+					aProcess(newTab, newTab._tPos);
 				});
 			}, this);
-
-			targetWindow['piro.sakura.ne.jp'].stopRendering.start();
-			remoteWindow['piro.sakura.ne.jp'].stopRendering.start();
 		}
-		else { // for Firefox 3.0
-			let indexes = remoteService.getIndexesFromTabs(aTabs);
-
-			// step 1: get session data from the remote window
-			let state = remoteService.evalInSandbox('('+remoteService.SessionStore.getWindowState(remoteWindow)+')');
-			// delete obsolete data
-			delete state.windows[0]._closedTabs;
-			for (let i = state.windows[0].tabs.length-1; i > -1; i--)
-			{
-				if (indexes.indexOf(i) < 0) {
-					state.windows[0].tabs.splice(i, 1);
-					if (i < state.windows[0].selected)
-						state.windows[0].selected--;
-				}
-				else {
-					this._clearTabValueKeys.forEach(function(aKey) {
-						delete state.windows[0].tabs[i].extData[aKey];
-					});
-				}
-			}
-			state = state.toSource();
-
-			// step 2: close imported tabs from the remote window
-			remoteWindow['piro.sakura.ne.jp'].stopRendering.stop();
+		else { // duplicate tabs, or move tabs for Firefox 3.0
 			aTabs.forEach(function(aTab) {
-				remoteService.makeTabUnrecoverable(aTab);
-				remoteBrowser.removeTab(aTab);
+				var newTab = targetBrowser.duplicateTab(aTab);
+				importedTabs.push(newTab);
+				this._duplicatedTabPostProcesses.forEach(function(aProcess) {
+					aProcess(newTab, newTab._tPos);
+				});
+				if (!aClone) {
+					sourceService.makeTabUnrecoverable(aTab);
+					sourceBrowser.removeTab(aTab);
+				}
 			}, this);
-			remoteWindow['piro.sakura.ne.jp'].stopRendering.start();
-
-			// step 3: import tabs from session data
-			targetWindow['piro.sakura.ne.jp'].stopRendering.stop();
-			let beforeTabs = this.getTabsArray(aTabBrowser);
-			this.SessionStore.setWindowState(targetWindow, state, false);
-			importedTabs = this.getTabsArray(aTabBrowser)
-							.filter(function(aTab, aIndex) {
-								if (beforeTabs.indexOf(aTab) < 0) {
-									this._duplicatedTabPostProcesses.forEach(function(aProcess) {
-										aProcess(aTab, aIndex);
-									});
-									return true;
-								}
-								else {
-									return false;
-								}
-							}, this);
-			targetWindow['piro.sakura.ne.jp'].stopRendering.start();
 		}
+
+		targetWindow['piro.sakura.ne.jp'].stopRendering.start();
+		sourceWindow['piro.sakura.ne.jp'].stopRendering.start();
 
 		this.duplicatingTabs = false;
 
@@ -2395,23 +2376,16 @@ var MultipleTabService = {
 
 		targetBrowser.movingSelectedTabs = true;
 		this.clearSelection(targetBrowser);
+		sourceService.clearSelection(sourceBrowser);
 
 		var selectAfter = this.getPref('extensions.multipletab.selectAfter.move');
-
 		var hasNextTab = this.getNextTab(aNewTab);
-		sourceTabs.forEach(function(aTab, aIndex) {
-			sourceService.setSelection(aTab, false);
-
-			var newTab = targetBrowser.addTab();
-			newTab.linkedBrowser.stop();
-			newTab.linkedBrowser.docShell;
-			targetBrowser.swapBrowsersAndCloseOther(newTab, aTab);
-			targetBrowser.setTabTitle(newTab);
-
+		var importedTabs = this.importTabs(sourceTabs, targetBrowser);
+		importedTabs.forEach(function(aTab, aIndex) {
 			if (delta[aIndex] > 0 && hasNextTab) delta[aIndex]--;
-			targetBrowser.moveTabTo(newTab, aNewTab._tPos + delta[aIndex] + 1);
-
-			this.setSelection(newTab, selectAfter);
+			targetBrowser.moveTabTo(aTab, aNewTab._tPos + delta[aIndex] + 1);
+			if (selectAfter)
+				this.setSelection(aTab, true);
 		}, this);
 
 		if (shouldClose) this.closeOwner(sourceBrowser);
@@ -2455,7 +2429,9 @@ var MultipleTabService = {
 
 		var delta = sourceService.calculateDeltaForNewPosition(sourceTabs, aSourceTab._tPos, -1);
 
-		sourceService.setSelection(aSourceTab, false);
+		sourceService.clearSelection(sourceBrowser);
+		this.clearSelection(targetBrowser);
+
 		var self = this;
 		var selectAfter = this.getPref(isMove ?
 				'extensions.multipletab.selectAfter.move' :
@@ -2467,18 +2443,11 @@ var MultipleTabService = {
 
 			var hasNextTab = sourceService.getNextTab(aNewTab);
 
-			sourceTabs.forEach(function(aTab, aIndex) {
-				sourceService.setSelection(aTab, false);
-
-				var newTab = targetBrowser.duplicateTab(aTab);
-
+			var importedTabs = self.importTabs(sourceTabs, targetBrowser, !isMove);
+			importedTabs.forEach(function(aTab, aIndex) {
 				if (delta[aIndex] > 0 && hasNextTab) delta[aIndex]--;
-				targetBrowser.moveTabTo(newTab, aNewTab._tPos + delta[aIndex] + 1);
-
-				if (isMove) sourceBrowser.removeTab(aTab);
-
-				self.setSelection(newTab, selectAfter);
-				sourceService.setSelection(aTab, false);
+				targetBrowser.moveTabTo(aTab, aNewTab._tPos + delta[aIndex] + 1);
+				if (selectAfter) self.setSelection(aTab, true);
 			});
 
 			if (shouldClose) self.closeOwner(sourceBrowser);

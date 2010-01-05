@@ -74,7 +74,7 @@
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/operationHistory.test.js
 */
 (function() {
-	const currentRevision = 6;
+	const currentRevision = 7;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -117,26 +117,35 @@
 			if (!wasInUndoableTask)
 				history._inUndoableTask = true;
 
+			var data = options.data;
+			if (!this._doingUndo && data) {
+				let f = this._getAvailableFunction(data.onRedo, data.onredo, data.redo);
+				if (!f && !data.onRedo && !data.onredo && !data.redo && options.task)
+					data.onRedo = options.task;
+
+				if (wasInUndoableTask) {
+					entries[entries.length-1].children.push(data);
+				}
+				else {
+					entries = entries.slice(0, history.index+1);
+					entries.push({
+						__proto__ : data,
+						data      : data,
+						children  : []
+					});
+					entries = entries.slice(-this.MAX_ENTRIES);
+
+					history.entries = entries;
+					history.index = entries.length;
+				}
+			}
+
 			try {
 				if (options.task)
 					options.task.call(this);
 			}
 			catch(e) {
 				error = e;
-			}
-
-			var data = options.data;
-			if (!wasInUndoableTask && !this._doingUndo && data) {
-				let f = this._getAvailableFunction(data.onRedo, data.onredo, data.redo);
-				if (!f && !data.onRedo && !data.onredo && !data.redo && options.task)
-					data.onRedo = options.task;
-
-				entries = entries.slice(0, history.index+1);
-				entries.push(data);
-				entries = entries.slice(-this.MAX_ENTRIES);
-
-				history.entries = entries;
-				history.index = entries.length;
 			}
 
 			if (!wasInUndoableTask)
@@ -168,23 +177,25 @@
 			var error;
 			while (processed === false && history.index > -1)
 			{
-				let data = history.entries[history.index--];
-				if (!data) continue;
-				let f = this._getAvailableFunction(data.onUndo, data.onundo, data.undo);
+				let entry = history.entries[history.index--];
+				if (!entry) continue;
 				let done = false;
-				try {
-					if (f) {
-						processed = f.call(data);
-						done = true;
+				[entry.data].concat(entry.children).forEach(function(aData) {
+					let f = this._getAvailableFunction(aData.onUndo, aData.onundo, aData.undo);
+					try {
+						if (f) {
+							processed = f.call(aData);
+							done = true;
+						}
+						else {
+							processed = true;
+						}
 					}
-					else {
-						processed = true;
+					catch(e) {
+						error = e;
 					}
-				}
-				catch(e) {
-					error = e;
-				}
-				this._dispatchEvent('UIOperationGlobalHistoryUndo', options, data, done);
+				}, this);
+				this._dispatchEvent('UIOperationGlobalHistoryUndo', options, entry.data, done);
 			}
 			this._doingUndo = false;
 
@@ -207,23 +218,26 @@
 			var error;
 			while (processed === false && history.index < max)
 			{
-				let data = history.entries[++history.index];
-				if (!data) continue;
-				let f = this._getAvailableFunction(data.onRedo, data.onredo, data.redo);
+				let entry = history.entries[++history.index];
+				if (!entry) continue;
 				let done = false;
-				try {
-					if (f) {
-						processed = f.call(data);
-						done = true;
+				[entry.data].concat(entry.children).forEach(function(aData) {
+					let f = this._getAvailableFunction(aData.onRedo, aData.onredo, aData.redo);
+					let done = false;
+					try {
+						if (f) {
+							processed = f.call(entry.data);
+							done = true;
+						}
+						else {
+							processed = true;
+						}
 					}
-					else {
-						processed = true;
+					catch(e) {
+						error = e;
 					}
-				}
-				catch(e) {
-					error = e;
-				}
-				this._dispatchEvent('UIOperationGlobalHistoryRedo', options, data, done);
+				}, this);
+				this._dispatchEvent('UIOperationGlobalHistoryRedo', options, entry.data, done);
 			}
 			this._doingUndo = false;
 
