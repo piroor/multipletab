@@ -1423,56 +1423,58 @@ var MultipleTabService = {
 		var tabs = Array.slice(aTabs);
 		var b    = this.getTabBrowserFromChild(aTabs[0]);
 
-		/* PUBLIC API */
-		if (!this.fireTabsClosingEvent(tabs))
-			return;
-
 //		tabs.sort(function(aTabA, aTabB) { return aTabA._tPos - aTabB._tPos; });
 		if (this.getPref('extensions.multipletab.close.direction') == this.CLOSE_DIRECTION_LAST_TO_START)
 			tabs.reverse();
 
-		window['piro.sakura.ne.jp'].stopRendering.stop();
-
 		var closeSelectedLast = this.getPref('extensions.multipletab.close.selectedTab.last');
 		var selected;
+		var removeTabs = [];
 		tabs.forEach(function(aTab) {
 			if (closeSelectedLast && aTab.selected)
 				selected = aTab;
 			else
-				b.removeTab(aTab);
+				removeTabs.push(aTab);
 		});
 		if (selected)
-			b.removeTab(selected);
+			removeTabs.push(selected);
+
+		this.closeTabsInternal(removeTabs);
+	},
+	CLOSE_DIRECTION_START_TO_LAST : 0,
+	CLOSE_DIRECTION_LAST_TO_START : 1,
+	closeTabsInternal : function MTS_closeTabsInternal(aTabs)
+	{
+		if (!aTabs.length) return;
+
+		/* PUBLIC API */
+		if (!this.fireTabsClosingEvent(removeTabs))
+			return;
+
+		window['piro.sakura.ne.jp'].stopRendering.stop();
+
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		aTabs.forEach(function(aTab) {
+			b.removeTab(aTab);
+		});
 
 		window['piro.sakura.ne.jp'].stopRendering.start();
 
 		/* PUBLIC API */
-		this.fireTabsClosedEvent(b, tabs);
+		this.fireTabsClosedEvent(b, removeTabs);
 	},
-	CLOSE_DIRECTION_START_TO_LAST : 0,
-	CLOSE_DIRECTION_LAST_TO_START : 1,
  
 	closeSimilarTabsOf : function MTS_closeSimilarTabsOf(aCurrentTab, aTabs) 
 	{
 		if (!aCurrentTab) return;
 
 		var removeTabs = this.getSimilarTabsOf(aCurrentTab, aTabs);
-		if (!this.warnAboutClosingTabs(removeTabs.length))
-			return;
-
 		var count = removeTabs.length;
-
-		/* PUBLIC API */
-		if (!this.fireTabsClosingEvent(removeTabs))
+		if (!count || !this.warnAboutClosingTabs(count))
 			return;
 
 		var b = this.getTabBrowserFromChild(aCurrentTab);
-		removeTabs.forEach(function(aTab) {
-			b.removeTab(aTab);
-		});
-
-		/* PUBLIC API */
-		this.fireTabsClosedEvent(b, removeTabs);
+		this.closeTabsInternal(removeTabs);
 	},
  
 	closeOtherTabs : function MTS_closeOtherTabs(aTabs) 
@@ -1493,16 +1495,7 @@ var MultipleTabService = {
 
 		});
 
-		/* PUBLIC API */
-		if (!this.fireTabsClosingEvent(removeTabs))
-			return;
-
-		removeTabs.forEach(function(aTab) {
-			b.removeTab(aTab);
-		});
-
-		/* PUBLIC API */
-		this.fireTabsClosedEvent(b, removeTabs);
+		this.closeTabsInternal(removeTabs);
 	},
  
 	reloadTabs : function MTS_reloadTabs(aTabs) 
