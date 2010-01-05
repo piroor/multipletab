@@ -1527,7 +1527,6 @@ var MultipleTabService = {
 						var tab = b.addTab('about:blank');
 						sv.SessionStore.setTabState(tab, aState);
 						b.moveTabTo(tab, indexes[aIndex]);
-						return tab;
 					});
 					if (selectedIndex > -1)
 						b.selectedTab = sv.getTabs(b).snapshotItem(selectedIndex);
