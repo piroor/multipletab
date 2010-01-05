@@ -1851,14 +1851,14 @@ var MultipleTabService = {
 
 		var historyEntry = {
 				label  : this.bundle.getString('undo_splitWindowFromTabs_label'),
-				onUndo : function() {
+				onUndo : function(aInfo) {
 					// Don't undo if the original window is already closed (for safety)
-					var w = window['piro.sakura.ne.jp'].operationHistory.getWindowById(id);
+					var w = aInfo.manager.getWindowById(id);
 					if (!w || w.closed)
 						return false;
 
 					// Don't undo when the target window is already closed (for safety)
-					var remoteWindow = (remoteId ? w['piro.sakura.ne.jp'].operationHistory.getWindowById(remoteId) : null ) || newWindow;
+					var remoteWindow = (remoteId ? aInfo.manager.getWindowById(remoteId) : null ) || newWindow;
 					if (!remoteWindow || remoteWindow.closed)
 						return false;
 
@@ -1867,10 +1867,10 @@ var MultipleTabService = {
 					// source window instead of the new remote window, because we should enable
 					// "redo" in the source window to re-split tabs.
 					if (this == remoteHistoryEntry) {
-						var history = w['piro.sakura.ne.jp'].operationHistory.getHistory('TabbarOperations', w);
+						var history = aInfo.manager.getHistory('TabbarOperations', w);
 						if (history.entries[history.index] == historyEntry) {
 							w.setTimeout(function() {
-								w['piro.sakura.ne.jp'].operationHistory.undo('TabbarOperations', w);
+								aInfo.manager.undo('TabbarOperations', w);
 							}, 0);
 							return;
 						}
@@ -1917,8 +1917,8 @@ var MultipleTabService = {
 			}
 
 		w['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
-			function() {
-				var w = window['piro.sakura.ne.jp'].operationHistory.getWindowById(id);
+			function(aInfo) {
+				var w = aInfo.manager.getWindowById(id);
 
 				var sv = w.MultipleTabService;
 				var tabs = sv.getTabsArray(b);
@@ -1926,7 +1926,7 @@ var MultipleTabService = {
 				if (tabs.length != originalCount)
 					return false;
 
-				var remoteWindow = (remoteId ? w['piro.sakura.ne.jp'].operationHistory.getWindowById(remoteId) : null ) || aRemoteWindow;
+				var remoteWindow = (remoteId ? aInfo.manager.getWindowById(remoteId) : null ) || aRemoteWindow;
 
 				tabs = tabs.filter(function(aTab, aIndex) {
 						return indexes.indexOf(aIndex) > -1;
@@ -1934,8 +1934,7 @@ var MultipleTabService = {
 				newWindow = sv.splitWindowFromTabsInternal(tabs, remoteWindow);
 
 				if (remoteWindow) {
-					remoteWindow['piro.sakura.ne.jp'].operationHistory
-					remoteWindow['piro.sakura.ne.jp'].operationHistory.addEntry(
+					aInfo.manager.addEntry(
 						'TabbarOperations',
 						remoteWindow,
 						remoteHistoryEntry
@@ -1944,7 +1943,7 @@ var MultipleTabService = {
 				else {
 					newWindow.addEventListener('load', function() {
 						newWindow.removeEventListener('load', arguments.callee, false);
-						newWindow['piro.sakura.ne.jp'].operationHistory.addEntry(
+						aInfo.manager.addEntry(
 							'TabbarOperations',
 							newWindow,
 							remoteHistoryEntry
