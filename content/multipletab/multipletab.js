@@ -244,6 +244,14 @@ var MultipleTabService = {
 				.sort();
 	},
  
+	sortTabs : function MTS_sortTabs(aTabs) 
+	{
+		return Array.slice(aTabs)
+				.sort(function(aA, aB) {
+					return aA._tPos - aB._tPos;
+				});
+	},
+ 
 	getSelectedTabs : function MTS_getSelectedTabs(aTabBrowser) 
 	{
 		return this.getArrayFromXPathResult(
@@ -1457,24 +1465,15 @@ var MultipleTabService = {
 		if (!this.fireTabsClosingEvent(aTabs))
 			return;
 
-		aTabs = Array.slice(aTabs);
+		aTabs = this.sortTabs(aTabs);
 
 		var w = aTabs[0].ownerDocument.defaultView;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		var indexes = this.getIndexesFromTabs(aTabs);
 		var selectedIndex = aTabs.indexOf(b.selectedTab);
-		var state = this.evalInSandbox('('+this.SessionStore.getWindowState(w)+')');
-
-		delete state.windows[0]._closedTabs;
-		for (let i = state.windows[0].tabs.length-1; i > -1; i--)
-		{
-			if (indexes.indexOf(i) > -1)
-				continue;
-			state.windows[0].tabs.splice(i, 1);
-			if (i < state.windows[0].selected)
-				state.windows[0].selected--;
-		}
-		state = state.toSource();
+		var states = aTabs.map(function(aTab) {
+				return this.SessionStore.getTabState(aTab);
+			}, this);
 
 		var count = this.getTabs(b).snapshotLength;
 
@@ -1524,14 +1523,12 @@ var MultipleTabService = {
 						return false;
 
 					w['piro.sakura.ne.jp'].stopRendering.stop();
-					sv.SessionStore.setWindowState(w, state, false);
-					sv.getTabsArray(b)
-						.filter(function(aTab) {
-							return tabs.indexOf(aTab) < 0;
-						})
-						.map(function(aTab, aIndex) {
-							b.moveTabTo(aTab, indexes[aIndex]);
-						});
+					states.forEach(function(aState, aIndex) {
+						var tab = b.addTab('about:blank');
+						sv.SessionStore.setTabState(tab, aState);
+						b.moveTabTo(tab, indexes[aIndex]);
+						return tab;
+					});
 					if (selectedIndex > -1)
 						b.selectedTab = sv.getTabs(b).snapshotItem(selectedIndex);
 					w['piro.sakura.ne.jp'].stopRendering.start();
@@ -1809,34 +1806,24 @@ var MultipleTabService = {
 
 		var b = aTabBrowser;
 		var w = b.ownerDocument.defaultView;
-		var beforeTabs = this.getTabsArray(b);
+		var tabs = this.getTabsArray(b)
+					.filter(function(aTab, aIndex) {
+						return aIndexes.indexOf(aIndex) > -1;
+					});
 		var selectedIndex = aIndexes.indexOf(b.selectedTab._tPos);
 
-		var state = this.evalInSandbox('('+this.SessionStore.getWindowState(w)+')');
-		// delete obsolete data
-		delete state.windows[0]._closedTabs;
-		for (let i = state.windows[0].tabs.length-1; i > -1; i--)
-		{
-			if (aIndexes.indexOf(i) < 0) {
-				state.windows[0].tabs.splice(i, 1);
-				if (i < state.windows[0].selected)
-					state.windows[0].selected--;
-			}
-			else {
+		var duplicatedTabs = tabs.map(function(aTab) {
+				var state = this.evalInSandbox('('+this.SessionStore.getTabState(aTab)+')');
 				this._clearTabValueKeys.forEach(function(aKey) {
-					delete state.windows[0].tabs[i].extData[aKey];
+					delete state.extData[aKey];
 				});
-			}
-		}
-		state = state.toSource();
-
-		this.SessionStore.setWindowState(w, state, false);
+				state = state.toSource();
+				var tab = b.addTab();
+				this.SessionStore.setTabState(tab, state);
+				return tab;
+			}, this);
 
 		this.clearSelection(b);
-
-		var duplicatedTabs = this.getTabsArray(b).filter(function(aTab) {
-				return beforeTabs.indexOf(aTab) < 0;
-			}, this);
 
 		if (selectedIndex > -1)
 			b.selectedTab = duplicatedTabs[selectedIndex];
