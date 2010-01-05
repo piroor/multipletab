@@ -2384,15 +2384,13 @@ var MultipleTabService = {
 		importedTabs.forEach(function(aTab, aIndex) {
 			if (delta[aIndex] > 0 && hasNextTab) delta[aIndex]--;
 			targetBrowser.moveTabTo(aTab, aNewTab._tPos + delta[aIndex] + 1);
-			if (selectAfter)
-				this.setSelection(aTab, true);
+			if (selectAfter) this.setSelection(aTab, true);
 		}, this);
 
 		if (shouldClose) this.closeOwner(sourceBrowser);
 
 		this.setSelection(aNewTab, selectAfter);
 		targetBrowser.movingSelectedTabs = false;
-
 	},
  
 	closeOwner : function MTS_closeOwner(aTabOwner) 
