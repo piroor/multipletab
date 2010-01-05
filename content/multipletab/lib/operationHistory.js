@@ -74,7 +74,7 @@
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/operationHistory.test.js
 */
 (function() {
-	const currentRevision = 7;
+	const currentRevision = 8;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -247,27 +247,33 @@
 			return true;
 		},
 
-		getWindowId : function(aWindow, aForceNewId)
+		getWindowId : function(aWindow)
 		{
 			var root = aWindow.document.documentElement;
-			var windowId = root.getAttribute(this.WINDOW_ID);
+			var id = root.getAttribute(this.WINDOW_ID);
 			try {
-				if (!windowId)
-					windowId = this.SessionStore.getWindowValue(aWindow, this.WINDOW_ID);
+				if (!id)
+					id = this.SessionStore.getWindowValue(aWindow, this.WINDOW_ID);
 			}
 			catch(e) {
 			}
-			if (!windowId || aForceNewId) {
-				windowId = 'window-'+Date.now()+parseInt(Math.random() * 65000);
+
+			// When the ID has been already used by other window,
+			// we have to create new ID for this window.
+			var windows = this._getWindowsById(id);
+			var forceNewId = (windows.length > 1 || windows[0] != aWindow);
+
+			if (!id || forceNewId) {
+				id = 'window-'+Date.now()+parseInt(Math.random() * 65000);
 				try {
-					this.SessionStore.setWindowValue(aWindow, this.WINDOW_ID, windowId);
+					this.SessionStore.setWindowValue(aWindow, this.WINDOW_ID, id);
 				}
 				catch(e) {
 				}
 			}
-			if (root.getAttribute(this.WINDOW_ID) != windowId)
-				root.setAttribute(this.WINDOW_ID, windowId);
-			return windowId;
+			if (root.getAttribute(this.WINDOW_ID) != id)
+				root.setAttribute(this.WINDOW_ID, id);
+			return id;
 		},
 
 		getWindowById : function(aId)
@@ -350,12 +356,6 @@
 			var windowId = w ? this.getWindowId(w) : null ;
 			var table = this._getTable(name, w);
 
-			// Wrongly duplicated ID, so, we have to create new ID for this window.
-			if (w && table.window && table.window != w) {
-				windowId = this.getWindowId(w, true);
-				table = this._getTable(name, w);
-			}
-
 			return {
 				name     : name,
 				window   : w,
@@ -416,6 +416,26 @@
 				delete table.windowId;
 				delete this._tables[aName];
 			}, this);
+		},
+
+		_getWindowsById : function(aId)
+		{
+			var targets = this.WindowMediator.getZOrderDOMWindowEnumerator(null, true);
+			var windows = [];
+			while (targets.hasMoreElements())
+			{
+				let target = targets.getNext().QueryInterface(Ci.nsIDOMWindowInternal);
+				let id = target.document.documentElement.getAttribute(this.WINDOW_ID);
+				try {
+					if (!id)
+						id = this.SessionStore.getWindowValue(target, this.WINDOW_ID)
+				}
+				catch(e) {
+				}
+				if (id == aId)
+					windows.push(target);
+			}
+			return windows;
 		},
 
 		get _doingUndo()
