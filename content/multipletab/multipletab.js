@@ -531,6 +531,20 @@ var MultipleTabService = {
 				return aTab.linkedBrowser.currentURI.spec != 'about:blank';
 			});
 	},
+ 
+	makeTabUnrecoverable : function MTS_makeTabUnrecoverable(aTab) 
+	{
+		var b = aTab.linkedBrowser;
+		try {
+			b.stop();
+			if (b.sessionHistory)
+				b.sessionHistory.PurgeHistory(b.sessionHistory.count);
+		}
+		catch(e) {
+			dump(e+'\n');
+		}
+		b.contentWindow.location.replace('about:blank');
+	},
   
 /* Initializing */ 
 	
@@ -1431,9 +1445,8 @@ var MultipleTabService = {
 
 		this.closeTabsInternal(aTabs);
 	},
-	CLOSE_DIRECTION_START_TO_LAST : 0,
-	CLOSE_DIRECTION_LAST_TO_START : 1,
-	closeTabsInternal : function MTS_closeTabsInternal(aTabs)
+	
+	closeTabsInternal : function MTS_closeTabsInternal(aTabs) 
 	{
 		if (!aTabs.length) return;
 
@@ -1466,6 +1479,8 @@ var MultipleTabService = {
 			function() {
 				var sv = w.MultipleTabService;
 				var tabs = sv.getTabsArray(b);
+
+				// Don't redo when tabs are modified (for safety)
 				if (tabs.length != count)
 					return false;
 
@@ -1501,6 +1516,7 @@ var MultipleTabService = {
 					var sv = w.MultipleTabService;
 					var tabs = sv.getTabsArray(b);
 
+					// Don't undo when tabs are modified (for safety)
 					if (tabs.length + indexes.length != count)
 						return false;
 
@@ -1525,7 +1541,9 @@ var MultipleTabService = {
 
 		aTabs = null;
 	},
- 
+	CLOSE_DIRECTION_START_TO_LAST : 0,
+	CLOSE_DIRECTION_LAST_TO_START : 1,
+  
 	closeSimilarTabsOf : function MTS_closeSimilarTabsOf(aCurrentTab, aTabs) 
 	{
 		if (!aCurrentTab) return;
@@ -1732,6 +1750,7 @@ var MultipleTabService = {
 		window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
 			function() {
 				var sv = w.MultipleTabService;
+				// Don't redo when tabs are modified (for safety)
 				if (sv.getTabs(b).snapshotLength != count)
 					return false;
 
@@ -1756,12 +1775,15 @@ var MultipleTabService = {
 				onUndo : function() {
 					var sv = w.MultipleTabService;
 					var tabs = sv.getTabsArray(b);
+					// Don't undo when tabs are modified (for safety)
 					if (tabs.length != count + indexes.length)
 						return false;
 
 					w['piro.sakura.ne.jp'].stopRendering.stop();
 					duplicatedIndexes.reverse().forEach(function(aIndex) {
-						b.removeTab(tabs[aIndex]);
+						var tab = tabs[aIndex];
+						sv.makeTabUnrecoverable(tab);
+						b.removeTab(tab);
 					});
 
 					w['piro.sakura.ne.jp'].stopRendering.start();
@@ -1774,7 +1796,8 @@ var MultipleTabService = {
 				return tabs.snapshotItem(aIndex);
 			});
 	},
-	duplicateTabsInternal : function MTS_duplicateTabsInternal(aTabBrowser, aIndexes)
+	
+	duplicateTabsInternal : function MTS_duplicateTabsInternal(aTabBrowser, aIndexes) 
 	{
 		var max = aIndexes.length;
 		if (!max) return [];
@@ -1821,16 +1844,23 @@ var MultipleTabService = {
 
 		return duplicatedTabs;
 	},
- 
+  
 	splitWindowFromTabs : function MTS_splitWindowFromTabs(aTabs, aWindow) 
 	{
-		if (!aTabs) return null;
+		if (!aTabs || !aTabs.length) return null;
+
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		if (!b.__multipletab__canDoWindowMove)
+			return this.splitWindowFromTabsOld(aTabs);
+
+		return this.splitWindowFromTabsInternal(aTabs, aWindow);
+	},
+	
+	splitWindowFromTabsInternal : function MTS_splitWindowFromTabsInternal(aTabs, aWindow) 
+	{
 		var max = aTabs.length;
 		if (!max) return null;
 		var b  = this.getTabBrowserFromChild(aTabs[0]);
-
-		if (!b.__multipletab__canDoWindowMove)
-			return this.splitWindowFromTabsOld(aTabs);
 
 		var allSelected = true;
 		var selectionState = aTabs.map(function(aTab) {
@@ -1868,14 +1898,7 @@ var MultipleTabService = {
 
 				sv.getTabsArray(targetBrowser).forEach(function(aTab) {
 					if (newTabs.indexOf(aTab) > -1) return;
-					try {
-						if (aTab.linkedBrowser.sessionHistory)
-							aTab.linkedBrowser.sessionHistory.PurgeHistory(aTab.linkedBrowser.sessionHistory.count);
-					}
-					catch(e) {
-						dump(e+'\n');
-					}
-					aTab.linkedBrowser.contentWindow.location.replace('about:blank');
+					sv.makeTabUnrecoverable(aTab);
 					targetBrowser.removeTab(aTab);
 				});
 
@@ -1904,9 +1927,9 @@ var MultipleTabService = {
 		}
 
 		return newWin;
-	},
-	
-	splitWindowFrom : function MTS_splitWindowFrom(aTabs) // old name 
+},
+ 
+	splitWindowFrom : function MTS_splitWindowFrom(aTabs) // old name, for backward compatibility 
 	{
 		return this.splitWindowFromTabs(aTabs);
 	},
@@ -1957,9 +1980,7 @@ var MultipleTabService = {
 		{
 			tab = aTabs[i];
 			this.deleteTabValue(tab, this.kSELECTED);
-			if (tab.linkedBrowser.sessionHistory)
-				tab.linkedBrowser.sessionHistory.PurgeHistory(tab.linkedBrowser.sessionHistory.count);
-			tab.linkedBrowser.contentWindow.location.replace('about:blank');
+			this.makeTabUnrecoverable(tab);
 			tab.setAttribute('collapsed', true);
 			tab.__multipletab__shouldRemove = true;
 		}
@@ -1981,6 +2002,7 @@ var MultipleTabService = {
 		// Step 3: Restore state in new window
 
 		var SS = this.SessionStore;
+		var self = this;
 
 		var newWin = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
 		var key = this.kSELECTED;
@@ -2021,14 +2043,7 @@ var MultipleTabService = {
 				for (var i = tabs.length-1; i > -1; i--)
 				{
 					if (SS.getTabValue(tabs[i], key)) continue;
-					try {
-						if (tabs[i].linkedBrowser.sessionHistory)
-							tabs[i].linkedBrowser.sessionHistory.PurgeHistory(tabs[i].linkedBrowser.sessionHistory.count);
-					}
-					catch(e) {
-						dump(e+'\n');
-					}
-					tabs[i].linkedBrowser.contentWindow.location.replace('about:blank');
+					self.makeTabUnrecoverable(tabs[i]);
 					tabs[i].__multipletab__shouldRemove = true;
 				}
 
