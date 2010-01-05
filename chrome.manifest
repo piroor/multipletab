@@ -1,8 +1,8 @@
 content	multipletab	jar:chrome/multipletab.jar!/content/multipletab/
 
 overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/multipletab.xul
-overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/bookmarkMultipleTabs.xul
-overlay	chrome://browser/content/places/bookmarkProperties2.xul	chrome://multipletab/content/bookmarkMultipleTabs_bookmarkPropertiesOverlay.xul
+overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/lib/bookmarkMultipleTabs.xul
+overlay	chrome://browser/content/places/bookmarkProperties2.xul	chrome://multipletab/content/lib/bookmarkMultipleTabs_bookmarkPropertiesOverlay.xul
 
 overlay	chrome://browser/content/bookmarks/bookmarksPanel.xul	chrome://multipletab/bookmarksOverlay.xul
 overlay	chrome://browser/content/places/places.xul	chrome://multipletab/content/bookmarksOverlay.xul
