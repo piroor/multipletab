@@ -722,7 +722,7 @@ var MultipleTabService = {
 			).replace(
 				/(\}\)?)$/,
 				<![CDATA[
-					MultipleTabService.fireDuplicateEvent(newTab, aTab, aSourceEvent);
+					MultipleTabService.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
 					return newTab;
 				$1]]>
 			));
@@ -2148,87 +2148,59 @@ var MultipleTabService = {
 	{
 		// Step 3: Restore state in new window
 
-		var SS = this.SessionStore;
-		var self = this;
-
 		var newWin = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
 		var key = this.kSELECTED;
 		var selectAfter = this.getPref('extensions.multipletab.selectAfter.move');
 		newWin.addEventListener('load', function() {
 			newWin.removeEventListener('load', arguments.callee, false);
 
-			newWin.MultipleTabService.duplicatingTabs = true;
+			var sv = newWin.MultipleTabService;
+			sv.duplicatingTabs = true;
 
-			SS.setWindowState(newWin, aState, false);
+			var beforeTabs = sv.getTabsArray(newWin.gBrowser);
+
+			sv.SessionStore.setWindowState(newWin, aState, false);
 			delete aState;
 
 			newWin.gBrowser.mStrip.setAttribute('collapsed', true);
+
+			sv.getTabsArray(newWin.gBrowser)
+				.forEach(function(aTab) {
+					if (beforeTabs.indexOf(aTab) > -1) {
+						sv.makeTabUnrecoverable(aTab);
+						aTab.__multipletab__shouldRemove = true;
+						return false;
+					}
+				});
+
+			delete beforeTabs;
 
 
 			// Step 4: Remove obsolete tabs
 
 			newWin.setTimeout(function() {
-				var restored = false;
-				var tabs = Array.slice(newWin.gBrowser.mTabContainer.childNodes)
-							.filter(function(aNode) {
-								return aNode.localName == 'tab';
-							});
-				var count = 0;
-				for (let i = tabs.length-1; i > -1; i--)
-				{
-					if (SS.getTabValue(tabs[i], key)) count++;
-				}
-
-				// if this window is not initialized yet, continue after a while.
-				if (count < aNumTabs) {
-					newWin.setTimeout(arguments.callee, 10);
-					return;
-				}
-				delete count;
-				delete aNumTabs;
-
-				for (let i = tabs.length-1; i > -1; i--)
-				{
-					if (SS.getTabValue(tabs[i], key)) continue;
-					self.makeTabUnrecoverable(tabs[i]);
-					tabs[i].__multipletab__shouldRemove = true;
-				}
-
-				window.setTimeout(function() {
-					for (let i = tabs.length-1; i > -1; i--)
-					{
-						try {
-							newWin.MultipleTabService.deleteTabValue(tabs[i], key);
-						}
-						catch(e) {
-						}
-
-						if (tabs[i].__multipletab__shouldRemove) {
-							newWin.gBrowser.removeTab(tabs[i]);
-						}
-						else {
-							tabs[i].removeAttribute('collapsed');
-							newWin.MultipleTabService._duplicatedTabPostProcesses.forEach(function(aProcess) {
-								aProcess(tabs[i], i);
-							});
-							newWin.MultipleTabService.setSelection(tabs[i], selectAfter);
-						}
+				sv.getTabsArray(newWin.gBrowser).forEach(function(aTab) {
+					if (aTab.__multipletab__shouldRemove) {
+						newWin.gBrowser.removeTab(aTab);
 					}
+					else {
+						aTab.removeAttribute('collapsed');
+						sv._duplicatedTabPostProcesses.forEach(function(aProcess) {
+							aProcess(aTab, i);
+						});
+						sv.setSelection(aTab, selectAfter);
+					}
+				});
 
-					newWin.gBrowser.mStrip.removeAttribute('collapsed');
-					newWin.focus();
+				newWin.gBrowser.mStrip.removeAttribute('collapsed');
+				newWin.focus();
 
-					newWin.MultipleTabService.duplicatingTabs = false;
+				sv.duplicatingTabs = false;
 
-					delete i;
-					delete tabs;
-					delete newWin;
-					delete SS;
-					delete self;
-				}, 0);
+				delete sv;
+				delete newWin;
+				delete imporetdTabs;
 			}, 0);
-
-			delete tabs;
 		}, false);
 
 		return newWin;
