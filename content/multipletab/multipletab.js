@@ -1719,14 +1719,15 @@ var MultipleTabService = {
  
 	duplicateTabs : function MTS_duplicateTabs(aTabs) 
 	{
-		if (!aTabs || !aTabs.length) return;
+		if (!aTabs || !aTabs.length) return [];
 
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		var w = b.ownerDocument.defaultView;
 		var indexes = this.getIndexesFromTabs(aTabs);
 		var count = this.getTabs(b).snapshotLength;
 		var shouldSelectAfter = this.getPref('extensions.multipletab.selectAfter.duplicate');
-		var duplicatedTabs = [];
+		var duplicatedIndexes = [];
+		var duplicatedTabs;
 
 		window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
 			function() {
@@ -1736,13 +1737,14 @@ var MultipleTabService = {
 
 				w['piro.sakura.ne.jp'].stopRendering.stop();
 
-				duplicatedTabs = sv.duplicateTabsInternal(b, indexes);
+				var duplicatedTabs = sv.duplicateTabsInternal(b, indexes);
 				if (shouldSelectAfter) {
 					duplicatedTabs.forEach(function(aTab) {
 						sv.setSelection(aTab, true);
 					});
 					shouldSelectAfter = false;
 				}
+				duplicatedIndexes = sv.getIndexesFromTabs(duplicatedTabs);
 
 				w['piro.sakura.ne.jp'].stopRendering.start();
 			},
@@ -1753,21 +1755,24 @@ var MultipleTabService = {
 				label  : this.bundle.getString('undo_duplicateTabs_label'),
 				onUndo : function() {
 					var sv = w.MultipleTabService;
-					if (sv.getTabs(b).snapshotLength + indexes.length != count)
+					var tabs = sv.getTabsArray(b);
+					if (tabs.length != count + indexes.length)
 						return false;
 
 					w['piro.sakura.ne.jp'].stopRendering.stop();
-					duplicatedTabs.forEach(function(aTab) {
-						b.removeTab(aTab);
+					duplicatedIndexes.reverse().forEach(function(aIndex) {
+						b.removeTab(tabs[aIndex]);
 					});
-					duplicatedTabs = [];
 
 					w['piro.sakura.ne.jp'].stopRendering.start();
 				}
 			}
 		);
 
-		return duplicatedTabs;
+		var tabs = this.getTabs(b);
+		return duplicatedIndexes.map(function(aIndex) {
+				return tabs.snapshotItem(aIndex);
+			});
 	},
 	duplicateTabsInternal : function MTS_duplicateTabsInternal(aTabBrowser, aIndexes)
 	{
