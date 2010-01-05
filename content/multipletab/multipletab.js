@@ -1815,7 +1815,7 @@ var MultipleTabService = {
 		var state = this.evalInSandbox('('+this.SessionStore.getWindowState(w)+')');
 		// delete obsolete data
 		delete state.windows[0]._closedTabs;
-		for (var i = state.windows[0].tabs.length-1; i > -1; i--)
+		for (let i = state.windows[0].tabs.length-1; i > -1; i--)
 		{
 			if (aIndexes.indexOf(i) < 0) {
 				state.windows[0].tabs.splice(i, 1);
@@ -1854,6 +1854,8 @@ var MultipleTabService = {
 
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		var w = b.ownerDocument.defaultView;
+
+		// for Firefox 3.0, we have to use old method.
 		if (!b.__multipletab__canDoWindowMove)
 			return this.splitWindowFromTabsOld(aTabs);
 
@@ -2039,6 +2041,7 @@ var MultipleTabService = {
 		return newWindow;
 	},
  
+	// for Firefox 3.5 or later
 	importTabs : function MTS_importTabs(aTabs, aTabBrowser) 
 	{
 		var importedTabs = [];
@@ -2046,7 +2049,6 @@ var MultipleTabService = {
 			return importedTabs;
 
 		this.duplicatingTabs = true;
-		window['piro.sakura.ne.jp'].stopRendering.stop();
 
 		if (!aTabBrowser)
 			aTabBrowser = this.browser;
@@ -2054,6 +2056,9 @@ var MultipleTabService = {
 		var remoteWindow  = aTabs[0].ownerDocument.defaultView;
 		var remoteService = remoteWindow.MultipleTabService;
 		var remoteBrowser = remoteService.getTabBrowserFromChild(aTabs[0]);
+
+		window['piro.sakura.ne.jp'].stopRendering.stop();
+		remoteWindow['piro.sakura.ne.jp'].stopRendering.stop();
 
 		aTabs.forEach(function(aTab, aIndex) {
 			var newTab = aTabBrowser.addTab();
@@ -2071,6 +2076,8 @@ var MultipleTabService = {
 		}, this);
 
 		window['piro.sakura.ne.jp'].stopRendering.start();
+		remoteWindow['piro.sakura.ne.jp'].stopRendering.start();
+
 		this.duplicatingTabs = false;
 
 		return importedTabs;
@@ -2081,32 +2088,31 @@ var MultipleTabService = {
 		return this.splitWindowFromTabs(aTabs);
 	},
   
+	// for Firefox 3.0
 	splitWindowFromTabsOld : function MTS_splitWindowFromTabsOld(aTabs) 
 	{
 		if (!aTabs) return null;
 
-		var max = aTabs.length;
-		if (!max) return null;
+		var aTabs = Array.slice(aTabs);
+		if (!aTabs.length) return null;
 
 
 		// Step 1: get window state
 
-		var b  = this.getTabBrowserFromChild(aTabs[0]);
-		var SS = this.SessionStore;
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		var w = b.ownerDocument.defaultView;
 
-		for (var i = max-1; i > -1; i--)
-		{
-			this.setTabValue(aTabs[i], this.kSELECTED, 'true');
-		}
+		this.clearSelection(b);
 
-		var state = this.evalInSandbox('('+SS.getWindowState(window)+')');
+		var indexes = this.getIndexesFromTabs(aTabs);
+		var selectedIndex = indexes.indexOf(b.selectedTab._tPos);
 
+		var state = this.evalInSandbox('('+this.SessionStore.getWindowState(w)+')');
 		// delete obsolete data
 		delete state.windows[0]._closedTabs;
-		for (var i = state.windows[0].tabs.length-1; i > -1; i--)
+		for (let i = state.windows[0].tabs.length-1; i > -1; i--)
 		{
-			if (!state.windows[0].tabs[i].extData ||
-				state.windows[0].tabs[i].extData[this.kSELECTED] != 'true') {
+			if (indexes.indexOf(i) < 0) {
 				state.windows[0].tabs.splice(i, 1);
 				if (i < state.windows[0].selected)
 					state.windows[0].selected--;
@@ -2122,26 +2128,20 @@ var MultipleTabService = {
 
 		// Step 2: remove obsolete tabs
 
-		var tab;
-		for (var i = max-1; i > -1; i--)
-		{
-			tab = aTabs[i];
-			this.deleteTabValue(tab, this.kSELECTED);
-			this.makeTabUnrecoverable(tab);
-			tab.setAttribute('collapsed', true);
-			tab.__multipletab__shouldRemove = true;
-		}
-		delete tab;
-
-		window.setTimeout(function(aSelf) {
-			aSelf.getTabsArray(b).reverse().forEach(function(aTab) {
-				if (aTab.__multipletab__shouldRemove)
-					b.removeTab(aTab);
+		window['piro.sakura.ne.jp'].stopRendering.stop();
+		aTabs.forEach(function(aTab) {
+			this.makeTabUnrecoverable(aTab);
+			aTab.setAttribute('collapsed', true);
+			aTab.__multipletab__shouldRemove = true;
+		}, this);
+		window.setTimeout(function(aTabBrowser) {
+			aTabs.forEach(function(aTab) {
+				aTabBrowser.removeTab(aTab);
 			});
-			delete b;
-		}, 0, this);
+			window['piro.sakura.ne.jp'].stopRendering.start();
+		}, 0, b);
 
-		return this.openNewWindowWithTabs(state, max);
+		return this.openNewWindowWithTabs(state, aTabs.length);
 	},
 	
 	openNewWindowWithTabs : function MTS_openNewWindowWithTabs(aState, aNumTabs) 
@@ -2174,7 +2174,7 @@ var MultipleTabService = {
 								return aNode.localName == 'tab';
 							});
 				var count = 0;
-				for (var i = tabs.length-1; i > -1; i--)
+				for (let i = tabs.length-1; i > -1; i--)
 				{
 					if (SS.getTabValue(tabs[i], key)) count++;
 				}
@@ -2187,7 +2187,7 @@ var MultipleTabService = {
 				delete count;
 				delete aNumTabs;
 
-				for (var i = tabs.length-1; i > -1; i--)
+				for (let i = tabs.length-1; i > -1; i--)
 				{
 					if (SS.getTabValue(tabs[i], key)) continue;
 					self.makeTabUnrecoverable(tabs[i]);
@@ -2195,7 +2195,7 @@ var MultipleTabService = {
 				}
 
 				window.setTimeout(function() {
-					for (var i = tabs.length-1; i > -1; i--)
+					for (let i = tabs.length-1; i > -1; i--)
 					{
 						try {
 							newWin.MultipleTabService.deleteTabValue(tabs[i], key);
@@ -2224,6 +2224,7 @@ var MultipleTabService = {
 					delete tabs;
 					delete newWin;
 					delete SS;
+					delete self;
 				}, 0);
 			}, 0);
 
