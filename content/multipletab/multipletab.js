@@ -534,6 +534,8 @@ var MultipleTabService = {
  
 	makeTabUnrecoverable : function MTS_makeTabUnrecoverable(aTab) 
 	{
+		// nsSessionStore.js doesn't save the tab to the undo cache
+		// if the tab is completely blank.
 		var b = aTab.linkedBrowser;
 		try {
 			b.stop();
@@ -543,7 +545,8 @@ var MultipleTabService = {
 		catch(e) {
 			dump(e+'\n');
 		}
-		b.contentWindow.location.replace('about:blank');
+		if (b.contentWindow && b.contentWindow.location)
+			b.contentWindow.location.replace('about:blank');
 	},
   
 /* Initializing */ 
@@ -1927,7 +1930,7 @@ var MultipleTabService = {
 		}
 
 		return newWin;
-},
+	},
  
 	splitWindowFrom : function MTS_splitWindowFrom(aTabs) // old name, for backward compatibility 
 	{
