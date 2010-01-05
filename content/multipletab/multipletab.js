@@ -1420,26 +1420,7 @@ var MultipleTabService = {
 		if (!this.warnAboutClosingTabs(aTabs.length))
 			return;
 
-		var tabs = Array.slice(aTabs);
-		var b    = this.getTabBrowserFromChild(aTabs[0]);
-
-//		tabs.sort(function(aTabA, aTabB) { return aTabA._tPos - aTabB._tPos; });
-		if (this.getPref('extensions.multipletab.close.direction') == this.CLOSE_DIRECTION_LAST_TO_START)
-			tabs.reverse();
-
-		var closeSelectedLast = this.getPref('extensions.multipletab.close.selectedTab.last');
-		var selected;
-		var removeTabs = [];
-		tabs.forEach(function(aTab) {
-			if (closeSelectedLast && aTab.selected)
-				selected = aTab;
-			else
-				removeTabs.push(aTab);
-		});
-		if (selected)
-			removeTabs.push(selected);
-
-		this.closeTabsInternal(removeTabs);
+		this.closeTabsInternal(aTabs);
 	},
 	CLOSE_DIRECTION_START_TO_LAST : 0,
 	CLOSE_DIRECTION_LAST_TO_START : 1,
@@ -1448,20 +1429,86 @@ var MultipleTabService = {
 		if (!aTabs.length) return;
 
 		/* PUBLIC API */
-		if (!this.fireTabsClosingEvent(removeTabs))
+		if (!this.fireTabsClosingEvent(aTabs))
 			return;
 
-		window['piro.sakura.ne.jp'].stopRendering.stop();
+		aTabs = Array.slice(aTabs);
 
+		var w = aTabs[0].ownerDocument.defaultView;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		aTabs.forEach(function(aTab) {
-			b.removeTab(aTab);
-		});
+		var indexes = Array.slice(aTabs)
+						.map(function(aTab) {
+							return aTab._tPos;
+						})
+						.sort();
+		var selectedIndex = aTabs.indexOf(b.selectedTab);
+		var state = this.evalInSandbox('('+this.SessionStore.getWindowState(w)+')');
 
-		window['piro.sakura.ne.jp'].stopRendering.start();
+		delete state.windows[0]._closedTabs;
+		for (let i = state.windows[0].tabs.length-1; i > -1; i--)
+		{
+			if (indexes.indexOf(i) > -1)
+				continue;
+			state.windows[0].tabs.splice(i, 1);
+			if (i < state.windows[0].selected)
+				state.windows[0].selected--;
+		}
+		state = state.toSource();
+
+		window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
+			function() {
+				w['piro.sakura.ne.jp'].stopRendering.stop();
+				var sv = w.MultipleTabService;
+				var tabs = sv.getTabsArray(b);
+				var removeTabs = indexes
+									.map(function(aIndex) {
+										return tabs[aIndex];
+									});
+
+				if (sv.getPref('extensions.multipletab.close.direction') == sv.CLOSE_DIRECTION_LAST_TO_START)
+					removeTabs.reverse();
+
+				var closeSelectedLast = sv.getPref('extensions.multipletab.close.selectedTab.last');
+				var selected;
+				removeTabs.forEach(function(aTab) {
+					if (closeSelectedLast && aTab.selected)
+						selected = aTab;
+					else
+						b.removeTab(aTab);
+				});
+				if (selected)
+					b.removeTab(selected);
+
+				w['piro.sakura.ne.jp'].stopRendering.start();
+			},
+
+			'TabbarOperations',
+			w,
+			{
+				label  : this.bundle.getString('undo_closeTabs_label'),
+				onUndo : function() {
+					w['piro.sakura.ne.jp'].stopRendering.stop();
+					var sv = w.MultipleTabService;
+					var tabs = sv.getTabsArray(b);
+					sv.SessionStore.setWindowState(w, state, false);
+					sv.getTabsArray(b)
+						.filter(function(aTab) {
+							return tabs.indexOf(aTab) < 0;
+						})
+						.map(function(aTab, aIndex) {
+							b.moveTabTo(aTab, indexes[aIndex]);
+						});
+					if (selectedIndex > -1)
+						b.selectedTab = sv.getTabs(b).snapshotItem(selectedIndex);
+					w['piro.sakura.ne.jp'].stopRendering.start();
+				}
+			}
+		);
 
 		/* PUBLIC API */
-		this.fireTabsClosedEvent(b, removeTabs);
+		this.fireTabsClosedEvent(b, aTabs);
+
+		aTabs = null;
 	},
  
 	closeSimilarTabsOf : function MTS_closeSimilarTabsOf(aCurrentTab, aTabs) 
