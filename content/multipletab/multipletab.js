@@ -2154,6 +2154,8 @@ var MultipleTabService = {
 		newWin.addEventListener('load', function() {
 			newWin.removeEventListener('load', arguments.callee, false);
 
+			newWin['piro.sakura.ne.jp'].stopRendering.stop();
+
 			var sv = newWin.MultipleTabService;
 			sv.duplicatingTabs = true;
 
@@ -2194,6 +2196,7 @@ var MultipleTabService = {
 
 				newWin.gBrowser.mStrip.removeAttribute('collapsed');
 				newWin.focus();
+				newWin['piro.sakura.ne.jp'].stopRendering.start();
 
 				sv.duplicatingTabs = false;
 
