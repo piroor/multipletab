@@ -1455,11 +1455,15 @@ var MultipleTabService = {
 		}
 		state = state.toSource();
 
+		var count = this.getTabs(b).snapshotLength;
+
 		window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
 			function() {
-				w['piro.sakura.ne.jp'].stopRendering.stop();
 				var sv = w.MultipleTabService;
 				var tabs = sv.getTabsArray(b);
+				if (tabs.length != count)
+					return false;
+
 				var removeTabs = indexes
 									.map(function(aIndex) {
 										return tabs[aIndex];
@@ -1467,6 +1471,8 @@ var MultipleTabService = {
 
 				if (sv.getPref('extensions.multipletab.close.direction') == sv.CLOSE_DIRECTION_LAST_TO_START)
 					removeTabs.reverse();
+
+				w['piro.sakura.ne.jp'].stopRendering.stop();
 
 				var closeSelectedLast = sv.getPref('extensions.multipletab.close.selectedTab.last');
 				var selected;
@@ -1487,9 +1493,13 @@ var MultipleTabService = {
 			{
 				label  : this.bundle.getString('undo_closeTabs_label'),
 				onUndo : function() {
-					w['piro.sakura.ne.jp'].stopRendering.stop();
 					var sv = w.MultipleTabService;
 					var tabs = sv.getTabsArray(b);
+
+					if (tabs.length + indexes.length != count)
+						return false;
+
+					w['piro.sakura.ne.jp'].stopRendering.stop();
 					sv.SessionStore.setWindowState(w, state, false);
 					sv.getTabsArray(b)
 						.filter(function(aTab) {
