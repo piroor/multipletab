@@ -755,7 +755,7 @@ var MultipleTabService = {
 
 		if ('_onDragEnd' in aTabBrowser) {
 			eval('aTabBrowser._onDragEnd = '+aTabBrowser._onDragEnd.toSource().replace(
-				/(this\._?replaceTabWithWindow\()/,
+				/([^\{\}\(\);]*this\._?replaceTabWithWindow\()/,
 				'if (MultipleTabService.isDraggingAllTabs(draggedTab)) return; $1'
 			));
 		}
