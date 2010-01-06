@@ -74,7 +74,7 @@
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/operationHistory.test.js
 */
 (function() {
-	const currentRevision = 19;
+	const currentRevision = 20;
 	const DEBUG = false;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
@@ -165,6 +165,8 @@
 
 			if (error)
 				throw error;
+
+			return continuationInfo;
 		},
 
 		getHistory : function()
@@ -179,7 +181,7 @@
 			var history = options.history;
 			log('undo start ('+history.index+' / '+history.entries.length+', '+options.name+' for '+options.windowId+', '+this._doingUndo+')');
 			if (!history.canUndo || this._doingUndo)
-				return false;
+				return { done : true };
 
 			this._doingUndo = true;
 			var processed = false;
@@ -237,7 +239,7 @@
 			if (error)
 				throw error;
 
-			return true;
+			return continuationInfo;
 		},
 
 		redo : function()
@@ -247,7 +249,7 @@
 			var max = history.entries.length;
 			log('redo start ('+history.index+' / '+max+', '+options.name+' for '+options.windowId+', '+this._doingUndo+')');
 			if (!history.canRedo || this._doingUndo)
-				return false;
+				return { done : true };
 
 			this._doingUndo = true;
 			var processed = false;
@@ -306,7 +308,49 @@
 			if (error)
 				throw error;
 
-			return true;
+			return continuationInfo;
+		},
+
+		goToIndex : function()
+		{
+			var options = this._getOptionsFromArguments(arguments);
+			var history = options.history;
+			var index = Math.max(0, Math.min(history.entries.length-1, options.index));
+			var current = history.index;
+
+			if (index == current) return;
+
+			var self = this;
+			var iterator = (function() {
+					while (true)
+					{
+						let info;
+						if (index < current) {
+							if (history.index <= index)
+								break;
+							info = self.undo(options.name, options.window);
+						}
+						else {
+							if (history.index >= index)
+								break;
+							info = self.redo(options.name, options.window);
+						}
+
+						while (!info.done)
+						{
+							yield;
+						}
+					}
+				})();
+
+			var timer = window.setInterval(function() {
+					try {
+						iterator.next();
+					}
+					catch(e) {
+						window.clearInterval(timer);
+					}
+				}, 10);
 		},
 
 		getWindowId : function(aWindow, aDefaultId)
@@ -399,18 +443,22 @@
 
 		_getOptionsFromArguments : function(aArguments)
 		{
-			var w = null, name, entry = null, task = null;
+			var w     = null,
+				name  = '',
+				entry = null,
+				task  = null,
+				index = -1;
 			Array.slice(aArguments).some(function(aArg) {
 				if (aArg instanceof Ci.nsIDOMWindow)
 					w = aArg;
 				else if (typeof aArg == 'string')
 					name = aArg;
+				else if (typeof aArg == 'number')
+					index = aArg;
 				else if (typeof aArg == 'function')
 					task = aArg;
 				else if (aArg)
 					entry = aArg;
-
-				return (w && name && entry && task);
 			});
 
 			if (!name)
@@ -425,7 +473,8 @@
 				windowId : windowId,
 				entry    : entry,
 				history  : history,
-				task     : task
+				task     : task,
+				index    : index
 			};
 		},
 

@@ -1470,7 +1470,7 @@ var MultipleTabService = {
 		var w = aTabs[0].ownerDocument.defaultView;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		var indexes = this.getIndexesFromTabs(aTabs);
-		var selectedIndex = aTabs.indexOf(b.selectedTab);
+		var selectedIndex = -1;
 		var states = aTabs.map(function(aTab) {
 				return this.SessionStore.getTabState(aTab);
 			}, this);
@@ -1486,10 +1486,11 @@ var MultipleTabService = {
 				if (tabs.length != count)
 					return false;
 
-				var removeTabs = indexes
-									.map(function(aIndex) {
-										return tabs[aIndex];
-									});
+				var removeTabs = indexes.map(function(aPosition, aIndex) {
+							var tab = tabs[aPosition];
+							if (tab.selected) selectedIndex = aIndex;
+							return tab;
+						});
 
 				if (sv.getPref('extensions.multipletab.close.direction') == sv.CLOSE_DIRECTION_LAST_TO_START)
 					removeTabs.reverse();
@@ -1527,9 +1528,9 @@ var MultipleTabService = {
 						var tab = b.addTab('about:blank');
 						sv.SessionStore.setTabState(tab, aState);
 						b.moveTabTo(tab, indexes[aIndex]);
+						if (aIndex == selectedIndex)
+							b.selectedTab = tab;
 					});
-					if (selectedIndex > -1)
-						b.selectedTab = sv.getTabs(b).snapshotItem(selectedIndex);
 					w['piro.sakura.ne.jp'].stopRendering.start();
 				}
 			}
