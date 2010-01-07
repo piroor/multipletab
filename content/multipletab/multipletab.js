@@ -2460,7 +2460,7 @@ var MultipleTabService = {
 		tabs.forEach(function(aTab, aIndex) {
 			if (aOldPositions.indexOf(aIndex) < 0)
 				restOldPositions.push(aIndex);
-			else if (aNewPositions.indexOf(aIndex) < 0)
+			if (aNewPositions.indexOf(aIndex) < 0)
 				restNewPositions.push(aIndex);
 		});
 		aTabBrowser.movingSelectedTabs = true;
@@ -2547,10 +2547,10 @@ var MultipleTabService = {
 						}, targetService);
 
 						newPositions = [aNewTab].concat(importedTabs).map(function(aTab) {
-								if (aTab.selected) newSelectedIndex = aIndex;
 								return aTab._tPos;
 							})
 							.sort();
+						newSelectedIndex = newPositions.indexOf(aNewTab._tPos);
 					},
 					'TabbarOperations',
 					info.sourceWindow,
