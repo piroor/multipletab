@@ -74,7 +74,7 @@
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/operationHistory.test.js
 */
 (function() {
-	const currentRevision = 25;
+	const currentRevision = 26;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -110,13 +110,14 @@
 	const oneIndent = '   ';
 	function log(aString, aLevel) {
 		if (!DEBUG) return;
+		aString = String(aString);
 		if (aLevel) {
 			let indent = '';
 			for (let i = 0; i < aLevel; i++)
 			{
 				indent += oneIndent;
 			}
-			aString = aString.replace(/^/g, indent);
+			aString = aString.replace(/^/gm, indent);
 		}
 		Cc['@mozilla.org/fuel/application;1']
 			.getService(Ci.fuelIApplication)
@@ -390,6 +391,12 @@
 				}, 10);
 
 			return selfInfo;
+		},
+
+		clear : function()
+		{
+			var options = this._getOptionsFromArguments(arguments);
+			return options.history.clear();
 		},
 
 		getWindowId : function(aWindow, aDefaultId)
@@ -824,9 +831,56 @@
 
 	function UIHistoryProxy(aHistory)
 	{
-		this.__proto__ = aHistory;
-		this.index = Math.max(0, Math.min(aHistory.entries.length-1, aHistory.index));
+		this._original = aHistory;
 	}
+	UIHistoryProxy.prototype = {
+		__proto__ : UIHistory.prototype,
+
+		get index()
+		{
+			return Math.max(0, Math.min(this.entries.length-1, this._original.index));
+		},
+		set index(aValue)
+		{
+			this._original.index = aValue;
+			return aValue;
+		},
+
+		get entries()
+		{
+			return this._original.entries;
+		},
+		set entries(aValue)
+		{
+			this._original.entries = aValue;
+			return aValue;
+		},
+
+		get metaData()
+		{
+			return this._original.metaData;
+		},
+		set metaData(aValue)
+		{
+			this._original.metaData = aValue;
+			return aValue;
+		},
+
+		get inOperationCount()
+		{
+			return this._original.inOperationCount;
+		},
+		set inOperationCount(aValue)
+		{
+			this._original.inOperationCount = aValue;
+			return aValue;
+		},
+
+		clear : function()
+		{
+			return this._original.clear();
+		}
+	};
 
 	function UIHistoryMetaData()
 	{
