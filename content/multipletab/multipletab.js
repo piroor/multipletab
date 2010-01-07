@@ -1906,7 +1906,7 @@ var MultipleTabService = {
 					// "redo" in the source window to re-split tabs.
 					if (this == remoteHistoryEntry) {
 						var history = aInfo.manager.getHistory('TabbarOperations', sourceWindow);
-						if (history.entries[history.index] == historyEntry) {
+						if (history.currentEntry == historyEntry) {
 							sourceWindow.setTimeout(function() {
 								aInfo.manager.undo('TabbarOperations', sourceWindow);
 							}, 0);
@@ -2498,12 +2498,168 @@ var MultipleTabService = {
 		var sourceTabsCount   = 0;
 		var targetTabsCount   = this.getTabs(targetBrowser).snapshotLength - 1;
 
-		var sourceLabel = this.bundle.getString('undo_importBundledTabsOf_source_label');
-
 		var isAllTabsMove;
 		var shouldSelectAfter = this.getPref('extensions.multipletab.selectAfter.move');
 
-		var entry;
+		var targetEntry = {
+				label  : this.bundle.getString('undo_importBundledTabsOf_target_label'),
+				getTargetWindow : function(aInfo) {
+					var targetWindow = aInfo.manager.getWindowById(targetId);
+					if (!targetWindow ||
+						!targetBrowser ||
+						!targetBrowser.parentNode) {
+						targetBrowser = null;
+						sourceBrowser = null;
+						return null;
+					}
+					return targetWindow;
+				},
+				getTabsFromPositions : function(aService, aTabBrowser, aPositions) {
+					return aService.getTabsArray(aTabBrowser)
+							.filter(function(aTab, aIndex) {
+								return aPositions.indexOf(aIndex) > -1;
+							});
+				},
+				getSourceBrowser : function(aSourceWindow) {
+					if (!sourceBrowser || !sourceBrowser.parentNode) {
+						sourceBrowser = null;
+						return aSourceWindow.gBrowser;
+					}
+					return sourceBrowser
+				},
+				onUndo : function(aInfo) {
+					var targetWindow = this.getTargetWindow(aInfo);
+					if (!targetWindow) return false;
+
+					var importedTabs;
+					var targetService = targetWindow.MultipleTabService;
+					var sourceWindow = aInfo.manager.getWindowById(sourceId);
+					if (isAllTabsMove || !sourceWindow) {
+						// When the source window is already closed, we have to open new window
+						// from imported tabs.
+						let continuation = aInfo.getContinuation();
+						importedTabs = this.getTabsFromPositions(targetService, targetBrowser, newPositions);
+						sourceWindow = targetService.splitWindowFromTabs(importedTabs);
+						sourceWindow.addEventListener('load', function() {
+							sourceWindow.removeEventListener('load', arguments.callee, false);
+							sourceId = aInfo.manager.getWindowId(sourceWindow);
+							sourceWindow.setTimeout(function() {
+								continuation();
+							}, 10);
+						}, false);
+						return;
+					}
+
+/*
+					if (this == targetEntry) {
+						var history = aInfo.manager.getHistory('TabbarOperations', sourceWindow);
+						if (history.currentMetaData.children.indexOf(sourceEntry) > -1) {
+							sourceWindow.setTimeout(function() {
+								aInfo.manager.undo('TabbarOperations', sourceWindow);
+							}, 0);
+							return;
+						}
+					}
+*/
+
+					var sourceService = sourceWindow.MultipleTabService;
+					var sourceBrowser = this.getSourceBrowser(sourceWindow);
+
+					// Don't undo when tabs are modified (for safety)
+					var offset = aInfo.level ? 1 : 0 ;
+					if (sourceService.getTabs(sourceBrowser).snapshotLength - offset != sourceTabsCount - importedTabsCount)
+						return false;
+
+					targetWindow['piro.sakura.ne.jp'].stopRendering.stop();
+					sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
+
+					// Restore tab position changed by onUndo() for the parent entry
+					if (aInfo.level) {
+						let baseTabs = targetService.importTabsTo([sourceService.getTabAt(oldPosition, sourceBrowser)], targetBrowser);
+						targetBrowser.moveTabTo(baseTabs[0], newPosition);
+					}
+					importedTabs = this.getTabsFromPositions(targetService, targetBrowser, newPositions);
+
+					var sourceTabs = sourceService.importTabsTo(importedTabs, sourceBrowser);
+					sourceService.moveTabs(
+						sourceBrowser,
+						sourceTabs.map(function(aTab) {
+							return aTab._tPos;
+						}),
+						oldPositions
+					);
+
+					var selected = sourceService.getTabAt(oldPositions[oldSelectedIndex], sourceBrowser);
+					if (selected)
+						sourceBrowser.selectedTab = selected;
+
+					targetWindow['piro.sakura.ne.jp'].stopRendering.start();
+					sourceWindow['piro.sakura.ne.jp'].stopRendering.start();
+				},
+				onRedo : function(aInfo) {
+					var targetWindow = this.getTargetWindow(aInfo);
+					var sourceWindow = aInfo.manager.getWindowById(sourceId);
+					if (!targetWindow || !sourceWindow) return false;
+
+/*
+					if (this == targetEntry) {
+						var history = aInfo.manager.getHistory('TabbarOperations', sourceWindow);
+						if (history.currentMetaData.children.indexOf(sourceEntry) > -1) {
+							sourceWindow.setTimeout(function() {
+								aInfo.manager.redo('TabbarOperations', sourceWindow);
+							}, 0);
+							return;
+						}
+					}
+*/
+
+					var targetService = targetWindow.MultipleTabService;
+					var sourceService = sourceWindow.MultipleTabService;
+					var sourceBrowser = this.getSourceBrowser(sourceWindow);
+
+					// Don't redo when tabs are modified (for safety)
+					var offset = aInfo.level ? 1 : 0 ;
+					if (sourceService.getTabs(sourceBrowser).snapshotLength + offset != sourceTabsCount)
+						return false;
+
+					targetWindow['piro.sakura.ne.jp'].stopRendering.stop();
+					sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
+
+					// Restore tab position changed by onRedo() for the parent entry
+					if (aInfo.level) {
+						let baseTabs = sourceService.importTabsTo([targetService.getTabAt(newPosition, targetBrowser)], sourceBrowser);
+						sourceBrowser.moveTabTo(baseTabs[0], oldPosition);
+					}
+
+					var sourceTabs = this.getTabsFromPositions(sourceService, sourceBrowser, oldPositions);
+					var importedTabs = targetService.importTabsTo(sourceTabs, targetBrowser);
+					targetService.moveTabs(
+						targetBrowser,
+						importedTabs.map(function(aTab) {
+							return aTab._tPos;
+						}),
+						newPositions
+					);
+
+					var selected = targetService.getTabAt(newPositions[newSelectedIndex], targetBrowser);
+					if (selected)
+						targetBrowser.selectedTab = selected;
+
+					if (isAllTabsMove) {
+						targetService.closeOwner(sourceBrowser);
+						sourceBrowser = null;
+					}
+					else {
+						sourceWindow['piro.sakura.ne.jp'].stopRendering.start();
+					}
+					targetWindow['piro.sakura.ne.jp'].stopRendering.start();
+				}
+			};
+		var sourceEntry = {
+				__proto__ : targetEntry,
+				label     : this.bundle.getString('undo_importBundledTabsOf_source_label')
+			};
+
 		window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
 			function(aInfo) {
 				var targetService = window.MultipleTabService;
@@ -2553,9 +2709,8 @@ var MultipleTabService = {
 						newSelectedIndex = newPositions.indexOf(aNewTab._tPos);
 					},
 					'TabbarOperations',
-					info.sourceWindow,
-					{ __proto__ : entry,
-					  label     : sourceLabel }
+					sourceWindow,
+					sourceEntry
 				);
 
 				if (isAllTabsMove) {
@@ -2573,136 +2728,7 @@ var MultipleTabService = {
 
 			'TabbarOperations',
 			window,
-			(entry = {
-				label  : this.bundle.getString('undo_importBundledTabsOf_target_label'),
-				getTargetWindow : function(aInfo) {
-					var targetWindow = aInfo.manager.getWindowById(targetId);
-					if (!targetWindow ||
-						!targetBrowser ||
-						!targetBrowser.parentNode) {
-						targetBrowser = null;
-						sourceBrowser = null;
-						return null;
-					}
-					return targetWindow;
-				},
-				getTabsFromPositions : function(aService, aTabBrowser, aPositions) {
-					return aService.getTabsArray(aTabBrowser)
-							.filter(function(aTab, aIndex) {
-								return aPositions.indexOf(aIndex) > -1;
-							});
-				},
-				getSourceBrowser : function(aSourceWindow) {
-					if (!sourceBrowser || !sourceBrowser.parentNode) {
-						sourceBrowser = null;
-						return aSourceWindow.gBrowser;
-					}
-					return sourceBrowser
-				},
-				onUndo : function(aInfo) {
-					var targetWindow = this.getTargetWindow(aInfo);
-					if (!targetWindow) return false;
-
-					var importedTabs;
-					var targetService = targetWindow.MultipleTabService;
-					var sourceWindow = aInfo.manager.getWindowById(sourceId);
-					if (isAllTabsMove || !sourceWindow) {
-						// When the source window is already closed, we have to open new window
-						// from imported tabs.
-						let continuation = aInfo.getContinuation();
-						importedTabs = this.getTabsFromPositions(targetService, targetBrowser, newPositions);
-						sourceWindow = targetService.splitWindowFromTabs(importedTabs);
-						sourceWindow.addEventListener('load', function() {
-							sourceWindow.removeEventListener('load', arguments.callee, false);
-							sourceId = aInfo.manager.getWindowId(sourceWindow);
-							sourceWindow.setTimeout(function() {
-								continuation();
-							}, 10);
-						}, false);
-						return;
-					}
-
-					var sourceService = sourceWindow.MultipleTabService;
-					var sourceBrowser = this.getSourceBrowser(sourceWindow);
-
-					// Don't undo when tabs are modified (for safety)
-					var offset = aInfo.level ? 1 : 0 ;
-					if (sourceService.getTabs(sourceBrowser).snapshotLength - offset != sourceTabsCount - importedTabsCount)
-						return false;
-
-					targetWindow['piro.sakura.ne.jp'].stopRendering.stop();
-					sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
-
-					// Restore tab position changed by onUndo() for the parent entry
-					if (aInfo.level) {
-						let baseTabs = targetService.importTabsTo([sourceService.getTabAt(oldPosition, sourceBrowser)], targetBrowser);
-						targetBrowser.moveTabTo(baseTabs[0], newPosition);
-					}
-					importedTabs = this.getTabsFromPositions(targetService, targetBrowser, newPositions);
-
-					var sourceTabs = sourceService.importTabsTo(importedTabs, sourceBrowser);
-					sourceService.moveTabs(
-						sourceBrowser,
-						sourceTabs.map(function(aTab) {
-							return aTab._tPos;
-						}),
-						oldPositions
-					);
-
-					var selected = sourceService.getTabAt(oldPositions[oldSelectedIndex], sourceBrowser);
-					if (selected)
-						sourceBrowser.selectedTab = selected;
-
-					targetWindow['piro.sakura.ne.jp'].stopRendering.start();
-					sourceWindow['piro.sakura.ne.jp'].stopRendering.start();
-				},
-				onRedo : function(aInfo) {
-					var targetWindow = this.getTargetWindow(aInfo);
-					var sourceWindow = aInfo.manager.getWindowById(sourceId);
-					if (!targetWindow || !sourceWindow) return false;
-
-					var targetService = targetWindow.MultipleTabService;
-					var sourceService = sourceWindow.MultipleTabService;
-					var sourceBrowser = this.getSourceBrowser(sourceWindow);
-
-					// Don't redo when tabs are modified (for safety)
-					var offset = aInfo.level ? 1 : 0 ;
-					if (sourceService.getTabs(sourceBrowser).snapshotLength + offset != sourceTabsCount)
-						return false;
-
-					targetWindow['piro.sakura.ne.jp'].stopRendering.stop();
-					sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
-
-					// Restore tab position changed by onRedo() for the parent entry
-					if (aInfo.level) {
-						let baseTabs = sourceService.importTabsTo([targetService.getTabAt(newPosition, targetBrowser)], sourceBrowser);
-						sourceBrowser.moveTabTo(baseTabs[0], oldPosition);
-					}
-
-					var sourceTabs = this.getTabsFromPositions(sourceService, sourceBrowser, oldPositions);
-					var importedTabs = targetService.importTabsTo(sourceTabs, targetBrowser);
-					targetService.moveTabs(
-						targetBrowser,
-						importedTabs.map(function(aTab) {
-							return aTab._tPos;
-						}),
-						newPositions
-					);
-
-					var selected = targetService.getTabAt(newPositions[newSelectedIndex], targetBrowser);
-					if (selected)
-						targetBrowser.selectedTab = selected;
-
-					if (isAllTabsMove) {
-						targetService.closeOwner(sourceBrowser);
-						sourceBrowser = null;
-					}
-					else {
-						sourceWindow['piro.sakura.ne.jp'].stopRendering.start();
-					}
-					targetWindow['piro.sakura.ne.jp'].stopRendering.start();
-				}
-			})
+			targetEntry
 		);
 	},
 	windowMoveBundledTabsOf : function MTS_windowMoveBundledTabsOf(aNewTab, aSourceTab) // old name, for backward compatibility
