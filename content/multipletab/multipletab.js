@@ -2437,32 +2437,24 @@ var MultipleTabService = {
 	},
 	moveTabs : function MTS_moveTabs(aTabBrowser, aOldPositions, aNewPositions)
 	{
+		var restOldPositions = [];
+		var restNewPositions = [];
 		var tabs = this.getTabsArray(aTabBrowser);
-
-		var positions = tabs.map(function(aTab, aIndex) {
-						return aIndex;
-					});
-		var restOldPositions = positions.filter(function(aIndex) {
-						return aOldPositions.indexOf(aIndex) < 0;
-					});
-		var restNewPositions = positions.filter(function(aIndex) {
-						return aNewPositions.indexOf(aIndex) < 0;
-					});
-		var allNewPositions = positions
-			.map(function(aIndex) {
-				var index = aOldPositions.indexOf(aIndex);
-				if (index > -1) {
-					return aNewPositions[index];
-				}
-				index = restOldPositions.indexOf(aIndex);
-				return restNewPositions[index];
-			});
-
+		tabs.forEach(function(aTab, aIndex) {
+			if (aOldPositions.indexOf(aIndex) < 0)
+				restOldPositions.push(aIndex);
+			else if (aNewPositions.indexOf(aIndex) < 0)
+				restNewPositions.push(aIndex);
+		});
 		aTabBrowser.movingSelectedTabs = true;
-		allNewPositions
-			.forEach(function(aNewPosition, aOldPosition) {
-				aTabBrowser.moveTabTo(tabs[aOldPosition], aNewPosition);
-			});
+		tabs.forEach(function(aTab, aOldPosition) {
+			var newPosition;
+			var index = aOldPositions.indexOf(aOldPosition);
+			var newPosition = (index > -1) ?
+					aNewPositions[index] :
+					restNewPositions[restOldPositions.indexOf(aOldPosition)] ;
+			aTabBrowser.moveTabTo(aTab, newPosition);
+		});
 		aTabBrowser.movingSelectedTabs = false;
 	},
  
