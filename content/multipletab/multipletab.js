@@ -2532,20 +2532,6 @@ var MultipleTabService = {
 					let baseTabs = aService.importTabsTo(sourceTab, aTargetTabBrowser);
 					aTargetTabBrowser.moveTabTo(baseTabs[0], aNewPosition);
 				},
-				syncLastEntry : function(aInfo, aSourceWindow, aTargetWindow)
-				{
-					if (this == targetEntry) {
-						let history = aInfo.manager.getHistory('TabbarOperations', aSourceWindow);
-						if (history.currentEntries.indexOf(sourceEntry) > -1)
-							history.index--;
-					}
-					else if (this == sourceEntry) {
-						let history = aInfo.manager.getHistory('TabbarOperations', aTargetWindow);
-						if (history.currentEntries.indexOf(targetEntry) > -1)
-							history.index--;
-					}
-
-				},
 				onUndo : function(aInfo) {
 					var targetWindow = this.getTargetWindow(aInfo);
 					if (!targetWindow) return false;
@@ -2572,7 +2558,12 @@ var MultipleTabService = {
 					var sourceService = sourceWindow.MultipleTabService;
 					var sourceBrowser = this.getSourceBrowser(sourceWindow);
 
-					this.syncLastEntry(aInfo, sourceWindow, targetWindow);
+					aInfo.manager.syncWindowHistoryFocus({
+						currentEntry : this,
+						name    : 'TabbarOperations',
+						entries : [sourceEntry, targetEntry],
+						windows : [sourceWindow, targetWindow]
+					});
 
 					// Don't undo when tabs are modified (for safety)
 					var offset = aInfo.level ? 1 : 0 ;
@@ -2612,7 +2603,12 @@ var MultipleTabService = {
 					var sourceService = sourceWindow.MultipleTabService;
 					var sourceBrowser = this.getSourceBrowser(sourceWindow);
 
-					this.syncLastEntry(aInfo, sourceWindow, targetWindow);
+					aInfo.manager.syncWindowHistoryFocus({
+						currentEntry : this,
+						name    : 'TabbarOperations',
+						entries : [sourceEntry, targetEntry],
+						windows : [sourceWindow, targetWindow]
+					});
 
 					// Don't redo when tabs are modified (for safety)
 					var offset = aInfo.level ? 1 : 0 ;

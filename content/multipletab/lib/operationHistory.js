@@ -74,7 +74,7 @@
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/operationHistory.test.js
 */
 (function() {
-	const currentRevision = 27;
+	const currentRevision = 28;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -395,6 +395,34 @@
 				}, 10);
 
 			return selfInfo;
+		},
+
+		syncWindowHistoryFocus : function(aOptions)
+		{
+			if (!aOptions.currentEntry)
+				throw 'currentEntry must be specified!';
+			if (!aOptions.entries)
+				throw 'entries must be specified!';
+			if (!aOptions.windows)
+				throw 'windows must be specified!';
+			if (aOptions.entries.length != aOptions.windows.length)
+				throw 'numbers of entries and windows must be same!';
+
+			var name = aOptions.name || 'window';
+
+			log('syncWindowHistoryFocus for '+name+' ('+aOptions.currentEntry.label+')');
+
+			aOptions.entries.forEach(function(aEntry, aIndex) {
+				var history = this.getHistory(name, aOptions.windows[aIndex]);
+				var currentEntries = history.currentEntries;
+				if (currentEntries.indexOf(aOptions.currentEntry) > -1) {
+					return;
+				}
+				if (currentEntries.indexOf(aEntry) > -1) {
+					log(name+' is synced for '+aIndex+' ('+aEntry.label+')');
+					history.index--;
+				}
+			}, this);
 		},
 
 		clear : function()
