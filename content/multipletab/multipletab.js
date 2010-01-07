@@ -2412,21 +2412,21 @@ var MultipleTabService = {
 			'TabbarOperations',
 			window,
 			{
-				label  : 'MultipleTabService::moveBundledTabsOf',
+				label  : this.bundle.getString('undo_moveBundledTabsOf_label'),
 				onUndo : function(aInfo) {
 					// Don't undo when tabs are modified (for safety)
 					if (self.getTabs(b).snapshotLength != count)
 						return false;
 					// Restore tab position changed by onUndo() for moveTabTo()
-					b.moveTabTo(self.getTabAt(oldPosition, b), newPosition);
+					if (aInfo.level)
+						b.moveTabTo(self.getTabAt(oldPosition, b), newPosition);
 					self.moveTabs(b, newPositions, oldPositions);
 				},
 				onRedo : function(aInfo) {
-					// Don't redo when tabs are modified (for safety)
 					if (self.getTabs(b).snapshotLength != count)
 						return false;
-					// Restore tab position changed by onRedo() for moveTabTo()
-					b.moveTabTo(self.getTabAt(newPosition, b), oldPosition);
+					if (aInfo.level)
+						b.moveTabTo(self.getTabAt(newPosition, b), oldPosition);
 					self.moveTabs(b, oldPositions, newPositions);
 				}
 			}
