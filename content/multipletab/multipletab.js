@@ -2527,6 +2527,11 @@ var MultipleTabService = {
 					}
 					return sourceBrowser
 				},
+				restoreOneTab : function(aService, aSourceTabBrowser, aTargetTabBrowser, aOldPosition, aNewPosition) {
+					let sourceTab = aService.getTabAt(aOldPosition, aSourceTabBrowser);
+					let baseTabs = aService.importTabsTo(sourceTab, aTargetTabBrowser);
+					aTargetTabBrowser.moveTabTo(baseTabs[0], aNewPosition);
+				},
 				onUndo : function(aInfo) {
 					var targetWindow = this.getTargetWindow(aInfo);
 					if (!targetWindow) return false;
@@ -2550,20 +2555,27 @@ var MultipleTabService = {
 						return;
 					}
 
+					var sourceService = sourceWindow.MultipleTabService;
+					var sourceBrowser = this.getSourceBrowser(sourceWindow);
+
 /*
 					if (this == targetEntry) {
 						var history = aInfo.manager.getHistory('TabbarOperations', sourceWindow);
-						if (history.currentMetaData.children.indexOf(sourceEntry) > -1) {
+						if (history.currentEntries.indexOf(sourceEntry) > -1) {
+alert('TARGET, REDIRECTED');
+							if (aInfo.level)
+								this.restoreOneTab(sourceService, sourceBrowser, targetBrowser, oldPosition, newPosition);
 							sourceWindow.setTimeout(function() {
 								aInfo.manager.undo('TabbarOperations', sourceWindow);
 							}, 0);
 							return;
 						}
+alert('TARGET, NOT REDIRECTED');
+					}
+					else {
+alert('SOURCE');
 					}
 */
-
-					var sourceService = sourceWindow.MultipleTabService;
-					var sourceBrowser = this.getSourceBrowser(sourceWindow);
 
 					// Don't undo when tabs are modified (for safety)
 					var offset = aInfo.level ? 1 : 0 ;
@@ -2574,10 +2586,8 @@ var MultipleTabService = {
 					sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
 
 					// Restore tab position changed by onUndo() for the parent entry
-					if (aInfo.level) {
-						let baseTabs = targetService.importTabsTo([sourceService.getTabAt(oldPosition, sourceBrowser)], targetBrowser);
-						targetBrowser.moveTabTo(baseTabs[0], newPosition);
-					}
+					if (aInfo.level)
+						this.restoreOneTab(sourceService, sourceBrowser, targetBrowser, oldPosition, newPosition);
 					importedTabs = this.getTabsFromPositions(targetService, targetBrowser, newPositions);
 
 					var sourceTabs = sourceService.importTabsTo(importedTabs, sourceBrowser);
@@ -2601,21 +2611,28 @@ var MultipleTabService = {
 					var sourceWindow = aInfo.manager.getWindowById(sourceId);
 					if (!targetWindow || !sourceWindow) return false;
 
-/*
-					if (this == targetEntry) {
-						var history = aInfo.manager.getHistory('TabbarOperations', sourceWindow);
-						if (history.currentMetaData.children.indexOf(sourceEntry) > -1) {
-							sourceWindow.setTimeout(function() {
-								aInfo.manager.redo('TabbarOperations', sourceWindow);
-							}, 0);
-							return;
-						}
-					}
-*/
-
 					var targetService = targetWindow.MultipleTabService;
 					var sourceService = sourceWindow.MultipleTabService;
 					var sourceBrowser = this.getSourceBrowser(sourceWindow);
+
+/*
+					if (this == sourceEntry) {
+						var history = aInfo.manager.getHistory('TabbarOperations', targetWindow);
+						if (history.currentEntries.indexOf(targetEntry) > -1) {
+alert('SOURCE, REDIRECTED');
+							if (aInfo.level)
+								this.restoreOneTab(sourceService, targetBrowser, sourceBrowser, newPosition, oldPosition);
+							targetWindow.setTimeout(function() {
+								aInfo.manager.redo('TabbarOperations', targetWindow);
+							}, 0);
+							return;
+						}
+alert('SOURCE, NOT REDIRECTED');
+					}
+					else {
+alert('TARGET');
+					}
+*/
 
 					// Don't redo when tabs are modified (for safety)
 					var offset = aInfo.level ? 1 : 0 ;
@@ -2626,10 +2643,8 @@ var MultipleTabService = {
 					sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
 
 					// Restore tab position changed by onRedo() for the parent entry
-					if (aInfo.level) {
-						let baseTabs = sourceService.importTabsTo([targetService.getTabAt(newPosition, targetBrowser)], sourceBrowser);
-						sourceBrowser.moveTabTo(baseTabs[0], oldPosition);
-					}
+					if (aInfo.level)
+						this.restoreOneTab(sourceService, targetBrowser, sourceBrowser, newPosition, oldPosition);
 
 					var sourceTabs = this.getTabsFromPositions(sourceService, sourceBrowser, oldPositions);
 					var importedTabs = targetService.importTabsTo(sourceTabs, targetBrowser);
