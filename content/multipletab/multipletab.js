@@ -2532,6 +2532,20 @@ var MultipleTabService = {
 					let baseTabs = aService.importTabsTo(sourceTab, aTargetTabBrowser);
 					aTargetTabBrowser.moveTabTo(baseTabs[0], aNewPosition);
 				},
+				syncLastEntry : function(aInfo, aSourceWindow, aTargetWindow)
+				{
+					if (this == targetEntry) {
+						let history = aInfo.manager.getHistory('TabbarOperations', aSourceWindow);
+						if (history.currentEntries.indexOf(sourceEntry) > -1)
+							history.index--;
+					}
+					else if (this == sourceEntry) {
+						let history = aInfo.manager.getHistory('TabbarOperations', aTargetWindow);
+						if (history.currentEntries.indexOf(targetEntry) > -1)
+							history.index--;
+					}
+
+				},
 				onUndo : function(aInfo) {
 					var targetWindow = this.getTargetWindow(aInfo);
 					if (!targetWindow) return false;
@@ -2558,24 +2572,7 @@ var MultipleTabService = {
 					var sourceService = sourceWindow.MultipleTabService;
 					var sourceBrowser = this.getSourceBrowser(sourceWindow);
 
-/*
-					if (this == targetEntry) {
-						var history = aInfo.manager.getHistory('TabbarOperations', sourceWindow);
-						if (history.currentEntries.indexOf(sourceEntry) > -1) {
-alert('TARGET, REDIRECTED');
-							if (aInfo.level)
-								this.restoreOneTab(sourceService, sourceBrowser, targetBrowser, oldPosition, newPosition);
-							sourceWindow.setTimeout(function() {
-								aInfo.manager.undo('TabbarOperations', sourceWindow);
-							}, 0);
-							return;
-						}
-alert('TARGET, NOT REDIRECTED');
-					}
-					else {
-alert('SOURCE');
-					}
-*/
+					this.syncLastEntry(aInfo, sourceWindow, targetWindow);
 
 					// Don't undo when tabs are modified (for safety)
 					var offset = aInfo.level ? 1 : 0 ;
@@ -2615,24 +2612,7 @@ alert('SOURCE');
 					var sourceService = sourceWindow.MultipleTabService;
 					var sourceBrowser = this.getSourceBrowser(sourceWindow);
 
-/*
-					if (this == sourceEntry) {
-						var history = aInfo.manager.getHistory('TabbarOperations', targetWindow);
-						if (history.currentEntries.indexOf(targetEntry) > -1) {
-alert('SOURCE, REDIRECTED');
-							if (aInfo.level)
-								this.restoreOneTab(sourceService, targetBrowser, sourceBrowser, newPosition, oldPosition);
-							targetWindow.setTimeout(function() {
-								aInfo.manager.redo('TabbarOperations', targetWindow);
-							}, 0);
-							return;
-						}
-alert('SOURCE, NOT REDIRECTED');
-					}
-					else {
-alert('TARGET');
-					}
-*/
+					this.syncLastEntry(aInfo, sourceWindow, targetWindow);
 
 					// Don't redo when tabs are modified (for safety)
 					var offset = aInfo.level ? 1 : 0 ;
