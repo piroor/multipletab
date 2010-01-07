@@ -397,6 +397,16 @@ var MultipleTabService = {
 		return this.getArrayFromXPathResult(this.getTabs(aTabBrowser));
 	},
  
+	getTabAt : function MTS_getTabAt(aIndex, aTabBrowser) 
+	{
+		if (aIndex < 0) return null;
+		return this.evaluateXPath(
+				'descendant::xul:tab['+(aIndex+1)+']',
+				aTabBrowser.mTabContainer,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue;
+	},
+ 
 	getNextTab : function MTS_getNextTab(aTab) 
 	{
 		return this.evaluateXPath(
@@ -915,7 +925,9 @@ var MultipleTabService = {
 				if (
 					this.isSelected(aEvent.originalTarget) &&
 					this.allowMoveMultipleTabs &&
-					!aEvent.currentTarget.movingSelectedTabs
+					!aEvent.currentTarget.movingSelectedTabs &&
+					!window['piro.sakura.ne.jp'].operationHistory.isUndoing('TabbarOperations', window) &&
+					!window['piro.sakura.ne.jp'].operationHistory.isRedoing('TabbarOperations', window)
 					)
 					this.moveBundledTabsOf(aEvent.originalTarget, aEvent);
 				break;
@@ -2353,15 +2365,105 @@ var MultipleTabService = {
 	moveBundledTabsOf : function MTS_moveBundledTabsOf(aMovedTab, aEvent) 
 	{
 		var b = this.getTabBrowserFromChild(aMovedTab);
-		var tabs = this.getSelectedTabs(b);
-		tabs.splice(tabs.indexOf(aMovedTab), 1);
-		var delta = this.calculateDeltaForNewPosition(tabs, aEvent.detail, aMovedTab._tPos);
-		b.movingSelectedTabs = true;
-		tabs.forEach(function(aTab, aIndex) {
-			b.moveTabTo(aTab, aMovedTab._tPos + delta[aIndex]);
-		});
-		b.movingSelectedTabs = false;
-		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
+		var count = this.getTabs(b).snapshotLength;
+		var oldPosition = aEvent.detail;
+		var newPosition = aMovedTab._tPos;
+		var oldPositions;
+		var newPositions;
+
+		var self = this;
+		window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
+			function() {
+				var movedTabs = self.getSelectedTabs(b);
+
+				oldPositions = movedTabs.map(function(aTab) {
+						if (aTab == aMovedTab)
+							return oldPosition;
+
+						var position = aTab._tPos;
+						if (position <= oldPosition && position > newPosition)
+							position--;
+						else if (position >= oldPosition && position < newPosition)
+							position++;
+
+						return position;
+					})
+					.sort();
+
+				var otherTabs = movedTabs.slice(0);
+				otherTabs.splice(otherTabs.indexOf(aMovedTab), 1);
+				var delta = self.calculateDeltaForNewPosition(otherTabs, oldPosition, newPosition);
+
+				b.movingSelectedTabs = true;
+
+				otherTabs.forEach(function(aTab, aIndex) {
+					b.moveTabTo(aTab, newPosition + delta[aIndex]);
+				});
+
+				newPositions = movedTabs.map(function(aTab) {
+						return aTab._tPos;
+					})
+					.sort();
+
+				b.movingSelectedTabs = false;
+				b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
+			},
+
+			'TabbarOperations',
+			window,
+			{
+				label  : 'MultipleTabService::moveBundledTabsOf',
+				onUndo : function(aInfo) {
+					// Don't undo when tabs are modified (for safety)
+					if (self.getTabs(b).snapshotLength != count)
+						return false;
+					// Restore tab position changed by onUndo() for moveTabTo()
+					b.moveTabTo(self.getTabAt(oldPosition, b), newPosition);
+					self.moveTabs(b, newPositions, oldPositions);
+				},
+				onRedo : function(aInfo) {
+					// Don't redo when tabs are modified (for safety)
+					if (self.getTabs(b).snapshotLength != count)
+						return false;
+					// Restore tab position changed by onRedo() for moveTabTo()
+					b.moveTabTo(self.getTabAt(newPosition, b), oldPosition);
+					self.moveTabs(b, oldPositions, newPositions);
+				}
+			}
+		);
+
+		aEvent = null;
+		aMovedTab = null;
+	},
+	moveTabs : function MTS_moveTabs(aTabBrowser, aOldPositions, aNewPositions)
+	{
+		var tabs = this.getTabsArray(aTabBrowser);
+
+		var positions = tabs.map(function(aTab, aIndex) {
+						return aIndex;
+					});
+		var restOldPositions = positions.filter(function(aIndex) {
+						return aOldPositions.indexOf(aIndex) < 0;
+					});
+		var restNewPositions = positions.filter(function(aIndex) {
+						return aNewPositions.indexOf(aIndex) < 0;
+					});
+		var allNewPositions = positions
+			.map(function(aIndex) {
+				var index = aOldPositions.indexOf(aIndex);
+				if (index > -1) {
+					return aNewPositions[index];
+				}
+				index = restOldPositions.indexOf(aIndex);
+				return restNewPositions[index];
+			});
+
+		aTabBrowser.movingSelectedTabs = true;
+		allNewPositions
+			.forEach(function(aNewPosition, aOldPosition) {
+				aTabBrowser.moveTabTo(tabs[aOldPosition], aNewPosition);
+			});
+		aTabBrowser.movingSelectedTabs = false;
 	},
  
 	windowMoveBundledTabsOf : function MTS_windowMoveBundledTabsOf(aNewTab, aSourceTab) 
