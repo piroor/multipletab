@@ -2457,6 +2457,7 @@ var MultipleTabService = {
 	},
 	moveTabsByIndex : function MTS_moveTabsByIndex(aTabBrowser, aOldPositions, aNewPositions)
 	{
+		// step 1: calculate new positions of all tabs
 		var restOldPositions = [];
 		var restNewPositions = [];
 		var tabs = this.getTabsArray(aTabBrowser);
@@ -2466,14 +2467,27 @@ var MultipleTabService = {
 			if (aNewPositions.indexOf(aIndex) < 0)
 				restNewPositions.push(aIndex);
 		});
+		// step 2: simulate rearranging
+		var rearranged = tabs.map(function(aTab, aOldPosition) {
+				var index = aNewPositions.indexOf(aOldPosition);
+				return tabs[(index > -1) ?
+						aOldPositions[index] :
+						restOldPositions[restNewPositions.indexOf(aOldPosition)] ];
+			});
+		// step 3: rearrange target tabs by the result of simulation
 		aTabBrowser.movingSelectedTabs = true;
-		tabs.forEach(function(aTab, aOldPosition) {
-			var newPosition;
-			var index = aOldPositions.indexOf(aOldPosition);
-			var newPosition = (index > -1) ?
-					aNewPositions[index] :
-					restNewPositions[restOldPositions.indexOf(aOldPosition)] ;
-			aTabBrowser.moveTabTo(aTab, newPosition);
+		var movedTabsCount = 0;
+		tabs.forEach(function(aTab, aIndex) {
+			if (aOldPositions.indexOf(aIndex) < 0) return; // it's not a target!
+			var newPosition = aNewPositions[movedTabsCount++];
+			var previousTab = newPosition > 0 ? rearranged[newPosition-1] : null ;
+			if (previousTab)
+				newPosition = previousTab._tPos + 1;
+			if (aTab._tPos < newPosition)
+				newPosition--;
+			if (aTab._tPos != newPosition)
+				aTabBrowser.moveTabTo(aTab, newPosition);
+		});
 		aTabBrowser.movingSelectedTabs = false;
 	},
  
