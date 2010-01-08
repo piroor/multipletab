@@ -74,7 +74,7 @@
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/operationHistory.test.js
 */
 (function() {
-	const currentRevision = 33;
+	const currentRevision = 34;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -851,29 +851,10 @@
 				log(' => level 0 (new entry at '+(this.entries.length-1)+')', this.inOperationCount);
 			}
 
-			var index = this.safeIndex;
-			var names = aEntry.insertBefore;
-			if (names && names.length) {
-				if (typeof names == 'string')
-					names = [names];
-
-				let metaData = this.metaData[index];
-				let insertionPositions = names.map(function(aName) {
-							return metaData.names.indexOf(aName);
-						})
-						.filter(function(aIndex) {
-							return aIndex > -1;
-						})
-						.sort();
-				if (insertionPositions.length) {
-					let position = insertionPositions[0];
-					let entries = this._getEntriesAt(index);
-					entries.splice(entries.indexOf(aEntry), 1);
-					entries.splice(position, 0, aEntry);
-					this._setEntriesAt(entries, index);
-					log(' => moved (inserted) to level '+position, this.inOperationCount);
-				}
-			}
+			if (aEntry.insertBefore)
+				this._insertBefore(aEntry, aEntry.insertBefore);
+			else if (aEntry.name)
+				this._checkInsertion(aEntry);
 		},
 		_addNewEntry : function(aEntry)
 		{
@@ -889,6 +870,65 @@
 			this.metaData = this.metaData.slice(-this.max);
 
 			this.index = this.entries.length;
+		},
+		_insertBefore : function(aEntry, aNames)
+		{
+			if (typeof aNames == 'string')
+				aNames = [aNames];
+
+			if (!aNames.length)
+				return;
+
+			var index = this.safeIndex;
+			var metaData = this.metaData[index];
+			var insertionPositions = aNames.map(function(aName) {
+						return metaData.names.indexOf(aName);
+					})
+					.filter(function(aIndex) {
+						return aIndex > -1;
+					})
+					.sort();
+			if (!insertionPositions.length)
+				return;
+
+			var position = insertionPositions[0];
+			var entries = this._getEntriesAt(index);
+			entries.splice(entries.indexOf(aEntry), 1);
+			entries.splice(position, 0, aEntry);
+			this._setEntriesAt(entries, index);
+			log(' => moved (inserted) to level '+position, this.inOperationCount);
+
+			metaData.registerInsertionTarget(aEntry, aNames);
+		},
+		_checkInsertion : function(aEntry)
+		{
+			var name = aEntry.name;
+			var index = this.safeIndex;
+			var metaData = this.metaData[index];
+			if (!(name in metaData.insertionTargets))
+				return;
+
+			var entries = this._getEntriesAt(index);
+			var indexes = metaData
+					.insertionTargets[name]
+					.map(function(aEntry) {
+						return entries.indexOf(aEntry);
+					})
+					.sort()
+					.reverse();
+
+			if (!indexes.length)
+				return;
+
+			var position = indexes[0]+1;
+			var currentPosition = entries.indexOf(aEntry);
+			if (position < currentPosition)
+				return;
+
+			entries.splice(currentPosition, 1);
+			entries.splice(position, 0, aEntry);
+			this._setEntriesAt(entries, index);
+			log(' => moved (inserted) to level '+position, this.inOperationCount);
 		},
 
 		get canUndo()
@@ -1056,7 +1096,17 @@
 		clear : function()
 		{
 			this.children = [];
-			this.names = [];
+			this.names    = [];
+			this.insertionTargets = {};
+		},
+
+		registerInsertionTarget : function(aEntry, aNames)
+		{
+			aNames.forEach(function(aName) {
+				if (!this.insertionTargets[aName])
+					this.insertionTargets[aName] = [];
+				this.insertionTargets[aName].push(aEntry);
+			}, this);
 		}
 	};
 
