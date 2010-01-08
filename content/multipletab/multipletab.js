@@ -2339,29 +2339,31 @@ var MultipleTabService = {
 		return w.MultipleTabService.getSelectedTabs(b);
 	},
  
-	calculateDeltaForNewPosition : function MTS_calculateDeltaForNewPosition(aTabs, aOriginalPos, aNewPos) 
+	calculateDeltaForNewPosition : function MTS_calculateDeltaForNewPosition(aTabs, aOldBasePos, aNewBasePos) 
 	{
-		var isMove = aNewPos > -1;
-		var movedToLeft = isMove && (aNewPos - aOriginalPos < 0);
+		var isMove = aNewBasePos > -1;
+		var movedToLeft = isMove && (aNewBasePos - aOldBasePos < 0);
 		var afterTabsOffset = (!isMove || movedToLeft) ? 0 : -1 ;
 		return aTabs.map(function(aTab) {
-				var originalPos = aTab._tPos;
-				if (aNewPos > -1) {
+				var oldPos = aTab._tPos;
+				var movedToRight = false;
+				if (isMove) {
 					if (
 						movedToLeft &&
-						aTab._tPos > aNewPos &&
-						aTab._tPos <= aOriginalPos
+						oldPos > aNewBasePos &&
+						oldPos <= aOldBasePos
 						)
-						originalPos--;
+						oldPos--;
 					else if (
 						!movedToLeft &&
-						aTab._tPos < aNewPos &&
-						aTab._tPos >= aOriginalPos
+						oldPos < aNewBasePos &&
+						oldPos >= aOldBasePos
 						)
-						originalPos++;
+						oldPos++;
+					movedToRight = oldPos < aNewBasePos;
 				}
-				if (originalPos < aOriginalPos)
-					return movedToLeft ? 0 : -1;
+				if (oldPos < aOldBasePos)
+					return movedToLeft && !movedToRight ? 0 : -1 ;
 				return ++afterTabsOffset;
 			});
 	},
@@ -2392,8 +2394,9 @@ var MultipleTabService = {
 				b.movingSelectedTabs = true;
 
 				otherTabs.forEach(function(aTab, aIndex) {
-					b.moveTabTo(aTab, newPosition + delta[aIndex]);
+					b.moveTabTo(aTab, aMovedTab._tPos + delta[aIndex]);
 				});
+				newPosition = aMovedTab._tPos;
 
 				newPositions = movedTabs.map(function(aTab, aIndex) {
 						if (aTab.selected) newSelectedIndex = aIndex;
@@ -2471,7 +2474,6 @@ var MultipleTabService = {
 					aNewPositions[index] :
 					restNewPositions[restOldPositions.indexOf(aOldPosition)] ;
 			aTabBrowser.moveTabTo(aTab, newPosition);
-		});
 		aTabBrowser.movingSelectedTabs = false;
 	},
  
@@ -2677,8 +2679,8 @@ var MultipleTabService = {
 				targetService.clearSelection(targetBrowser);
 				sourceService.clearSelection(sourceBrowser);
 
-				var delta = sourceService.calculateDeltaForNewPosition(otherSourceTabs, oldPosition, -1);
-				var hasNextTab   = targetService.getNextTab(aNewTab);
+				var delta      = sourceService.calculateDeltaForNewPosition(otherSourceTabs, oldPosition, -1);
+				var hasNextTab = targetService.getNextTab(aNewTab);
 
 				window['piro.sakura.ne.jp'].stopRendering.stop();
 				sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
@@ -2688,7 +2690,8 @@ var MultipleTabService = {
 						importedTabs.forEach(function(aTab, aIndex) {
 							if (delta[aIndex] > 0 && hasNextTab)
 								delta[aIndex]--;
-							targetBrowser.moveTabTo(aTab, newPosition + delta[aIndex] + 1);
+							targetBrowser.moveTabTo(aTab, aNewTab._tPos + delta[aIndex] + 1);
+							newPosition = aNewTab._tPos;
 							if (shouldSelectAfter)
 								targetService.setSelection(aTab, true);
 						}, targetService);
@@ -2697,7 +2700,7 @@ var MultipleTabService = {
 								return aTab._tPos;
 							})
 							.sort();
-						newSelectedIndex = newPositions.indexOf(aNewTab._tPos);
+						newSelectedIndex = newPositions.indexOf(newPosition);
 					},
 					'TabbarOperations',
 					sourceWindow,
