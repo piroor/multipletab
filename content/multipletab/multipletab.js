@@ -38,6 +38,8 @@ var MultipleTabService = {
 
 	lineFeed : '\r\n',
 	
+/* Utilities */ 
+	
 	NSResolver : { 
 		lookupNamespaceURI : function MTS_lookupNamespaceURI(aPrefix)
 		{
@@ -79,7 +81,24 @@ var MultipleTabService = {
 		}
 		return xpathResult;
 	},
- 
+	
+	getArrayFromXPathResult : function MTS_getArrayFromXPathResult(aXPathResult) 
+	{
+		if (!(aXPathResult instanceof Components.interfaces.nsIDOMXPathResult)) {
+			aXPathResult = this.evaluateXPath.apply(this, arguments);
+		}
+		var max = aXPathResult.snapshotLength;
+		var array = new Array(max);
+		if (!max) return array;
+
+		for (var i = 0; i < max; i++)
+		{
+			array[i] = aXPathResult.snapshotItem(i);
+		}
+
+		return array;
+	},
+  
 	evalInSandbox : function MTS_evalInSandbox(aCode, aOwner) 
 	{
 		try {
@@ -91,6 +110,8 @@ var MultipleTabService = {
 		return void(0);
 	},
  
+// XPConnect 
+	
 	get SessionStore() { 
 		if (!this._SessionStore) {
 			this._SessionStore = Components.classes['@mozilla.org/browser/sessionstore;1'].getService(Components.interfaces.nsISessionStore);
@@ -98,22 +119,6 @@ var MultipleTabService = {
 		return this._SessionStore;
 	},
 	_SessionStore : null,
- 
-	get bundle() { 
-		if (!this._bundle) {
-			this._bundle = document.getElementById('multipletab-bundle');
-		}
-		return this._bundle;
-	},
-	_bundle : null,
- 
-	get tabbrowserBundle() { 
-		if (!this._tabbrowserBundle) {
-			this._tabbrowserBundle = document.getElementById('multipletab-tabbrowserBundle');
-		}
-		return this._tabbrowserBundle;
-	},
-	_tabbrowserBundle : null,
  
 	get IOService() 
 	{
@@ -149,46 +154,40 @@ var MultipleTabService = {
 		return this._EffectiveTLD;
 	},
 //	_EffectiveTLD : null,
- 
-/* Utilities */ 
-	
-	isEventFiredOnTabIcon : function MTS_isEventFiredOnTabIcon(aEvent) 
-	{
-		return this.evaluateXPath(
-				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-icon ")]',
-				aEvent.originalTarget || aEvent.target,
-				XPathResult.BOOLEAN_TYPE
-			).booleanValue;
-	},
- 
-	isEventFiredOnClickable : function MTS_isEventFiredOnClickable(aEvent) 
-	{
-		return this.evaluateXPath(
-				'ancestor-or-self::*[contains(" button toolbarbutton scrollbar popup menupopup tooltip ", concat(" ", local-name(), " "))]',
-				aEvent.originalTarget || aEvent.target,
-				XPathResult.BOOLEAN_TYPE
-			).booleanValue;
-	},
- 
-	getCloseboxFromEvent : function MTS_getCloseboxFromEvent(aEvent) 
-	{
-		return this.evaluateXPath(
-				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-close-button ")]',
-				aEvent.originalTarget || aEvent.target,
-				XPathResult.FIRST_ORDERED_NODE_TYPE
-			).singleNodeValue;
-	},
- 
-	isAccelKeyPressed : function MTS_isAccelKeyPressed(aEvent) 
-	{
-		return navigator.platform.toLowerCase().indexOf('mac') > -1 ? aEvent.metaKey : aEvent.ctrlKey ;
-	},
- 
+  
 	isDisabled : function MTS_isDisabled() 
 	{
 		return (document.getElementById('cmd_CustomizeToolbars').getAttribute('disabled') == 'true');
 	},
  
+	get allowMoveMultipleTabs() 
+	{
+		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
+	},
+ 
+	get browser() 
+	{
+		return gBrowser;
+	},
+ 
+	get bundle() { 
+		if (!this._bundle) {
+			this._bundle = document.getElementById('multipletab-bundle');
+		}
+		return this._bundle;
+	},
+	_bundle : null,
+ 
+	get tabbrowserBundle() { 
+		if (!this._tabbrowserBundle) {
+			this._tabbrowserBundle = document.getElementById('multipletab-tabbrowserBundle');
+		}
+		return this._tabbrowserBundle;
+	},
+	_tabbrowserBundle : null,
+ 
+// tabs 
+	
 	warnAboutClosingTabs : function MTS_warnAboutClosingTabs(aTabsCount) 
 	{
 		if (
@@ -211,28 +210,6 @@ var MultipleTabService = {
 		if (shouldClose && !checked.value)
 			this.setPref('browser.tabs.warnOnClose', false);
 		return shouldClose;
-	},
- 
-	get browser() 
-	{
-		return gBrowser;
-	},
- 
-	getArrayFromXPathResult : function MTS_getArrayFromXPathResult(aXPathResult) 
-	{
-		if (!(aXPathResult instanceof Components.interfaces.nsIDOMXPathResult)) {
-			aXPathResult = this.evaluateXPath.apply(this, arguments);
-		}
-		var max = aXPathResult.snapshotLength;
-		var array = new Array(max);
-		if (!max) return array;
-
-		for (var i = 0; i < max; i++)
-		{
-			array[i] = aXPathResult.snapshotItem(i);
-		}
-
-		return array;
 	},
  
 	getIndexesFromTabs : function MTS_getIndexesFromTabs(aTabs) 
@@ -431,11 +408,210 @@ var MultipleTabService = {
 		return this.getTabBrowserFromChild(aTab);
 	},
   
-	get allowMoveMultipleTabs() 
+	filterBlankTabs : function MTS_filterBlankTabs(aTabs) 
 	{
-		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
+		return aTabs.filter(function(aTab) {
+				return aTab.linkedBrowser.currentURI.spec != 'about:blank';
+			});
 	},
  
+	makeTabUnrecoverable : function MTS_makeTabUnrecoverable(aTab) 
+	{
+		// nsSessionStore.js doesn't save the tab to the undo cache
+		// if the tab is completely blank.
+		var b = aTab.linkedBrowser;
+		try {
+			b.stop();
+			if (b.sessionHistory)
+				b.sessionHistory.PurgeHistory(b.sessionHistory.count);
+		}
+		catch(e) {
+			dump(e+'\n');
+		}
+		if (b.contentWindow && b.contentWindow.location)
+			b.contentWindow.location.replace('about:blank');
+	},
+  
+// bundled tabs 
+	
+	getBundledTabsOf : function MTS_getBundledTabsOf(aTab, aInfo) 
+	{
+		if (!aInfo) aInfo = {};
+		aInfo.sourceWindow = null;
+		aInfo.sourceBrowser = null;
+		var tabs = [];
+
+		var w, b;
+		if (
+			!aTab ||
+			aTab.localName != 'tab' ||
+			!(w = aTab.ownerDocument.defaultView) ||
+			!('MultipleTabService' in w) ||
+			!(b = w.MultipleTabService.getTabBrowserFromChild(aTab))
+			)
+			return tabs;
+
+		aInfo.sourceWindow = w;
+		aInfo.sourceBrowser = b;
+		return w.MultipleTabService.getSelectedTabs(b);
+	},
+ 
+	rearrangeBundledTabsOf : function MTS_rearrangeBundledTabsOf() 
+	{
+		var baseTab,
+			oldBasePosition = -1,
+			tabs;
+		Array.slice(arguments).forEach(function(aArg) {
+			if (aArg instanceof Components.interfaces.nsIDOMNode)
+				baseTab = aArg;
+			else if (typeof aArg == 'number')
+				oldBasePosition = aArg;
+			else if (typeof aArg == 'object')
+				tabs = aArg;
+		});
+
+		var b       = this.getTabBrowserFromChild(baseTab);
+		var allTabs = this.getTabsArray(b);
+		if (!tabs || !tabs.length)
+			tabs = this.getSelectedTabs(b);
+
+		var otherTabs = tabs.filter(function(aTab) {
+				return aTab != baseTab;
+			});
+
+		// step 1: calculate old positions of all tabs
+		var oldTabs = allTabs.slice(0);
+		if (oldBasePosition < 0) {
+			let positionInTabs = tabs.indexOf(baseTab);
+			if (positionInTabs < 0 || !tabs.length)
+				throw 'original positions of tabs cannot be calculated.';
+
+			oldTabs.splice(baseTab._tPos, 1);
+			oldTabs.splice.apply(oldTabs, [oldTabs.indexOf(otherTabs[0]), otherTabs.length].concat(tabs));
+		}
+		else {
+			oldTabs.splice(oldBasePosition, 0, oldTabs.splice(baseTab._tPos, 1)[0]);
+		}
+
+		// step 2: extract tabs which should be moved
+		var movedTabs = oldTabs.filter(function(aTab) {
+					return otherTabs.indexOf(aTab) > -1 || aTab == baseTab;
+				});
+
+		// step 3: simulate rearranging
+		var rearranged = allTabs.filter(function(aTab) {
+					return otherTabs.indexOf(aTab) < 0;
+				});
+		rearranged.splice.apply(rearranged, [rearranged.indexOf(baseTab), 1].concat(movedTabs));
+
+		// step 4: rearrange target tabs by the result of simulation
+		b.movingSelectedTabs = true;
+		rearranged.forEach(function(aTab, aNewPosition) {
+			if (otherTabs.indexOf(aTab) < 0) return;
+
+			var previousTab = aNewPosition > 0 ? rearranged[aNewPosition-1] : null ;
+			if (previousTab)
+				aNewPosition = previousTab._tPos + 1;
+			if (aNewPosition > aTab._tPos)
+				aNewPosition--;
+			if (aTab._tPos != aNewPosition)
+				b.moveTabTo(aTab, aNewPosition);
+		});
+		b.movingSelectedTabs = false;
+	},
+ 
+	moveTabsByIndex : function MTS_moveTabsByIndex(aTabBrowser, aOldPositions, aNewPositions) 
+	{
+		// step 1: calculate new positions of all tabs
+		var restOldPositions = [];
+		var restNewPositions = [];
+		var tabs = this.getTabsArray(aTabBrowser);
+		tabs.forEach(function(aTab, aIndex) {
+			if (aOldPositions.indexOf(aIndex) < 0)
+				restOldPositions.push(aIndex);
+			if (aNewPositions.indexOf(aIndex) < 0)
+				restNewPositions.push(aIndex);
+		});
+
+		// step 2: simulate rearranging
+		var rearranged = tabs.map(function(aTab, aOldPosition) {
+				var index = aNewPositions.indexOf(aOldPosition);
+				return tabs[(index > -1) ?
+						aOldPositions[index] :
+						restOldPositions[restNewPositions.indexOf(aOldPosition)] ];
+			});
+
+		// step 3: rearrange target tabs by the result of simulation
+		aTabBrowser.movingSelectedTabs = true;
+		var movedTabsCount = 0;
+		tabs.forEach(function(aTab, aIndex) {
+			if (aOldPositions.indexOf(aIndex) < 0) return; // it's not a target!
+			var newPosition = aNewPositions[movedTabsCount++];
+			var previousTab = newPosition > 0 ? rearranged[newPosition-1] : null ;
+			if (previousTab)
+				newPosition = previousTab._tPos + 1;
+			if (newPosition > aTab._tPos)
+				newPosition--;
+			if (aTab._tPos != newPosition)
+				aTabBrowser.moveTabTo(aTab, newPosition);
+		});
+		aTabBrowser.movingSelectedTabs = false;
+	},
+	
+	getOriginalPositions : function MTS_getOriginalPositions(aTabs, aBaseTab, aOldBasePosition) 
+	{
+		var newBasePosition = aBaseTab._tPos;
+		return aTabs.map(function(aTab) {
+				if (aTab == aBaseTab)
+					return aOldBasePosition;
+
+				var position = aTab._tPos;
+				if (position <= aOldBasePosition && position > newBasePosition)
+					position--;
+				else if (position >= aOldBasePosition && position < newBasePosition)
+					position++;
+
+				return position;
+			})
+			.sort();
+	},
+   
+// events 
+	
+	isEventFiredOnTabIcon : function MTS_isEventFiredOnTabIcon(aEvent) 
+	{
+		return this.evaluateXPath(
+				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-icon ")]',
+				aEvent.originalTarget || aEvent.target,
+				XPathResult.BOOLEAN_TYPE
+			).booleanValue;
+	},
+ 
+	isEventFiredOnClickable : function MTS_isEventFiredOnClickable(aEvent) 
+	{
+		return this.evaluateXPath(
+				'ancestor-or-self::*[contains(" button toolbarbutton scrollbar popup menupopup tooltip ", concat(" ", local-name(), " "))]',
+				aEvent.originalTarget || aEvent.target,
+				XPathResult.BOOLEAN_TYPE
+			).booleanValue;
+	},
+ 
+	getCloseboxFromEvent : function MTS_getCloseboxFromEvent(aEvent) 
+	{
+		return this.evaluateXPath(
+				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-close-button ")]',
+				aEvent.originalTarget || aEvent.target,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue;
+	},
+ 
+	isAccelKeyPressed : function MTS_isAccelKeyPressed(aEvent) 
+	{
+		return navigator.platform.toLowerCase().indexOf('mac') > -1 ? aEvent.metaKey : aEvent.ctrlKey ;
+	},
+  
+// fire custom events 
+	
 	fireDuplicatedEvent : function MTS_fireDuplicatedEvent(aNewTab, aSourceTab, aSourceEvent) 
 	{
 		var event = aNewTab.ownerDocument.createEvent('Events');
@@ -495,7 +671,7 @@ var MultipleTabService = {
 			return this.__canceled;
 		};
 	},
- 
+  
 	createDragFeedbackImage : function MTS_createDragFeedbackImage(aNode) 
 	{
 		var tabs = this.getDraggedTabs(aNode);
@@ -543,28 +719,28 @@ var MultipleTabService = {
 		return tabs;
 	},
  
-	filterBlankTabs : function MTS_filterBlankTabs(aTabs) 
+	moveHistoryEntryBefore : function MTS_moveHistoryEntryBefore(aEntry, aName) 
 	{
-		return aTabs.filter(function(aTab) {
-				return aTab.linkedBrowser.currentURI.spec != 'about:blank';
-			});
-	},
- 
-	makeTabUnrecoverable : function MTS_makeTabUnrecoverable(aTab) 
-	{
-		// nsSessionStore.js doesn't save the tab to the undo cache
-		// if the tab is completely blank.
-		var b = aTab.linkedBrowser;
-		try {
-			b.stop();
-			if (b.sessionHistory)
-				b.sessionHistory.PurgeHistory(b.sessionHistory.count);
+		var history = window['piro.sakura.ne.jp'].operationHistory.getHistory('TabbarOperations', window);
+		var entries = history.lastEntries;
+		if (!entires) return;
+
+		var index = entries.indexOf(aEntry);
+		if (index < 0) return;
+
+		var insertionPoint = -1;
+		for (let i in entries)
+		{
+			if (entries[i].name != aName)
+				continue;
+			insertionPoint = i;
+			break;
 		}
-		catch(e) {
-			dump(e+'\n');
-		}
-		if (b.contentWindow && b.contentWindow.location)
-			b.contentWindow.location.replace('about:blank');
+		if (insertionPoint < 0) return;
+
+		entries.splice(index, 1);
+		entries.splice(insertionPoint, 0, aEntry);
+		history.lastEntries = entries;
 	},
   
 /* Initializing */ 
@@ -1211,6 +1387,7 @@ var MultipleTabService = {
 			!window['piro.sakura.ne.jp'].operationHistory.isRedoing('TabbarOperations', window)
 			) {
 			var self = this;
+			var entry;
 			window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
 				function(aInfo) {
 					newTab = aTask.call(aTabBrowser);
@@ -1219,15 +1396,16 @@ var MultipleTabService = {
 
 				'TabbarOperations',
 				window,
-				{
+				(entry = {
 					name   : 'multipletab-duplicateTabs',
 					label  : this.bundle.getString('undo_duplicateTabs_label'),
 					// I don't define onUndo() and onRedo() for this entry
-					// because they are processed 
+					// because they are processed
 					onUndo : function(aInfo) { return false; },
 					onRedo : function(aInfo) { return false; }
-				}
+				})
 			);
+			this.moveHistoryEntryBefore(entry, 'undotab-duplicateTab');
 		}
 		else {
 			newTab = aTask.call(aTabBrowser);
@@ -1789,6 +1967,7 @@ var MultipleTabService = {
 		var duplicatedIndexes = [];
 		var duplicatedTabs;
 
+		var entry;
 		w['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
 			function(aInfo) {
 				var sv = w.MultipleTabService;
@@ -1812,7 +1991,7 @@ var MultipleTabService = {
 
 			'TabbarOperations',
 			w,
-			{
+			(entry = {
 				name   : 'multipletab-duplicateTabs',
 				label  : this.bundle.getString('undo_duplicateTabs_label'),
 				onUndo : function(aInfo) {
@@ -1831,8 +2010,9 @@ var MultipleTabService = {
 
 					w['piro.sakura.ne.jp'].stopRendering.start();
 				}
-			}
+			})
 		);
+		this.moveHistoryEntryBefore(entry, 'undotab-duplicateTab');
 
 		var tabs = this.getTabs(b);
 		return duplicatedIndexes.map(function(aIndex) {
@@ -2345,28 +2525,6 @@ var MultipleTabService = {
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 
 	
-	getBundledTabsOf : function MTS_getBundledTabsOf(aTab, aInfo) 
-	{
-		if (!aInfo) aInfo = {};
-		aInfo.sourceWindow = null;
-		aInfo.sourceBrowser = null;
-		var tabs = [];
-
-		var w, b;
-		if (
-			!aTab ||
-			aTab.localName != 'tab' ||
-			!(w = aTab.ownerDocument.defaultView) ||
-			!('MultipleTabService' in w) ||
-			!(b = w.MultipleTabService.getTabBrowserFromChild(aTab))
-			)
-			return tabs;
-
-		aInfo.sourceWindow = w;
-		aInfo.sourceBrowser = b;
-		return w.MultipleTabService.getSelectedTabs(b);
-	},
- 
 	moveBundledTabsOf : function MTS_moveBundledTabsOf(aMovedTab, aEvent) 
 	{
 		var b = this.getTabBrowserFromChild(aMovedTab);
@@ -2379,6 +2537,7 @@ var MultipleTabService = {
 		var newPositions;
 
 		var self = this;
+		var entry;
 		window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
 			function() {
 				var movedTabs = self.getSelectedTabs(b);
@@ -2400,16 +2559,13 @@ var MultipleTabService = {
 
 			'TabbarOperations',
 			window,
-			{
+			(entry = {
 				name   : 'multipletab-moveBundledTabs',
 				label  : this.bundle.getString('undo_moveBundledTabsOf_label'),
 				onUndo : function(aInfo) {
 					// Don't undo when tabs are modified (for safety)
 					if (self.getTabs(b).snapshotLength != count)
 						return false;
-					// Restore tab position changed by onUndo() for moveTabTo()
-					if (aInfo.processed)
-						b.moveTabTo(self.getTabAt(oldPosition, b), newPosition);
 					self.moveTabsByIndex(b, newPositions, oldPositions);
 					b.selectedTab = self.getTabAt(oldPositions[oldSelectedIndex], b) ||
 									b.selectedTab;
@@ -2417,134 +2573,17 @@ var MultipleTabService = {
 				onRedo : function(aInfo) {
 					if (self.getTabs(b).snapshotLength != count)
 						return false;
-					if (aInfo.processed)
-						b.moveTabTo(self.getTabAt(newPosition, b), oldPosition);
 					self.moveTabsByIndex(b, oldPositions, newPositions);
 					b.selectedTab = self.getTabAt(newPositions[newSelectedIndex], b) ||
 									b.selectedTab;
 				}
-			}
+			})
 		);
+
+		this.moveHistoryEntryBefore(entry, 'undotab-moveTab');
 
 		aEvent = null;
 		aMovedTab = null;
-	},
-	rearrangeBundledTabsOf : function MTS_rearrangeBundledTabsOf()
-	{
-		var baseTab,
-			oldBasePosition = -1,
-			tabs;
-		Array.slice(arguments).forEach(function(aArg) {
-			if (aArg instanceof Components.interfaces.nsIDOMNode)
-				baseTab = aArg;
-			else if (typeof aArg == 'number')
-				oldBasePosition = aArg;
-			else if (typeof aArg == 'object')
-				tabs = aArg;
-		});
-
-		var b       = this.getTabBrowserFromChild(baseTab);
-		var allTabs = this.getTabsArray(b);
-		if (!tabs || !tabs.length)
-			tabs = this.getSelectedTabs(b);
-
-		var otherTabs = tabs.filter(function(aTab) {
-				return aTab != baseTab;
-			});
-
-		// step 1: calculate old positions of all tabs
-		var oldTabs = allTabs.slice(0);
-		if (oldBasePosition < 0) {
-			let positionInTabs = tabs.indexOf(baseTab);
-			if (positionInTabs < 0 || !tabs.length)
-				throw 'original positions of tabs cannot be calculated.';
-
-			oldTabs.splice(baseTab._tPos, 1);
-			oldTabs.splice.apply(oldTabs, [oldTabs.indexOf(otherTabs[0]), otherTabs.length].concat(tabs));
-		}
-		else {
-			oldTabs.splice(oldBasePosition, 0, oldTabs.splice(baseTab._tPos, 1)[0]);
-		}
-
-		// step 2: extract tabs which should be moved
-		var movedTabs = oldTabs.filter(function(aTab) {
-					return otherTabs.indexOf(aTab) > -1 || aTab == baseTab;
-				});
-
-		// step 3: simulate rearranging
-		var rearranged = allTabs.filter(function(aTab) {
-					return otherTabs.indexOf(aTab) < 0;
-				});
-		rearranged.splice.apply(rearranged, [rearranged.indexOf(baseTab), 1].concat(movedTabs));
-
-		// step 4: rearrange target tabs by the result of simulation
-		b.movingSelectedTabs = true;
-		rearranged.forEach(function(aTab, aNewPosition) {
-			if (otherTabs.indexOf(aTab) < 0) return;
-
-			var previousTab = aNewPosition > 0 ? rearranged[aNewPosition-1] : null ;
-			if (previousTab)
-				aNewPosition = previousTab._tPos + 1;
-			if (aNewPosition > aTab._tPos)
-				aNewPosition--;
-			if (aTab._tPos != aNewPosition)
-				b.moveTabTo(aTab, aNewPosition);
-		});
-		b.movingSelectedTabs = false;
-	},
-	getOriginalPositions : function MTS_getOriginalPositions(aTabs, aBaseTab, aOldBasePosition)
-	{
-		var newBasePosition = aBaseTab._tPos;
-		return aTabs.map(function(aTab) {
-				if (aTab == aBaseTab)
-					return aOldBasePosition;
-
-				var position = aTab._tPos;
-				if (position <= aOldBasePosition && position > newBasePosition)
-					position--;
-				else if (position >= aOldBasePosition && position < newBasePosition)
-					position++;
-
-				return position;
-			})
-			.sort();
-	},
-	moveTabsByIndex : function MTS_moveTabsByIndex(aTabBrowser, aOldPositions, aNewPositions)
-	{
-		// step 1: calculate new positions of all tabs
-		var restOldPositions = [];
-		var restNewPositions = [];
-		var tabs = this.getTabsArray(aTabBrowser);
-		tabs.forEach(function(aTab, aIndex) {
-			if (aOldPositions.indexOf(aIndex) < 0)
-				restOldPositions.push(aIndex);
-			if (aNewPositions.indexOf(aIndex) < 0)
-				restNewPositions.push(aIndex);
-		});
-
-		// step 2: simulate rearranging
-		var rearranged = tabs.map(function(aTab, aOldPosition) {
-				var index = aNewPositions.indexOf(aOldPosition);
-				return tabs[(index > -1) ?
-						aOldPositions[index] :
-						restOldPositions[restNewPositions.indexOf(aOldPosition)] ];
-			});
-
-		// step 3: rearrange target tabs by the result of simulation
-		aTabBrowser.movingSelectedTabs = true;
-		var movedTabsCount = 0;
-		tabs.forEach(function(aTab, aIndex) {
-			if (aOldPositions.indexOf(aIndex) < 0) return; // it's not a target!
-			var newPosition = aNewPositions[movedTabsCount++];
-			var previousTab = newPosition > 0 ? rearranged[newPosition-1] : null ;
-			if (previousTab)
-				newPosition = previousTab._tPos + 1;
-			if (newPosition > aTab._tPos)
-				newPosition--;
-			if (aTab._tPos != newPosition)
-				aTabBrowser.moveTabTo(aTab, newPosition);
-		});
-		aTabBrowser.movingSelectedTabs = false;
 	},
  
 	importBundledTabsOf : function MTS_importBundledTabsOf(aNewTab, aSourceTab) 
@@ -2789,12 +2828,15 @@ var MultipleTabService = {
 			window,
 			targetEntry
 		);
+
+		this.moveHistoryEntryBefore(targetEntry, 'undotab-importTab');
+		this.moveHistoryEntryBefore(targetEntry, 'undotab-onDrop-importTab');
 	},
 	windowMoveBundledTabsOf : function MTS_windowMoveBundledTabsOf(aNewTab, aSourceTab) // old name, for backward compatibility
 	{
 		return this.importBundledTabsOf(aNewTab, aSourceTab);
 	},
- 
+	
 	closeOwner : function MTS_closeOwner(aTabOwner) 
 	{
 		var w = aTabOwner.ownerDocument.defaultView;
@@ -2811,7 +2853,7 @@ var MultipleTabService = {
 		}
 		w.close();
 	},
- 
+  
 	duplicateBundledTabsOf : function MTS_duplicateBundledTabsOf(aNewTab, aSourceTab, aMayBeMove) 
 	{
 		var sourceId;
@@ -2934,6 +2976,8 @@ var MultipleTabService = {
 			window,
 			targetEntry
 		);
+
+		this.moveHistoryEntryBefore(targetEntry, 'undotab-duplicateTab');
 	},
  
 	tearOffSelectedTabsFromRemote : function MTS_tearOffSelectedTabsFromRemote() 
