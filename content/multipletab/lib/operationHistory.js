@@ -906,8 +906,11 @@
 							.map(function(aEntry, aIndex) {
 								var children = metaData[aIndex].children.length;
 								children = children ? ' ('+children+')' : '' ;
+								var name = aEntry.name;
+								name = name ? ' ['+name+']' : '' ;
 								return (aIndex == index ? '*' : ' ' )+
 										' '+aIndex+': '+aEntry.label+
+										name+
 										children;
 							}, this)
 							.join('\n');

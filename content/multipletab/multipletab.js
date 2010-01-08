@@ -1220,6 +1220,7 @@ var MultipleTabService = {
 				'TabbarOperations',
 				window,
 				{
+					name   : 'multipletab-duplicateTabs',
 					label  : this.bundle.getString('undo_duplicateTabs_label'),
 					// I don't define onUndo() and onRedo() for this entry
 					// because they are processed 
@@ -1554,6 +1555,7 @@ var MultipleTabService = {
 			'TabbarOperations',
 			w,
 			{
+				name   : 'multipletab-closeTabs',
 				label  : this.bundle.getString('undo_closeTabs_label'),
 				onUndo : function(aInfo) {
 					var sv = w.MultipleTabService;
@@ -1811,6 +1813,7 @@ var MultipleTabService = {
 			'TabbarOperations',
 			w,
 			{
+				name   : 'multipletab-duplicateTabs',
 				label  : this.bundle.getString('undo_duplicateTabs_label'),
 				onUndo : function(aInfo) {
 					var sv = w.MultipleTabService;
@@ -1909,6 +1912,7 @@ var MultipleTabService = {
 		var remoteId = aRemoteWindow ? sourceWindow['piro.sakura.ne.jp'].operationHistory.getWindowId(aRemoteWindow) : null ;
 
 		var historyEntry = {
+				name   : 'multipletab-tearOffTabs',
 				label  : this.bundle.getString('undo_splitWindowFromTabs_label'),
 				onUndo : function(aInfo) {
 					// Don't undo if the original window is already closed (for safety)
@@ -2397,6 +2401,7 @@ var MultipleTabService = {
 			'TabbarOperations',
 			window,
 			{
+				name   : 'multipletab-moveBundledTabs',
 				label  : this.bundle.getString('undo_moveBundledTabsOf_label'),
 				onUndo : function(aInfo) {
 					// Don't undo when tabs are modified (for safety)
@@ -2569,6 +2574,7 @@ var MultipleTabService = {
 		var shouldSelectAfter = this.getPref('extensions.multipletab.selectAfter.move');
 
 		var targetEntry = {
+				name   : 'multipletab-importBundledTabs',
 				label  : this.bundle.getString('undo_importBundledTabsOf_target_label'),
 				getTargetWindow : function(aInfo) {
 					var targetWindow = aInfo.manager.getWindowById(targetId);
@@ -2827,6 +2833,9 @@ var MultipleTabService = {
 			);
 
 		var targetEntry = {
+				name   : isMove ?
+							'multipletab-moveBundledTabs' :
+							'multipletab-duplicateBundledTabs',
 				label  : this.bundle.getString(isMove ?
 							'undo_importBundledTabsOf_target_label' :
 							'undo_duplicateTabs_label'
