@@ -722,13 +722,15 @@ var MultipleTabService = {
 			', aSourceEvent)'
 		).replace(
 			'{',
-			'{ var newTab = (function() {'
+			'{ return MultipleTabService.onDuplicateTab(function() {'
 		).replace(
 			/(\}\)?)$/,
 			<![CDATA[
-				}).call(this);
-				MultipleTabService.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
-				return newTab;
+					},
+					this,
+					aTab,
+					aSourceEvent
+				);
 			$1]]>
 		));
 
@@ -1195,6 +1197,42 @@ var MultipleTabService = {
 			var tab = this.getTabFromEvent(aEvent, true);
 			this.toggleReadyToClose(tab);
 		}
+	},
+ 
+	// for drag and drop of selected tabs
+	onDuplicateTab : function MTS_onDuplicateTab(aTask, aTabBrowser, aTab, aSourceEvent) 
+	{
+		var newTab;
+		if (
+			this.isSelected(aTab) &&
+			this.allowMoveMultipleTabs &&
+			!aTabBrowser.duplicatingSelectedTabs &&
+			!window['piro.sakura.ne.jp'].operationHistory.isUndoing('TabbarOperations', window) &&
+			!window['piro.sakura.ne.jp'].operationHistory.isRedoing('TabbarOperations', window)
+			) {
+			var self = this;
+			window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
+				function(aInfo) {
+					newTab = aTask.call(aTabBrowser);
+					self.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
+				},
+
+				'TabbarOperations',
+				window,
+				{
+					label  : this.bundle.getString('undo_duplicateTabs_label'),
+					// I don't define onUndo() and onRedo() for this entry
+					// because they are processed 
+					onUndo : function(aInfo) { return false; },
+					onRedo : function(aInfo) { return false; }
+				}
+			);
+		}
+		else {
+			newTab = aTask.call(aTabBrowser);
+			this.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
+		}
+		return newTab;
 	},
   
 /* Popup */ 
@@ -2365,7 +2403,7 @@ var MultipleTabService = {
 					if (self.getTabs(b).snapshotLength != count)
 						return false;
 					// Restore tab position changed by onUndo() for moveTabTo()
-					if (aInfo.level)
+					if (aInfo.processed)
 						b.moveTabTo(self.getTabAt(oldPosition, b), newPosition);
 					self.moveTabsByIndex(b, newPositions, oldPositions);
 					b.selectedTab = self.getTabAt(oldPositions[oldSelectedIndex], b) ||
@@ -2374,7 +2412,7 @@ var MultipleTabService = {
 				onRedo : function(aInfo) {
 					if (self.getTabs(b).snapshotLength != count)
 						return false;
-					if (aInfo.level)
+					if (aInfo.processed)
 						b.moveTabTo(self.getTabAt(newPosition, b), oldPosition);
 					self.moveTabsByIndex(b, oldPositions, newPositions);
 					b.selectedTab = self.getTabAt(newPositions[newSelectedIndex], b) ||
@@ -2595,7 +2633,7 @@ var MultipleTabService = {
 					});
 
 					// Don't undo when tabs are modified (for safety)
-					var offset = aInfo.level ? 1 : 0 ;
+					var offset = aInfo.processed ? 1 : 0 ;
 					if (sourceService.getTabs(sourceBrowser).snapshotLength - offset != sourceTabsCount - importedTabsCount)
 						return false;
 
@@ -2603,7 +2641,7 @@ var MultipleTabService = {
 					sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
 
 					// Restore tab position changed by onUndo() for the parent entry
-					if (aInfo.level)
+					if (aInfo.processed)
 						this.restoreOneTab(sourceService, sourceBrowser, targetBrowser, oldPosition, newPosition);
 					importedTabs = this.getTabsFromPositions(targetService, targetBrowser, newPositions);
 
@@ -2640,7 +2678,7 @@ var MultipleTabService = {
 					});
 
 					// Don't redo when tabs are modified (for safety)
-					var offset = aInfo.level ? 1 : 0 ;
+					var offset = aInfo.processed ? 1 : 0 ;
 					if (sourceService.getTabs(sourceBrowser).snapshotLength + offset != sourceTabsCount)
 						return false;
 
@@ -2648,7 +2686,7 @@ var MultipleTabService = {
 					sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
 
 					// Restore tab position changed by onRedo() for the parent entry
-					if (aInfo.level)
+					if (aInfo.processed)
 						this.restoreOneTab(sourceService, targetBrowser, sourceBrowser, newPosition, oldPosition);
 
 					var sourceTabs = this.getTabsFromPositions(sourceService, sourceBrowser, oldPositions);
