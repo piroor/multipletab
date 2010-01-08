@@ -74,7 +74,7 @@
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/operationHistory.test.js
 */
 (function() {
-	const currentRevision = 32;
+	const currentRevision = 33;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -841,12 +841,38 @@
 				'\n  in operation : '+this.inOperationCount,
 				this.inOperationCount);
 			if (this.inOperation) {
-				this.lastMetaData.children.push(aEntry);
-				log(' => child level ('+(this.lastMetaData.children.length-1)+')', this.inOperationCount);
+				let metaData = this.lastMetaData;
+				metaData.children.push(aEntry);
+				metaData.names.push(aEntry.name);
+				log(' => level '+metaData.children.length+' (child)', this.inOperationCount);
 			}
 			else {
 				this._addNewEntry(aEntry);
-				log(' => top level ('+(this.entries.length-1)+')', this.inOperationCount);
+				log(' => level 0 (new entry at '+(this.entries.length-1)+')', this.inOperationCount);
+			}
+
+			var index = this.safeIndex;
+			var names = aEntry.insertBefore;
+			if (names && names.length) {
+				if (typeof names == 'string')
+					names = [names];
+
+				let metaData = this.metaData[index];
+				let insertionPositions = names.map(function(aName) {
+							return metaData.names.indexOf(aName);
+						})
+						.filter(function(aIndex) {
+							return aIndex > -1;
+						})
+						.sort();
+				if (insertionPositions.length) {
+					let position = insertionPositions[0];
+					let entries = this._getEntriesAt(index);
+					entries.splice(entries.indexOf(aEntry), 1);
+					entries.splice(position, 0, aEntry);
+					this._setEntriesAt(entries, index);
+					log(' => moved (inserted) to level '+position, this.inOperationCount);
+				}
 			}
 		},
 		_addNewEntry : function(aEntry)
@@ -855,8 +881,11 @@
 			this.entries.push(aEntry);
 			this.entries = this.entries.slice(-this.max);
 
+			var metaData = new UIHistoryMetaData();
+			metaData.names.push(aEntry.name);
+
 			this.metaData = this.metaData.slice(0, this.index+1);
-			this.metaData.push(new UIHistoryMetaData());
+			this.metaData.push(metaData);
 			this.metaData = this.metaData.slice(-this.max);
 
 			this.index = this.entries.length;
@@ -910,6 +939,9 @@
 			if (aIndex < 0 || aIndex >= this.entries.length)
 				return aEntries;
 
+			this.metaData[aIndex].names = aEntries.map(function(aEntry) {
+					return aEntry.name;
+				});
 			var parent = aEntries[0];
 			var children = aEntries.slice(1);
 			this.entries[aIndex] = parent;
@@ -923,6 +955,18 @@
 		set lastEntries(aEntries)
 		{
 			return this._setEntriesAt(aEntries, this.entries.length-1);
+		},
+
+		_getPromotionOptions : function(aArguments)
+		{
+			var entry, names = [];
+			Array.slice(aArguments).forEach(function(aArg) {
+				if (typeof aArg == 'string')
+					names.push(aArg);
+				else if (typeof aArg == 'object')
+					entry = aArg;
+			});
+			return [entry, names];
 		},
 
 		toString : function()
@@ -1012,6 +1056,7 @@
 		clear : function()
 		{
 			this.children = [];
+			this.names = [];
 		}
 	};
 

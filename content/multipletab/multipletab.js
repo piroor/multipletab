@@ -718,30 +718,6 @@ var MultipleTabService = {
 		var tabs = b ? this.getSelectedTabs(b) : [] ;
 		return tabs;
 	},
- 
-	moveHistoryEntryBefore : function MTS_moveHistoryEntryBefore(aEntry, aName) 
-	{
-		var history = window['piro.sakura.ne.jp'].operationHistory.getHistory('TabbarOperations', window);
-		var entries = history.lastEntries;
-		if (!entries) return;
-
-		var index = entries.indexOf(aEntry);
-		if (index < 0) return;
-
-		var insertionPoint = -1;
-		for (let i in entries)
-		{
-			if (entries[i].name != aName)
-				continue;
-			insertionPoint = i;
-			break;
-		}
-		if (insertionPoint < 0) return;
-
-		entries.splice(index, 1);
-		entries.splice(insertionPoint, 0, aEntry);
-		history.lastEntries = entries;
-	},
   
 /* Initializing */ 
 	
@@ -1387,7 +1363,6 @@ var MultipleTabService = {
 			!window['piro.sakura.ne.jp'].operationHistory.isRedoing('TabbarOperations', window)
 			) {
 			var self = this;
-			var entry;
 			window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
 				function(aInfo) {
 					newTab = aTask.call(aTabBrowser);
@@ -1396,16 +1371,16 @@ var MultipleTabService = {
 
 				'TabbarOperations',
 				window,
-				(entry = {
+				{
 					name   : 'multipletab-duplicateTabs',
 					label  : this.bundle.getString('undo_duplicateTabs_label'),
+					insertBefore : ['undotab-duplicateTab'],
 					// I don't define onUndo() and onRedo() for this entry
 					// because they are processed
 					onUndo : function(aInfo) { return false; },
 					onRedo : function(aInfo) { return false; }
-				})
+				}
 			);
-			this.moveHistoryEntryBefore(entry, 'undotab-duplicateTab');
 		}
 		else {
 			newTab = aTask.call(aTabBrowser);
@@ -1991,9 +1966,10 @@ var MultipleTabService = {
 
 			'TabbarOperations',
 			w,
-			(entry = {
-				name   : 'multipletab-duplicateTabs',
-				label  : this.bundle.getString('undo_duplicateTabs_label'),
+			{
+				name  : 'multipletab-duplicateTabs',
+				label : this.bundle.getString('undo_duplicateTabs_label'),
+				insertBefore : ['undotab-duplicateTab'],
 				onUndo : function(aInfo) {
 					var sv = w.MultipleTabService;
 					var tabs = sv.getTabsArray(b);
@@ -2010,9 +1986,8 @@ var MultipleTabService = {
 
 					w['piro.sakura.ne.jp'].stopRendering.start();
 				}
-			})
+			}
 		);
-		this.moveHistoryEntryBefore(entry, 'undotab-duplicateTab');
 
 		var tabs = this.getTabs(b);
 		return duplicatedIndexes.map(function(aIndex) {
@@ -2537,7 +2512,6 @@ var MultipleTabService = {
 		var newPositions;
 
 		var self = this;
-		var entry;
 		window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
 			function() {
 				var movedTabs = self.getSelectedTabs(b);
@@ -2559,9 +2533,10 @@ var MultipleTabService = {
 
 			'TabbarOperations',
 			window,
-			(entry = {
-				name   : 'multipletab-moveBundledTabs',
-				label  : this.bundle.getString('undo_moveBundledTabsOf_label'),
+			{
+				name  : 'multipletab-moveBundledTabs',
+				label : this.bundle.getString('undo_moveBundledTabsOf_label'),
+				insertBefore : ['undotab-moveTab'],
 				onUndo : function(aInfo) {
 					// Don't undo when tabs are modified (for safety)
 					if (self.getTabs(b).snapshotLength != count)
@@ -2577,10 +2552,8 @@ var MultipleTabService = {
 					b.selectedTab = self.getTabAt(newPositions[newSelectedIndex], b) ||
 									b.selectedTab;
 				}
-			})
+			}
 		);
-
-		this.moveHistoryEntryBefore(entry, 'undotab-moveTab');
 
 		aEvent = null;
 		aMovedTab = null;
@@ -2613,8 +2586,9 @@ var MultipleTabService = {
 		var shouldSelectAfter = this.getPref('extensions.multipletab.selectAfter.move');
 
 		var targetEntry = {
-				name   : 'multipletab-importBundledTabs',
-				label  : this.bundle.getString('undo_importBundledTabsOf_target_label'),
+				name  : 'multipletab-importBundledTabs',
+				label : this.bundle.getString('undo_importBundledTabsOf_target_label'),
+				insertBefore : ['undotab-importTab', 'undotab-onDrop-importTab'],
 				getTargetWindow : function(aInfo) {
 					var targetWindow = aInfo.manager.getWindowById(targetId);
 					if (!targetWindow ||
@@ -2828,9 +2802,6 @@ var MultipleTabService = {
 			window,
 			targetEntry
 		);
-
-		this.moveHistoryEntryBefore(targetEntry, 'undotab-importTab');
-		this.moveHistoryEntryBefore(targetEntry, 'undotab-onDrop-importTab');
 	},
 	windowMoveBundledTabsOf : function MTS_windowMoveBundledTabsOf(aNewTab, aSourceTab) // old name, for backward compatibility
 	{
@@ -2882,6 +2853,7 @@ var MultipleTabService = {
 							'undo_importBundledTabsOf_target_label' :
 							'undo_duplicateTabs_label'
 						),
+				insertBefore : ['undotab-duplicateTab'],
 				onUndo : function(aInfo) {
 				},
 				onRedo : function(aInfo) {
@@ -2976,8 +2948,6 @@ var MultipleTabService = {
 			window,
 			targetEntry
 		);
-
-		this.moveHistoryEntryBefore(targetEntry, 'undotab-duplicateTab');
 	},
  
 	tearOffSelectedTabsFromRemote : function MTS_tearOffSelectedTabsFromRemote() 
