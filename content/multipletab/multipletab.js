@@ -2363,7 +2363,7 @@ var MultipleTabService = {
 					movedToRight = oldPos < aNewBasePos;
 				}
 				if (oldPos < aOldBasePos)
-					return movedToLeft && !movedToRight ? 0 : -1 ;
+					return movedToRight || !movedToLeft ? -1 : 0 ;
 				return ++afterTabsOffset;
 			});
 	},
@@ -2483,8 +2483,6 @@ var MultipleTabService = {
 			var previousTab = newPosition > 0 ? rearranged[newPosition-1] : null ;
 			if (previousTab)
 				newPosition = previousTab._tPos + 1;
-			if (aTab._tPos < newPosition)
-				newPosition--;
 			if (aTab._tPos != newPosition)
 				aTabBrowser.moveTabTo(aTab, newPosition);
 		});
