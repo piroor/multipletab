@@ -2808,51 +2808,123 @@ var MultipleTabService = {
  
 	duplicateBundledTabsOf : function MTS_duplicateBundledTabsOf(aNewTab, aSourceTab, aMayBeMove) 
 	{
-		var info = {};
-		var sourceTabs = this.getBundledTabsOf(aSourceTab, info);
-
+		var sourceId;
+		var targetId = window['piro.sakura.ne.jp'].operationHistory.getWindowId(window);
+		var sourceBrowser;
 		var targetBrowser = this.getTabBrowserFromChild(aNewTab);
-		var sourceBrowser = info.sourceBrowser;
-		var sourceService = info.sourceWindow.MultipleTabService;
+		var duplicatedTabsCount = 0;
+		var sourceTabsCount = 0;
+		var targetTabsCount = this.getTabs(targetBrowser).snapshotLength - 1;
 
-		var isMove = aMayBeMove && targetBrowser != sourceBrowser;
-		var shouldClose = isMove && sourceService.getTabs(sourceBrowser).snapshotLength == sourceTabs.length;
-
-		var index = sourceTabs.indexOf(aSourceTab);
-		var otherTabs = sourceTabs.slice(0);
-		otherTabs.splice(index, 1);
-
-		sourceService.clearSelection(sourceBrowser);
-		this.clearSelection(targetBrowser);
-
-		var self = this;
-		var selectAfter = this.getPref(isMove ?
+		var isMove = (
+				aMayBeMove &&
+				this.getTabBrowserFromChild(aSourceTab) != this.getTabBrowserFromChild(aNewTab)
+			);
+		var isAllTabsMove;
+		var shouldSelectAfter = this.getPref(isMove ?
 				'extensions.multipletab.selectAfter.move' :
 				'extensions.multipletab.selectAfter.duplicate'
 			);
-		window.setTimeout(function() {
-			targetBrowser.duplicatingSelectedTabs = true;
-			targetBrowser.movingSelectedTabs = true;
 
-			var duplicatedTabs = self.importTabsTo(otherTabs, targetBrowser, !isMove);
-			duplicatedTabs.splice(index, 0, aNewTab);
-			self.rearrangeBundledTabsOf(aNewTab, duplicatedTabs);
+		var targetEntry = {
+				label  : this.bundle.getString(isMove ?
+							'undo_importBundledTabsOf_target_label' :
+							'undo_duplicateTabs_label'
+						),
+				onUndo : function(aInfo) {
+				},
+				onRedo : function(aInfo) {
+				}
+			};
+		var sourceEntry = {
+				__proto__ : targetEntry,
+				label  : this.bundle.getString(isMove ?
+							'undo_duplicateBundledTabsOf_source_label' :
+							'undo_duplicateTabs_label'
+						),
+			};
 
-			if (selectAfter)
-				duplicatedTabs.forEach(function(aTab) {
-					self.setSelection(aTab, true);
-				});
+		window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
+			function(aInfo) {
+				var targetWindow = window;
+				var targetService = targetWindow.MultipleTabService;
 
-			if (shouldClose) self.closeOwner(sourceBrowser);
+				var info = {};
+				var sourceTabs = targetService.getBundledTabsOf(aSourceTab, info);
 
-			targetBrowser.movingSelectedTabs = false;
-			targetBrowser.duplicatingSelectedTabs = false;
-			targetBrowser.mTabDropIndicatorBar.collapsed = true; // hide anyway!
+				var targetBrowser = targetService.getTabBrowserFromChild(aNewTab);
+				var sourceWindow  = info.sourceWindow;
+				var sourceService = sourceWindow.MultipleTabService;
+				sourceBrowser = info.sourceBrowser;
+				sourceId = aInfo.manager.getWindowId(sourceWindow);
+				sourceTabsCount = sourceService.getTabs(sourceBrowser).snapshotLength;
+				duplicatedTabsCount = sourceTabs.length;
 
-			delete info.sourceBrowser;
-			delete info.sourceWindow;
-			info = null;
-		}, 0);
+				isAllTabsMove = isMove && sourceService.getTabs(sourceBrowser).snapshotLength == sourceTabs.length;
+
+				var sourceBaseIndex = sourceTabs.indexOf(aSourceTab);
+				var otherTabs = sourceTabs.slice(0);
+				otherTabs.splice(sourceBaseIndex, 1);
+
+				sourceService.clearSelection(sourceBrowser);
+				targetService.clearSelection(targetBrowser);
+
+				var otherSourceTabs = sourceTabs.slice(0);
+				otherSourceTabs.splice(otherSourceTabs.indexOf(aSourceTab), 1);
+
+				var targetContinuation = aInfo.getContinuation();
+				var targetTask = function() {
+						targetBrowser.duplicatingSelectedTabs = true;
+						targetBrowser.movingSelectedTabs = true;
+
+						var duplicatedTabs = targetService.importTabsTo(otherTabs, targetBrowser, !isMove);
+						duplicatedTabs.splice(sourceBaseIndex, 0, aNewTab);
+						targetService.rearrangeBundledTabsOf(aNewTab, duplicatedTabs);
+
+						if (shouldSelectAfter)
+							duplicatedTabs.forEach(function(aTab) {
+								targetService.setSelection(aTab, true);
+							});
+
+						if (isAllTabsMove) {
+							targetService.closeOwner(sourceBrowser);
+							sourceBrowser = null;
+						}
+
+						targetBrowser.movingSelectedTabs = false;
+						targetBrowser.duplicatingSelectedTabs = false;
+						targetBrowser.mTabDropIndicatorBar.collapsed = true; // hide anyway!
+
+						delete info.sourceBrowser;
+						delete info.sourceWindow;
+						info = null;
+
+						targetContinuation();
+					};
+
+				if (targetWindow != sourceWindow) {
+					aInfo.manager.doUndoableTask(
+						function(aInfo) {
+							var sourceContinuation = aInfo.getContinuation();
+							targetWindow.setTimeout(function() {
+								targetTask();
+								sourceContinuation();
+							}, 0);
+						},
+						'TabbarOperations',
+						sourceWindow,
+						sourceEntry
+					);
+				}
+				else {
+					targetWindow.setTimeout(targetTask, 0);
+				}
+			},
+
+			'TabbarOperations',
+			window,
+			targetEntry
+		);
 	},
  
 	tearOffSelectedTabsFromRemote : function MTS_tearOffSelectedTabsFromRemote() 
