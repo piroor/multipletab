@@ -648,16 +648,6 @@ var MultipleTabService = {
 	delayedInit : function MTS_delayedInit() 
 	{
 		this.overrideExtensionsOnDelayedInit(); // hacks.js
-
-		if (!('duplicateTab' in gBrowser)) {
-			gBrowser.duplicateTab = function(aTab, aSourceEvent) {
-				MultipleTabService.duplicateTabs([aTab]);
-				var lastTab = MultipleTabService.getTabsArray(this);
-				lastTab = lastTab[lastTab.length-1];
-				MultipleTabService.fireDuplicatedEvent(lastTab, aTab, aSourceEvent);
-				return lastTab;
-			};
-		}
 	},
  
 	kPREF_VERSION : 1,
@@ -727,24 +717,20 @@ var MultipleTabService = {
 		));
 */
 
-		if ('duplicateTab' in aTabBrowser) {
-			eval('aTabBrowser.duplicateTab = '+aTabBrowser.duplicateTab.toSource().replace(
-				')',
-				', aSourceEvent)'
-			).replace(
-				'{',
-				'{ var newTab;'
-			).replace(
-				/return /g,
-				'newTab = '
-			).replace(
-				/(\}\)?)$/,
-				<![CDATA[
-					MultipleTabService.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
-					return newTab;
-				$1]]>
-			));
-		}
+		eval('aTabBrowser.duplicateTab = '+aTabBrowser.duplicateTab.toSource().replace(
+			')',
+			', aSourceEvent)'
+		).replace(
+			'{',
+			'{ var newTab = (function() {'
+		).replace(
+			/(\}\)?)$/,
+			<![CDATA[
+				}).call(this);
+				MultipleTabService.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
+				return newTab;
+			$1]]>
+		));
 
 		if ('_onDrop' in aTabBrowser && 'swapBrowsersAndCloseOther' in aTabBrowser) {
 			eval('aTabBrowser._onDrop = '+aTabBrowser._onDrop.toSource().replace(
@@ -2339,35 +2325,6 @@ var MultipleTabService = {
 		return w.MultipleTabService.getSelectedTabs(b);
 	},
  
-	calculateDeltaForNewPosition : function MTS_calculateDeltaForNewPosition(aTabs, aOldBasePos, aNewBasePos) 
-	{
-		var isMove = aNewBasePos > -1;
-		var movedToLeft = isMove && (aNewBasePos - aOldBasePos < 0);
-		var afterTabsOffset = !isMove || movedToLeft || (aTabs[0]._tPos > aNewBasePos) ? 0 : -1 ;
-		return aTabs.map(function(aTab) {
-				var oldPos = aTab._tPos;
-				var movedToRight = !movedToLeft;
-				if (isMove) {
-					if (
-						movedToLeft &&
-						oldPos > aNewBasePos &&
-						oldPos <= aOldBasePos
-						)
-						oldPos--;
-					else if (
-						!movedToLeft &&
-						oldPos < aNewBasePos &&
-						oldPos >= aOldBasePos
-						)
-						oldPos++;
-					movedToRight = oldPos < aNewBasePos;
-				}
-				if (oldPos < aOldBasePos)
-					return !movedToLeft || movedToRight ? -1 : 0 ;
-				return ++afterTabsOffset;
-			});
-	},
- 
 	moveBundledTabsOf : function MTS_moveBundledTabsOf(aMovedTab, aEvent) 
 	{
 		var b = this.getTabBrowserFromChild(aMovedTab);
@@ -2387,24 +2344,15 @@ var MultipleTabService = {
 				oldSelectedIndex = movedTabs.indexOf(b.selectedTab);
 				oldPositions = self.getOriginalPositions(movedTabs, aMovedTab, oldPosition);
 
-				var otherTabs = movedTabs.slice(0);
-				otherTabs.splice(otherTabs.indexOf(aMovedTab), 1);
-				var delta = self.calculateDeltaForNewPosition(otherTabs, oldPosition, newPosition);
+				self.rearrangeBundledTabsOf(aMovedTab, oldPosition, movedTabs);
 
-				b.movingSelectedTabs = true;
-
-				otherTabs.forEach(function(aTab, aIndex) {
-					b.moveTabTo(aTab, aMovedTab._tPos + delta[aIndex]);
-				});
 				newPosition = aMovedTab._tPos;
-
 				newPositions = movedTabs.map(function(aTab, aIndex) {
 						if (aTab.selected) newSelectedIndex = aIndex;
 						return aTab._tPos;
 					})
 					.sort();
 
-				b.movingSelectedTabs = false;
 				b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 			},
 
@@ -2438,6 +2386,69 @@ var MultipleTabService = {
 		aEvent = null;
 		aMovedTab = null;
 	},
+	rearrangeBundledTabsOf : function MTS_rearrangeBundledTabsOf()
+	{
+		var baseTab,
+			oldBasePosition = -1,
+			tabs;
+		Array.slice(arguments).forEach(function(aArg) {
+			if (aArg instanceof Components.interfaces.nsIDOMNode)
+				baseTab = aArg;
+			else if (typeof aArg == 'number')
+				oldBasePosition = aArg;
+			else if (typeof aArg == 'object')
+				tabs = aArg;
+		});
+
+		var b       = this.getTabBrowserFromChild(baseTab);
+		var allTabs = this.getTabsArray(b);
+		if (!tabs || !tabs.length)
+			tabs = this.getSelectedTabs(b);
+
+		var otherTabs = tabs.filter(function(aTab) {
+				return aTab != baseTab;
+			});
+
+		// step 1: calculate old positions of all tabs
+		var oldTabs = allTabs.slice(0);
+		if (oldBasePosition < 0) {
+			let positionInTabs = tabs.indexOf(baseTab);
+			if (positionInTabs < 0 || !tabs.length)
+				throw 'original positions of tabs cannot be calculated.';
+
+			oldTabs.splice(baseTab._tPos, 1);
+			oldTabs.splice.apply(oldTabs, [oldTabs.indexOf(otherTabs[0]), otherTabs.length].concat(tabs));
+		}
+		else {
+			oldTabs.splice(oldBasePosition, 0, oldTabs.splice(baseTab._tPos, 1)[0]);
+		}
+
+		// step 2: extract tabs which should be moved
+		var movedTabs = oldTabs.filter(function(aTab) {
+					return otherTabs.indexOf(aTab) > -1 || aTab == baseTab;
+				});
+
+		// step 3: simulate rearranging
+		var rearranged = allTabs.filter(function(aTab) {
+					return otherTabs.indexOf(aTab) < 0;
+				});
+		rearranged.splice.apply(rearranged, [rearranged.indexOf(baseTab), 1].concat(movedTabs));
+
+		// step 4: rearrange target tabs by the result of simulation
+		b.movingSelectedTabs = true;
+		rearranged.forEach(function(aTab, aNewPosition) {
+			if (otherTabs.indexOf(aTab) < 0) return;
+
+			var previousTab = aNewPosition > 0 ? rearranged[aNewPosition-1] : null ;
+			if (previousTab)
+				aNewPosition = previousTab._tPos + 1;
+			if (aNewPosition > aTab._tPos)
+				aNewPosition--;
+			if (aTab._tPos != aNewPosition)
+				b.moveTabTo(aTab, aNewPosition);
+		});
+		b.movingSelectedTabs = false;
+	},
 	getOriginalPositions : function MTS_getOriginalPositions(aTabs, aBaseTab, aOldBasePosition)
 	{
 		var newBasePosition = aBaseTab._tPos;
@@ -2467,6 +2478,7 @@ var MultipleTabService = {
 			if (aNewPositions.indexOf(aIndex) < 0)
 				restNewPositions.push(aIndex);
 		});
+
 		// step 2: simulate rearranging
 		var rearranged = tabs.map(function(aTab, aOldPosition) {
 				var index = aNewPositions.indexOf(aOldPosition);
@@ -2474,6 +2486,7 @@ var MultipleTabService = {
 						aOldPositions[index] :
 						restOldPositions[restNewPositions.indexOf(aOldPosition)] ];
 			});
+
 		// step 3: rearrange target tabs by the result of simulation
 		aTabBrowser.movingSelectedTabs = true;
 		var movedTabsCount = 0;
@@ -2483,6 +2496,8 @@ var MultipleTabService = {
 			var previousTab = newPosition > 0 ? rearranged[newPosition-1] : null ;
 			if (previousTab)
 				newPosition = previousTab._tPos + 1;
+			if (newPosition > aTab._tPos)
+				newPosition--;
 			if (aTab._tPos != newPosition)
 				aTabBrowser.moveTabTo(aTab, newPosition);
 		});
@@ -2671,6 +2686,7 @@ var MultipleTabService = {
 
 				var info = {};
 				var sourceTabs = targetService.getBundledTabsOf(aSourceTab, info);
+				var sourceBaseIndex = sourceTabs.indexOf(aSourceTab);
 				oldPositions = targetService.getOriginalPositions(sourceTabs, aSourceTab, oldPosition);
 
 				var otherSourceTabs = sourceTabs.slice(0);
@@ -2691,27 +2707,20 @@ var MultipleTabService = {
 				targetService.clearSelection(targetBrowser);
 				sourceService.clearSelection(sourceBrowser);
 
-				var delta      = sourceService.calculateDeltaForNewPosition(otherSourceTabs, oldPosition, -1);
-				var hasNextTab = targetService.getNextTab(aNewTab);
-
 				window['piro.sakura.ne.jp'].stopRendering.stop();
 				sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
 				aInfo.manager.doUndoableTask(
 					function(aInfo) {
 						var importedTabs = targetService.importTabsTo(otherSourceTabs, targetBrowser);
-						importedTabs.forEach(function(aTab, aIndex) {
-							if (delta[aIndex] > 0 && hasNextTab)
-								delta[aIndex]--;
-							targetBrowser.moveTabTo(aTab, aNewTab._tPos + delta[aIndex] + 1);
-							newPosition = aNewTab._tPos;
-							if (shouldSelectAfter)
-								targetService.setSelection(aTab, true);
-						}, targetService);
-
-						newPositions = [aNewTab].concat(importedTabs).map(function(aTab) {
+						importedTabs.splice(sourceBaseIndex, 0, aNewTab);
+						targetService.rearrangeBundledTabsOf(aNewTab, importedTabs);
+						newPositions = importedTabs.map(function(aTab) {
+								if (shouldSelectAfter)
+									targetService.setSelection(aTab, true);
 								return aTab._tPos;
 							})
 							.sort();
+						newPosition = aNewTab._tPos;
 						newSelectedIndex = newPositions.indexOf(newPosition);
 					},
 					'TabbarOperations',
@@ -2772,9 +2781,8 @@ var MultipleTabService = {
 		var shouldClose = isMove && sourceService.getTabs(sourceBrowser).snapshotLength == sourceTabs.length;
 
 		var index = sourceTabs.indexOf(aSourceTab);
-		sourceTabs.splice(index, 1);
-
-		var delta = sourceService.calculateDeltaForNewPosition(sourceTabs, aSourceTab._tPos, -1);
+		var otherTabs = sourceTabs.slice(0);
+		otherTabs.splice(index, 1);
 
 		sourceService.clearSelection(sourceBrowser);
 		this.clearSelection(targetBrowser);
@@ -2788,18 +2796,17 @@ var MultipleTabService = {
 			targetBrowser.duplicatingSelectedTabs = true;
 			targetBrowser.movingSelectedTabs = true;
 
-			var hasNextTab = sourceService.getNextTab(aNewTab);
+			var duplicatedTabs = self.importTabsTo(otherTabs, targetBrowser, !isMove);
+			duplicatedTabs.splice(index, 0, aNewTab);
+			self.rearrangeBundledTabsOf(aNewTab, duplicatedTabs);
 
-			var importedTabs = self.importTabsTo(sourceTabs, targetBrowser, !isMove);
-			importedTabs.forEach(function(aTab, aIndex) {
-				if (delta[aIndex] > 0 && hasNextTab) delta[aIndex]--;
-				targetBrowser.moveTabTo(aTab, aNewTab._tPos + delta[aIndex] + 1);
-				if (selectAfter) self.setSelection(aTab, true);
-			});
+			if (selectAfter)
+				duplicatedTabs.forEach(function(aTab) {
+					self.setSelection(aTab, true);
+				});
 
 			if (shouldClose) self.closeOwner(sourceBrowser);
 
-			self.setSelection(aNewTab, selectAfter);
 			targetBrowser.movingSelectedTabs = false;
 			targetBrowser.duplicatingSelectedTabs = false;
 			targetBrowser.mTabDropIndicatorBar.collapsed = true; // hide anyway!
