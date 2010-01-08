@@ -2416,7 +2416,7 @@ var MultipleTabService = {
 					// Restore tab position changed by onUndo() for moveTabTo()
 					if (aInfo.level)
 						b.moveTabTo(self.getTabAt(oldPosition, b), newPosition);
-					self.moveTabs(b, newPositions, oldPositions);
+					self.moveTabsByIndex(b, newPositions, oldPositions);
 					b.selectedTab = self.getTabAt(oldPositions[oldSelectedIndex], b) ||
 									b.selectedTab;
 				},
@@ -2425,7 +2425,7 @@ var MultipleTabService = {
 						return false;
 					if (aInfo.level)
 						b.moveTabTo(self.getTabAt(newPosition, b), oldPosition);
-					self.moveTabs(b, oldPositions, newPositions);
+					self.moveTabsByIndex(b, oldPositions, newPositions);
 					b.selectedTab = self.getTabAt(newPositions[newSelectedIndex], b) ||
 									b.selectedTab;
 				}
@@ -2452,7 +2452,7 @@ var MultipleTabService = {
 			})
 			.sort();
 	},
-	moveTabs : function MTS_moveTabs(aTabBrowser, aOldPositions, aNewPositions)
+	moveTabsByIndex : function MTS_moveTabsByIndex(aTabBrowser, aOldPositions, aNewPositions)
 	{
 		var restOldPositions = [];
 		var restNewPositions = [];
@@ -2579,7 +2579,7 @@ var MultipleTabService = {
 					importedTabs = this.getTabsFromPositions(targetService, targetBrowser, newPositions);
 
 					var sourceTabs = sourceService.importTabsTo(importedTabs, sourceBrowser);
-					sourceService.moveTabs(
+					sourceService.moveTabsByIndex(
 						sourceBrowser,
 						sourceTabs.map(function(aTab) {
 							return aTab._tPos;
@@ -2624,7 +2624,7 @@ var MultipleTabService = {
 
 					var sourceTabs = this.getTabsFromPositions(sourceService, sourceBrowser, oldPositions);
 					var importedTabs = targetService.importTabsTo(sourceTabs, targetBrowser);
-					targetService.moveTabs(
+					targetService.moveTabsByIndex(
 						targetBrowser,
 						importedTabs.map(function(aTab) {
 							return aTab._tPos;

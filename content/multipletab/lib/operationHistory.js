@@ -74,7 +74,7 @@
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/operationHistory.test.js
 */
 (function() {
-	const currentRevision = 28;
+	const currentRevision = 29;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -183,7 +183,9 @@
 
 			if (!continuationInfo.shouldWait) {
 				history.inOperation = false;
-				log('  => doUndoableTask finish / in operation : '+history.inOperation, history.inOperationCount);
+				log('  => doUndoableTask finish / in operation : '+history.inOperation+
+					'\n'+history.toString(),
+					history.inOperationCount);
 				// wait for all child processes
 				if (history.inOperation)
 					continuationInfo = {
@@ -266,7 +268,7 @@
 
 			if (continuationInfo.done) {
 				this._setUndoingState(options.key, false);
-				log('  => undo finish');
+				log('  => undo finish\n'+history.toString());
 			}
 			else {
 				continuationInfo.allowed = true;
@@ -338,7 +340,7 @@
 
 			if (continuationInfo.done) {
 				this._setRedoingState(options.key, false);
-				log('  => redo finish');
+				log('  => redo finish\n'+history.toString());
 			}
 			else {
 				continuationInfo.allowed = true;
@@ -601,7 +603,11 @@
 								aInfo.done = true;
 						}
 						aInfo.called = true;
-						log('  => doUndoableTask finish (delayed) / in operation : '+history.inOperationCount+' / '+aInfo.allowed, history.inOperationCount);
+						log('  => doUndoableTask finish (delayed) / '+
+							'in operation : '+history.inOperationCount+' / '+
+							'allowed : '+aInfo.allowed+
+							'\n'+history.toString(),
+							history.inOperationCount);
 					};
 					key = null;
 					self = null;
@@ -613,9 +619,8 @@
 						if (aInfo.allowed)
 							self._setUndoingState(key, false);
 						aInfo.called = true;
-						log('  => undo finish (delayed)');
+						log('  => undo finish (delayed)\n'+history.toString());
 					};
-					history = null;
 					aInfo.created = true;
 					break;
 
@@ -624,9 +629,8 @@
 						if (aInfo.allowed)
 							self._setRedoingState(key, false);
 						aInfo.called = true;
-						log('  => redo finish (delayed)');
+						log('  => redo finish (delayed)\n'+history.toString());
 					};
-					history = null;
 					aInfo.created = true;
 					break;
 
@@ -891,6 +895,29 @@
 		get lastEntries()
 		{
 			return this._getEntriesAt(this.entries.length-1);
+		},
+
+		toString : function()
+		{
+			var entries = this.entries;
+			var metaData = this.metaData;
+			var index = this.index;
+			var string = entries
+							.map(function(aEntry, aIndex) {
+								var children = metaData[aIndex].children.length;
+								children = children ? ' ('+children+')' : '' ;
+								return (aIndex == index ? '*' : ' ' )+
+										' '+aIndex+': '+aEntry.label+
+										children;
+							}, this)
+							.join('\n');
+			if (index < 0)
+				string = '* -1: -----\n' + string;
+			else if (index >= entries.length)
+				string += '\n* '+entries.length+': -----';
+
+			var id = this.windowId;
+			return this.name+(id ? ' ('+id+')' : '' )+'\n'+string;
 		}
 	};
 
