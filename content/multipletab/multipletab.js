@@ -2343,10 +2343,10 @@ var MultipleTabService = {
 	{
 		var isMove = aNewBasePos > -1;
 		var movedToLeft = isMove && (aNewBasePos - aOldBasePos < 0);
-		var afterTabsOffset = (!isMove || movedToLeft) ? 0 : -1 ;
+		var afterTabsOffset = !isMove || movedToLeft || (aTabs[0]._tPos > aNewBasePos) ? 0 : -1 ;
 		return aTabs.map(function(aTab) {
 				var oldPos = aTab._tPos;
-				var movedToRight = false;
+				var movedToRight = !movedToLeft;
 				if (isMove) {
 					if (
 						movedToLeft &&
@@ -2363,7 +2363,7 @@ var MultipleTabService = {
 					movedToRight = oldPos < aNewBasePos;
 				}
 				if (oldPos < aOldBasePos)
-					return movedToRight || !movedToLeft ? -1 : 0 ;
+					return !movedToLeft || movedToRight ? -1 : 0 ;
 				return ++afterTabsOffset;
 			});
 	},
