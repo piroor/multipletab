@@ -723,7 +723,7 @@ var MultipleTabService = {
 	{
 		var history = window['piro.sakura.ne.jp'].operationHistory.getHistory('TabbarOperations', window);
 		var entries = history.lastEntries;
-		if (!entires) return;
+		if (!entries) return;
 
 		var index = entries.indexOf(aEntry);
 		if (index < 0) return;
