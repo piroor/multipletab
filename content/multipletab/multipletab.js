@@ -638,9 +638,7 @@ var MultipleTabService = {
 		event.initEvent('MultipleTabHandlerTabsClosing', true, true);
 		event.tabs = aTabs;
 		event.count = aTabs.length;
-		this.ensureEventCancelable(event);
-		this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
-		return !event.getPreventDefault();
+		return this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
 	},
  
 	fireTabsClosedEvent : function MTS_fireTabsClosedEvent(aTabBrowser, aTabs) 
@@ -654,22 +652,6 @@ var MultipleTabService = {
 		event.tabs = aTabs;
 		event.count = aTabs.length;
 		aTabBrowser.dispatchEvent(event);
-	},
- 
-	ensureEventCancelable : function MTS_ensureEventCancelable(aEvent) 
-	{
-		if (aEvent.getPreventDefault) return;
-		// getPreventDefault is available on any event on Gecko 1.9.2 or later.
-		// on Gecko 1.9.1 or before, UIEvents only have the method...
-		aEvent.__original__preventDefault = aEvent.preventDefault;
-		aEvent.__canceled = false;
-		aEvent.preventDefault = function() {
-			this.__original__preventDefault();
-			this.__canceled = true;
-		};
-		aEvent.getPreventDefault = function() {
-			return this.__canceled;
-		};
 	},
   
 	createDragFeedbackImage : function MTS_createDragFeedbackImage(aNode) 
