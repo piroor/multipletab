@@ -2548,6 +2548,7 @@ var MultipleTabService = {
 
 		var info = {};
 		var sourceTabs = targetService.getBundledTabsOf(aSourceTab, info);
+		var sourceWindow = info.sourceWindow;
 		if (sourceTabs.length <= 1)
 			return;
 
@@ -2561,7 +2562,6 @@ var MultipleTabService = {
 			var otherSourceTabs = sourceTabs.slice(0);
 			otherSourceTabs.splice(otherSourceTabs.indexOf(aSourceTab), 1);
 
-			var sourceWindow  = info.sourceWindow;
 			var sourceService = sourceWindow.MultipleTabService;
 			var sourceBrowser = info.sourceBrowser;
 
