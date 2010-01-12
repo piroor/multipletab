@@ -1135,6 +1135,12 @@ var MultipleTabService = {
 
 
 			case 'UIOperationHistoryPreUndo:TabbarOperations':
+				switch (aEvent.entry.name)
+				{
+					case 'multipletab-tearOffTabs-our':
+					case 'multipletab-tearOffTabs-remote':
+						return this.onPreUndoTearOffTabsToNewWindow(aEvent);
+				}
 				break;
 
 			case 'UIOperationHistoryUndo:TabbarOperations':
@@ -1150,10 +1156,19 @@ var MultipleTabService = {
 					case 'multipletab-duplicateBundledTabs-target':
 						this.restoreTabPositions(aEvent.entry.data.source);
 						return;
+					case 'multipletab-tearOffTabs-our':
+					case 'multipletab-tearOffTabs-remote':
+						return this.onUndoTearOffTabsToNewWindow(aEvent);
 				}
 				break;
 
 			case 'UIOperationHistoryRedo:TabbarOperations':
+				switch (aEvent.entry.name)
+				{
+					case 'multipletab-tearOffTabs-our':
+					case 'multipletab-tearOffTabs-remote':
+						return this.onRedoTearOffTabsToNewWindow(aEvent);
+				}
 				break;
 
 			case 'UIOperationHistoryPostRedo:TabbarOperations':
@@ -1169,6 +1184,9 @@ var MultipleTabService = {
 					case 'multipletab-duplicateBundledTabs-target':
 						this.restoreTabPositions(aEvent.entry.data.target);
 						return;
+					case 'multipletab-tearOffTabs-our':
+					case 'multipletab-tearOffTabs-remote':
+						return this.onPostRedoTearOffTabsToNewWindow(aEvent);
 				}
 				break;
 		}
@@ -2071,247 +2089,225 @@ var MultipleTabService = {
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 
 		if (!aRemoteWindow) {
-			var self = this;
+			let self = this;
 			aRemoteWindow = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
 			aRemoteWindow.addEventListener('load', function() {
 				aRemoteWindow.removeEventListener('load', arguments.callee, false);
-				self.importTabsToNewWindow(aTabs, aRemoteWindow);
+				aRemoteWindow.setTimeout(function() {
+					self.tearOffTabsToNewWindow(aTabs, aRemoteWindow);
+				}, 0);
 			}, false);
 		}
 		else {
-			this.importTabsToNewWindow(aTabs, aRemoteWindow);
+			this.tearOffTabsToNewWindow(aTabs, aRemoteWindow);
 		}
 
 		return aRemoteWindow;
 	},
 	
-	importTabsToNewWindow : function MTS_importTabsToNewWindow(aTabs, aRemoteWindow) 
+	tearOffTabsToNewWindow : function MTS_tearOffTabsToNewWindow(aTabs, aRemoteWindow) 
 	{
-		var sourceBrowser = this.getTabBrowserFromChild(aTabs[0]);
-		var sourceWindow  = sourceBrowser.ownerDocument.defaultView;
-		var sourceId      = sourceWindow['piro.sakura.ne.jp'].operationHistory.getWindowId(sourceWindow);
+		var ourBrowser    = this.getTabBrowserFromChild(aTabs[0]);
+		var ourWindow     = ourBrowser.ownerDocument.defaultView;
+		var remoteBrowser = aRemoteWindow.gBrowser;
+		var ourService    = ourWindow.MultipleTabService;
+		var remoteService = aRemoteWindow.MultipleTabService;
 
-		var indexes       = this.getIndexesFromTabs(aTabs);
-		var selectedIndex = indexes.indexOf(sourceBrowser.selectedTab._tPos);
-		var originalCount = this.getTabs(sourceBrowser).snapshotLength;
+		var selectAfter = this.getPref('extensions.multipletab.selectAfter.move');
 
-		var remoteId = aRemoteWindow ? sourceWindow['piro.sakura.ne.jp'].operationHistory.getWindowId(aRemoteWindow) : null ;
-
-		var historyEntry = {
-				name   : 'multipletab-tearOffTabs',
-				label  : this.bundle.getString('undo_splitWindowFromTabs_label'),
-				onUndo : function(aInfo) {
-					// Don't undo if the original window is already closed (for safety)
-					var sourceWindow = aInfo.manager.getWindowById(sourceId);
-					if (!sourceWindow || sourceWindow.closed) {
-						sourceBrowser = null;
-						return false;
-					}
-
-					// Don't undo when the target window is already closed (for safety)
-					var remoteWindow = remoteId ? aInfo.manager.getWindowById(remoteId) : null ;
-					if (!remoteWindow || remoteWindow.closed) {
-						return false;
-					}
-
-					// If "undo" is called in the new remote window and the last history entry
-					// of the source window is related to this entry, then run "undo" in the
-					// source window instead of the new remote window, because we should enable
-					// "redo" in the source window to re-split tabs.
-					if (this == remoteHistoryEntry) {
-						var history = aInfo.manager.getHistory('TabbarOperations', sourceWindow);
-						if (history.currentEntry == historyEntry) {
-							sourceWindow.setTimeout(function() {
-								aInfo.manager.undo('TabbarOperations', sourceWindow);
-							}, 0);
-							return;
-						}
-					}
-
-					// Don't undo when tabs in the remote window are modified (for safety)
-					var remoteService = remoteWindow.MultipleTabService;
-					var remoteBrowser = remoteService.browser;
-					var remoteTabs = remoteService.getTabsArray(remoteBrowser);
-					if (remoteTabs.length != indexes.length)
-						return false;
-
-					var sourceService = sourceWindow.MultipleTabService;
-					var tabs = sourceService.getTabsArray(sourceBrowser);
-					// Don't undo when tabs are modified (for safety)
-					if (tabs.length != originalCount - indexes.length)
-						return false;
-
-					sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
-					remoteWindow['piro.sakura.ne.jp'].stopRendering.stop();
-
-					remoteBrowser.addTab('about:blank'); // to prevent window close by importedTabs()
-
-					var importedTabs = sourceService.importTabsTo(remoteTabs, sourceBrowser);
-					importedTabs.forEach(function(aTab, aIndex) {
-						sourceBrowser.moveTabTo(aTab, indexes[aIndex]);
+		var operation = function(aOurParams, aRemoteParams, aData) {
+				var allSelected = true;
+				var selectionState = aTabs.map(function(aTab) {
+						var selected = ourService.isSelected(aTab);
+						if (!selected) allSelected = false;
+						return selected;
 					});
-					if (selectedIndex > -1)
-						sourceBrowser.selectedTab = importedTabs[selectedIndex];
 
-					sourceWindow['piro.sakura.ne.jp'].stopRendering.start();
+				remoteService.duplicatingTabs = true;
+				aRemoteWindow['piro.sakura.ne.jp'].stopRendering.stop();
 
-					remoteWindow.setTimeout(function() {
-						// remoteWindow['piro.sakura.ne.jp'].stopRendering.start();
-						remoteWindow.close();
-					}, 0);
-				},
-				onRedo : function(aInfo) {
-					var sourceWindow = aInfo.manager.getWindowById(sourceId);
+				if (aOurParams)
+					aOurParams.wait();
+				if (aRemoteParams)
+					aRemoteParams.wait();
 
-					var sourceService = sourceWindow.MultipleTabService;
-					var tabs = sourceService.getTabsArray(sourceBrowser);
-					// Don't redo when tabs are modified (for safety)
-					if (tabs.length != originalCount)
-						return false;
+				aRemoteWindow.setTimeout(function() {
+					var remoteBrowser = aRemoteWindow.gBrowser;
+					var importedTabs = remoteService.importTabsTo(aTabs, remoteBrowser);
+					remoteService.clearSelection(remoteBrowser);
+					remoteService.getTabsArray(remoteBrowser)
+						.forEach(function(aTab) {
+							var index = importedTabs.indexOf(aTab);
+							if (index > -1) {
+								if (
+									!allSelected &&
+									selectionState[index] &&
+									selectAfter
+									) {
+									remoteService.setSelection(aTab, true);
+								}
+							}
+							else {
+								// causes error. why?
+								// remoteService.irrevocableRemoveTab(aTab, remoteBrowser);
+								remoteBrowser.removeTab(aTab);
+							}
+						});
+					aRemoteWindow['piro.sakura.ne.jp'].stopRendering.start();
 
-					var continuation = aInfo.getContinuation();
-					var remoteWindow = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
-					remoteWindow.addEventListener('load', function() {
-						remoteWindow.removeEventListener('load', arguments.callee, false);
-
-						remoteId = aInfo.manager.getWindowId(remoteWindow);
-						var sourceWindow = aInfo.manager.getWindowById(sourceId);
-						var sourceService = sourceWindow.MultipleTabService;
-						var tabs = sourceService.getTabsArray(sourceBrowser);
-
-						tabs = tabs.filter(function(aTab, aIndex) {
-								return indexes.indexOf(aIndex) > -1;
-							});
-						sourceService.importTabsToNewWindowInternal(tabs, remoteWindow);
-
-						continuation();
-
-						aInfo.manager.addEntry(
-							'TabbarOperations',
-							remoteWindow,
-							remoteHistoryEntry
-						);
-					}, false);
-				}
+					if (aData) {
+						aData.remote.positions = [];
+						aData.remote.tabs = importedTabs.map(function(aTab) {
+							aData.remote.positions.push(aTab._tPos);
+							return aRemoteWindow.UndoTabService.getId(aTab);
+						});
+					}
+					if (aOurParams)
+						aOurParams.continue();
+					if (aRemoteParams)
+						aRemoteParams.continue();
+				}, 0);
 			};
-		var remoteHistoryEntry = {
-				__proto__ : historyEntry,
-				onRedo : function() {}
-			}
 
-		UndoTabService.doOperation(
-			function(aInfo) {
-				var sourceWindow = aInfo.manager.getWindowById(sourceId);
-				var sourceService = sourceWindow.MultipleTabService;
-				var tabs = sourceService.getTabsArray(sourceBrowser);
-				// Don't redo when tabs are modified (for safety)
-				if (tabs.length != originalCount)
-					return false;
-
-				var remoteWindow = (remoteId ? aInfo.manager.getWindowById(remoteId) : null ) || aRemoteWindow;
-
-				tabs = tabs.filter(function(aTab, aIndex) {
-						return indexes.indexOf(aIndex) > -1;
-					});
-				sourceService.importTabsToNewWindowInternal(tabs, remoteWindow);
-
-				aInfo.manager.addEntry(
-					'TabbarOperations',
-					remoteWindow,
-					remoteHistoryEntry
-				);
-			},
-			'TabbarOperations',
-			sourceWindow,
-			historyEntry
-		);
-
-		aTabs = null;
-		sourceWindow = null;
+		if ('UndoTabService' in window && UndoTabService.isUndoable()) {
+			let data = {
+					our : UndoTabService.getTabOpetarionTargetsData({
+						window  : ourWindow,
+						browser : ourBrowser,
+						tabs    : aTabs
+						}, {
+						selected  : UndoTabService.getId(ourBrowser.selectedTab),
+						positions : aTabs.map(function(aTab) {
+							return aTab._tPos;
+						})
+					}),
+					remote : UndoTabService.getTabOpetarionTargetsData({
+						window  : aRemoteWindow,
+						browser : remoteBrowser
+					})
+				};
+			data.our.entry = {
+				name  : 'multipletab-tearOffTabs-our',
+				label : this.bundle.getString('undo_splitWindowFromTabs_label'),
+				data  : data
+			};
+			data.remote.entry = {
+				name  : 'multipletab-tearOffTabs-remote',
+				label : this.bundle.getString('undo_splitWindowFromTabs_label'),
+				data  : data
+			};
+			UndoTabService.doOperation(
+				function(aOurParams) {
+					UndoTabService.doOperation(
+						function(aRemoteParams) {
+							operation(aOurParams, aRemoteParams, data);
+						},
+						aRemoteWindow,
+						data.remote.entry
+					);
+				},
+				ourWindow,
+				data.our.entry
+			);
+		}
+		else {
+			operation();
+		}
 
 		return aRemoteWindow;
 	},
- 
-	importTabsToNewWindowInternal : function MTS_importTabsToNewWindowInternal(aTabs, aWindow) 
+	onPreUndoTearOffTabsToNewWindow : function MTS_onPreUndoTearOffTabsToNewWindow(aEvent)
 	{
-		var max = aTabs.length;
-		if (!max) return [];
-		var b = this.getTabBrowserFromChild(aTabs[0]);
-
-		// for Firefox 3.0, we have to use old method.
-		if (!b.__multipletab__canDoWindowMove)
-			return this.importTabsToNewWindowInternalOld(aTabs, aWindow);
-
-		var allSelected = true;
-		var selectionState = aTabs.map(function(aTab) {
-				var selected = this.isSelected(aTab);
-				if (!selected) allSelected = false;
-				return selected;
-			}, this);
-
-		var selectAfter = this.getPref('extensions.multipletab.selectAfter.move');
-
-		aWindow.removeEventListener('load', arguments.callee, false);
-		aWindow.MultipleTabService.duplicatingTabs = true;
-		aWindow['piro.sakura.ne.jp'].stopRendering.stop();
-
-//		aWindow.setTimeout(function() {
-			var remoteService = aWindow.MultipleTabService;
-			var remoteBrowser = aWindow.gBrowser;
-			var importedTabs = remoteService.importTabsTo(aTabs, remoteBrowser);
-			remoteService.clearSelection(remoteBrowser);
-			remoteService.getTabsArray(remoteBrowser)
-				.forEach(function(aTab) {
-					var index = importedTabs.indexOf(aTab);
-					if (index > -1) {
-						if (
-							!allSelected &&
-							selectionState[index] &&
-							selectAfter
-							)
-							remoteService.setSelection(aTab, true);
-					}
-					else {
-						remoteService.irrevocableRemoveTab(aTab, remoteBrowser);
-					}
-				});
-			aWindow['piro.sakura.ne.jp'].stopRendering.start();
-			delete allSelected;
-			delete selectionState;
-			delete remoteBrowser;
-			delete importedTabs;
-			delete aWindow;
-//		}, 0);
-
-		return importedTabs;
+		var remote = UndoTabService.getTabOpetarionTargetsBy(aEvent.entry.data.remote);
+		if (remote.window && remote.browser)
+			remote.browser.addTab('about:blank'); // to prevent browser's auto-close
 	},
- 
-	// for Firefox 3.0
-	importTabsToNewWindowInternalOld : function MTS_importTabsToNewWindowInternalOld(aTabs, aWindow) 
+	onUndoTearOffTabsToNewWindow : function MTS_onUndoTearOffTabsToNewWindow(aEvent)
 	{
-		if (!aTabs) return [];
+		var entry  = aEvent.entry;
+		var data   = entry.data;
+		var our    = UndoTabService.getTabOpetarionTargetsBy(data.our);
+		var remote = UndoTabService.getTabOpetarionTargetsBy(data.remote);
+		if (!our.window || !remote.window)
+			return aEvent.preventDefault();
 
-		var aTabs = Array.slice(aTabs);
-		if (!aTabs.length) return [];
+		var tabs = our.tabs;
+		if (entry == data.remote.entry) {
+			if (remote.tabs.length == data.remote.tabs.length) {
+				tabs = remote.window.MultipleTabService.importTabsTo(remote.tabs, our.browser);
+			}
+			UndoTabService.fakeUndo(our.window, data.our.entry);
+		}
 
-		var selectAfter = this.getPref('extensions.multipletab.selectAfter.move');
+		if (tabs.length == data.our.tabs.length) {
+			this.moveTabsByIndex(
+				our.browser,
+				tabs.map(function(aTab, aIndex) {
+					UndoTabService.setElementId(aTab, data.our.tabs[aIndex]);
+					return aTab._tPos;
+				}),
+				data.our.positions
+			);
+		}
 
-		aWindow['piro.sakura.ne.jp'].stopRendering.stop();
+		var selected = UndoTabService.getTargetById(data.our.selected, data.our.browser.mTabContainer);
+		if (selected)
+			our.browser.selectedTab = selected;
 
-		var sv = aWindow.MultipleTabService;
-		var b = sv.browser;
-		var importedTabs = sv.importTabsTo(aTabs, b);
-		sv.getTabsArray(b)
-			.forEach(function(aTab) {
-				if (importedTabs.indexOf(aTab) < 0) {
-					sv.irrevocableRemoveTab(aTab, b);
-				}
-			});
+		if (remote.browser)
+			this.closeOwner(remote.browser);
+	},
+	onRedoTearOffTabsToNewWindow : function MTS_onRedoTearOffTabsToNewWindow(aEvent)
+	{
+		var entry  = aEvent.entry;
+		var data   = entry.data;
+		var remote = UndoTabService.getTabOpetarionTargetsBy(data.remote);
+		if (data.remote.isNewWindow && remote.window)
+			return aEvent.preventDefault();
 
-		aWindow.focus();
-		aWindow['piro.sakura.ne.jp'].stopRendering.start();
+		aEvent.wait();
+		var remoteWindow = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
+		remoteWindow.addEventListener('load', function() {
+			remoteWindow.removeEventListener('load', arguments.callee, false);
+			data.remote.window = UndoTabService.setWindowId(remoteWindow, data.remote.window);
+			data.remote.browser = UndoTabService.setElementId(remoteWindow.gBrowser, data.remote.browser);
+			remoteWindow.setTimeout(function() {
+				aEvent.continue();
+			}, 0);
+		}, false);
+	},
+	onPostRedoTearOffTabsToNewWindow : function MTS_onPostRedoTearOffTabsToNewWindow(aEvent)
+	{
+		var entry  = aEvent.entry;
+		var data   = entry.data;
+		var remote = UndoTabService.getTabOpetarionTargetsBy(data.remote);
+		if (!remote.window)
+			return aEvent.preventDefault();
 
-		return importedTabs;
+		if (remote.tabs.length == data.remote.tabs.length) {
+			remote.window['piro.sakura.ne.jp'].stopRendering.start();
+			remote.window.MultipleTabService.getTabsArray(remote.browser)
+				.some(function(aTab) {
+					if (remote.tabs.indexOf(aTab) > -1)
+						return false;
+					// remote.window.MultipleTabService.irrevocableRemoveTab(aTab, remote.browser);
+					remote.browser.removeTab(aTab);
+					return true;
+				});
+			this.moveTabsByIndex(
+				remote.browser,
+				remote.tabs.map(function(aTab, aIndex) {
+					return aTab._tPos;
+				}),
+				data.remote.positions
+			);
+			remote.window['piro.sakura.ne.jp'].stopRendering.start();
+		}
+
+		remote.window.setTimeout(function() {
+			remote.window.UndoTabService.addEntry(remote.window, data.remote.entry);
+			remote.window.UndoTabService.fakeRedo(remote.window, data.remote.entry);
+		}, 250);
 	},
  
 	splitWindowFrom : function MTS_splitWindowFrom(aTabs) // old name, for backward compatibility 
