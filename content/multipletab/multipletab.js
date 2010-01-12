@@ -1047,9 +1047,7 @@ var MultipleTabService = {
 				if (
 					this.isSelected(aEvent.originalTarget) &&
 					this.allowMoveMultipleTabs &&
-					!aEvent.currentTarget.movingSelectedTabs &&
-					!window['piro.sakura.ne.jp'].operationHistory.isUndoing('TabbarOperations', window) &&
-					!window['piro.sakura.ne.jp'].operationHistory.isRedoing('TabbarOperations', window)
+					!aEvent.currentTarget.movingSelectedTabs
 					)
 					this.moveBundledTabsOf(aEvent.originalTarget, aEvent);
 				break;
@@ -1058,9 +1056,7 @@ var MultipleTabService = {
 				if (
 					this.isSelected(aEvent.sourceTab) &&
 					this.allowMoveMultipleTabs &&
-					!aEvent.currentTarget.duplicatingSelectedTabs &&
-					!window['piro.sakura.ne.jp'].operationHistory.isUndoing('TabbarOperations', window) &&
-					!window['piro.sakura.ne.jp'].operationHistory.isRedoing('TabbarOperations', window)
+					!aEvent.currentTarget.duplicatingSelectedTabs
 					)
 					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab, aEvent.mayBeMove);
 				break;
@@ -1069,9 +1065,7 @@ var MultipleTabService = {
 				if (
 					this.isSelected(aEvent.sourceTab) &&
 					this.allowMoveMultipleTabs &&
-					!aEvent.currentTarget.duplicatingSelectedTabs &&
-					!window['piro.sakura.ne.jp'].operationHistory.isUndoing('TabbarOperations', window) &&
-					!window['piro.sakura.ne.jp'].operationHistory.isRedoing('TabbarOperations', window)
+					!aEvent.currentTarget.duplicatingSelectedTabs
 					)
 					this.importBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab);
 				break;
@@ -1337,30 +1331,16 @@ var MultipleTabService = {
 	onDuplicateTab : function MTS_onDuplicateTab(aTask, aTabBrowser, aTab, aSourceEvent) 
 	{
 		var newTab;
-		if (
-			this.isSelected(aTab) &&
-			this.allowMoveMultipleTabs &&
-			!aTabBrowser.duplicatingSelectedTabs &&
-			!window['piro.sakura.ne.jp'].operationHistory.isUndoing('TabbarOperations', window) &&
-			!window['piro.sakura.ne.jp'].operationHistory.isRedoing('TabbarOperations', window)
-			) {
+		if ('UndoTabService' in window && UndoTabService.isUndoable()) {
 			var self = this;
-			window['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
+			UndoTabService.doOperation(
 				function(aInfo) {
 					newTab = aTask.call(aTabBrowser);
 					self.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
 				},
-
-				'TabbarOperations',
-				window,
 				{
-					name   : 'multipletab-duplicateTabs',
-					label  : this.bundle.getString('undo_duplicateTabs_label'),
-					insertBefore : ['undotab-duplicateTab'],
-					// I don't define onUndo() and onRedo() for this entry
-					// because they are processed
-					onUndo : function(aInfo) { return false; },
-					onRedo : function(aInfo) { return false; }
+					name  : 'multipletab-duplicateTabs',
+					label : this.bundle.getString('undo_duplicateTabs_label')
 				}
 			);
 		}
@@ -1642,76 +1622,40 @@ var MultipleTabService = {
 			return;
 
 		aTabs = this.sortTabs(aTabs);
+		if (this.getPref('extensions.multipletab.close.direction') == this.CLOSE_DIRECTION_LAST_TO_START)
+			aTabs.reverse();
 
 		var w = aTabs[0].ownerDocument.defaultView;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		var indexes = this.getIndexesFromTabs(aTabs);
-		var selectedIndex = -1;
-		var states = aTabs.map(function(aTab) {
-				return this.SessionStore.getTabState(aTab);
-			}, this);
+		var closeSelectedLast = this.getPref('extensions.multipletab.close.selectedTab.last');
 
-		var count = this.getTabs(b).snapshotLength;
+		var self = this;
+		var operation = function() {
+			var selected;
+			aTabs.forEach(function(aTab) {
+				if (closeSelectedLast && aTab.selected)
+					selected = aTab;
+				else
+					b.removeTab(aTab);
+			});
+			if (selected)
+				b.removeTab(selected);
+		};
 
-		w['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
-			function(aInfo) {
-				var sv = w.MultipleTabService;
-				var tabs = sv.getTabsArray(b);
-
-				// Don't redo when tabs are modified (for safety)
-				if (tabs.length != count)
-					return false;
-
-				var removeTabs = indexes.map(function(aPosition, aIndex) {
-							var tab = tabs[aPosition];
-							if (tab.selected) selectedIndex = aIndex;
-							return tab;
-						});
-
-				if (sv.getPref('extensions.multipletab.close.direction') == sv.CLOSE_DIRECTION_LAST_TO_START)
-					removeTabs.reverse();
-
-				w['piro.sakura.ne.jp'].stopRendering.stop();
-
-				var closeSelectedLast = sv.getPref('extensions.multipletab.close.selectedTab.last');
-				var selected;
-				removeTabs.forEach(function(aTab) {
-					if (closeSelectedLast && aTab.selected)
-						selected = aTab;
-					else
-						b.removeTab(aTab);
-				});
-				if (selected)
-					b.removeTab(selected);
-
-				w['piro.sakura.ne.jp'].stopRendering.start();
-			},
-
-			'TabbarOperations',
-			w,
-			{
-				name   : 'multipletab-closeTabs',
-				label  : this.bundle.getString('undo_closeTabs_label'),
-				onUndo : function(aInfo) {
-					var sv = w.MultipleTabService;
-					var tabs = sv.getTabsArray(b);
-
-					// Don't undo when tabs are modified (for safety)
-					if (tabs.length + indexes.length != count)
-						return false;
-
-					w['piro.sakura.ne.jp'].stopRendering.stop();
-					states.forEach(function(aState, aIndex) {
-						var tab = b.addTab('about:blank');
-						sv.SessionStore.setTabState(tab, aState);
-						b.moveTabTo(tab, indexes[aIndex]);
-						if (aIndex == selectedIndex)
-							b.selectedTab = tab;
-					});
-					w['piro.sakura.ne.jp'].stopRendering.start();
+		w['piro.sakura.ne.jp'].stopRendering.stop();
+		if ('UndoTabService' in window && UndoTabService.isUndoable()) {
+			UndoTabService.doOperation(
+				operation,
+				{
+					name  : 'multipletab-closeTabs',
+					label : this.bundle.getString('undo_closeTabs_label')
 				}
-			}
-		);
+			);
+		}
+		else {
+			operation();
+		}
+		w['piro.sakura.ne.jp'].stopRendering.start();
 
 		/* PUBLIC API */
 		this.fireTabsClosedEvent(b, aTabs);
@@ -1918,81 +1862,55 @@ var MultipleTabService = {
 
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		var w = b.ownerDocument.defaultView;
-		var indexes = this.getIndexesFromTabs(aTabs);
-		var count = this.getTabs(b).snapshotLength;
 		var shouldSelectAfter = this.getPref('extensions.multipletab.selectAfter.duplicate');
-		var duplicatedIndexes = [];
 		var duplicatedTabs;
 
-		var entry;
-		w['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
-			function(aInfo) {
-				var sv = w.MultipleTabService;
-				// Don't redo when tabs are modified (for safety)
-				if (sv.getTabs(b).snapshotLength != count)
-					return false;
-
-				w['piro.sakura.ne.jp'].stopRendering.stop();
-
-				var duplicatedTabs = sv.duplicateTabsInternal(b, indexes);
-				if (shouldSelectAfter) {
-					duplicatedTabs.forEach(function(aTab) {
-						sv.setSelection(aTab, true);
-					});
-					shouldSelectAfter = false;
-				}
-				duplicatedIndexes = sv.getIndexesFromTabs(duplicatedTabs);
-
-				w['piro.sakura.ne.jp'].stopRendering.start();
-			},
-
-			'TabbarOperations',
-			w,
-			{
-				name  : 'multipletab-duplicateTabs',
-				label : this.bundle.getString('undo_duplicateTabs_label'),
-				insertBefore : ['undotab-duplicateTab'],
-				onUndo : function(aInfo) {
-					var sv = w.MultipleTabService;
-					var tabs = sv.getTabsArray(b);
-					// Don't undo when tabs are modified (for safety)
-					if (tabs.length != count + indexes.length)
-						return false;
-
-					w['piro.sakura.ne.jp'].stopRendering.stop();
-					duplicatedIndexes.reverse().forEach(function(aIndex) {
-						var tab = tabs[aIndex];
-						sv.makeTabUnrecoverable(tab);
-						b.removeTab(tab);
-					});
-
-					w['piro.sakura.ne.jp'].stopRendering.start();
-				}
+		var self = this;
+		var operation = function() {
+			duplicatedTabs = self.duplicateTabsInternal(b, aTabs);
+			if (shouldSelectAfter) {
+				duplicatedTabs.forEach(function(aTab) {
+					self.setSelection(aTab, true);
+				});
+				shouldSelectAfter = false;
 			}
-		);
+		};
+		w['piro.sakura.ne.jp'].stopRendering.stop();
+		if ('UndoTabService' in window && UndoTabService.isUndoable()) {
+			UndoTabService.doOperation(
+				operation,
+				{
+					name  : 'multipletab-duplicateTabs',
+					label : this.bundle.getString('undo_duplicateTabs_label')
+				}
+			);
+		}
+		else {
+			operation();
+		}
+		w['piro.sakura.ne.jp'].stopRendering.start();
 
-		var tabs = this.getTabs(b);
-		return duplicatedIndexes.map(function(aIndex) {
-				return tabs.snapshotItem(aIndex);
-			});
+		return duplicatedTabs;
 	},
 	
-	duplicateTabsInternal : function MTS_duplicateTabsInternal(aTabBrowser, aIndexes) 
+	duplicateTabsInternal : function MTS_duplicateTabsInternal(aTabBrowser, aTabs) 
 	{
-		var max = aIndexes.length;
+		var max = aTabs.length;
 		if (!max) return [];
 
-		this.duplicatingTabs = true;
+		aTabs = this.sortTabs(aTabs);
 
 		var b = aTabBrowser;
 		var w = b.ownerDocument.defaultView;
-		var tabs = this.getTabsArray(b)
-					.filter(function(aTab, aIndex) {
-						return aIndexes.indexOf(aIndex) > -1;
-					});
-		var selectedIndex = aIndexes.indexOf(b.selectedTab._tPos);
+		var selectedIndex = aTabs.indexOf(b.selectedTab);
 
-		var duplicatedTabs = tabs.map(function(aTab) {
+		this.duplicatingTabs = true;
+
+		w['piro.sakura.ne.jp'].stopRendering.stop();
+
+		this.clearSelection(b);
+
+		var duplicatedTabs = aTabs.map(function(aTab) {
 				var state = this.evalInSandbox('('+this.SessionStore.getTabState(aTab)+')');
 				this._clearTabValueKeys.forEach(function(aKey) {
 					delete state.extData[aKey];
@@ -2007,6 +1925,8 @@ var MultipleTabService = {
 
 		if (selectedIndex > -1)
 			b.selectedTab = duplicatedTabs[selectedIndex];
+
+		w['piro.sakura.ne.jp'].stopRendering.start();
 
 		w.setTimeout(function(aSelf) {
 			aSelf.duplicatingTabs = false;
