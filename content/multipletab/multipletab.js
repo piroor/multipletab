@@ -1432,6 +1432,21 @@ var MultipleTabService = {
 	// for drag and drop of selected tabs
 	onDuplicateTab : function MTS_onDuplicateTab(aTask, aTabBrowser, aTab, aSourceEvent) 
 	{
+		if (
+			!this.isSelected(aTab) ||
+			!this.allowMoveMultipleTabs &&
+			('UndoTabService' in window && UndoTabService.isUndoable())
+			)
+			return aTask.call(aTabBrowser);
+
+		var b = this.getTabBrowserFromChild(aTab);
+		if (b.duplicatingSelectedTabs)
+			return aTask.call(aTabBrowser);
+
+		var tabs = this.getBundledTabsOf(aTab);
+		if (tabs.length <= 1)
+			return aTask.call(aTabBrowser);
+
 		var newTab;
 		if ('UndoTabService' in window && UndoTabService.isUndoable()) {
 			var self = this;
@@ -2184,7 +2199,7 @@ var MultipleTabService = {
 				onRedo : function() {}
 			}
 
-		sourceWindow['piro.sakura.ne.jp'].operationHistory.doUndoableTask(
+		UndoTabService.doOperation(
 			function(aInfo) {
 				var sourceWindow = aInfo.manager.getWindowById(sourceId);
 				var sourceService = sourceWindow.MultipleTabService;
@@ -2206,7 +2221,6 @@ var MultipleTabService = {
 					remoteHistoryEntry
 				);
 			},
-
 			'TabbarOperations',
 			sourceWindow,
 			historyEntry
@@ -2517,7 +2531,9 @@ var MultipleTabService = {
 	{
 		var b = this.getTabBrowserFromChild(aMovedTab);
 		var oldPosition = aEvent.detail;
-		var movedTabs = this.getSelectedTabs(b);
+		var movedTabs = this.getBundledTabsOf(aMovedTab);
+		if (movedTabs.length <= 1)
+			return;
 		this.rearrangeBundledTabsOf(aMovedTab, oldPosition, movedTabs);
 		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 	},
@@ -2531,15 +2547,19 @@ var MultipleTabService = {
 			retrurn;
 		}
 
+		var targetWindow = aNewTab.ownerDocument.defaultView;
+		var targetService = targetWindow.MultipleTabService;
+
+		var info = {};
+		var sourceTabs = targetService.getBundledTabsOf(aSourceTab, info);
+		if (sourceTabs.length <= 1)
+			return;
+
 		var shouldSelectAfter = this.getPref('extensions.multipletab.selectAfter.move');
+
 		var operation = function(aCollectData) {
 			var result = {};
 
-			var targetWindow = aNewTab.ownerDocument.defaultView;
-			var targetService = targetWindow.MultipleTabService;
-
-			var info = {};
-			var sourceTabs = targetService.getBundledTabsOf(aSourceTab, info);
 			var sourceBaseIndex = sourceTabs.indexOf(aSourceTab);
 
 			var otherSourceTabs = sourceTabs.slice(0);
@@ -2628,11 +2648,11 @@ var MultipleTabService = {
 							data.source = result.source;
 							data.target = result.target;
 						},
-						aSourceTab.ownerDocument.defaultView,
+						sourceWindow,
 						sourceEntry
 					);
 				},
-				aNewTab.ownerDocument.defaultView,
+				targetWindow,
 				targetEntry
 			);
 		}
@@ -2664,11 +2684,26 @@ var MultipleTabService = {
   
 	duplicateBundledTabsOf : function MTS_duplicateBundledTabsOf(aNewTab, aSourceTab, aMayBeMove) 
 	{
-		var isMove = (
-				aMayBeMove &&
-				this.getTabBrowserFromChild(aSourceTab) != this.getTabBrowserFromChild(aNewTab)
+		var sourceWindow = aSourceTab.ownerDocument.defaultView;
+		var sourceService = sourceWindow.MultipleTabService;
+
+		var targetWindow = aNewTab.ownerDocument.defaultView;
+		var targetService = targetWindow.MultipleTabService;
+
+		var info = {};
+		var sourceTabs = sourceService.getBundledTabsOf(aSourceTab, info);
+		if (sourceTabs.length <= 1)
+			return;
+
+		var sourceBrowser = info.sourceBrowser;
+		var targetBrowser = targetService.getTabBrowserFromChild(aNewTab);
+
+		var isMove = (aMayBeMove && sourceBrowser != targetBrowser);
+		var isAllTabsMove = (
+				isMove &&
+				targetWindow != sourceWindow &&
+				sourceService.getTabs(sourceBrowser).snapshotLength == sourceTabs.length
 			);
-		var isAllTabsMove;
 		var shouldSelectAfter = this.getPref(isMove ?
 				'extensions.multipletab.selectAfter.move' :
 				'extensions.multipletab.selectAfter.duplicate'
@@ -2676,17 +2711,6 @@ var MultipleTabService = {
 
 		var operation = function(aCollectData) {
 			var result = {};
-
-			var targetWindow = window;
-			var targetService = targetWindow.MultipleTabService;
-
-			var info = {};
-			var sourceTabs = targetService.getBundledTabsOf(aSourceTab, info);
-
-			var targetBrowser = targetService.getTabBrowserFromChild(aNewTab);
-			var sourceWindow  = info.sourceWindow;
-			var sourceService = sourceWindow.MultipleTabService;
-			var sourceBrowser = info.sourceBrowser;
 
 			result.source = !aCollectData ? null :
 				{
@@ -2699,8 +2723,6 @@ var MultipleTabService = {
 						return aTab._tPos;
 					})
 				};
-
-			isAllTabsMove = isMove && sourceService.getTabs(sourceBrowser).snapshotLength == sourceTabs.length;
 
 			var sourceBaseIndex = sourceTabs.indexOf(aSourceTab);
 			var otherTabs = sourceTabs.slice(0);
@@ -2751,7 +2773,7 @@ var MultipleTabService = {
 					source : null,
 					target : null
 				};
-			var targetEntry = {
+			let targetEntry = {
 				name  : isMove ?
 							'multipletab-importBundledTabs-source' :
 							'multipletab-duplicateBundledTabs-target',
@@ -2761,7 +2783,7 @@ var MultipleTabService = {
 						),
 				data  : data
 			};
-			var sourceEntry = {
+			let sourceEntry = {
 				name  : isMove ?
 							'multipletab-importBundledTabs-source' :
 							'multipletab-duplicateBundledTabs-target',
@@ -2771,23 +2793,35 @@ var MultipleTabService = {
 						),
 				data  : data
 			};
-
-			UndoTabService.doOperation(
-				function() {
-					UndoTabService.doOperation(
-						function() {
-							var result = operation(true);
-							data.source = result.source;
-							data.target = result.target;
-						},
-						aNewTab.ownerDocument.defaultView,
-						targetEntry
-					);
-					return isMove;
-				},
-				aSourceTab.ownerDocument.defaultView,
-				sourceEntry
-			);
+			if (sourceWindow == targetWindow) {
+				UndoTabService.doOperation(
+					function() {
+						var result = operation(true);
+						data.source = result.source;
+						data.target = result.target;
+					},
+					targetWindow,
+					targetEntry
+				);
+			}
+			else {
+				UndoTabService.doOperation(
+					function() {
+						UndoTabService.doOperation(
+							function() {
+								var result = operation(true);
+								data.source = result.source;
+								data.target = result.target;
+							},
+							targetWindow,
+							targetEntry
+						);
+						return (isMove && !isAllTabsMove) ? true : false ;
+					},
+					sourceWindow,
+					sourceEntry
+				);
+			}
 		}
 		else {
 			operation();
@@ -2799,7 +2833,7 @@ var MultipleTabService = {
 		var remoteTab = window.arguments[0];
 		var info = {};
 		var tabs = this.getBundledTabsOf(remoteTab, info);
-		if (tabs.length) {
+		if (tabs.length <= 1) {
 			if (this.isDraggingAllTabs(remoteTab)) {
 				window.close();
 			}
