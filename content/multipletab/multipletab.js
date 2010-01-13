@@ -2829,7 +2829,7 @@ var MultipleTabService = {
 		var remoteTab = window.arguments[0];
 		var info = {};
 		var tabs = this.getBundledTabsOf(remoteTab, info);
-		if (tabs.length <= 1) {
+		if (tabs.length > 1) {
 			if (this.isDraggingAllTabs(remoteTab)) {
 				window.close();
 			}
