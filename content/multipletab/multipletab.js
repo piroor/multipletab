@@ -2184,6 +2184,11 @@ var MultipleTabService = {
 					remote : UndoTabService.getTabOpetarionTargetsData({
 						window  : aRemoteWindow,
 						browser : remoteBrowser
+						}, {
+						width  : aRemoteWindow.outerWidth,
+						height : aRemoteWindow.outerHeight,
+						x      : aRemoteWindow.screenX,
+						y      : aRemoteWindow.screenY
 					})
 				};
 			data.our.entry = {
@@ -2219,8 +2224,15 @@ var MultipleTabService = {
 	onPreUndoTearOffTabsToNewWindow : function MTS_onPreUndoTearOffTabsToNewWindow(aEvent)
 	{
 		var remote = UndoTabService.getTabOpetarionTargetsBy(aEvent.entry.data.remote);
-		if (remote.window && remote.browser)
-			remote.browser.addTab('about:blank'); // to prevent browser's auto-close
+		if (!remote.window || !remote.browser)
+			return;
+
+		remote.browser.addTab('about:blank'); // to prevent browser's auto-close
+
+		data.remote.width  = remote.window.outerWidth;
+		data.remote.height = remote.window.outerHeight;
+		data.remote.x      = remote.window.screenX;
+		data.remote.y      = remote.window.screenY;
 	},
 	onUndoTearOffTabsToNewWindow : function MTS_onUndoTearOffTabsToNewWindow(aEvent)
 	{
@@ -2270,6 +2282,8 @@ var MultipleTabService = {
 		remoteWindow.addEventListener('load', function() {
 			remoteWindow.removeEventListener('load', arguments.callee, false);
 			data.remote.window = UndoTabService.setWindowId(remoteWindow, data.remote.window);
+			remoteWindow.resizeTo(data.remote.width, data.remote.height);
+			remoteWindow.moveTo(data.remote.x, data.remote.y);
 			data.remote.browser = UndoTabService.setElementId(remoteWindow.gBrowser, data.remote.browser);
 			remoteWindow.setTimeout(function() {
 				aEvent.continue();
