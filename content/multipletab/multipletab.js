@@ -2283,10 +2283,6 @@ var MultipleTabService = {
 			return;
 		}
 
-		// We can do nothing for existing window.
-		if (!data.remote.isNewWindow)
-			return;
-
 		aEvent.wait();
 		var remoteWindow = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
 		remoteWindow.addEventListener('load', function() {
