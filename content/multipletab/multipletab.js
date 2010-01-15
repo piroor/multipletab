@@ -2274,8 +2274,18 @@ var MultipleTabService = {
 		var entry  = aEvent.entry;
 		var data   = entry.data;
 		var remote = UndoTabService.getTabOpetarionTargetsBy(data.remote);
-		if (data.remote.isNewWindow && remote.window)
-			return aEvent.preventDefault();
+
+		// When the window was already reopened by other redo processes,
+		// then use it.
+		if (remote.window) {
+			remote.window.resizeTo(data.remote.width, data.remote.height);
+			remote.window.moveTo(data.remote.x, data.remote.y);
+			return;
+		}
+
+		// We can do nothing for existing window.
+		if (!data.remote.isNewWindow)
+			return;
 
 		aEvent.wait();
 		var remoteWindow = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
