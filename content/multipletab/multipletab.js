@@ -1475,7 +1475,7 @@ var MultipleTabService = {
 				},
 				{
 					name  : 'multipletab-duplicateTab',
-					label : this.bundle.getString('undo_duplicateTabs_label')
+					label : this.bundle.getFormattedString('undo_duplicateTabs_label', [tabs.length])
 				}
 			);
 		}
@@ -1788,7 +1788,7 @@ var MultipleTabService = {
 				operation,
 				{
 					name  : 'multipletab-closeTabs',
-					label : this.bundle.getString('undo_closeTabs_label'),
+					label : this.bundle.getFormattedString('undo_closeTabs_label', [aTabs.length]),
 					data  : data
 				}
 			);
@@ -2026,7 +2026,7 @@ var MultipleTabService = {
 				operation,
 				{
 					name  : 'multipletab-duplicateTabs',
-					label : this.bundle.getString('undo_duplicateTabs_label'),
+					label : this.bundle.getFormattedString('undo_duplicateTabs_label', [aTabs.length]),
 					data  : data
 				}
 			);
@@ -2193,12 +2193,12 @@ var MultipleTabService = {
 				};
 			data.our.entry = {
 				name  : 'multipletab-tearOffTabs-our',
-				label : this.bundle.getString('undo_splitWindowFromTabs_label'),
+				label : this.bundle.getFormattedString('undo_splitWindowFromTabs_label', [aTabs.length]),
 				data  : data
 			};
 			data.remote.entry = {
 				name  : 'multipletab-tearOffTabs-remote',
-				label : this.bundle.getString('undo_splitWindowFromTabs_label'),
+				label : this.bundle.getFormattedString('undo_splitWindowFromTabs_label', [aTabs.length]),
 				data  : data
 			};
 			UndoTabService.doOperation(
@@ -2652,12 +2652,12 @@ var MultipleTabService = {
 				};
 			let targetEntry = {
 					name  : 'multipletab-importBundledTabs-target',
-					label : this.bundle.getString('undo_importBundledTabsOf_target_label'),
+					label : this.bundle.getFormattedString('undo_importBundledTabsOf_target_label', [sourceTabs.length]),
 					data  : data
 				};
 			let sourceEntry = {
 					name  : 'multipletab-importBundledTabs-source',
-					label : this.bundle.getString('undo_importBundledTabsOf_source_label'),
+					label : this.bundle.getFormattedString('undo_importBundledTabsOf_source_label', [sourceTabs.length]),
 					data  : data
 				};
 			UndoTabService.doOperation(
@@ -2797,9 +2797,10 @@ var MultipleTabService = {
 				name  : isMove ?
 							'multipletab-importBundledTabs-source' :
 							'multipletab-duplicateBundledTabs-target',
-				label : this.bundle.getString(isMove ?
+				label : this.bundle.getFormattedString(isMove ?
 							'undo_importBundledTabsOf_target_label' :
-							'undo_duplicateTabs_label'
+							'undo_duplicateTabs_label',
+							[sourceTabs.length]
 						),
 				data  : data
 			};
@@ -2807,9 +2808,10 @@ var MultipleTabService = {
 				name  : isMove ?
 							'multipletab-importBundledTabs-source' :
 							'multipletab-duplicateBundledTabs-target',
-				label : this.bundle.getString(isMove ?
+				label : this.bundle.getFormattedString(isMove ?
 							'undo_duplicateBundledTabsOf_source_label' :
-							'undo_duplicateTabs_label'
+							'undo_duplicateTabs_label',
+							[sourceTabs.length]
 						),
 				data  : data
 			};
