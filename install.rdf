@@ -23,7 +23,8 @@
                        em:description="Provides features to close (, reload, etc.) multiple tabs at once."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
+		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
@@ -40,7 +41,8 @@
                        em:description="複数のタブをまとめて閉じたり再読み込みしたりといった機能を加えます。"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
+		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
@@ -57,7 +59,8 @@
                        em:description="Lehetővé teszi több lap egyidejű bezárását, újratöltését, ..."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
+		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
@@ -74,7 +77,8 @@
                        em:description="Fornisce funzionalità per la gestione contemporanea di più schede"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
+		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
@@ -91,7 +95,8 @@
                        em:description="Implementa la habilidad de seleccionar múltiples pestañas para cerrarlas, recargarlas, marcarlas, moverlas o duplicarlas todas a la vez"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
+		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
@@ -108,7 +113,8 @@
                        em:description="Обеспечивает возможность закрытия, перезагрузки, сохранения и т. д. группы вкладок одним действием."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
+		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
@@ -125,7 +131,8 @@
                        em:description="對複數分頁提供同時關閉或重新載入等功能。"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
+		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
@@ -142,7 +149,8 @@
                        em:description="对多个标签提供同时关闭或刷新等功能。"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
+		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
@@ -159,7 +167,8 @@
                        em:description="Umożliwia operacje (zamknięcie, odświeżenie itp.) wielu kart na raz."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
+		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
@@ -176,7 +185,8 @@
                        em:description="Fügt Features zum gleichzeitigen Schließen, Neuladen, etc. mehrerer Tabs hinzu."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
-		<em:contributor>Mikes Kaszmán István (some features and hu-HU locale)</em:contributor>
+		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
+		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
