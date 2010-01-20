@@ -23,7 +23,8 @@
 		return;
 	}
 
-	if ('destroy' in window['piro.sakura.ne.jp'].stopRendering)
+	if (loadedRevision &&
+		'destroy' in window['piro.sakura.ne.jp'].stopRendering)
 		window['piro.sakura.ne.jp'].stopRendering.destroy();
 
 	window['piro.sakura.ne.jp'].stopRendering = {
