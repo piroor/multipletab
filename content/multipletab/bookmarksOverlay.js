@@ -20,7 +20,8 @@ MultipleTabBookmarkService = {
 							'TreeStyleTabBookmarksService' in window)
 							TreeStyleTabBookmarksService.beginAddBookmarksFromTabs(multipleTabsProxy._tabs);
 						$&
-						if ('TreeStyleTabBookmarksService' in window)
+						if ('_tabs' in multipleTabsProxy &&
+							'TreeStyleTabBookmarksService' in window)
 							TreeStyleTabBookmarksService.endAddBookmarksFromTabs();
 					]]>
 				)
