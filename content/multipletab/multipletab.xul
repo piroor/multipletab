@@ -101,19 +101,19 @@
 			type="checkbox" autocheck="false"
 			oncommand="MultipleTabService.toggleTabsFreezed(MultipleTabService.getSelectedTabs(),
 				this.getAttribute('checked') != 'true');"
-			multipletab-available="'freezeTab' in gBrowser"/>
+			multipletab-available="MultipleTabService.canFreezeTab"/>
 		<menuitem id="multipletab-selection-protectTabs"
 			label="&popup.selection.protectTabs;"
 			type="checkbox" autocheck="false"
 			oncommand="MultipleTabService.toggleTabsProtected(MultipleTabService.getSelectedTabs(),
 				this.getAttribute('checked') != 'true');"
-			multipletab-available="'protectTab' in gBrowser"/>
+			multipletab-available="MultipleTabService.canProtectTab"/>
 		<menuitem id="multipletab-selection-lockTabs"
 			label="&popup.selection.lockTabs;"
 			type="checkbox" autocheck="false"
 			oncommand="MultipleTabService.toggleTabsLocked(MultipleTabService.getSelectedTabs(),
 				this.getAttribute('checked') != 'true');"
-			multipletab-available="'lockTab' in gBrowser"/>
+			multipletab-available="MultipleTabService.canLockTab"/>
 	</menupopup>
 
 	<menupopup id="multipletab-tabcontext-menu-template">

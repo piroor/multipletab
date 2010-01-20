@@ -2510,6 +2510,10 @@ var MultipleTabService = {
 	{
 		return aTab.hasAttribute('protected') && aTab.hasAttribute('locked');
 	},
+	get canFreezeTab()
+	{
+		return 'freezeTab' in gBrowser;
+	},
  
 	toggleTabsProtected : function MTS_toggleTabsProtected(aTabs, aNewState) 
 	{
@@ -2525,6 +2529,10 @@ var MultipleTabService = {
 	{
 		return aTab.hasAttribute('protected');
 	},
+	get canProtectTab()
+	{
+		return 'protectTab' in gBrowser;
+	},
  
 	toggleTabsLocked : function MTS_toggleTabsLocked(aTabs, aNewState) 
 	{
@@ -2532,13 +2540,35 @@ var MultipleTabService = {
 			aNewState = !tabs.every(this._isTabLocked);
 
 		aTabs.forEach(function(aTab) {
-			if (aNewState != this._isTabLocked(aTab))
+			if (aNewState == this._isTabLocked(aTab)) return;
+
+			// Tab Mix Plus
+			if ('lockTab' in gBrowser)
 				gBrowser.lockTab(aTab);
+
+			// Super Tab Mode
+			// https://addons.mozilla.org/firefox/addon/13288
+			if ('stmM' in window && 'togglePL' in stmM) {
+				if (aNewState)
+					aTab.setAttribute('isPageLocked', true);
+				else
+					aTab.removeAttribute('isPageLocked');
+			}
 		}, this);
 	},
 	_isTabLocked : function MTS__isTabLocked(aTab)
 	{
-		return aTab.hasAttribute('locked');
+		return (
+			aTab.hasAttribute('locked') || // Tab Mix Plus
+			aTab.hasAttribute('isPageLocked') // Super Tab Mode
+		);
+	},
+	get canLockTab()
+	{
+		return (
+			'lockTab' in gBrowser || // Tab Mix Plus
+			('stmM' in window && 'togglePL' in stmM) // Super Tab Mode
+		);
 	},
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 
