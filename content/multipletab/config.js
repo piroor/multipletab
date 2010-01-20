@@ -11,8 +11,10 @@ var gDragModeRadio;
 
 function init()
 {
-	var installed = window['piro.sakura.ne.jp'].extensions.isInstalled(MENU_EDITOR_ID);
-	var enabled = window['piro.sakura.ne.jp'].extensions.isEnabled(MENU_EDITOR_ID);
+	var ext = window['piro.sakura.ne.jp'].extensions;
+
+	var installed = ext.isInstalled(MENU_EDITOR_ID);
+	var enabled = ext.isEnabled(MENU_EDITOR_ID);
 
 	[
 		'menuEditorLink-selection',
@@ -43,20 +45,33 @@ function init()
 
 	[
 		{
-			id    : 'printalltabs@peculier.com',
+			ids   : ['printalltabs@peculier.com'],
 			items : ['extensions.multipletab.show.multipletab-selection-printTabs-check']
 		},
 		{
-			id    : '{dc572301-7619-498c-a57d-39143191b318}', // Tab Mix Plus
+			ids   : [
+				'{dc572301-7619-498c-a57d-39143191b318}', // Tab Mix Plus
+				'tabutils@ithinc.cn' // Tab Utilities
+			],
 			items : [
 				'extensions.multipletab.show.multipletab-selection-freezeTabs-check',
-				'extensions.multipletab.show.multipletab-selection-protectTabs-check',
+				'extensions.multipletab.show.multipletab-selection-protectTabs-check'
+			]
+		},
+		{
+			ids   : [
+				'{dc572301-7619-498c-a57d-39143191b318}', // Tab Mix Plus
+				'tabutils@ithinc.cn', // Tab Utilities
+				'{752a85d4-68d6-48ae-ab7d-6640f5f75d85}' // Super Tab Mode
+			],
+			items : [
 				'extensions.multipletab.show.multipletab-selection-lockTabs-check'
 			]
 		}
 	].forEach(function(aDefinition) {
-		var enabled = window['piro.sakura.ne.jp'].extensions.isInstalled(aDefinition.id) &&
-						window['piro.sakura.ne.jp'].extensions.isEnabled(aDefinition.id);
+		var enabled = aDefinition.ids.some(function(aId) {
+					return ext.isInstalled(aId) && ext.isEnabled(aId);
+				});
 		aDefinition.items
 			.map(document.getElementById, document)
 			.forEach(enabled ?
