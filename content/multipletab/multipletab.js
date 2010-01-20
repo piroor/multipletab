@@ -2495,6 +2495,12 @@ var MultipleTabService = {
 	},
   
 	// Tab Mix Plus commands 
+	//   Tab Mix Plus:
+	//     freeze, protect, lock
+	//   Tab Utilities https://addons.mozilla.org/firefox/addon/59961
+	//     freeze, protect
+	//   Super Tab Mode https://addons.mozilla.org/firefox/addon/13288
+	//     lock
 	
 	toggleTabsFreezed : function MTS_toggleTabsFreezed(aTabs, aNewState) 
 	{
@@ -2542,12 +2548,11 @@ var MultipleTabService = {
 		aTabs.forEach(function(aTab) {
 			if (aNewState == this._isTabLocked(aTab)) return;
 
-			// Tab Mix Plus
+			// Tab Mix Plus, Tab Utilities
 			if ('lockTab' in gBrowser)
 				gBrowser.lockTab(aTab);
 
 			// Super Tab Mode
-			// https://addons.mozilla.org/firefox/addon/13288
 			if ('stmM' in window && 'togglePL' in stmM) {
 				if (aNewState)
 					aTab.setAttribute('isPageLocked', true);
@@ -2559,14 +2564,14 @@ var MultipleTabService = {
 	_isTabLocked : function MTS__isTabLocked(aTab)
 	{
 		return (
-			aTab.hasAttribute('locked') || // Tab Mix Plus
+			aTab.hasAttribute('locked') || // Tab Mix Plus, Tab Utilities
 			aTab.hasAttribute('isPageLocked') // Super Tab Mode
 		);
 	},
 	get canLockTab()
 	{
 		return (
-			'lockTab' in gBrowser || // Tab Mix Plus
+			'lockTab' in gBrowser || // Tab Mix Plus, Tab Utilities
 			('stmM' in window && 'togglePL' in stmM) // Super Tab Mode
 		);
 	},
