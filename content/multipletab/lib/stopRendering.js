@@ -27,6 +27,8 @@
 		'destroy' in window['piro.sakura.ne.jp'].stopRendering)
 		window['piro.sakura.ne.jp'].stopRendering.destroy();
 
+	const Ci = Components.interfaces;
+
 	window['piro.sakura.ne.jp'].stopRendering = {
 		revision : currentRevision,
 
@@ -35,10 +37,10 @@
 		get baswWindow()
 		{
 			return window.top
-					.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-					.getInterface(Components.interfaces.nsIWebNavigation)
-					.QueryInterface(Components.interfaces.nsIDocShell)
-					.QueryInterface(Components.interfaces.nsIBaseWindow);
+					.QueryInterface(Ci.nsIInterfaceRequestor)
+					.getInterface(Ci.nsIWebNavigation)
+					.QueryInterface(Ci.nsIDocShell)
+					.QueryInterface(Ci.nsIBaseWindow);
 		},
 
 		stop : function()

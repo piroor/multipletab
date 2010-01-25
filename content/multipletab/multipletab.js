@@ -415,7 +415,7 @@ var MultipleTabService = {
 			});
 	},
  
-	makeTabBlank : function MTS_makeTabBlank(aTab)
+	makeTabBlank : function MTS_makeTabBlank(aTab) 
 	{
 		var b = aTab.linkedBrowser;
 		try {
@@ -433,7 +433,7 @@ var MultipleTabService = {
 		delete aTab.__SS_extdata;
 	},
  
-	irrevocableRemoveTab : function MTS_irrevocableRemoveTab(aTab, aTabBrowser)
+	irrevocableRemoveTab : function MTS_irrevocableRemoveTab(aTab, aTabBrowser) 
 	{
 		// nsSessionStore.js doesn't save the tab to the undo cache
 		// if the tab is completely blank.
@@ -3103,107 +3103,10 @@ var MultipleTabService = {
 			default:
 				break;
 		}
-	},
-  
-/* Save/Load Prefs */ 
-	
-	get Prefs() 
-	{
-		if (!this._Prefs) {
-			this._Prefs = Components.classes['@mozilla.org/preferences;1'].getService(Components.interfaces.nsIPrefBranch);
-		}
-		return this._Prefs;
-	},
-	_Prefs : null,
- 
-	getPref : function MTS_getPref(aPrefstring, aInterface) 
-	{
-		try {
-			if (aInterface) {
-				return this.Prefs.getComplexValue(aPrefstring, aInterface);
-			}
-
-			switch (this.Prefs.getPrefType(aPrefstring))
-			{
-				case this.Prefs.PREF_STRING:
-					return decodeURIComponent(escape(this.Prefs.getCharPref(aPrefstring)));
-					break;
-				case this.Prefs.PREF_INT:
-					return this.Prefs.getIntPref(aPrefstring);
-					break;
-				default:
-					return this.Prefs.getBoolPref(aPrefstring);
-					break;
-			}
-		}
-		catch(e) {
-		}
-
-		return null;
-	},
- 
-	setPref : function MTS_setPref(aPrefstring, aNewValue) 
-	{
-		var pref = this.Prefs ;
-		var type;
-		try {
-			type = typeof aNewValue;
-		}
-		catch(e) {
-			type = null;
-		}
-
-		switch (type)
-		{
-			case 'string':
-				pref.setCharPref(aPrefstring, unescape(encodeURIComponent(aNewValue)));
-				break;
-			case 'number':
-				pref.setIntPref(aPrefstring, parseInt(aNewValue));
-				break;
-			default:
-				pref.setBoolPref(aPrefstring, aNewValue);
-				break;
-		}
-		return true;
-	},
- 
-	clearPref : function MTS_clearPref(aPrefstring) 
-	{
-		try {
-			this.Prefs.clearUserPref(aPrefstring);
-		}
-		catch(e) {
-		}
-
-		return;
-	},
- 
-	addPrefListener : function MTS_addPrefListener(aObserver) 
-	{
-		var domains = ('domains' in aObserver) ? aObserver.domains : [aObserver.domain] ;
-		try {
-			var pbi = this.Prefs.QueryInterface(Components.interfaces.nsIPrefBranchInternal);
-			for (var i = 0; i < domains.length; i++)
-				pbi.addObserver(domains[i], aObserver, false);
-		}
-		catch(e) {
-		}
-	},
- 
-	removePrefListener : function MTS_removePrefListener(aObserver) 
-	{
-		var domains = ('domains' in aObserver) ? aObserver.domains : [aObserver.domain] ;
-		try {
-			var pbi = this.Prefs.QueryInterface(Components.interfaces.nsIPrefBranchInternal);
-			for (var i = 0; i < domains.length; i++)
-				pbi.removeObserver(domains[i], aObserver, false);
-		}
-		catch(e) {
-		}
 	}
   
 }; 
+MultipleTabService.__proto__ = window['piro.sakura.ne.jp'].prefs;
 
 window.addEventListener('load', MultipleTabService, false);
 window.addEventListener('DOMContentLoaded', MultipleTabService, false);

@@ -8,14 +8,15 @@
    // if (window['piro.sakura.ne.jp'].extensions.isInstalled('my.extension.id@example.com') &&
    //     window['piro.sakura.ne.jp'].extensions.isEnabled('my.extension.id@example.com'))
    //     window['piro.sakura.ne.jp'].extensions.goToOptions('my.extension.id@example.com');
+   var dir = window['piro.sakura.ne.jp'].extensions.getInstalledLocation('my.extension.id@example.com');
 
- lisence: The MIT License, Copyright (c) 2009 SHIMODA "Piro" Hiroshi
+ lisence: The MIT License, Copyright (c) 2009-2010 SHIMODA "Piro" Hiroshi
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/license.txt
  original:
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/extensions.js
 */
 (function() {
-	const currentRevision = 2;
+	const currentRevision = 4;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -26,26 +27,35 @@
 		return;
 	}
 
+	const Cc = Components.classes;
+	const Ci = Components.interfaces;
+
 	window['piro.sakura.ne.jp'].extensions = {
 		revision : currentRevision,
 
-		ExtensionManager : Components.classes['@mozilla.org/extensions/manager;1']
-			.getService(Components.interfaces.nsIExtensionManager),
-		RDF : Components.classes['@mozilla.org/rdf/rdf-service;1']
-			.getService(Components.interfaces.nsIRDFService),
-		WindowMediator : Components.classes['@mozilla.org/appshell/window-mediator;1']
-			.getService(Components.interfaces.nsIWindowMediator),
-		Prefs : Components.classes['@mozilla.org/preferences;1']
-			.getService(Components.interfaces.nsIPrefBranch),
+		ExtensionManager : Cc['@mozilla.org/extensions/manager;1']
+			.getService(Ci.nsIExtensionManager),
+		RDF : Cc['@mozilla.org/rdf/rdf-service;1']
+			.getService(Ci.nsIRDFService),
+		WindowMediator : Cc['@mozilla.org/appshell/window-mediator;1']
+			.getService(Ci.nsIWindowMediator),
+		Prefs : Cc['@mozilla.org/preferences;1']
+			.getService(Ci.nsIPrefBranch),
 
 		isAvailable : function(aId)
 		{
-			return this.isInstalled(aId) && this.isEnabled(aId);
+			return (this.isInstalled(aId) && this.isEnabled(aId)) ? true : false ;
 		},
 
 		isInstalled : function(aId)
 		{
-			return this.ExtensionManager.getInstallLocation(aId);
+			return this.ExtensionManager.getInstallLocation(aId) ? true : false ;
+		},
+
+		getInstalledLocation : function(aId)
+		{
+			var location = this.ExtensionManager.getInstallLocation(aId);
+			return location ? location.location : null ;
 		},
 
 		isEnabled : function(aId)
@@ -57,7 +67,7 @@
 						res,
 						this.RDF.GetResource('http://www.mozilla.org/2004/em-rdf#appDisabled'),
 						true
-					).QueryInterface(Components.interfaces.nsIRDFLiteral)
+					).QueryInterface(Ci.nsIRDFLiteral)
 					.Value == 'true';
 			}
 			catch(e) {
@@ -68,7 +78,7 @@
 						res,
 						this.RDF.GetResource('http://www.mozilla.org/2004/em-rdf#userDisabled'),
 						true
-					).QueryInterface(Components.interfaces.nsIRDFLiteral)
+					).QueryInterface(Ci.nsIRDFLiteral)
 					.Value == 'true';
 			}
 			catch(e) {
@@ -86,7 +96,7 @@
 						res,
 						this.RDF.GetResource('http://www.mozilla.org/2004/em-rdf#optionsURL'),
 						true
-					).QueryInterface(Components.interfaces.nsIRDFLiteral)
+					).QueryInterface(Ci.nsIRDFLiteral)
 					.Value;
 			}
 			catch(e) {
