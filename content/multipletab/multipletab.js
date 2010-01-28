@@ -429,7 +429,8 @@ var MultipleTabService = {
 		if (b.contentWindow && b.contentWindow.location)
 			b.contentWindow.location.replace('about:blank');
 
-		delete aTab.linkedBrowser.parentNode.__SS_data;
+		delete aTab.linkedBrowser.__SS_data; // Firefox 3.6-
+		delete aTab.linkedBrowser.parentNode.__SS_data; // -Firefox 3.5
 		delete aTab.__SS_extdata;
 	},
  
@@ -440,11 +441,13 @@ var MultipleTabService = {
 		this.makeTabBlank(aTab);
 
 		// override session data to prevent undo
-		aTab.linkedBrowser.parentNode.__SS_data = {
-			entries : [],
-			_tabStillLoading : true, // for Firefox 3.5 or later
-			_tab : aTab // for Firefox 3.0.x
-		};
+		var data = {
+				entries : [],
+				_tabStillLoading : true, // for Firefox 3.5 or later
+				_tab : aTab // for Firefox 3.0.x
+			};
+		aTab.linkedBrowser.__SS_data = data; // Firefox 3.6-
+		aTab.linkedBrowser.parentNode.__SS_data = data; // -Firefox 3.5
 
 		(aTabBrowser || this.getTabBrowserFromChild(aTab))
 			.removeTab(aTab);
@@ -3001,10 +3004,12 @@ var MultipleTabService = {
 	// workaround for http://piro.sakura.ne.jp/latest/blosxom/mozilla/extension/treestyletab/2009-09-29_debug.htm
 	checkCachedSessionDataExpiration : function MTS_checkCachedSessionDataExpiration(aTab) 
 	{
-		if (aTab.linkedBrowser.parentNode.__SS_data &&
-			aTab.linkedBrowser.parentNode.__SS_data._tabStillLoading &&
+		var data = aTab.linkedBrowser.__SS_data || // Firefox 3.6-
+					aTab.linkedBrowser.parentNode.__SS_data; // -Firefox 3.5
+		if (data &&
+			data._tabStillLoading &&
 			aTab.getAttribute('busy') != 'true')
-			aTab.linkedBrowser.parentNode.__SS_data._tabStillLoading = false;
+			data._tabStillLoading = false;
 	},
   
 	toggleSelection : function MTS_toggleSelection(aTab) 
