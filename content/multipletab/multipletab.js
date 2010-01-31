@@ -452,6 +452,18 @@ var MultipleTabService = {
 		(aTabBrowser || this.getTabBrowserFromChild(aTab))
 			.removeTab(aTab);
 	},
+ 
+	ensureLoaded : function MTS_ensureLoaded(aTab) 
+	{
+		// for BarTap ( https://addons.mozilla.org/firefox/addon/67651 )
+		if (aTab.getAttribute('ontap') == 'true') {
+			var event = document.createEvent('Event');
+			event.initEvent('BarTapLoad', true, true);
+			aTab.linkedBrowser.dispatchEvent(event);
+			return true;
+		}
+		return false;
+	},
   
 // bundled tabs 
 	
@@ -1847,11 +1859,11 @@ var MultipleTabService = {
 		if (!aTabs) return;
 
 		var b;
-		var self = this;
 		Array.slice(aTabs).forEach(function(aTab) {
-			if (!b) b = self.getTabBrowserFromChild(aTab);
-			b.reloadTab(aTab);
-		});
+			if (!b) b = this.getTabBrowserFromChild(aTab);
+			if (!this.ensureLoaded(aTab))
+				b.reloadTab(aTab);
+		}, this);
 	},
  
 	saveTabs : function MTS_saveTabs(aTabs, aSaveType, aFolder) 
@@ -1868,6 +1880,7 @@ var MultipleTabService = {
 		}
 
 		if (aTabs.length == 1) {
+			this.ensureLoaded(aTabs[0]);
 			var saveType = aSaveType;
 			if (aSaveType & this.kSAVE_TYPE_TEXT &&
 				!this.shouldConvertTabToText(aTabs[0], aSaveType)) {
@@ -1882,6 +1895,12 @@ var MultipleTabService = {
 
 		var fileExistence = {};
 		aTabs.forEach(function(aTab) {
+			if (this.ensureLoaded(aTab)) {
+				window.setTimeout(function(aSelf) {
+					arguments.callee.call(aSelf);
+				}, 200, this);
+				return;
+			}
 			var b = aTab.linkedBrowser;
 			var destFile = folder.clone();
 			var uri = b.currentURI;
@@ -1994,6 +2013,8 @@ var MultipleTabService = {
 	{
 		if (!('PrintAllTabs' in window)) return;
 
+		aTabs.forEach(this.ensureLoaded, this);
+
 		PrintAllTabs.__multipletab__printNodes = aTabs.map(function(aTab) {
 			return aTab._tPos;
 		});
@@ -2050,6 +2071,8 @@ var MultipleTabService = {
 
 		aTabs = this.sortTabs(aTabs);
 
+		aTabs.forEach(this.ensureLoaded, this);
+
 		var b = aTabBrowser;
 		var w = b.ownerDocument.defaultView;
 		var selectedIndex = aTabs.indexOf(b.selectedTab);
@@ -2088,6 +2111,8 @@ var MultipleTabService = {
 	splitWindowFromTabs : function MTS_splitWindowFromTabs(aTabs, aRemoteWindow) 
 	{
 		if (!aTabs || !aTabs.length) return null;
+
+		aTabs.forEach(this.ensureLoaded, this);
 
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 
@@ -2365,6 +2390,8 @@ var MultipleTabService = {
 		if (!aTabs.length)
 			return importedTabs;
 
+		aTabs.forEach(this.ensureLoaded, this);
+
 		this.duplicatingTabs = true;
 
 		var targetBrowser = aTabBrowser || this.browser;
@@ -2436,6 +2463,8 @@ var MultipleTabService = {
 		if (!aTabs) return '';
 
 		if (aTabs instanceof Components.interfaces.nsIDOMNode) aTabs = [aTabs];
+
+		aTabs.forEach(this.ensureLoaded, this);
 
 		var format = aFormat || this.getClopboardFormatForType(aFormatType);
 		if (!format) format = '%URL%';
