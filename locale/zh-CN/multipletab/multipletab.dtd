@@ -45,12 +45,12 @@
 <!ENTITY config.tabdrag.moveMultipleTabs "紧邻排列移动后的选中标签">
 
 <!ENTITY config.tabclickmode.accel.caption "Ctrl（Command）-左键点击标签时的动作">
-<!ENTITY config.tabclickmode.accel.default "关闭标签 (Firefox default)">
+<!ENTITY config.tabclickmode.accel.default "关闭标签（Firefox 默认）">
 <!ENTITY config.tabclickmode.accel.select  "切换标签选中状态">
 
 <!ENTITY config.tabclickmode.shift.caption "Shift-左键点击标签时的动作">
-<!ENTITY config.tabclickmode.shift.default "Ignore (Firefox default)">
-<!ENTITY config.tabclickmode.shift.select  "Select Tabs">
+<!ENTITY config.tabclickmode.shift.default "无动作（Firefox 默认）">
+<!ENTITY config.tabclickmode.shift.select  "连选标签">
 
 <!ENTITY config.tabs.features "特性">
 
@@ -61,16 +61,16 @@
 <!ENTITY config.useEffectiveTLD.enabled  "相同域名（“aaa.example.com”和“bbb.example.com”视为相同网站）">
 <!ENTITY config.useEffectiveTLD.disabled "相同主机（“aaa.example.com”和“bbb.example.com”视为不同网站）">
 
-<!ENTITY config.tabs.clipboard "Copy">
+<!ENTITY config.tabs.clipboard "复制格式">
 
 <!ENTITY config.clipboardFormatType.caption "“复制标签 URI”的复制格式">
 <!ENTITY config.clipboardFormatType.select  "从子菜单中选择">
-<!ENTITY config.clipboardFormatType.add.label      "Add Custom Format">
+<!ENTITY config.clipboardFormatType.add.label      "添加自定义格式">
 <!ENTITY config.clipboardFormatType.remove.label   "&#xD7;">
-<!ENTITY config.clipboardFormatType.remove.tooltip "Remove This Format">
-<!ENTITY config.clipboardFormatType.default.label  "Name">
-<!ENTITY config.clipboardFormatType.default.format "Format">
-<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;EOL&#x25;=Line Feed">
+<!ENTITY config.clipboardFormatType.remove.tooltip "删除此格式">
+<!ENTITY config.clipboardFormatType.default.label  "名称">
+<!ENTITY config.clipboardFormatType.default.format "格式代码">
+<!ENTITY config.clipboardFormatType.description    "可用的格式占位符：&#x25;URL&#x25;=页面 URL, &#x25;TITLE&#x25;=页面标题, &#x25;URL_HTMLIFIED&#x25;=HTML转义页面URL, &#x25;TITLE_HTMLIFIED&#x25;=HTML转义页面标题, &#x25;EOL&#x25;=换行符">
 
 <!ENTITY config.tabs.selectionMenu    "选中标签菜单">
 <!ENTITY config.selectionMenu.caption "在选中标签的上下文菜单中显示：">
