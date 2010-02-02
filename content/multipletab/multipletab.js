@@ -1858,9 +1858,11 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return;
 
-		var b;
-		Array.slice(aTabs).forEach(function(aTab) {
-			if (!b) b = this.getTabBrowserFromChild(aTab);
+		aTabs = this.filterBlankTabs(aTabs);
+		if (!aTabs.length) return;
+
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		aTabs.forEach(function(aTab) {
 			if (!this.ensureLoaded(aTab))
 				b.reloadTab(aTab);
 		}, this);
