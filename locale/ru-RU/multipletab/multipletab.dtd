@@ -7,9 +7,9 @@
 <!ENTITY popup.selection.clipboard   "Копировать URL-ы выбранных вкладок">
 <!ENTITY popup.selection.saveTabs      "Сохранить выбранные вкладки как файлы">
 <!ENTITY popup.selection.printTabs     "Печать выбранных вкладок">
-<!ENTITY popup.selection.freezeTabs  "Заморозить выбранные вкладки">
-<!ENTITY popup.selection.protectTabs "Защитить выбранные вкладки">
-<!ENTITY popup.selection.lockTabs    "Заблокировать выбранные вкладки">
+<!ENTITY popup.selection.freezeTabs  "Заморозить вкладку">
+<!ENTITY popup.selection.protectTabs "Защитить вкладку">
+<!ENTITY popup.selection.lockTabs    "Заблокировать вкладку">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Закрыть вкладки слева">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Закрыть вкладки выше">
@@ -44,13 +44,13 @@
 <!ENTITY config.tabdrag.autoclear     "Сбрасывать выбор вкладок после закрытия всплывающего меню">
 <!ENTITY config.tabdrag.moveMultipleTabs "Переносить выбранные вкладки вместе">
 
-<!ENTITY config.tabclickmode.accel.caption "Действие для использования Ctrl-Click на вкладках">
-<!ENTITY config.tabclickmode.accel.default "Закрыть вкладку (Firefox default)">
+<!ENTITY config.tabclickmode.accel.caption "Действие при Ctrl-клике (Command-клике) по вкладкам">
+<!ENTITY config.tabclickmode.accel.default "Закрыть вкладку (по умолчанию для Firefox)">
 <!ENTITY config.tabclickmode.accel.select  "Переключить выбор вкладки">
 
-<!ENTITY config.tabclickmode.shift.caption "Действие для использования Shift-Click на вкладках">
-<!ENTITY config.tabclickmode.shift.default "Ignore (Firefox default)">
-<!ENTITY config.tabclickmode.shift.select  "Select Tabs">
+<!ENTITY config.tabclickmode.shift.caption "Действие при Shift-клике по вкладкам">
+<!ENTITY config.tabclickmode.shift.default "Ничего не предпринимать (по умолчанию для Firefox)">
+<!ENTITY config.tabclickmode.shift.select  "Выбрать вкладки">
 
 <!ENTITY config.tabs.features "Возможности">
 
