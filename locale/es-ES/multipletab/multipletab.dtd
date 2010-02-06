@@ -17,6 +17,7 @@
 <!ENTITY popup.context.removeRightTabs.vertical   "Cerrar pestañas que están debajo">
 <!ENTITY popup.context.removeAll                  "Cerrar todas las pestañas">
 <!ENTITY popup.context.removeSimilar              "Cerrar pestañas similares">
+<!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
 <!ENTITY popup.context.duplicate                  "Duplicar pestañas">
 <!ENTITY popup.context.clipboard                  "Copiar URI">
 <!ENTITY popup.context.clipboardAll               "Copiar URIs de todas las pestañas">

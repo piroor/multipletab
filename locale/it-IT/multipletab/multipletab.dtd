@@ -17,6 +17,7 @@
 <!ENTITY popup.context.removeRightTabs.vertical   "Chiudi le schede sotto">
 <!ENTITY popup.context.removeAll                  "Chiudi tutti le schede">
 <!ENTITY popup.context.removeSimilar              "Chiudi le schede simili">
+<!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
 <!ENTITY popup.context.duplicate                  "Duplica scheda">
 <!ENTITY popup.context.clipboard                  "Copia indirizzo">
 <!ENTITY popup.context.clipboardAll               "Copia l&apos;indirizzo di tutte le schede">

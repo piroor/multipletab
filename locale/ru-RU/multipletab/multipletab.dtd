@@ -17,6 +17,7 @@
 <!ENTITY popup.context.removeRightTabs.vertical   "Закрыть вкладки ниже">
 <!ENTITY popup.context.removeAll                  "Закрыть все вкладки">
 <!ENTITY popup.context.removeSimilar              "Закрыть схожие вкладки">
+<!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
 <!ENTITY popup.context.duplicate                  "Клонировать вкладку">
 <!ENTITY popup.context.clipboard                  "Копировать URL">
 <!ENTITY popup.context.clipboardAll               "Копировать URL-ы всех вкладок">

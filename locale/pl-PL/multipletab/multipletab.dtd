@@ -17,6 +17,7 @@
 <!ENTITY popup.context.removeRightTabs.vertical   "Zamknij karty poniżej">
 <!ENTITY popup.context.removeAll                  "Zamknij wszystkie karty">
 <!ENTITY popup.context.removeSimilar              "Zamknij podobne karty">
+<!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
 <!ENTITY popup.context.duplicate                  "Duplikuj kartę ">
 <!ENTITY popup.context.clipboard                  "Kopiuj URI">
 <!ENTITY popup.context.clipboardAll               "Kopiuj URI wszystkich kart">

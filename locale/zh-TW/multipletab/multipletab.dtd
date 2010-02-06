@@ -17,6 +17,7 @@
 <!ENTITY popup.context.removeRightTabs.vertical   "關閉下方所有分頁">
 <!ENTITY popup.context.removeAll                  "關閉所有分頁">
 <!ENTITY popup.context.removeSimilar              "關閉同類其他分頁">
+<!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
 <!ENTITY popup.context.duplicate                  "分頁新增副本">
 <!ENTITY popup.context.clipboard                  "複製 URI">
 <!ENTITY popup.context.clipboardAll               "複製所有分頁的URI">

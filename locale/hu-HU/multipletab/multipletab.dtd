@@ -17,6 +17,7 @@
 <!ENTITY popup.context.removeRightTabs.vertical   "Alatta levő lapok bezárása">
 <!ENTITY popup.context.removeAll                  "Összes lap bezárása">
 <!ENTITY popup.context.removeSimilar              "Hasonló lapok bezárása">
+<!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
 <!ENTITY popup.context.duplicate                  "Lap kettőzése">
 <!ENTITY popup.context.clipboard                  "Lap adatainak másolása">
 <!ENTITY popup.context.clipboardAll               "Mindegyik lap adatainak másolása">

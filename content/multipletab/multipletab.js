@@ -1822,11 +1822,12 @@ var MultipleTabService = {
 	CLOSE_DIRECTION_START_TO_LAST : 0,
 	CLOSE_DIRECTION_LAST_TO_START : 1,
   
-	closeSimilarTabsOf : function MTS_closeSimilarTabsOf(aCurrentTab, aTabs) 
+	closeSimilarTabsOf : function MTS_closeSimilarTabsOf(aCurrentTab, aTabs, aIncludeCurrent) 
 	{
 		if (!aCurrentTab) return;
 
 		var removeTabs = this.getSimilarTabsOf(aCurrentTab, aTabs);
+		if (aIncludeCurrent) removeTabs.push(aCurrentTab);
 		var count = removeTabs.length;
 		if (!count || !this.warnAboutClosingTabs(count))
 			return;

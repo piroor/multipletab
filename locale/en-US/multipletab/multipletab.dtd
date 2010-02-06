@@ -17,6 +17,7 @@
 <!ENTITY popup.context.removeRightTabs.vertical   "Close Below Tabs">
 <!ENTITY popup.context.removeAll                  "Close All Tabs">
 <!ENTITY popup.context.removeSimilar              "Close Similar Tabs">
+<!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
 <!ENTITY popup.context.duplicate                  "Duplicate Tab">
 <!ENTITY popup.context.clipboard                  "Copy URI">
 <!ENTITY popup.context.clipboardAll               "Copy URIs of All Tabs">

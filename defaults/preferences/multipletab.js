@@ -34,6 +34,7 @@ pref("extensions.multipletab.show.multipletab-context-removeLeftTabs",  true);
 pref("extensions.multipletab.show.multipletab-context-removeRightTabs", true);
 pref("extensions.multipletab.show.multipletab-context-removeAll",       true);
 pref("extensions.multipletab.show.multipletab-context-removeSimilar",   true);
+pref("extensions.multipletab.show.multipletab-context-removeOtherSimilar", true);
 pref("extensions.multipletab.show.multipletab-context-duplicate",       true);
 pref("extensions.multipletab.show.multipletab-context-clipboard",       true);
 pref("extensions.multipletab.show.multipletab-context-clipboardAll",    true);

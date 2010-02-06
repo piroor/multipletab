@@ -349,6 +349,9 @@
 		<preference id="extensions.multipletab.show.multipletab-context-removeSimilar"
 			name="extensions.multipletab.show.multipletab-context-removeSimilar"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-context-removeOtherSimilar"
+			name="extensions.multipletab.show.multipletab-context-removeOtherSimilar"
+			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 			name="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 			type="bool"/>
@@ -376,6 +379,9 @@
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeSimilar-check"
 				preference="extensions.multipletab.show.multipletab-context-removeSimilar"
 				label="&popup.context.removeSimilar;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-removeOtherSimilar-check"
+				preference="extensions.multipletab.show.multipletab-context-removeOtherSimilar"
+				label="&popup.context.removeOtherSimilar;"/>
 			<separator id="multipletab-context-separator-copyAndSave"/>
 			<checkbox id="extensions.multipletab.show.multipletab-context-clipboard-check"
 				preference="extensions.multipletab.show.multipletab-context-clipboard"

@@ -127,8 +127,13 @@
 		<menuitem id="multipletab-context-removeSimilar"
 			label="&popup.context.removeSimilar;"
 			tbattr="tabbrowser-multiple"
-			oncommand="MultipleTabService.closeSimilarTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab);"
+			oncommand="MultipleTabService.closeSimilarTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab, null, true);"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'context_closeOtherTabs')][1]"/>
+		<menuitem id="multipletab-context-removeOtherSimilar"
+			label="&popup.context.removeOtherSimilar;"
+			tbattr="tabbrowser-multiple"
+			oncommand="MultipleTabService.closeSimilarTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab);"
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-removeSimilar')][1]"/>
 
 		<menuseparator id="multipletab-context-separator-removeTabs"
 			tbattr="tabbrowser-multiple"
