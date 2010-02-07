@@ -26,7 +26,7 @@
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/prefs.test.js
 */
 (function() {
-	const currentRevision = 4;
+	const currentRevision = 5;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -51,9 +51,18 @@
 					.getService(Ci.nsIPrefService)
 					.getDefaultBranch(null),
 	 
-		getPref : function(aPrefstring, aBranch) 
+		getPref : function(aPrefstring, aInterface, aBranch) 
 		{
+			if (!aInterface || aInterface instanceof Ci.nsIPrefBranch)
+				[aBranch, aInterface] = [aInterface, aBranch];
+
 			if (!aBranch) aBranch = this.Prefs;
+
+			if (aInterface)
+				return (aBranch.getPrefType(aPrefstring) == aBranch.PREF_INVALID) ?
+						null :
+						aBranch.getComplexValue(aPrefstring, aInterface);
+
 			switch (aBranch.getPrefType(aPrefstring))
 			{
 				case aBranch.PREF_STRING:
@@ -71,9 +80,9 @@
 			}
 		},
 
-		getDefaultPref : function(aPrefstring)
+		getDefaultPref : function(aPrefstring, aInterface)
 		{
-			return this.getPref(aPrefstring, this.DefaultPrefs);
+			return this.getPref(aPrefstring, this.DefaultPrefs, aInterface);
 		},
 	 
 		setPref : function(aPrefstring, aNewValue, aBranch) 
