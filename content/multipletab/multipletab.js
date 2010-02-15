@@ -414,7 +414,7 @@ var MultipleTabService = {
 				return this.getCurrentURIOfTab(aTab).spec != 'about:blank' ||
 						// for BarTap ( https://addons.mozilla.org/firefox/addon/67651 )
 						aTab.getAttribute('ontap') == 'true';
-			});
+			}, this);
 	},
  
 	makeTabBlank : function MTS_makeTabBlank(aTab) 
