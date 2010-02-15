@@ -138,7 +138,7 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 		eval('BarTap.writeBarTap = '+
 			BarTap.writeBarTap.toSource().replace(
 				'bartap = JSON.stringify',
-				'MultipleTabService.backupBarTapURI(aURI, aBrowser); $&'
+				'MultipleTabService.backupArgumentURI(aURI, aBrowser); $&'
 			)
 		);
 	}

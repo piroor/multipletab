@@ -493,14 +493,14 @@ var MultipleTabService = {
 		return aTab.linkedBrowser.currentURI;
 	},
  
-	backupBarTapURI : function MTS_backupBarTapURI(aURI, aBrowser) 
+	backupArgumentURI : function MTS_backupArgumentURI(aURI, aBrowser) 
 	{
 		if (aURI) {
 			var uri = (aURI instanceof Components.interfaces.nsIURI) ? aURI.spec : aURI ;
-			aBrowser.setAttribute(this.kBARTAP_URI, uri);
+			aBrowser.setAttribute(this.kARGUMENT_URI, uri);
 		}
 	},
-	kBARTAP_URI : 'multipletab-bartap-uri',
+	kARGUMENT_URI : 'multipletab-bartap-uri',
   
 // bundled tabs 
 	
