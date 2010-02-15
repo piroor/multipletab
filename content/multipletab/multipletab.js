@@ -812,7 +812,8 @@ var MultipleTabService = {
 	{
 		window.removeEventListener('DOMContentLoaded', this, false);
 
-		if ('swapBrowsersAndCloseOther' in document.getElementById('content')) {
+		var b = document.getElementById('content');
+		if (b && 'swapBrowsersAndCloseOther' in b) {
 			eval('window.BrowserStartup = '+window.BrowserStartup.toSource().replace(
 				'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
 				'if (!MultipleTabService.tearOffSelectedTabsFromRemote()) { $& }'
