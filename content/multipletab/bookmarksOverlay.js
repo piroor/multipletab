@@ -1,4 +1,4 @@
-MultipleTabBookmarkService = { 
+var MultipleTabBookmarkService = { 
 	
 	init : function MTBS_init() 
 	{
