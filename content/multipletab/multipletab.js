@@ -270,7 +270,7 @@ var MultipleTabService = {
 			aTabs = this.getTabsArray(this.getTabBrowserFromChild(aCurrentTab));
 
 		try {
-			var currentDomain = this.getDomainFromURI(aCurrentTab.linkedBrowser.currentURI);
+			var currentDomain = this.getDomainFromURI(this.getCurrentURIOfTab(aCurrentTab));
 		}
 		catch(e) {
 			return resultTabs;
@@ -278,7 +278,7 @@ var MultipleTabService = {
 
 		Array.slice(aTabs).forEach(function(aTab) {
 			if (aTab == aCurrentTab) return;
-			if (this.getDomainFromURI(aTab.linkedBrowser.currentURI) == currentDomain)
+			if (this.getDomainFromURI(this.getCurrentURIOfTab(aTab)) == currentDomain)
 				resultTabs.push(aTab);
 		}, this);
 		return resultTabs;
@@ -411,7 +411,7 @@ var MultipleTabService = {
 	filterBlankTabs : function MTS_filterBlankTabs(aTabs) 
 	{
 		return aTabs.filter(function(aTab) {
-				return aTab.linkedBrowser.currentURI.spec != 'about:blank' ||
+				return this.getCurrentURIOfTab(aTab).spec != 'about:blank' ||
 						// for BarTap ( https://addons.mozilla.org/firefox/addon/67651 )
 						aTab.getAttribute('ontap') == 'true';
 			});
@@ -466,6 +466,39 @@ var MultipleTabService = {
 		}
 		return false;
 	},
+ 
+ 	getCurrentURIOfTab : function MTS_getCurrentURIOfTab(aTab) 
+	{
+		if (aTab.getAttribute('ontap') == 'true') {
+			// If BarTap ( https://addons.mozilla.org/firefox/addon/67651 ) is installed,
+			// currentURI is possibly 'about:blank'. So, we have to get correct URI
+			// from the attribute or the session histrory.
+			var b = aTab.linkedBrowser;
+			try {
+				if (b.hasAttribute(this.kBARTAP_URI))
+					return this.makeURIFromSpec(b.getAttribute(this.kBARTAP_URI));
+			}
+			catch(e) {
+			}
+			try {
+				var h = b.sessionHistory;
+				var entry = h.getEntryAtIndex(h.index, false);
+				return entry.URI;
+			}
+			catch(e) {
+			}
+		}
+		return aTab.linkedBrowser.currentURI;
+	},
+ 
+	backupBarTapURI : function MTS_backupBarTapURI(aURI, aBrowser) 
+	{
+		if (aURI) {
+			var uri = (aURI instanceof Components.interfaces.nsIURI) ? aURI.spec : aURI ;
+			aBrowser.setAttribute(this.kBARTAP_URI, uri);
+		}
+	},
+	kBARTAP_URI : 'multipletab-bartap-uri',
   
 // bundled tabs 
 	
@@ -1909,7 +1942,7 @@ var MultipleTabService = {
 			}
 			var b = aTab.linkedBrowser;
 			var destFile = folder.clone();
-			var uri = b.currentURI;
+			var uri = this.getCurrentURIOfTab(aTab);
 			var shouldConvertToText = this.shouldConvertTabToText(aTab, aSaveType);
 			var fileInfo = new FileInfo(aTab.label);
 			initFileInfo(
@@ -1975,7 +2008,7 @@ var MultipleTabService = {
 	saveOneTab : function MTS_saveOneTab(aTab, aDestFile, aSaveType) 
 	{
 		var b = aTab.linkedBrowser;
-		var uri = b.currentURI;
+		var uri = this.getCurrentURIOfTab(aTab);
 
 		var autoChosen = aDestFile ? new AutoChosen(aDestFile, uri) : null ;
 		if (autoChosen && aSaveType == this.kSAVE_TYPE_TEXT) {
@@ -2480,7 +2513,7 @@ var MultipleTabService = {
 		var timeLocal = now.toLocaleString();
 
 		var stringToCopy = Array.slice(aTabs).map(function(aTab) {
-				let uri = aTab.linkedBrowser.currentURI.spec;
+				let uri = this.getCurrentURIOfTab(aTab).spec;
 				let title = aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label');
 				let escapedURI = uri
 								.replace(/&/g, '&amp;')
