@@ -458,10 +458,12 @@ var MultipleTabService = {
 	ensureLoaded : function MTS_ensureLoaded(aTab) 
 	{
 		// for BarTap ( https://addons.mozilla.org/firefox/addon/67651 )
-		if (aTab.getAttribute('ontap') == 'true') {
-			var event = document.createEvent('Event');
-			event.initEvent('BarTapLoad', true, true);
-			aTab.linkedBrowser.dispatchEvent(event);
+		if (
+			aTab.getAttribute('ontap') == 'true' &&
+			'BarTap' in window &&
+			'loadTabContents' in BarTap
+			) {
+			BarTap.loadTabContents(aTab);
 			return true;
 		}
 		return false;
