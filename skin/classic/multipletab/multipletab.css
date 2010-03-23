@@ -1,21 +1,15 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-:root[multipletab-selection-style="color"] tabbrowser .tabbrowser-strip .tabbrowser-tabs
-  .tabbrowser-tab[multipletab-selected="true"] .tab-image-left,
-:root[multipletab-selection-style="color"] tabbrowser .tabbrowser-strip .tabbrowser-tabs
-  .tabbrowser-tab[multipletab-selected="true"] .tab-image-middle,
-:root[multipletab-selection-style="color"] tabbrowser .tabbrowser-strip .tabbrowser-tabs
-  .tabbrowser-tab[multipletab-selected="true"] .tab-image-right,
-:root[multipletab-selection-style="color"] tabbrowser .tabbrowser-strip .tabbrowser-tabs
-  .tabbrowser-tab[multipletab-selected="true"] .tab-middle,
-:root[multipletab-selection-style="color"] tabbrowser .tabbrowser-strip .tabbrowser-tabs
-  .tabbrowser-tab[multipletab-selected="true"] .tab-close-button {
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-image-left,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-image-middle,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-image-right,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-middle,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-close-button {
 	background-color: Highlight !important;
 	color: HighlightText !important;
 }
 
-:root[multipletab-selection-style="border"] tabbrowser .tabbrowser-strip .tabbrowser-tabs
-  .tabbrowser-tab[multipletab-selected="true"] {
+:root[multipletab-selection-style="border"]  .tabbrowser-tab[multipletab-selected="true"] {
 	font-weight: bold !important;
 	-moz-appearance: none !important;
 	border: 2px solid -moz-dialogtext !important;
@@ -25,14 +19,12 @@
 	-moz-border-left-colors: -moz-dialogtext -moz-dialogtext !important;
 }
 
-:root tabbrowser .tabbrowser-strip .tabbrowser-tabs
-  .tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button {
+.tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button {
 	outline: 2px solid Highlight important;
 	background-color: Highlight !important;
 }
 
-:root tabbrowser .tabbrowser-strip .tabbrowser-tabs
-  .tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button image {
+.tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button image {
 	outline: 2px solid /*invert*/ important;
 	background-color: Highlight !important;
 	outline: 0 none important;
