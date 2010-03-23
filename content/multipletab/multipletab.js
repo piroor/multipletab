@@ -1094,6 +1094,7 @@ var MultipleTabService = {
 	
 	handleEvent : function MTS_handleEvent(aEvent) 
 	{
+		var b;
 		switch (aEvent.type)
 		{
 			case 'mousedown':
@@ -1130,30 +1131,33 @@ var MultipleTabService = {
 				break;
 
 			case 'TabMove':
+				b = this.getTabBrowserFromChild(aEvent.currentTarget);
 				if (
 					this.isSelected(aEvent.originalTarget) &&
 					this.allowMoveMultipleTabs &&
-					!aEvent.currentTarget.movingSelectedTabs &&
+					!b.movingSelectedTabs &&
 					(!('UndoTabService' in window) || UndoTabService.isUndoable())
 					)
 					this.moveBundledTabsOf(aEvent.originalTarget, aEvent);
 				break;
 
 			case 'MultipleTabHandler:TabDuplicate':
+				b = this.getTabBrowserFromChild(aEvent.currentTarget);
 				if (
 					this.isSelected(aEvent.sourceTab) &&
 					this.allowMoveMultipleTabs &&
-					!aEvent.currentTarget.duplicatingSelectedTabs &&
+					!b.duplicatingSelectedTabs &&
 					(!('UndoTabService' in window) || UndoTabService.isUndoable())
 					)
 					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab, aEvent.mayBeMove);
 				break;
 
 			case 'MultipleTabHandler:TabWindowMove':
+				b = this.getTabBrowserFromChild(aEvent.currentTarget);
 				if (
 					this.isSelected(aEvent.sourceTab) &&
 					this.allowMoveMultipleTabs &&
-					!aEvent.currentTarget.duplicatingSelectedTabs &&
+					!b.duplicatingSelectedTabs &&
 					(!('UndoTabService' in window) || UndoTabService.isUndoable())
 					)
 					this.importBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab);
