@@ -328,7 +328,7 @@ var MultipleTabService = {
 	getTabFromEvent : function MTS_getTabFromEvent(aEvent, aReallyOnTab) 
 	{
 		var tab = this.evaluateXPath(
-				'ancestor-or-self::xul:tab[ancestor::xul:tabbrowser]',
+				'ancestor-or-self::xul:tab',
 				aEvent.originalTarget || aEvent.target,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
@@ -346,7 +346,7 @@ var MultipleTabService = {
 	getTabFromChild : function MTS_getTabFromChild(aNode) 
 	{
 		return this.evaluateXPath(
-				'ancestor-or-self::xul:tab[ancestor::xul:tabbrowser]',
+				'ancestor-or-self::xul:tab',
 				aNode,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
