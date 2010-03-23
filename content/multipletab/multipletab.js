@@ -354,11 +354,13 @@ var MultipleTabService = {
  
 	getTabBrowserFromChild : function MTS_getTabBrowserFromChild(aTab) 
 	{
-		return this.evaluateXPath(
-				'ancestor-or-self::xul:tabbrowser',
-				aTab,
+		var b = this.evaluateXPath(
+				'ancestor-or-self::xul:tabbrowser | '+
+				'ancestor-or-self::xul:tabs[@tabbrowser]',
+				aNode,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
+		return (b && b.tabbrowser) || b;
 	},
  
 	getTabs : function MTS_getTabs(aTabBrowser) 
