@@ -981,7 +981,8 @@ var MultipleTabService = {
 	initTabBrowserContextMenu : function MTS_initTabBrowserContextMenu(aTabBrowser) 
 	{
 		var suffix = '-tabbrowser-'+(aTabBrowser.id || 'instance-'+parseInt(Math.random() * 65000));
-		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
+		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu') ||
+							document.getAnonymousElementByAttribute(aTabBrowser.tabContainer, 'anonid', 'tabContextMenu');
 		var template = document.getElementById(this.kCONTEXT_MENU_TEMPLATE);
 		this.getArrayFromXPathResult('child::*[starts-with(@id, "multipletab-context-")]', template)
 			.concat(this.getArrayFromXPathResult('child::*[not(@id) or not(starts-with(@id, "multipletab-context-"))]', template))
