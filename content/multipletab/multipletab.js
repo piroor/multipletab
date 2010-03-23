@@ -882,11 +882,11 @@ var MultipleTabService = {
  
 	initTabBrowser : function MTS_initTabBrowser(aTabBrowser) 
 	{
-		aTabBrowser.addEventListener('TabOpen', this, true);
-		aTabBrowser.addEventListener('TabClose', this, true);
-		aTabBrowser.addEventListener('TabMove', this, true);
-		aTabBrowser.addEventListener('MultipleTabHandler:TabDuplicate', this, true);
-		aTabBrowser.addEventListener('MultipleTabHandler:TabWindowMove', this, true);
+		aTabBrowser.mTabContainer.addEventListener('TabOpen', this, true);
+		aTabBrowser.mTabContainer.addEventListener('TabClose', this, true);
+		aTabBrowser.mTabContainer.addEventListener('TabMove', this, true);
+		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabDuplicate', this, true);
+		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabWindowMove', this, true);
 //		aTabBrowser.mTabContainer.addEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
@@ -1064,11 +1064,11 @@ var MultipleTabService = {
 	
 	destroyTabBrowser : function MTS_destroyTabBrowser(aTabBrowser) 
 	{
-		aTabBrowser.removeEventListener('TabOpen', this, true);
-		aTabBrowser.removeEventListener('TabClose', this, true);
-		aTabBrowser.removeEventListener('TabMove', this, true);
-		aTabBrowser.removeEventListener('MultipleTabHandler:TabDuplicate', this, true);
-		aTabBrowser.removeEventListener('MultipleTabHandler:TabWindowMove', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('TabOpen', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('TabClose', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('TabMove', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabDuplicate', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabWindowMove', this, true);
 //		aTabBrowser.mTabContainer.removeEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('draggesture', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
