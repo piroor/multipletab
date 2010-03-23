@@ -357,7 +357,7 @@ var MultipleTabService = {
 		var b = this.evaluateXPath(
 				'ancestor-or-self::xul:tabbrowser | '+
 				'ancestor-or-self::xul:tabs[@tabbrowser]',
-				aNode,
+				aTab,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
 		return (b && b.tabbrowser) || b;
