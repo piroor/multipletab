@@ -891,6 +891,7 @@ var MultipleTabService = {
 		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabWindowMove', this, true);
 //		aTabBrowser.mTabContainer.addEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
+		aTabBrowser.mTabContainer.addEventListener('dragend',     this, true);
 		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousemove',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousedown',   this, true);
@@ -949,28 +950,17 @@ var MultipleTabService = {
 			$1]]>
 		));
 
-		if ('_onDrop' in aTabBrowser && 'swapBrowsersAndCloseOther' in aTabBrowser) {
-			eval('aTabBrowser._onDrop = '+aTabBrowser._onDrop.toSource().replace(
-				/(this\.swapBrowsersAndCloseOther\([^;]+\);)/,
-				'MultipleTabService.fireWindowMoveEvent(newTab, draggedTab); $1'
-			));
+		if ('swapBrowsersAndCloseOther' in aTabBrowser) { // Firefox 3.5 or later
 			aTabBrowser.__multipletab__canDoWindowMove = true;
 		}
 		else {
-			if ('onDrop' in aTabBrowser) {
+			if ('onDrop' in aTabBrowser) { // Firefox 3.0
 				eval('aTabBrowser.onDrop = '+aTabBrowser.onDrop.toSource().replace(
 					/(this\.duplicateTab\([^\)]+)(\))/g,
 					'$1, aEvent$2'
 				));
 			}
 			aTabBrowser.__multipletab__canDoWindowMove = false;
-		}
-
-		if ('_onDragEnd' in aTabBrowser) {
-			eval('aTabBrowser._onDragEnd = '+aTabBrowser._onDragEnd.toSource().replace(
-				/([^\{\}\(\);]*this\.replaceTabWithWindow\()/,
-				'if (MultipleTabService.isDraggingAllTabs(draggedTab)) return; $1'
-			));
 		}
 
 		this.initTabBrowserContextMenu(aTabBrowser);
@@ -1073,6 +1063,7 @@ var MultipleTabService = {
 		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabWindowMove', this, true);
 //		aTabBrowser.mTabContainer.removeEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('draggesture', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('dragend',     this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mousedown',   this, true);
@@ -1107,28 +1098,25 @@ var MultipleTabService = {
 //				break;
 
 			case 'draggesture':
-				this.onTabDragStart(aEvent);
-				break;
+				return this.onTabDragStart(aEvent);
 
 			case 'mouseup':
-				this.onTabDragEnd(aEvent);
-				break;
+				return this.onTabDragEnd(aEvent);
 
 			case 'mouseover':
-				this.onTabDragEnter(aEvent);
-				break;
+				return this.onTabDragEnter(aEvent);
 
 			case 'mousemove':
-				this.onTabDragOver(aEvent);
-				break;
+				return this.onTabDragOver(aEvent);
+
+			case 'dragend':
+				return this.onTabbarDragEnd(aEvent);
 
 			case 'TabOpen':
-				this.initTab(aEvent.originalTarget);
-				break;
+				return this.onTabAdded(aEvent);
 
 			case 'TabClose':
-				this.destroyTab(aEvent.originalTarget);
-				break;
+				return this.destroyTab(aEvent.originalTarget);
 
 			case 'TabMove':
 				b = this.getTabBrowserFromChild(aEvent.currentTarget);
@@ -1164,16 +1152,13 @@ var MultipleTabService = {
 				break;
 
 			case 'DOMContentLoaded':
-				this.preInit();
-				break;
+				return this.preInit();
 
 			case 'load':
-				this.init();
-				break;
+				return this.init();
 
 			case 'unload':
-				this.destroy();
-				break;
+				return this.destroy();
 
 			case 'popupshowing':
 				if (
@@ -1504,6 +1489,38 @@ var MultipleTabService = {
 
 			var tab = this.getTabFromEvent(aEvent, true);
 			this.toggleReadyToClose(tab);
+		}
+	},
+ 
+	onTabbarDragEnd : function MTS_onTabbarDragEnd(aEvent) 
+	{
+		if (
+			dt.mozUserCancelled ||
+			aEvent.dataTransfer.dropEffect != 'none'
+			)
+			return;
+
+		var draggedTab = aEvent.dataTransfer.mozGetDataAt(TAB_DROP_TYPE, 0);
+		if (this.isDraggingAllTabs(draggedTab))
+			aEvent.stopPropagation();
+	},
+ 
+	onTabAdded : function MTS_onTabAdded(aEvent) 
+	{
+		var tab = aEvent.originalTarget;
+		this.initTab(tab);
+
+		var session = Components
+						.classes['@mozilla.org/widget/dragservice;1']
+						.getService(Components.interfaces.nsIDragService)
+						.getCurrentSession();
+		var draggedTab = session && session.sourceNode ?
+							this.getTabFromChild(session.sourceNode) :
+							null ;
+		if (draggedTab &&
+			this.getTabBrowserFromChild(draggedTab) != this.getTabBrowserFromChild(tab)) {
+			// this maybe a moving of tab from another window
+			this.fireWindowMoveEvent(tab, draggedTab);
 		}
 	},
  
