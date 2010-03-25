@@ -1049,9 +1049,6 @@ var MultipleTabService = {
 		this.getTabsArray(gBrowser).forEach(function(aTab) {
 			this.destroyTab(aTab);
 		}, this);
-
-		var tabContextMenu = document.getAnonymousElementByAttribute(gBrowser, 'anonid', 'tabContextMenu');
-		tabContextMenu.removeEventListener('popupshowing', this, false);
 	},
 	
 	destroyTabBrowser : function MTS_destroyTabBrowser(aTabBrowser) 
@@ -1068,7 +1065,8 @@ var MultipleTabService = {
 		aTabBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mousedown',   this, true);
 
-		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
+		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu') ||
+							document.getAnonymousElementByAttribute(aTabBrowser.tabContainer, 'anonid', 'tabContextMenu');
 		tabContextMenu.removeEventListener('popupshowing', this, false);
 	},
  
