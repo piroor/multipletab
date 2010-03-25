@@ -1494,13 +1494,14 @@ var MultipleTabService = {
  
 	onTabbarDragEnd : function MTS_onTabbarDragEnd(aEvent) 
 	{
+		var dt = aEvent.dataTransfer;
 		if (
 			dt.mozUserCancelled ||
-			aEvent.dataTransfer.dropEffect != 'none'
+			dt.dropEffect != 'none'
 			)
 			return;
 
-		var draggedTab = aEvent.dataTransfer.mozGetDataAt(TAB_DROP_TYPE, 0);
+		var draggedTab = dt.mozGetDataAt(TAB_DROP_TYPE, 0);
 		if (this.isDraggingAllTabs(draggedTab))
 			aEvent.stopPropagation();
 	},
