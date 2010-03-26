@@ -973,8 +973,8 @@ var MultipleTabService = {
 	initTabBrowserContextMenu : function MTS_initTabBrowserContextMenu(aTabBrowser) 
 	{
 		var suffix = '-tabbrowser-'+(aTabBrowser.id || 'instance-'+parseInt(Math.random() * 65000));
-		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu') ||
-							document.getAnonymousElementByAttribute(aTabBrowser.tabContainer, 'anonid', 'tabContextMenu');
+		var tabContextMenu = aTabBrowser.tabContextMenu ||
+							document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		var template = document.getElementById(this.kCONTEXT_MENU_TEMPLATE);
 		this.getArrayFromXPathResult('child::*[starts-with(@id, "multipletab-context-")]', template)
 			.concat(this.getArrayFromXPathResult('child::*[not(@id) or not(starts-with(@id, "multipletab-context-"))]', template))
@@ -1065,8 +1065,8 @@ var MultipleTabService = {
 		aTabBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mousedown',   this, true);
 
-		var tabContextMenu = document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu') ||
-							document.getAnonymousElementByAttribute(aTabBrowser.tabContainer, 'anonid', 'tabContextMenu');
+		var tabContextMenu = aTabBrowser.tabContextMenu ||
+							document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		tabContextMenu.removeEventListener('popupshowing', this, false);
 	},
  
