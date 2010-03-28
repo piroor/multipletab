@@ -820,9 +820,12 @@ var MultipleTabService = {
 						saveMode = SAVEMODE_FILEONLY | SAVEMODE_COMPLETE_TEXT;
 					}
 				$&]]>
-			).replace(
+			).replace( // Firefox 3.5 or older
 				/(!aChosenData)( && useSaveDocument && saveAsType == kSaveAsType_Text)/,
 				'($1 || "saveAsType" in aChosenData)$2'
+			).replace( // Firefox 3.6 or later
+				/(targetContentType: )(saveAsType == kSaveAsType_Text)/,
+				'$1 (!aChosenData || "saveAsType" in aChosenData) && $2'
 			));
 		}
 
