@@ -11,7 +11,7 @@ var MultipleTabBookmarkService = {
 					'$& var multipleTabsProxy = session = new MultipleTabDragSessionProxy(session, insertionPoint);'
 				).replace(
 					// for Firefox 3.5 or later
-					'var dt = this.currentDataTransfer;',
+					'var doCopy =',
 					'$& var multipleTabsProxy = dt = new MultipleTabDOMDataTransferProxy(dt, insertionPoint);'
 				).replace(
 					// for background tabs with BarTap ( https://addons.mozilla.org/firefox/addon/67651 )
