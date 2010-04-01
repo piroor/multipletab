@@ -352,12 +352,33 @@ var MultipleTabService = {
 			).singleNodeValue;
 	},
  
-	getTabBrowserFromChild : function MTS_getTabBrowserFromChild(aTab) 
+	getTabBrowserFromChild : function MTS_getTabBrowserFromChild(aTabBrowserChild) 
 	{
+		if (!aTabBrowserChild)
+			return null;
+
+		if (aTabBrowserChild.localName == 'tabbrowser') // itself
+			return aTabBrowserChild;
+
+		if (aTabBrowserChild.tabbrowser) // tabs, Firefox 3.7 or later
+			return aTabBrowserChild.tabbrowser;
+
+		if (aTabBrowserChild.id == 'TabsToolbar') // tabs toolbar, Firefox 3.7 or later
+			return aTabBrowserChild.getElementsByTagName('tabs')[0].tabbrowser;
+
+		// tab context menu on Firefox 3.7
+		var popup = this.evaluateXPath(
+				'ancestor-or-self::xul:menupopup[@id="tabContextMenu"]',
+				aTabBrowserChild,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue;
+		if (popup && 'TabContextMenu' in window)
+			return this.getTabBrowserFromChild(TabContextMenu.contextTab);
+
 		var b = this.evaluateXPath(
 				'ancestor-or-self::xul:tabbrowser | '+
 				'ancestor-or-self::xul:tabs[@tabbrowser]',
-				aTab,
+				aTabBrowserChild,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
 		return (b && b.tabbrowser) || b;
