@@ -908,6 +908,7 @@ var MultipleTabService = {
  
 	initTabBrowser : function MTS_initTabBrowser(aTabBrowser) 
 	{
+		aTabBrowser.mTabContainer.addEventListener('TabSelect', this, true);
 		aTabBrowser.mTabContainer.addEventListener('TabOpen', this, true);
 		aTabBrowser.mTabContainer.addEventListener('TabClose', this, true);
 		aTabBrowser.mTabContainer.addEventListener('TabMove', this, true);
@@ -1077,6 +1078,7 @@ var MultipleTabService = {
 	
 	destroyTabBrowser : function MTS_destroyTabBrowser(aTabBrowser) 
 	{
+		aTabBrowser.mTabContainer.removeEventListener('TabSelect', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('TabOpen', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('TabClose', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('TabMove', this, true);
@@ -1133,6 +1135,12 @@ var MultipleTabService = {
 
 			case 'dragend':
 				return this.onTabbarDragEnd(aEvent);
+
+			// restart timer after the clicked tab was completely selected.
+			case 'TabSelect':
+				if (this.lastMouseDownEvent)
+					this.startDelayedDragStartTimer();
+				return;
 
 			case 'TabOpen':
 				return this.onTabAdded(aEvent);
@@ -1334,12 +1342,7 @@ var MultipleTabService = {
 				return;
 			}
 			else if (this.tabDragMode != this.TAB_DRAG_MODE_DEFAULT) {
-				var delay = this.getPref('extensions.multipletab.tabdrag.delay');
-				if (delay > 0) {
-					this.cancelDelayedDragStart();
-					this.lastMouseDown = Date.now();
-					this.delayedDragStartTimer = window.setTimeout(this.delayedDragStart, delay, this, aEvent);
-				}
+				this.startDelayedDragStartTimer(aEvent);
 			}
 		}
 		if (this.selectionModified && !this.hasSelection())
@@ -1353,12 +1356,22 @@ var MultipleTabService = {
 			this.clearSelection();
 	},
 	
-	delayedDragStart : function MTS_delayedDragStart(aSelf, aEvent) 
+	startDelayedDragStartTimer : function MTS_startDelayedDragStartTimer(aEvent) 
 	{
-		aSelf.clearSelection();
-		aSelf.tabDragging = false; // cancel "dragging" before we start to drag it really.
-		aSelf.delayedDragStartReady = true;
-		aSelf.onTabDragStart(aEvent, true);
+		var delay = this.getPref('extensions.multipletab.tabdrag.delay');
+		if (delay > 0) {
+			var unprocessedEvent = this.lastMouseDownEvent;
+			this.cancelDelayedDragStart();
+			this.lastMouseDown = Date.now();
+			this.lastMouseDownEvent = aEvent || unprocessedEvent;
+			this.delayedDragStartTimer = window.setTimeout(function(aSelf) {
+				var event = aSelf.lastMouseDownEvent;
+				aSelf.clearSelection();
+				aSelf.tabDragging = false; // cancel "dragging" before we start to drag it really.
+				aSelf.delayedDragStartReady = true;
+				aSelf.onTabDragStart(event, true);
+			}, delay, this);
+		}
 	},
 	cancelDelayedDragStart : function MTS_cancelDelayedDragStart()
 	{
@@ -1366,8 +1379,10 @@ var MultipleTabService = {
 			window.clearTimeout(this.delayedDragStartTimer);
 			this.delayedDragStartTimer = null;
 		}
+		this.lastMouseDownEvent = null;
 	},
 	delayedDragStartTimer : null,
+	lastMouseDownEvent : null,
   
 	onTabDragStart : function MTS_onTabDragStart(aEvent, aIsTimeout) 
 	{
