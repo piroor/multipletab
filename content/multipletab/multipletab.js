@@ -1751,7 +1751,7 @@ var MultipleTabService = {
 				   tabs
 				   selectedTabs */
 				eval('available = ('+available+')');
-				if (!available) pref = false;
+				pref = !!available;
 			}
 
 			if (pref === null) return;
