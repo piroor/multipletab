@@ -15,8 +15,18 @@
  original:
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/extensions.js
 */
+
+if ('window' in this && !window) { // work as a JS Code Module
+	var EXPORTED_SYMBOLS = ['window', 'extensions'];
+
+	let ns = {};
+	Components.utils.import('resource://multipletab-modules/namespace.jsm', ns);
+
+	var window = ns.getNamespaceFor('piro.sakura.ne.jp');
+}
+
 (function() {
-	const currentRevision = 5;
+	const currentRevision = 6;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -32,7 +42,7 @@
 
 	// Firefox 3.7 or later
 	var AM = {};
-	if ('@mozilla.org/addons/integration;1' in Components.classes)
+	if ('@mozilla.org/addons/integration;1' in Cc)
 		Components.utils.import('resource://gre/modules/AddonManager.jsm', AM);
 
 	window['piro.sakura.ne.jp'].extensions = {
@@ -45,7 +55,7 @@
 			AM.AddonManager.getAddonByID(aId, function(aAddon) {
 				addon = aAddon;
 			});
-			var thread = Components.classes['@mozilla.org/thread-manager;1']
+			var thread = Cc['@mozilla.org/thread-manager;1']
 							.getService()
 							.mainThread;
 			while (addon === void(0)) {
@@ -131,7 +141,7 @@
 			return false;
 		},
 
-		goToOptions : function(aId)
+		goToOptions : function(aId, aOwnerWindow)
 		{
 			var uri = this.ExtensionManager ? this.getOptionsURI_EM(aId) : this.getOptionsURI_AM(aId) ;
 			if (!uri) return;
@@ -151,7 +161,7 @@
 			}
 			catch(e) {
 			}
-			window.openDialog(
+			(aOwnerWindow || window).openDialog(
 				uri,
 				'',
 				'chrome,titlebar,toolbar,centerscreen,' + (instantApply ? 'dialog=no' : 'modal' )
@@ -181,3 +191,7 @@
 		}
 	};
 })();
+
+if (window != this) { // work as a JS Code Module
+	var extensions = window['piro.sakura.ne.jp'].extensions;
+}
