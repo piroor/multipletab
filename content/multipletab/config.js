@@ -3,6 +3,10 @@ const XULAppInfo = Components.classes['@mozilla.org/xre/app-info;1']
 const comparator = Components.classes['@mozilla.org/xpcom/version-comparator;1']
 					.getService(Components.interfaces.nsIVersionComparator);
 
+Components.utils.import('resource://multipletab-modules/extensions.js', {});
+Components.utils.import('resource://multipletab-modules/namespace.jsm');
+var extensions = getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'].extensions;
+
 const MENU_EDITOR_ID = '{EDA7B1D7-F793-4e03-B074-E6F303317FB0}';
 
 var gAutoPopupItems = [];
@@ -11,10 +15,8 @@ var gDragModeRadio;
 
 function init()
 {
-	var ext = window['piro.sakura.ne.jp'].extensions;
-
-	var installed = ext.isInstalled(MENU_EDITOR_ID);
-	var enabled = ext.isEnabled(MENU_EDITOR_ID);
+	var installed = extensions.isInstalled(MENU_EDITOR_ID);
+	var enabled = extensions.isEnabled(MENU_EDITOR_ID);
 
 	[
 		'menuEditorLink-selection',
@@ -70,7 +72,7 @@ function init()
 		}
 	].forEach(function(aDefinition) {
 		var enabled = aDefinition.ids.some(function(aId) {
-					return ext.isInstalled(aId) && ext.isEnabled(aId);
+					return extensions.isInstalled(aId) && extensions.isEnabled(aId);
 				});
 		aDefinition.items
 			.map(document.getElementById, document)
@@ -119,7 +121,7 @@ function onDragModeChange()
 
 function openMenuEditorConfig()
 {
-	window['piro.sakura.ne.jp'].extensions.goToOptions(MENU_EDITOR_ID);
+	extensions.goToOptions(MENU_EDITOR_ID, window);
 }
 
 

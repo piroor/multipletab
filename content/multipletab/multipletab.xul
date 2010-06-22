@@ -9,9 +9,7 @@
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
          xmlns:html="http://www.w3.org/1999/xhtml">
 
-<script src="lib/autoScroll.js" type="application/javascript"/>
 <script src="lib/stopRendering.js" type="application/javascript"/>
-<script src="lib/prefs.js" type="application/javascript"/>
 <script src="multipletab.js" type="application/javascript"/>
 <script src="bookmarksOverlay.js" type="application/javascript"/>
 <script src="hacks.js" type="application/javascript"/>

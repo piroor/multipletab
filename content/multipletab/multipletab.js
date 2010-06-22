@@ -110,6 +110,8 @@ var MultipleTabService = {
 		return void(0);
 	},
  
+	get autoScroll() { return this.namespace.autoScroll; },
+ 
 // XPConnect 
 	
 	get SessionStore() { 
@@ -1488,7 +1490,7 @@ var MultipleTabService = {
 			return;
 
 		if (this.tabDragging || this.tabCloseboxDragging) {
-			window['piro.sakura.ne.jp'].autoScroll.processAutoScroll(aEvent);
+			this.autoScroll.processAutoScroll(aEvent);
 		}
 
 		if (this.tabDragging) {
@@ -3243,7 +3245,15 @@ var MultipleTabService = {
 	}
   
 }; 
-MultipleTabService.__proto__ = window['piro.sakura.ne.jp'].prefs;
+(function() {
+	Components.utils.import('resource://multipletab-modules/prefs.js', {});
+
+	var namespace = {};
+	Components.utils.import('resource://multipletab-modules/namespace.jsm', namespace);
+
+	MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];
+	MultipleTabService.__proto__ = MultipleTabService.namespace.prefs;
+})();
 
 window.addEventListener('load', MultipleTabService, false);
 window.addEventListener('DOMContentLoaded', MultipleTabService, false);
