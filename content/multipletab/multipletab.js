@@ -3246,13 +3246,11 @@ var MultipleTabService = {
   
 }; 
 (function() {
-	Components.utils.import('resource://multipletab-modules/prefs.js', {});
-
 	var namespace = {};
+	Components.utils.import('resource://multipletab-modules/prefs.js', namespace);
 	Components.utils.import('resource://multipletab-modules/namespace.jsm', namespace);
-
+	MultipleTabService.__proto__ = namespace.prefs;
 	MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];
-	MultipleTabService.__proto__ = MultipleTabService.namespace.prefs;
 })();
 
 window.addEventListener('load', MultipleTabService, false);
