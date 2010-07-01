@@ -3251,6 +3251,7 @@ var MultipleTabService = {
 	Components.utils.import('resource://multipletab-modules/namespace.jsm', namespace);
 	MultipleTabService.__proto__ = namespace.prefs;
 	MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];
+	Components.utils.import('resource://multipletab-modules/autoScroll.js');
 })();
 
 window.addEventListener('load', MultipleTabService, false);
