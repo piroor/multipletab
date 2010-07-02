@@ -15,18 +15,15 @@ var gDragModeRadio;
 
 function init()
 {
-	var installed = extensions.isInstalled(MENU_EDITOR_ID);
-	var enabled = extensions.isEnabled(MENU_EDITOR_ID);
-
 	[
 		'menuEditorLink-selection',
 		'menuEditorLink-context'
 	].forEach(function(aItem) {
 		aItem = document.getElementById(aItem);
-		if (installed)
-			aItem.setAttribute('collapsed', true);
-		else
+		aItem.setAttribute('collapsed', true);
+		extensions.isInstalled(MENU_EDITOR_ID, { ng : function() {
 			aItem.removeAttribute('collapsed');
+		}});
 	});
 
 	[
@@ -34,14 +31,14 @@ function init()
 		'menuEditorConfig-context'
 	].forEach(function(aItem) {
 		aItem = document.getElementById(aItem);
-		if (installed)
+		aItem.setAttribute('collapsed', true);
+		aItem.setAttribute('disabled', true);
+		extensions.isInstalled(MENU_EDITOR_ID, { ok : function() {
 			aItem.removeAttribute('collapsed');
-		else
-			aItem.setAttribute('collapsed', true);
-		if (enabled)
+		}});
+		extensions.isEnabled(MENU_EDITOR_ID, { ok : function() {
 			aItem.removeAttribute('disabled');
-		else
-			aItem.setAttribute('disabled', true);
+		}});
 	});
 
 
@@ -71,15 +68,15 @@ function init()
 			]
 		}
 	].forEach(function(aDefinition) {
-		var enabled = aDefinition.ids.some(function(aId) {
-					return extensions.isInstalled(aId) && extensions.isEnabled(aId);
-				});
-		aDefinition.items
-			.map(document.getElementById, document)
-			.forEach(enabled ?
-				function(aItem) { aItem.removeAttribute('disabled'); } :
-				function(aItem) { aItem.setAttribute('disabled', true); }
-			);
+		var items = aDefinition.items.map(document.getElementById, document);
+		items.forEach(function(aItem) {
+			aItem.setAttribute('disabled', true);
+		});
+		aDefinition.ids.forEach(function(aId) {
+			extensions.isAvailable(aId, { ok : function() {
+				aItem.removeAttribute('disabled');
+			}});
+		});
 	});
 
 	new window['piro.sakura.ne.jp'].arrowScrollBoxScrollHelper('formatTypeBox', 'radio');
