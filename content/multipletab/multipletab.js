@@ -477,7 +477,7 @@ var MultipleTabService = {
 		aTab.linkedBrowser.parentNode.__SS_data = data; // -Firefox 3.5
 
 		(aTabBrowser || this.getTabBrowserFromChild(aTab))
-			.removeTab(aTab);
+			.removeTab(aTab, { animate : true });
 	},
  
 	ensureLoaded : function MTS_ensureLoaded(aTab) 
@@ -1331,7 +1331,7 @@ var MultipleTabService = {
 			}
 			else if (this.isAccelKeyPressed(aEvent)) {
 				if (this.tabAccelClickMode != this.TAB_CLICK_MODE_SELECT) {
-					b.removeTab(tab);
+					b.removeTab(tab, { animate : true });
 					return;
 				}
 
@@ -1888,10 +1888,10 @@ var MultipleTabService = {
 				if (closeSelectedLast && aTab.selected)
 					selected = aTab;
 				else
-					b.removeTab(aTab);
+					b.removeTab(aTab, { animate : true });
 			});
 			if (selected)
-				b.removeTab(selected);
+				b.removeTab(selected, { animate : true });
 		};
 
 		w['piro.sakura.ne.jp'].stopRendering.stop();
@@ -2283,7 +2283,7 @@ var MultipleTabService = {
 							else {
 								// causes error. why?
 								// remoteService.irrevocableRemoveTab(aTab, remoteBrowser);
-								remoteBrowser.removeTab(aTab);
+								remoteBrowser.removeTab(aTab, { animate : true });
 							}
 						});
 					aRemoteWindow['piro.sakura.ne.jp'].stopRendering.start();
@@ -2444,7 +2444,7 @@ var MultipleTabService = {
 					if (remote.tabs.indexOf(aTab) > -1)
 						return false;
 					// remote.window.MultipleTabService.irrevocableRemoveTab(aTab, remote.browser);
-					remote.browser.removeTab(aTab);
+					remote.browser.removeTab(aTab, { animate : true });
 					return true;
 				});
 			this.moveTabsByIndex(
