@@ -19,7 +19,7 @@
      // 1st argument: DOMNode or ID of an element
      // 2nd argument: DOMNode, ID of an element, or local name of a child element
 
- lisence: The MIT License, Copyright (c) 2009 SHIMODA "Piro" Hiroshi
+ license: The MIT License, Copyright (c) 2009 SHIMODA "Piro" Hiroshi
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/license.txt
  original:
    http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/arrowScrollBoxScrollHelper.js
