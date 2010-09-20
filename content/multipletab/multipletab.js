@@ -515,6 +515,12 @@ var MultipleTabService = {
 			catch(e) {
 			}
 		}
+		// Firefox 4.0-
+		if (aTab.linkedBrowser.__SS_needsRestore) {
+			let data = aTab.linkedBrowser.__SS_data;
+			let entry = data.entries[Math.max(data.index, data.entries.length-1)];
+			return this.makeURIFromSpec(entry.url);
+		}
 		return aTab.linkedBrowser.currentURI;
 	},
  
