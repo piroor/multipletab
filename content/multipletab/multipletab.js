@@ -3148,7 +3148,8 @@ var MultipleTabService = {
 					aTab.linkedBrowser.parentNode.__SS_data; // -Firefox 3.5
 		if (data &&
 			data._tabStillLoading &&
-			aTab.getAttribute('busy') != 'true')
+			aTab.getAttribute('busy') != 'true' &&
+			!aTab.linkedBrowser.__SS_restoring)
 			data._tabStillLoading = false;
 	},
   
