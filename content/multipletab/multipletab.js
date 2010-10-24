@@ -234,7 +234,7 @@ var MultipleTabService = {
 	getSelectedTabs : function MTS_getSelectedTabs(aTabBrowser) 
 	{
 		return this.getArrayFromXPathResult(
-				'descendant::xul:tab[@'+this.kSELECTED+'="true"]',
+				'descendant::xul:tab[@'+this.kSELECTED+'="true" and not(@hidden="true")]',
 				(aTabBrowser || this.browser).mTabContainer
 			);
 	},
@@ -242,7 +242,7 @@ var MultipleTabService = {
 	getReadyToCloseTabs : function MTS_getReadyToCloseTabs(aTabBrowser) 
 	{
 		return this.getArrayFromXPathResult(
-				'descendant::xul:tab[@'+this.kREADY_TO_CLOSE+'="true"]',
+				'descendant::xul:tab[@'+this.kREADY_TO_CLOSE+'="true" and not(@hidden="true")]',
 				(aTabBrowser || this.browser).mTabContainer
 			);
 	},
@@ -250,7 +250,7 @@ var MultipleTabService = {
 	getLeftTabsOf : function MTS_getLeftTabsOf(aTab) 
 	{
 		return this.getArrayFromXPathResult(
-				'preceding-sibling::xul:tab',
+				'preceding-sibling::xul:tab[not(@hidden="true")]',
 				aTab
 			);
 	},
@@ -258,7 +258,7 @@ var MultipleTabService = {
 	getRightTabsOf : function MTS_getRightTabsOf(aTab) 
 	{
 		return this.getArrayFromXPathResult(
-				'following-sibling::xul:tab',
+				'following-sibling::xul:tab[not(@hidden="true")]',
 				aTab
 			);
 	},
@@ -389,7 +389,7 @@ var MultipleTabService = {
 	getTabs : function MTS_getTabs(aTabBrowser) 
 	{
 		return this.evaluateXPath(
-				'descendant::xul:tab',
+				'descendant::xul:tab[not(@hidden="true")]',
 				aTabBrowser.mTabContainer
 			);
 	},
@@ -412,7 +412,7 @@ var MultipleTabService = {
 	getNextTab : function MTS_getNextTab(aTab) 
 	{
 		return this.evaluateXPath(
-				'following-sibling::xul:tab[1]',
+				'following-sibling::xul:tab[1][not(@hidden="true")]',
 				aTab,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
@@ -421,7 +421,7 @@ var MultipleTabService = {
 	getPreviousTab : function MTS_getPreviousTab(aTab) 
 	{
 		return this.evaluateXPath(
-				'preceding-sibling::xul:tab[1]',
+				'preceding-sibling::xul:tab[1][not(@hidden="true")]',
 				aTab,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
