@@ -4,7 +4,8 @@
 :root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-image-middle,
 :root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-image-right,
 :root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-middle,
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-close-button {
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-close-button,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-content {
 	background-color: Highlight !important;
 	color: HighlightText !important;
 }
