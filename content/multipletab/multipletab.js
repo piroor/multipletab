@@ -2199,7 +2199,7 @@ var MultipleTabService = {
 				this._clearTabValueKeys.forEach(function(aKey) {
 					delete state.extData[aKey];
 				});
-				state = state.toSource();
+				state = 'JSON' in window ? JSON.stringify(state) : state.toSource() ;
 				var tab = b.addTab();
 				this.SessionStore.setTabState(tab, state);
 				return tab;
