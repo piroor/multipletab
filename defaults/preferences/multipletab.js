@@ -43,6 +43,9 @@ pref("extensions.multipletab.show.multipletab-context-saveTabs",        true);
 // 0 = URI, 1 = title+URI, 2 = HTML Link, -1 = select
 pref("extensions.multipletab.clipboard.formatType", -1);
 pref("extensions.multipletab.clipboard.linefeed", "\r\n");
+pref("extensions.multipletab.platform.WINNT.clipboard.linefeed", "\r\n");
+pref("extensions.multipletab.platform.Darwin.clipboard.linefeed", "\n");
+pref("extensions.multipletab.platform.Linux.clipboard.linefeed", "\n");
 pref("extensions.multipletab.clipboard.format.0", "%URL%");
 pref("extensions.multipletab.clipboard.format.1", "%TITLE%%EOL%%URL%");
 pref("extensions.multipletab.clipboard.format.2", "<a href=\"%URL_HTMLIFIED%\">%TITLE_HTMLIFIED%</a>");

@@ -156,6 +156,17 @@ var MultipleTabService = {
 		return this._EffectiveTLD;
 	},
 //	_EffectiveTLD : null,
+ 
+	get XULAppInfo()
+	{
+		if (!this._XULAppInfo) {
+			this._XULAppInfo = Components.classes['@mozilla.org/xre/app-info;1']
+								.getService(Components.interfaces.nsIXULAppInfo)
+								.QueryInterface(Components.interfaces.nsIXULRuntime);
+		}
+		return this._XULAppInfo;
+	},
+	_XULAppInfo : null,
   
 	isDisabled : function MTS_isDisabled() 
 	{
@@ -711,7 +722,7 @@ var MultipleTabService = {
  
 	isAccelKeyPressed : function MTS_isAccelKeyPressed(aEvent) 
 	{
-		return navigator.platform.toLowerCase().indexOf('mac') > -1 ? aEvent.metaKey : aEvent.ctrlKey ;
+		return this.XULAppInfo.OS == 'Darwin' ? aEvent.metaKey : aEvent.ctrlKey ;
 	},
   
 // fire custom events 
@@ -811,6 +822,8 @@ var MultipleTabService = {
 	{
 		if (!('gBrowser' in window)) return;
 
+		this.applyPlatformDefaultPrefs();
+
 		window.addEventListener('mouseup', this, true);
 
 		window.removeEventListener('load', this, false);
@@ -895,6 +908,14 @@ var MultipleTabService = {
 	delayedInit : function MTS_delayedInit() 
 	{
 		this.overrideExtensionsOnDelayedInit(); // hacks.js
+	},
+ 
+	applyPlatformDefaultPrefs : function TSTUtils_applyPlatformDefaultPrefs()
+	{
+		var OS = this.XULAppInfo.OS;
+		this.getDescendant('extensions.multipletab.platform.'+OS).forEach(function(aKey) {
+			this.setDefaultPref(aKey.replace('platform.'+OS+'.', ''), this.getDefaultPref(aKey));
+		}, this);
 	},
  
 	kPREF_VERSION : 1,
