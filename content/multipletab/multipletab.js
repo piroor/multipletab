@@ -1646,8 +1646,13 @@ var MultipleTabService = {
 		popup.hidePopup();
 		popup.autoClearSelection = aAutoClearSelection;
 		document.popupNode = this.browser.mTabContainer;
-		if ('openPopupAtScreen' in popup) // Firefox 3
-			popup.openPopupAtScreen(aEvent.screenX, aEvent.screenY, true);
+		if ('openPopupAtScreen' in popup) // Firefox 3 or later
+			popup.openPopupAtScreen(
+				aEvent.screenX,
+				aEvent.screenY,
+				true,
+				aEvent
+			);
 		else
 			popup.showPopup(
 				document.documentElement,
