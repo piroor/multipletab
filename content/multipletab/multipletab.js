@@ -913,8 +913,16 @@ var MultipleTabService = {
 	applyPlatformDefaultPrefs : function TSTUtils_applyPlatformDefaultPrefs()
 	{
 		var OS = this.XULAppInfo.OS;
+		var processed = {};
 		this.getDescendant('extensions.multipletab.platform.'+OS).forEach(function(aKey) {
-			this.setDefaultPref(aKey.replace('platform.'+OS+'.', ''), this.getDefaultPref(aKey));
+			var key = aKey.replace('platform.'+OS+'.', '');
+			this.setDefaultPref(key, this.getPref(aKey));
+			processed[key] = true;
+		}, this);
+		this.getDescendant('extensions.multipletab.platform.default').forEach(function(aKey) {
+			var key = aKey.replace('platform.default.', '');
+			if (!(key in processed))
+				this.setDefaultPref(key, this.getPref(aKey));
 		}, this);
 	},
  
@@ -2200,6 +2208,7 @@ var MultipleTabService = {
 
 		return duplicatedTabs;
 	},
+
 	
 	duplicateTabsInternal : function MTS_duplicateTabsInternal(aTabBrowser, aTabs) 
 	{
@@ -3282,6 +3291,7 @@ var MultipleTabService = {
 	var namespace = {};
 	Components.utils.import('resource://multipletab-modules/prefs.js', namespace);
 	Components.utils.import('resource://multipletab-modules/namespace.jsm', namespace);
+
 	MultipleTabService.__proto__ = namespace.prefs;
 	MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];
 	Components.utils.import('resource://multipletab-modules/autoScroll.js');
