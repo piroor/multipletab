@@ -242,12 +242,29 @@ var MultipleTabService = {
 				});
 	},
  
-	getSelectedTabs : function MTS_getSelectedTabs(aTabBrowser) 
+	getSelectedTabs : function MTS_getSelectedTabs(aSource) 
 	{
-		return this.getArrayFromXPathResult(
-				'descendant::xul:tab[@'+this.kSELECTED+'="true" and not(@hidden="true")]',
-				(aTabBrowser || this.browser).mTabContainer
-			);
+		var dt;
+		if (
+			!aSource ||
+			!(aSource instanceof Components.interfaces.nsIDOMEvent) ||
+			!(dt = aSource.dataTransfer)
+			)
+			return this.getArrayFromXPathResult(
+					'descendant::xul:tab[@'+this.kSELECTED+'="true" and not(@hidden="true")]',
+					(aSource || this.browser).mTabContainer
+				);
+
+		var tabs = [];
+		if (dt.mozItemCount < 1 ||
+			Array.slice(dt.mozTypesAt(0)).indexOf(TAB_DROP_TYPE) < 0)
+			return tabs;
+
+		for (let i = 0, maxi = dt.mozItemCount; i < maxi; i++)
+		{
+			tabs.push(dt.mozGetDataAt(TAB_DROP_TYPE, i));
+		}
+		return tabs;
 	},
  
 	getReadyToCloseTabs : function MTS_getReadyToCloseTabs(aTabBrowser) 
