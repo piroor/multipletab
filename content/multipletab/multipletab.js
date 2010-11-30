@@ -870,7 +870,7 @@ var MultipleTabService = {
 		aTabBrowser.mTabContainer.addEventListener('TabMove',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabDuplicate',  this, true);
 		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabWindowMove', this, true);
-		aTabBrowser.mTabContainer.addEventListener('dragstart', this, true);
+		aTabBrowser.mTabContainer.parentNode.addEventListener('dragstart', this, true);
 		aTabBrowser.mTabContainer.addEventListener('dragend',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mouseover', this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousemove', this, true);
@@ -998,7 +998,7 @@ var MultipleTabService = {
 		aTabBrowser.mTabContainer.removeEventListener('TabMove',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabDuplicate',  this, true);
 		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabWindowMove', this, true);
-		aTabBrowser.mTabContainer.removeEventListener('dragstart', this, true);
+		aTabBrowser.mTabContainer.parentNode.removeEventListener('dragstart', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('dragend',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mouseover', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mousemove', this, true);
@@ -1305,7 +1305,7 @@ var MultipleTabService = {
 		if (!tab) {
 			this.lastMouseOverTarget = null;
 			// do nothing
-			return;
+			return false;
 		}
 
 		if (
@@ -1343,6 +1343,7 @@ var MultipleTabService = {
 
 		aEvent.preventDefault();
 		aEvent.stopPropagation();
+		return true;
 	},
 	tabDragging         : false,
 	tabCloseboxDragging : false,
@@ -1351,8 +1352,11 @@ var MultipleTabService = {
  
 	startTabsDrag : function MTS_startTabsDrag(aEvent) 
 	{
-		if (!this.mTabBrowser.treeStyleTab) // do nothing because Tree Style Tab will handle this event.
-			window['piro.sakura.ne.jp'].tabsDragUtils.startTabsDrag(aEvent, this.getSelectedTabs());
+		if (this.mTabBrowser.treeStyleTab) // do nothing because Tree Style Tab will handle this event.
+			return false;
+
+		window['piro.sakura.ne.jp'].tabsDragUtils.startTabsDrag(aEvent, this.getSelectedTabs());
+		return true;
 	},
  
 	onTabDragEnd : function MTS_onTabDragEnd(aEvent) 
