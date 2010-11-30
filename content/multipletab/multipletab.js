@@ -498,8 +498,7 @@ var MultipleTabService = {
 		// override session data to prevent undo
 		var data = {
 				entries : [],
-				_tabStillLoading : true, // for Firefox 3.5 or later
-				_tab : aTab // for Firefox 3.0.x
+				_tabStillLoading : true // for Firefox 3.5 or later
 			};
 		aTab.linkedBrowser.__SS_data = data; // Firefox 3.6-
 		aTab.linkedBrowser.parentNode.__SS_data = data; // -Firefox 3.5
@@ -1033,12 +1032,6 @@ var MultipleTabService = {
 			aTabBrowser.__multipletab__canDoWindowMove = true;
 		}
 		else {
-			if ('onDrop' in aTabBrowser) { // Firefox 3.0
-				eval('aTabBrowser.onDrop = '+aTabBrowser.onDrop.toSource().replace(
-					/(this\.duplicateTab\([^\)]+)(\))/g,
-					'$1, aEvent$2'
-				));
-			}
 			aTabBrowser.__multipletab__canDoWindowMove = false;
 		}
 
@@ -2566,7 +2559,7 @@ var MultipleTabService = {
 		targetWindow['piro.sakura.ne.jp'].stopRendering.stop();
 		sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
 
-		if (targetBrowser.__multipletab__canDoWindowMove && !aClone) {// move tabs, for Firefox 3.5 or later
+		if (targetBrowser.__multipletab__canDoWindowMove && !aClone) {// move tabs
 			aTabs.forEach(function(aTab, aIndex) {
 				var newTab = targetBrowser.addTab();
 				importedTabs.push(newTab);
@@ -2579,7 +2572,7 @@ var MultipleTabService = {
 				});
 			}, this);
 		}
-		else { // duplicate tabs, or move tabs for Firefox 3.0
+		else { // duplicate tabs
 			aTabs.forEach(function(aTab) {
 				var newTab = targetBrowser.duplicateTab(aTab);
 				importedTabs.push(newTab);

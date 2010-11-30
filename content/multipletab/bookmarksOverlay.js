@@ -6,10 +6,6 @@ var MultipleTabBookmarkService = {
 			'onDrop' in PlacesControllerDragHelper) {
 			eval('PlacesControllerDragHelper.onDrop = '+
 				PlacesControllerDragHelper.onDrop.toSource().replace(
-					// for Firefox 3.0
-					'var session = this.getSession();',
-					'$& var multipleTabsProxy = session = new MultipleTabDragSessionProxy(session, insertionPoint);'
-				).replace(
 					// for Firefox 3.5 or later
 					'var doCopy =',
 					'var multipleTabsProxy = dt = new MultipleTabDOMDataTransferProxy(dt, insertionPoint); $&'
@@ -60,88 +56,6 @@ var MultipleTabBookmarkService = {
 }; 
 
 window.addEventListener('load', MultipleTabBookmarkService, false);
-  
-// for Firefox 3.0
-function MultipleTabDragSessionProxy(aSession, aInsertionPoint) 
-{
-	// Don't proxy it because it is not a drag of tabs.
-	if (aSession.numDropItems != 1 ||
-		!aSession.sourceNode)
-		return aSession;
-
-	var tab = MultipleTabService.getTabFromChild(aSession.sourceNode);
-	if (!tab)
-		return aSession;
-
-	var tabs = MultipleTabService.getBundledTabsOf(tab);
-
-	// Don't proxy it because there is no selection.
-	if (tabs.length < 2)
-		return aSession;
-
-	this._source = aSession;
-	this._tabs = tabs;
-
-	if (MultipleTabBookmarkService.willBeInsertedBeforeExistingNode(aInsertionPoint))
-		this._tabs.reverse();
-}
-
-MultipleTabDragSessionProxy.prototype = {
-	
-	_apply : function MTDSProxy__apply(aMethod, aArguments) 
-	{
-		return this._source[aMethod].apply(this._source, aArguments);
-	},
- 
-	_setDataToTransferable : function MTDSProxy__setDataToTransferable(aTransferable, aType, aData) 
-	{
-		try {
-			var string = Components.classes['@mozilla.org/supports-string;1']
-							.createInstance(Components.interfaces.nsISupportsString);
-			string.data = aData;
-			aTransferable.setTransferData(aType, string, aData.length * 2);
-		}
-		catch(e) {
-		}
-	},
- 
-	// nsIDragSession 
-	get canDrop() { return this._source.canDrop; },
-	set canDrop(aValue) { return this._source.canDrop = aValue; },
-	get onlyChromeDrop() { return this._source.onlyChromeDrop; },
-	set onlyChromeDrop(aValue) { return this._source.onlyChromeDrop = aValue; },
-	get dragAction() { return this._source.dragAction; },
-	set dragAction(aValue) { return this._source.dragAction = aValue; },
-
-	get numDropItems()
-	{
-		return this._tabs.length;
-	},
-
-	get sourceDocument() { return this._source.sourceDocument; },
-	get sourceNode() { return this._source.sourceNode; },
-	get dataTransfer() { return this._source.dataTransfer; },
-
-	getData : function MTDSProxy_getData(aTransferable, aIndex)
-	{
-		var tab = this._tabs[aIndex];
-		var uri = MultipleTabService.getCurrentURIOfTab(tab);
-		if (uri) {
-			this._setDataToTransferable(aTransferable, 'text/x-moz-url', uri.spec+'\n'+tab.label);
-			this._setDataToTransferable(aTransferable, 'text/unicode', uri.spec);
-			this._setDataToTransferable(aTransferable, 'text/html', '<a href="'+uri.spec+'">'+tab.label+'</a>');
-		}
-		else {
-			this._setDataToTransferable(aTransferable, 'text/unicode', 'about:blank');
-		}
-	},
-
-	isDataFlavorSupported : function MTDSProxy_isDataFlavorSupported()
-	{
-		return this._apply('isDataFlavorSupported', arguments);
-	}
- 
-}; 
   
 // for Firefox 3.5 or later
 function MultipleTabDOMDataTransferProxy(aDataTransfer, aInsertionPoint) 
