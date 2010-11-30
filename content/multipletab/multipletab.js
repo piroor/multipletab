@@ -1384,8 +1384,8 @@ var MultipleTabService = {
 	],
 	registerDragTabsBlocker : function MTH_registerDragTabsBlocker(aBlocker) /* PUBLIC API */
 	{
-		if (!_dragTabsBlockers ||
-			typeof _dragTabsBlockers != 'function' ||
+		if (!aBlocker ||
+			typeof aBlocker != 'function' ||
 			this._dragTabsBlockers.indexOf(aBlocker) > -1)
 			return;
 		this._dragTabsBlockers.push(aBlocker);
@@ -1393,8 +1393,8 @@ var MultipleTabService = {
 	unregisterDragTabsBlocker : function MTH_unregisterDragTabsBlocker(aBlocker) /* PUBLIC API */
 	{
 		var index;
-		if (!_dragTabsBlockers ||
-			typeof _dragTabsBlockers != 'function' ||
+		if (!aBlocker ||
+			typeof aBlocker != 'function' ||
 			(index = this._dragTabsBlockers.indexOf(aBlocker)) > -1)
 			return;
 		this._dragTabsBlockers.splice(index, 1);
