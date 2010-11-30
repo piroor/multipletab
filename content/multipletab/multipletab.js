@@ -997,6 +997,18 @@ var MultipleTabService = {
 			aTabBrowser.__multipletab__canDoWindowMove = false;
 		}
 
+		var tabDNDObserver = (aTabBrowser.tabContainer && aTabBrowser.tabContainer.tabbrowser == aTabBrowser) ?
+								aTabBrowser.tabContainer : // Firefox 4.0 or later
+								aTabBrowser ; // Firefox 3.5 - 3.6
+		if ('_setEffectAllowedForDataTransfer' in tabDNDObserver) {
+			eval('tabDNDObserver._setEffectAllowedForDataTransfer = '+
+				tabDNDObserver._setEffectAllowedForDataTransfer.toSource().replace(
+					'dt.mozItemCount > 1',
+					'$& && !MultipleTabService.isTabsDragging(arguments[0])'
+				)
+			);
+		}
+
 		this.initTabBrowserContextMenu(aTabBrowser);
 
 		this.getTabsArray(aTabBrowser).forEach(function(aTab) {
@@ -1457,6 +1469,17 @@ var MultipleTabService = {
 			dt.mozSetDataAt(TAB_DROP_TYPE, aTab, aIndex);
 			dt.mozSetDataAt('text/x-moz-text-internal', this.getCurrentURIOfTab(aTab), aIndex);
 		}, this);
+	},
+ 
+	isTabsDragging : function MTS_isTabsDragging(aEvent) 
+	{
+		var dt = aEvent.dataTransfer;
+		for (let i = 0, maxi = dt.mozItemCount; i < maxi; i++)
+		{
+			if (Array.slice(dt.mozTypesAt(i)).indexOf(TAB_DROP_TYPE) < 0)
+				return false;
+		}
+		return true;
 	},
  
 	onTabDragEnd : function MTS_onTabDragEnd(aEvent) 
