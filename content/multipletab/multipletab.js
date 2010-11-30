@@ -1363,11 +1363,41 @@ var MultipleTabService = {
  
 	startTabsDrag : function MTS_startTabsDrag(aEvent) 
 	{
-		if (this.mTabBrowser.treeStyleTab) // do nothing because Tree Style Tab will handle this event.
+		if (this.canDragTabs(aEvent))
 			return false;
 
 		window['piro.sakura.ne.jp'].tabsDragUtils.startTabsDrag(aEvent, this.getSelectedTabs());
 		return true;
+	},
+ 
+	canDragTabs : function MTH_canDragTabs(aEvent) 
+	{
+		return this._dragTabsBlockers.some(function(aBlocker) {
+				return aBlocker(aEvent, this.mTabBrowser);
+			}, this);
+	},
+	_dragTabsBlockers : [
+		function(aEvent, aTabBrowser) {
+			// do nothing because Tree Style Tab will handle this event.
+			return !aTabBrowser.treeStyleTab;
+		}
+	],
+	registerDragTabsBlocker : function MTH_registerDragTabsBlocker(aBlocker) /* PUBLIC API */
+	{
+		if (!_dragTabsBlockers ||
+			typeof _dragTabsBlockers != 'function' ||
+			this._dragTabsBlockers.indexOf(aBlocker) > -1)
+			return;
+		this._dragTabsBlockers.push(aBlocker);
+	},
+	unregisterDragTabsBlocker : function MTH_unregisterDragTabsBlocker(aBlocker) /* PUBLIC API */
+	{
+		var index;
+		if (!_dragTabsBlockers ||
+			typeof _dragTabsBlockers != 'function' ||
+			(index = this._dragTabsBlockers.indexOf(aBlocker)) > -1)
+			return;
+		this._dragTabsBlockers.splice(index, 1);
 	},
  
 	onTabDragEnd : function MTS_onTabDragEnd(aEvent) 
