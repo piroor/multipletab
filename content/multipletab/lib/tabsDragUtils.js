@@ -175,6 +175,8 @@
 		isTabsDragging : function TDU_isTabsDragging(aEvent) 
 		{
 			var dt = aEvent.dataTransfer;
+			if (dt.mozItemCount < 1)
+				return false;
 			for (let i = 0, maxi = dt.mozItemCount; i < maxi; i++)
 			{
 				if (Array.slice(dt.mozTypesAt(i)).indexOf(TAB_DROP_TYPE) < 0)
