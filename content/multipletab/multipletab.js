@@ -529,8 +529,8 @@ var MultipleTabService = {
 			// from the attribute or the session histrory.
 			var b = aTab.linkedBrowser;
 			try {
-				if (b.hasAttribute(this.kBARTAP_URI))
-					return this.makeURIFromSpec(b.getAttribute(this.kBARTAP_URI));
+				if (b.hasAttribute(this.kARGUMENT_URI))
+					return this.makeURIFromSpec(b.getAttribute(this.kARGUMENT_URI));
 			}
 			catch(e) {
 			}
@@ -1414,7 +1414,7 @@ var MultipleTabService = {
 			this.tabDragMode == this.TAB_DRAG_MODE_DEFAULT
 			) {
 			// drag tabs
-			return this.setUpTabDragData(tab, aEvent);
+			return this.setUpTabsDragData(aEvent);
 		}
 		else {
 			var delay = this.getPref('extensions.multipletab.tabdrag.delay');
@@ -1424,7 +1424,7 @@ var MultipleTabService = {
 				!aIsTimeout
 				) {
 				// drag tabs
-				return this.setUpTabDragData(tab, aEvent);
+				return this.setUpTabsDragData(aEvent);
 			}
 			this.tabDragging = true;
 			this.delayedDragStartReady = false;
@@ -1441,15 +1441,16 @@ var MultipleTabService = {
 	lastMouseOverTarget : null,
 	lastMouseDown       : 0,
  
-	setUpTabDragData : function MTS_setUpTabDragData(aDraggedTab, aEvent) 
+	setUpTabsDragData : function MTS_setUpSelectedTabsDragData(aEvent, aTabs) /* PUBLIC API */ 
 	{
-		var tabs = this.getSelectedTabs();
-		var index = tabs.indexOf(aDraggedTab);
+		var draggedTab = this.getTabFromEvent(aEvent);
+		var tabs = aTabs || this.getSelectedTabs();
+		var index = tabs.indexOf(draggedTab);
 		if (index < 0)
 			return;
 
 		tabs.splice(index, 1);
-		tabs.unshift(aDraggedTab);
+		tabs.unshift(draggedTab);
 
 		var dt = aEvent.dataTransfer;
 		tabs.forEach(function(aTab, aIndex) {
