@@ -264,7 +264,7 @@ var MultipleTabService = {
 		{
 			tabs.push(dt.mozGetDataAt(TAB_DROP_TYPE, i));
 		}
-		return tabs;
+		return tabs.sort(function(aA, aB) { return aA._tPos - aB._tPos; });
 	},
  
 	getReadyToCloseTabs : function MTS_getReadyToCloseTabs(aTabBrowser) 
@@ -390,13 +390,13 @@ var MultipleTabService = {
 		if (aTabBrowserChild.localName == 'tabbrowser') // itself
 			return aTabBrowserChild;
 
-		if (aTabBrowserChild.tabbrowser) // tabs, Firefox 3.7 or later
+		if (aTabBrowserChild.tabbrowser) // tabs, Firefox 4.0 or later
 			return aTabBrowserChild.tabbrowser;
 
-		if (aTabBrowserChild.id == 'TabsToolbar') // tabs toolbar, Firefox 3.7 or later
+		if (aTabBrowserChild.id == 'TabsToolbar') // tabs toolbar, Firefox 4.0 or later
 			return aTabBrowserChild.getElementsByTagName('tabs')[0].tabbrowser;
 
-		// tab context menu on Firefox 3.7
+		// tab context menu on Firefox 4.0
 		var popup = this.evaluateXPath(
 				'ancestor-or-self::xul:menupopup[@id="tabContextMenu"]',
 				aTabBrowserChild,
@@ -967,49 +967,11 @@ var MultipleTabService = {
 		aTabBrowser.mTabContainer.addEventListener('TabMove', this, true);
 		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabDuplicate', this, true);
 		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabWindowMove', this, true);
-//		aTabBrowser.mTabContainer.addEventListener('dragstart',   this, true);
-		aTabBrowser.mTabContainer.addEventListener('draggesture', this, true);
+		aTabBrowser.mTabContainer.addEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('dragend',     this, true);
 		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousemove',   this, true);
 		aTabBrowser.mTabContainer.addEventListener('mousedown',   this, true);
-
-/*
-		eval('aTabBrowser.onDragStart = '+aTabBrowser.onDragStart.toSource().replace(
-			'aXferData.data.addDataForFlavour("text/unicode", URI.spec);',
-			<![CDATA[
-				var selectedTabs = MultipleTabService.getSelectedTabs(this);
-				if (MultipleTabService.isSelected(aEvent.target) &&
-					MultipleTabService.allowMoveMultipleTabs) {
-					aXferData.data.addDataForFlavour(
-						'text/unicode',
-						selectedTabs.map(function(aTab) {
-							return aTab.linkedBrowser.currentURI.spec;
-						}).join('\n')
-					);
-				}
-				else {
-					$&
-				}
-			]]>
-		).replace(
-			/(aXferData.data.addDataForFlavour\("text\/html", [^\)]+\);)/,
-			<![CDATA[
-				if (MultipleTabService.isSelected(aEvent.target) &&
-					MultipleTabService.allowMoveMultipleTabs) {
-					aXferData.data.addDataForFlavour(
-						'text/html',
-						selectedTabs.map(function(aTab) {
-							return '<a href="' + aTab.linkedBrowser.currentURI.spec + '">' + aTab.label + '</a>';
-						}).join('\n')
-					);
-				}
-				else {
-					$1
-				}
-			]]>
-		));
-*/
 
 		eval('aTabBrowser.duplicateTab = '+aTabBrowser.duplicateTab.toSource().replace(
 			')',
@@ -1131,8 +1093,7 @@ var MultipleTabService = {
 		aTabBrowser.mTabContainer.removeEventListener('TabMove', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabDuplicate', this, true);
 		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabWindowMove', this, true);
-//		aTabBrowser.mTabContainer.removeEventListener('dragstart',   this, true);
-		aTabBrowser.mTabContainer.removeEventListener('draggesture', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('dragstart',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('dragend',     this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
 		aTabBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
@@ -1165,10 +1126,7 @@ var MultipleTabService = {
 				this.onTabClick(aEvent);
 				break;
 
-//			case 'dragstart':
-//				break;
-
-			case 'draggesture':
+			case 'dragstart':
 				return this.onTabDragStart(aEvent);
 
 			case 'mouseup':
@@ -1438,6 +1396,7 @@ var MultipleTabService = {
 		var tab = this.getTabFromEvent(aEvent);
 		if (!tab) {
 			this.lastMouseOverTarget = null;
+			// do nothing
 			return;
 		}
 
@@ -1454,7 +1413,8 @@ var MultipleTabService = {
 			this.isEventFiredOnTabIcon(aEvent) ||
 			this.tabDragMode == this.TAB_DRAG_MODE_DEFAULT
 			) {
-			return;
+			// drag tabs
+			return this.setUpTabDragData(tab, aEvent);
 		}
 		else {
 			var delay = this.getPref('extensions.multipletab.tabdrag.delay');
@@ -1463,7 +1423,8 @@ var MultipleTabService = {
 				(Date.now() - this.lastMouseDown < delay) &&
 				!aIsTimeout
 				) {
-				return
+				// drag tabs
+				return this.setUpTabDragData(tab, aEvent);
 			}
 			this.tabDragging = true;
 			this.delayedDragStartReady = false;
@@ -1479,6 +1440,23 @@ var MultipleTabService = {
 	tabCloseboxDragging : false,
 	lastMouseOverTarget : null,
 	lastMouseDown       : 0,
+ 
+	setUpTabDragData : function MTS_setUpTabDragData(aDraggedTab, aEvent) 
+	{
+		var tabs = this.getSelectedTabs();
+		var index = tabs.indexOf(aDraggedTab);
+		if (index < 0)
+			return;
+
+		tabs.splice(index, 1);
+		tabs.unshift(aDraggedTab);
+
+		var dt = aEvent.dataTransfer;
+		tabs.forEach(function(aTab, aIndex) {
+			dt.mozSetDataAt(TAB_DROP_TYPE, aTab, aIndex);
+			dt.mozSetDataAt('text/x-moz-text-internal', this.getCurrentURIOfTab(aTab), aIndex);
+		}, this);
+	},
  
 	onTabDragEnd : function MTS_onTabDragEnd(aEvent) 
 	{
