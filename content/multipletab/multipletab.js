@@ -865,16 +865,16 @@ var MultipleTabService = {
 	initTabBrowser : function MTS_initTabBrowser(aTabBrowser) 
 	{
 		aTabBrowser.mTabContainer.addEventListener('TabSelect', this, true);
-		aTabBrowser.mTabContainer.addEventListener('TabOpen', this, true);
-		aTabBrowser.mTabContainer.addEventListener('TabClose', this, true);
-		aTabBrowser.mTabContainer.addEventListener('TabMove', this, true);
-		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabDuplicate', this, true);
+		aTabBrowser.mTabContainer.addEventListener('TabOpen',   this, true);
+		aTabBrowser.mTabContainer.addEventListener('TabClose',  this, true);
+		aTabBrowser.mTabContainer.addEventListener('TabMove',   this, true);
+		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabDuplicate',  this, true);
 		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabWindowMove', this, true);
-		aTabBrowser.mTabContainer.addEventListener('dragstart',   this, true);
-		aTabBrowser.mTabContainer.addEventListener('dragend',     this, true);
-		aTabBrowser.mTabContainer.addEventListener('mouseover',   this, true);
-		aTabBrowser.mTabContainer.addEventListener('mousemove',   this, true);
-		aTabBrowser.mTabContainer.addEventListener('mousedown',   this, true);
+		aTabBrowser.mTabContainer.addEventListener('dragstart', this, true);
+		aTabBrowser.mTabContainer.addEventListener('dragend',   this, true);
+		aTabBrowser.mTabContainer.addEventListener('mouseover', this, true);
+		aTabBrowser.mTabContainer.addEventListener('mousemove', this, true);
+		aTabBrowser.mTabContainer.addEventListener('mousedown', this, true);
 
 		eval('aTabBrowser.duplicateTab = '+aTabBrowser.duplicateTab.toSource().replace(
 			')',
@@ -993,16 +993,16 @@ var MultipleTabService = {
 	destroyTabBrowser : function MTS_destroyTabBrowser(aTabBrowser) 
 	{
 		aTabBrowser.mTabContainer.removeEventListener('TabSelect', this, true);
-		aTabBrowser.mTabContainer.removeEventListener('TabOpen', this, true);
-		aTabBrowser.mTabContainer.removeEventListener('TabClose', this, true);
-		aTabBrowser.mTabContainer.removeEventListener('TabMove', this, true);
-		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabDuplicate', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('TabOpen',   this, true);
+		aTabBrowser.mTabContainer.removeEventListener('TabClose',  this, true);
+		aTabBrowser.mTabContainer.removeEventListener('TabMove',   this, true);
+		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabDuplicate',  this, true);
 		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabWindowMove', this, true);
-		aTabBrowser.mTabContainer.removeEventListener('dragstart',   this, true);
-		aTabBrowser.mTabContainer.removeEventListener('dragend',     this, true);
-		aTabBrowser.mTabContainer.removeEventListener('mouseover',   this, true);
-		aTabBrowser.mTabContainer.removeEventListener('mousemove',   this, true);
-		aTabBrowser.mTabContainer.removeEventListener('mousedown',   this, true);
+		aTabBrowser.mTabContainer.removeEventListener('dragstart', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('dragend',   this, true);
+		aTabBrowser.mTabContainer.removeEventListener('mouseover', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('mousemove', this, true);
+		aTabBrowser.mTabContainer.removeEventListener('mousedown', this, true);
 
 		var tabContextMenu = aTabBrowser.tabContextMenu ||
 							document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
