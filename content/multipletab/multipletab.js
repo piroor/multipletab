@@ -112,6 +112,12 @@ var MultipleTabService = {
  
 	get autoScroll() { return this.namespace.autoScroll; },
  
+	get isToolbarCustomizing() 
+	{
+		var toolbox = window.gToolbox || window.gNavToolbox;
+		return toolbox && toolbox.customizing;
+	},
+ 
 // XPConnect 
 	
 	get SessionStore() { 
@@ -168,11 +174,6 @@ var MultipleTabService = {
 	},
 	_XULAppInfo : null,
   
-	isDisabled : function MTS_isDisabled() 
-	{
-		return (document.getElementById('cmd_CustomizeToolbars').getAttribute('disabled') == 'true');
-	},
- 
 	get allowMoveMultipleTabs() 
 	{
 		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
@@ -864,17 +865,21 @@ var MultipleTabService = {
  
 	initTabBrowser : function MTS_initTabBrowser(aTabBrowser) 
 	{
-		aTabBrowser.mTabContainer.addEventListener('TabSelect', this, true);
-		aTabBrowser.mTabContainer.addEventListener('TabOpen',   this, true);
-		aTabBrowser.mTabContainer.addEventListener('TabClose',  this, true);
-		aTabBrowser.mTabContainer.addEventListener('TabMove',   this, true);
-		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabDuplicate',  this, true);
-		aTabBrowser.mTabContainer.addEventListener('MultipleTabHandler:TabWindowMove', this, true);
-		aTabBrowser.mTabContainer.parentNode.addEventListener('dragstart', this, true);
-		aTabBrowser.mTabContainer.addEventListener('dragend',   this, true);
-		aTabBrowser.mTabContainer.addEventListener('mouseover', this, true);
-		aTabBrowser.mTabContainer.addEventListener('mousemove', this, true);
-		aTabBrowser.mTabContainer.addEventListener('mousedown', this, true);
+		var tabContainer = aTabBrowser.mTabContainer;
+		tabContainer.addEventListener('TabSelect', this, true);
+		tabContainer.addEventListener('TabOpen',   this, true);
+		tabContainer.addEventListener('TabClose',  this, true);
+		tabContainer.addEventListener('TabMove',   this, true);
+		tabContainer.addEventListener('MultipleTabHandler:TabDuplicate',  this, true);
+		tabContainer.addEventListener('MultipleTabHandler:TabWindowMove', this, true);
+
+		// attach listener to a higher level element, to handle events before other listeners handle them.
+		var strip = tabContainer.parentNode;
+		strip.addEventListener('dragstart', this, true);
+		strip.addEventListener('dragend',   this, true);
+		strip.addEventListener('mouseover', this, true);
+		strip.addEventListener('mousemove', this, true);
+		strip.addEventListener('mousedown', this, true);
 
 		eval('aTabBrowser.duplicateTab = '+aTabBrowser.duplicateTab.toSource().replace(
 			')',
@@ -992,17 +997,20 @@ var MultipleTabService = {
 	
 	destroyTabBrowser : function MTS_destroyTabBrowser(aTabBrowser) 
 	{
-		aTabBrowser.mTabContainer.removeEventListener('TabSelect', this, true);
-		aTabBrowser.mTabContainer.removeEventListener('TabOpen',   this, true);
-		aTabBrowser.mTabContainer.removeEventListener('TabClose',  this, true);
-		aTabBrowser.mTabContainer.removeEventListener('TabMove',   this, true);
-		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabDuplicate',  this, true);
-		aTabBrowser.mTabContainer.removeEventListener('MultipleTabHandler:TabWindowMove', this, true);
-		aTabBrowser.mTabContainer.parentNode.removeEventListener('dragstart', this, true);
-		aTabBrowser.mTabContainer.removeEventListener('dragend',   this, true);
-		aTabBrowser.mTabContainer.removeEventListener('mouseover', this, true);
-		aTabBrowser.mTabContainer.removeEventListener('mousemove', this, true);
-		aTabBrowser.mTabContainer.removeEventListener('mousedown', this, true);
+		var tabContainer = aTabBrowser.mTabContainer;
+		tabContainer.removeEventListener('TabSelect', this, true);
+		tabContainer.removeEventListener('TabOpen',   this, true);
+		tabContainer.removeEventListener('TabClose',  this, true);
+		tabContainer.removeEventListener('TabMove',   this, true);
+		tabContainer.removeEventListener('MultipleTabHandler:TabDuplicate',  this, true);
+		tabContainer.removeEventListener('MultipleTabHandler:TabWindowMove', this, true);
+
+		var strip = tabContainer.parentNode;
+		strip.removeEventListener('dragstart', this, true);
+		strip.removeEventListener('dragend',   this, true);
+		strip.removeEventListener('mouseover', this, true);
+		strip.removeEventListener('mousemove', this, true);
+		strip.removeEventListener('mousedown', this, true);
 
 		var tabContextMenu = aTabBrowser.tabContextMenu ||
 							document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
@@ -1301,6 +1309,9 @@ var MultipleTabService = {
 	{
 		this.cancelDelayedDragStart();
 
+		if (this.isToolbarCustomizing)
+			return false;
+
 		var tab = this.getTabFromEvent(aEvent);
 		if (!tab) {
 			this.lastMouseOverTarget = null;
@@ -1363,6 +1374,9 @@ var MultipleTabService = {
 	{
 		this.cancelDelayedDragStart();
 
+		if (this.isToolbarCustomizing)
+			return;
+
 		if (this.tabCloseboxDragging) {
 			this.tabCloseboxDragging = false;
 			this.closeTabs(this.getReadyToCloseTabs());
@@ -1389,10 +1403,13 @@ var MultipleTabService = {
  
 	onTabDragEnter : function MTS_onTabDragEnter(aEvent) 
 	{
-		if (!(
+		if (
+			!(
 				this.tabDragging ||
 				this.tabCloseboxDragging
-			) || this.isDisabled())
+			) ||
+			this.isToolbarCustomizing
+			)
 			return;
 
 		var b = this.getTabBrowserFromChild(aEvent.originalTarget);
@@ -1407,10 +1424,13 @@ var MultipleTabService = {
  
 	onTabDragOver : function MTS_onTabDragOver(aEvent) 
 	{
-		if (!(
+		if (
+			!(
 				this.tabDragging ||
 				this.tabCloseboxDragging
-			) || this.isDisabled())
+			) ||
+			this.isToolbarCustomizing
+			)
 			return;
 
 		if (this.tabDragging || this.tabCloseboxDragging) {
