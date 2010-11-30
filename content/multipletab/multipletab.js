@@ -255,16 +255,7 @@ var MultipleTabService = {
 					(aSource || this.browser).mTabContainer
 				);
 
-		var tabs = [];
-		if (dt.mozItemCount < 1 ||
-			Array.slice(dt.mozTypesAt(0)).indexOf(TAB_DROP_TYPE) < 0)
-			return tabs;
-
-		for (let i = 0, maxi = dt.mozItemCount; i < maxi; i++)
-		{
-			tabs.push(dt.mozGetDataAt(TAB_DROP_TYPE, i));
-		}
-		return tabs.sort(function(aA, aB) { return aA._tPos - aB._tPos; });
+		return window['piro.sakura.ne.jp'].tabsDragUtils.getDraggedTabs(aSource);
 	},
  
 	getReadyToCloseTabs : function MTS_getReadyToCloseTabs(aTabBrowser) 
@@ -523,42 +514,9 @@ var MultipleTabService = {
  
  	getCurrentURIOfTab : function MTS_getCurrentURIOfTab(aTab) 
 	{
-		if (aTab.getAttribute('ontap') == 'true') {
-			// If BarTap ( https://addons.mozilla.org/firefox/addon/67651 ) is installed,
-			// currentURI is possibly 'about:blank'. So, we have to get correct URI
-			// from the attribute or the session histrory.
-			var b = aTab.linkedBrowser;
-			try {
-				if (b.hasAttribute(this.kARGUMENT_URI))
-					return this.makeURIFromSpec(b.getAttribute(this.kARGUMENT_URI));
-			}
-			catch(e) {
-			}
-			try {
-				var h = b.sessionHistory;
-				var entry = h.getEntryAtIndex(h.index, false);
-				return entry.URI;
-			}
-			catch(e) {
-			}
-		}
-		// Firefox 4.0-
-		if (aTab.linkedBrowser.__SS_needsRestore) {
-			let data = aTab.linkedBrowser.__SS_data;
-			let entry = data.entries[Math.max(data.index, data.entries.length-1)];
-			return this.makeURIFromSpec(entry.url);
-		}
-		return aTab.linkedBrowser.currentURI;
+		var uri = window['piro.sakura.ne.jp'].tabsDragUtils.getCurrentURIOfTab(aTab);
+		return this.makeURIFromSpec(uri);
 	},
- 
-	backupArgumentURI : function MTS_backupArgumentURI(aURI, aBrowser) 
-	{
-		if (aURI) {
-			var uri = (aURI instanceof Components.interfaces.nsIURI) ? aURI.spec : aURI ;
-			aBrowser.setAttribute(this.kARGUMENT_URI, uri);
-		}
-	},
-	kARGUMENT_URI : 'multipletab-bartap-uri',
   
 // bundled tabs 
 	
@@ -785,52 +743,7 @@ var MultipleTabService = {
 		aTabBrowser.dispatchEvent(event);
 	},
   
-	createDragFeedbackImage : function MTS_createDragFeedbackImage(aNode) 
-	{
-		var tabs = this.getDraggedTabs(aNode);
-		if (tabs.length < 2) return null;
 
-		var canvas = document.createElementNS('http://www.w3.org/1999/xhtml', 'canvas');
-		var offset = tabs[0].boxObject.height * 0.66;
-		var padding = offset * (tabs.length - 1);
-		var width = tabs[0].boxObject.width + (padding * 0.66);
-		var height = tabs[0].boxObject.height + padding;
-		canvas.width = width;
-		canvas.height = height;
-		try {
-			var ctx = canvas.getContext('2d');
-			ctx.clearRect(0, 0, width, height);
-			tabs.forEach(function(aTab, aIndex) {
-				var box = aTab.boxObject;
-				ctx.drawWindow(window, box.x, box.y, box.width, box.height, 'transparent');
-				ctx.translate(offset * 0.66, offset);
-			}, this);
-			var image = new Image();
-			image.src = canvas.toDataURL()
-			return image;
-		}
-		catch(e) {
-			return null;
-		}
-	},
-	getDragFeedbackImageX : function MTS_getDragFeedbackImageX(aNode)
-	{
-		var tabs = this.getDraggedTabs(aNode);
-		if (tabs.length < 2) return 0;
-		return 16;
-	},
-	getDragFeedbackImageY : function MTS_getDragFeedbackImageY(aNode)
-	{
-		var tabs = this.getDraggedTabs(aNode);
-		if (tabs.length < 2) return 0;
-		return 16;
-	},
-	getDraggedTabs : function MTS_getDraggedTabs(aNode)
-	{
-		var b = this.getTabBrowserFromChild(aNode);
-		var tabs = b ? this.getSelectedTabs(b) : [] ;
-		return tabs;
-	},
   
 /* Initializing */ 
 	
@@ -858,16 +771,6 @@ var MultipleTabService = {
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.selectionStyle');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.linefeed');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.formats');
-
-/*
-		if ('nsDragAndDrop' in window &&
-			'startDrag' in nsDragAndDrop) {
-			eval('nsDragAndDrop.startDrag = '+nsDragAndDrop.startDrag.toSource().replace(
-				/(invokeDragSessionWithImage\([^\)]+,\s*)null\s*,\s*0,\s*0(\s*,[^\)]+\))/,
-				'$1MultipleTabService.createDragFeedbackImage(aEvent.target), MultipleTabService.getDragFeedbackImageX(aEvent.target), MultipleTabService.getDragFeedbackImageY(aEvent.target)$2'
-			));
-		}
-*/
 
 		if ('internalSave' in window) {
 			eval('window.internalSave = '+window.internalSave.toSource().replace(
@@ -997,17 +900,7 @@ var MultipleTabService = {
 			aTabBrowser.__multipletab__canDoWindowMove = false;
 		}
 
-		var tabDNDObserver = (aTabBrowser.tabContainer && aTabBrowser.tabContainer.tabbrowser == aTabBrowser) ?
-								aTabBrowser.tabContainer : // Firefox 4.0 or later
-								aTabBrowser ; // Firefox 3.5 - 3.6
-		if ('_setEffectAllowedForDataTransfer' in tabDNDObserver) {
-			eval('tabDNDObserver._setEffectAllowedForDataTransfer = '+
-				tabDNDObserver._setEffectAllowedForDataTransfer.toSource().replace(
-					'dt.mozItemCount > 1',
-					'$& && !MultipleTabService.isTabsDragging(arguments[0])'
-				)
-			);
-		}
+		window['piro.sakura.ne.jp'].tabsDragUtils.initTabBrowser(aTabBrowser);
 
 		this.initTabBrowserContextMenu(aTabBrowser);
 
@@ -1114,6 +1007,8 @@ var MultipleTabService = {
 		var tabContextMenu = aTabBrowser.tabContextMenu ||
 							document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		tabContextMenu.removeEventListener('popupshowing', this, false);
+
+		window['piro.sakura.ne.jp'].tabsDragUtils.destroyTabBrowser(aTabBrowser);
 	},
  
 	destroyTab : function MTS_destroyTab(aTab) 
@@ -1170,6 +1065,7 @@ var MultipleTabService = {
 				if (
 					this.isSelected(aEvent.originalTarget) &&
 					this.allowMoveMultipleTabs &&
+
 					!b.movingSelectedTabs &&
 					(!('UndoTabService' in window) || UndoTabService.isUndoable())
 					)
@@ -1426,7 +1322,7 @@ var MultipleTabService = {
 			this.tabDragMode == this.TAB_DRAG_MODE_DEFAULT
 			) {
 			// drag tabs
-			return this.setUpTabsDragData(aEvent);
+			return this.startTabsDrag(aEvent);
 		}
 		else {
 			var delay = this.getPref('extensions.multipletab.tabdrag.delay');
@@ -1436,7 +1332,7 @@ var MultipleTabService = {
 				!aIsTimeout
 				) {
 				// drag tabs
-				return this.setUpTabsDragData(aEvent);
+				return this.startTabsDrag(aEvent);
 			}
 			this.tabDragging = true;
 			this.delayedDragStartReady = false;
@@ -1453,33 +1349,10 @@ var MultipleTabService = {
 	lastMouseOverTarget : null,
 	lastMouseDown       : 0,
  
-	setUpTabsDragData : function MTS_setUpSelectedTabsDragData(aEvent, aTabs) /* PUBLIC API */ 
+	startTabsDrag : function MTS_startTabsDrag(aEvent) 
 	{
-		var draggedTab = this.getTabFromEvent(aEvent);
-		var tabs = aTabs || this.getSelectedTabs();
-		var index = tabs.indexOf(draggedTab);
-		if (index < 0)
-			return;
-
-		tabs.splice(index, 1);
-		tabs.unshift(draggedTab);
-
-		var dt = aEvent.dataTransfer;
-		tabs.forEach(function(aTab, aIndex) {
-			dt.mozSetDataAt(TAB_DROP_TYPE, aTab, aIndex);
-			dt.mozSetDataAt('text/x-moz-text-internal', this.getCurrentURIOfTab(aTab), aIndex);
-		}, this);
-	},
- 
-	isTabsDragging : function MTS_isTabsDragging(aEvent) 
-	{
-		var dt = aEvent.dataTransfer;
-		for (let i = 0, maxi = dt.mozItemCount; i < maxi; i++)
-		{
-			if (Array.slice(dt.mozTypesAt(i)).indexOf(TAB_DROP_TYPE) < 0)
-				return false;
-		}
-		return true;
+		if (!this.mTabBrowser.treeStyleTab) // do nothing because Tree Style Tab will handle this event.
+			window['piro.sakura.ne.jp'].tabsDragUtils.startTabsDrag(aEvent, this.getSelectedTabs());
 	},
  
 	onTabDragEnd : function MTS_onTabDragEnd(aEvent) 

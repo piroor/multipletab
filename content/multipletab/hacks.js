@@ -131,18 +131,6 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 			this.setPref(TMPWarnPref, false);
 	}
 
-	// BarTap
-	// https://addons.mozilla.org/firefox/addon/67651
-	if ('BarTap' in window &&
-		'writeBarTap' in BarTap) {
-		eval('BarTap.writeBarTap = '+
-			BarTap.writeBarTap.toSource().replace(
-				'bartap = JSON.stringify',
-				'MultipleTabService.backupArgumentURI(aURI, aBrowser); $&'
-			)
-		);
-	}
-
 };
 
 MultipleTabService.overrideExtensionsOnDelayedInit = function MTS_overrideExtensionsOnDelayedInit() {
