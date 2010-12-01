@@ -37,6 +37,13 @@ var MultipleTabService = {
 	],
 
 	lineFeed : '\r\n',
+
+	/* event types */
+	kEVENT_TYPE_TAB_DUPLICATE   : 'MultipleTabHandler:TabDuplicate',
+	kEVENT_TYPE_WINDOW_MOVE     : 'MultipleTabHandler:TabWindowMove',
+	kEVENT_TYPE_TABS_CLOSING    : 'MultipleTabHandlerTabsClosing',
+	kEVENT_TYPE_TABS_CLOSED     : 'MultipleTabHandlerTabsClosed',
+	kEVENT_TYPE_TABS_DRAG_START : 'MultipleTabHandler:TabsDragStart',
 	
 /* Utilities */ 
 	
@@ -705,7 +712,7 @@ var MultipleTabService = {
 	fireDuplicatedEvent : function MTS_fireDuplicatedEvent(aNewTab, aSourceTab, aSourceEvent) 
 	{
 		var event = aNewTab.ownerDocument.createEvent('Events');
-		event.initEvent('MultipleTabHandler:TabDuplicate', true, false);
+		event.initEvent(this.kEVENT_TYPE_TAB_DUPLICATE, true, false);
 		event.sourceTab = aSourceTab;
 		event.mayBeMove = aSourceEvent && !this.isAccelKeyPressed(aSourceEvent);
 		aNewTab.dispatchEvent(event);
@@ -714,7 +721,7 @@ var MultipleTabService = {
 	fireWindowMoveEvent : function MTS_fireWindowMoveEvent(aNewTab, aSourceTab) 
 	{
 		var event = document.createEvent('Events');
-		event.initEvent('MultipleTabHandler:TabWindowMove', true, false);
+		event.initEvent(this.kEVENT_TYPE_WINDOW_MOVE, true, false);
 		event.sourceTab = aSourceTab;
 		aNewTab.dispatchEvent(event);
 	},
@@ -725,7 +732,7 @@ var MultipleTabService = {
 		var d = aTabs[0].ownerDocument;
 		/* PUBLIC API */
 		var event = d.createEvent('Events');
-		event.initEvent('MultipleTabHandlerTabsClosing', true, true);
+		event.initEvent(this.kEVENT_TYPE_TABS_CLOSING, true, true);
 		event.tabs = aTabs;
 		event.count = aTabs.length;
 		return this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
@@ -738,7 +745,7 @@ var MultipleTabService = {
 		var d = aTabBrowser.ownerDocument;
 		/* PUBLIC API */
 		var event = d.createEvent('Events');
-		event.initEvent('MultipleTabHandlerTabsClosed', true, false);
+		event.initEvent(this.kEVENT_TYPE_TABS_CLOSED, true, false);
 		event.tabs = aTabs;
 		event.count = aTabs.length;
 		aTabBrowser.dispatchEvent(event);
@@ -870,8 +877,8 @@ var MultipleTabService = {
 		tabContainer.addEventListener('TabOpen',   this, true);
 		tabContainer.addEventListener('TabClose',  this, true);
 		tabContainer.addEventListener('TabMove',   this, true);
-		tabContainer.addEventListener('MultipleTabHandler:TabDuplicate',  this, true);
-		tabContainer.addEventListener('MultipleTabHandler:TabWindowMove', this, true);
+		tabContainer.addEventListener(this.kEVENT_TYPE_TAB_DUPLICATE, this, true);
+		tabContainer.addEventListener(this.kEVENT_TYPE_WINDOW_MOVE,   this, true);
 
 		// attach listener to a higher level element, to handle events before other listeners handle them.
 		var strip = tabContainer.parentNode;
@@ -1002,8 +1009,8 @@ var MultipleTabService = {
 		tabContainer.removeEventListener('TabOpen',   this, true);
 		tabContainer.removeEventListener('TabClose',  this, true);
 		tabContainer.removeEventListener('TabMove',   this, true);
-		tabContainer.removeEventListener('MultipleTabHandler:TabDuplicate',  this, true);
-		tabContainer.removeEventListener('MultipleTabHandler:TabWindowMove', this, true);
+		tabContainer.removeEventListener(this.kEVENT_TYPE_TAB_DUPLICATE, this, true);
+		tabContainer.removeEventListener(this.kEVENT_TYPE_WINDOW_MOVE,   this, true);
 
 		var strip = tabContainer.parentNode;
 		strip.removeEventListener('dragstart', this, true);
@@ -1080,7 +1087,7 @@ var MultipleTabService = {
 					this.moveBundledTabsOf(aEvent.originalTarget, aEvent);
 				break;
 
-			case 'MultipleTabHandler:TabDuplicate':
+			case this.kEVENT_TYPE_TAB_DUPLICATE:
 				b = this.getTabBrowserFromChild(aEvent.currentTarget);
 				if (
 					this.isSelected(aEvent.sourceTab) &&
@@ -1091,7 +1098,7 @@ var MultipleTabService = {
 					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab, aEvent.mayBeMove);
 				break;
 
-			case 'MultipleTabHandler:TabWindowMove':
+			case this.kEVENT_TYPE_WINDOW_MOVE:
 				b = this.getTabBrowserFromChild(aEvent.currentTarget);
 				if (
 					this.isSelected(aEvent.sourceTab) &&
@@ -1366,7 +1373,7 @@ var MultipleTabService = {
 		/* PUBLIC API */
 		/* any addon can cancel Multiple Tab Handler's handling of tab draggings */
 		var event = aEvent.originalTarget.ownerDocument.createEvent('Events');
-		event.initEvent('MultipleTabHandler:StartTabsDrag', true, true);
+		event.initEvent(this.kEVENT_TYPE_TABS_DRAG_START, true, true);
 		if (!aEvent.originalTarget.dispatchEvent(event))
 			return false;
 
