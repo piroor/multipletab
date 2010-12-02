@@ -9,10 +9,6 @@ var MultipleTabBookmarkService = {
 					// for Firefox 3.5 or later
 					'var doCopy =',
 					'var multipleTabsProxy = dt = new MultipleTabDOMDataTransferProxy(dt, insertionPoint); $&'
-				).replace(
-					// for background tabs with BarTap ( https://addons.mozilla.org/firefox/addon/67651 )
-					'data.linkedBrowser.currentURI',
-					'MultipleTabService.getCurrentURIOfTab(data)'
 				).replace( // for Tree Style Tab (save tree structure to bookmarks)
 					'PlacesUIUtils.ptm.doTransaction(txn);',
 					<![CDATA[
@@ -61,8 +57,7 @@ window.addEventListener('load', MultipleTabBookmarkService, false);
 function MultipleTabDOMDataTransferProxy(aDataTransfer, aInsertionPoint) 
 {
 	// Don't proxy it because it is not a drag of tabs.
-	if (aDataTransfer.mozItemCount != 1 ||
-		Array.slice(aDataTransfer.mozTypesAt(0)).indexOf(TAB_DROP_TYPE) < 0)
+	if (!aDataTransfer.mozTypesAt(0).contains(TAB_DROP_TYPE))
 		return aDataTransfer;
 
 	var tab = aDataTransfer.mozGetDataAt(TAB_DROP_TYPE, 0);
@@ -134,8 +129,8 @@ MultipleTabDOMDataTransferProxy.prototype = {
 				return tab;
 
 			case 'text/x-moz-text-internal':
-				var uri = MultipleTabService.getCurrentURIOfTab(tab);
-				return uri ? uri.spec : 'about:blank' ;
+				return window['piro.sakura.ne.jp'].tabsDragUtils.getCurrentURIOfTab(tab) ||
+						'about:blank' ;
 		}
 
 		return this._apply('mozGetDataAt', [aFormat, 0]);
