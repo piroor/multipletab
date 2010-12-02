@@ -105,7 +105,9 @@ MultipleTabDOMDataTransferProxy.prototype = {
 
 	mozTypesAt : function MTDOMDTProxy_mozTypesAt()
 	{
-		return this._apply('mozTypesAt', [0]);
+		// return this._apply('mozTypesAt', [0]);
+		// I return "text/x-moz-url" as a first type, to override behavior for "to-be-restored" tabs.
+		return new MTHStringList(['text/x-moz-url', TAB_DROP_TYPE, 'text/x-moz-text-internal']);
 	},
 
 	mozClearDataAt : function MTDOMDTProxy_mozClearDataAt()
@@ -128,9 +130,13 @@ MultipleTabDOMDataTransferProxy.prototype = {
 			case TAB_DROP_TYPE:
 				return tab;
 
+			case 'text/x-moz-url':
+				return (window['piro.sakura.ne.jp'].tabsDragUtils.getCurrentURIOfTab(tab) ||
+						'about:blank') + '\n' + tab.label;
+
 			case 'text/x-moz-text-internal':
 				return window['piro.sakura.ne.jp'].tabsDragUtils.getCurrentURIOfTab(tab) ||
-						'about:blank' ;
+						'about:blank';
 		}
 
 		return this._apply('mozGetDataAt', [aFormat, 0]);
@@ -140,3 +146,18 @@ MultipleTabDOMDataTransferProxy.prototype = {
  
 }; 
   
+function MTHStringList(aTypes) 
+{
+	return {
+		__proto__ : aTypes,
+		item : function(aIndex)
+		{
+			return this[aIndex];
+		},
+		contains : function(aType)
+		{
+			return this.indexOf(aType) > -1;
+		}
+	};
+}
+ 
