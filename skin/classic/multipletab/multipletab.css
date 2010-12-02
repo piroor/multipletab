@@ -1,10 +1,15 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-image-left,
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-image-middle,
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-image-right,
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-middle,
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-close-button,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] {
+	background-color: Highlight;
+	color: HighlightText;
+}
+
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-text,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] > .tab-image-left,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] > .tab-image-middle,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] > .tab-image-middle + .tab-close-button,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] > .tab-image-right,
 :root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-content {
 	background-color: Highlight !important;
 	color: HighlightText !important;
