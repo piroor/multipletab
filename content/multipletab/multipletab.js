@@ -12,7 +12,8 @@ var MultipleTabService = {
 	TAB_CLICK_MODE_SELECT  : 1,
 
 	kSELECTION_STYLE : 'multipletab-selection-style',
-	kSELECTED        : 'multipletab-selected',
+	kSELECTED        : 'multiselected',
+	kSELECTED_OLD    : 'multipletab-selected',
 	kSELECTED_DUPLICATING : 'multipletab-selected-duplicating',
 	kREADY_TO_CLOSE  : 'multipletab-ready-to-close',
 	kINSERT_AFTER    : 'multipletab-insertafter',
@@ -3035,6 +3036,7 @@ var MultipleTabService = {
  
 	setSelection : function MTS_setSelection(aTab, aState) 
 	{
+		this.setBooleanAttributeToTab(aTab, this.kSELECTED_OLD, aState, true); // for backward compatibility
 		return this.setBooleanAttributeToTab(aTab, this.kSELECTED, aState, true);
 	},
 	
@@ -3114,6 +3116,7 @@ var MultipleTabService = {
   
 	toggleSelection : function MTS_toggleSelection(aTab) 
 	{
+		this.toggleBooleanAttributeToTab(aTab, this.kSELECTED_OLD, true); // for backward compatibility
 		return this.toggleBooleanAttributeToTab(aTab, this.kSELECTED, true);
 	},
 	
@@ -3129,6 +3132,7 @@ var MultipleTabService = {
   
 	clearSelection : function MTS_clearSelection(aTabBrowser) 
 	{
+		this.clearSelectionSub(this.getSelectedTabs(aTabBrowser), this.kSELECTED_OLD); // for backward compatibility
 		this.clearSelectionSub(this.getSelectedTabs(aTabBrowser), this.kSELECTED);
 		this.clearSelectionSub(this.getReadyToCloseTabs(aTabBrowser), this.kREADY_TO_CLOSE);
 		this.selectionModified = false;
