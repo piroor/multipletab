@@ -3037,7 +3037,7 @@ var MultipleTabService = {
 	setSelection : function MTS_setSelection(aTab, aState) 
 	{
 		this.setBooleanAttributeToTab(aTab, this.kSELECTED_OLD, aState, true); // for backward compatibility
-		return this.setBooleanAttributeToTab(aTab, this.kSELECTED, aState, true);
+		return this.setBooleanAttributeToTab(aTab, this.kSELECTED, aState, true, this.kSELECTED);
 	},
 	
 	setReadyToClose : function MTS_setReadyToClose(aTab, aState) 
@@ -3045,17 +3045,21 @@ var MultipleTabService = {
 		return this.setBooleanAttributeToTab(aTab, this.kREADY_TO_CLOSE, aState, false);
 	},
  
-	setBooleanAttributeToTab : function MTS_setBooleanAttributeToTab(aTab, aAttr, aState, aShouldSaveToSession) 
+	setBooleanAttributeToTab : function MTS_setBooleanAttributeToTab(aTab, aAttr, aState, aShouldSaveToSession, aPropertyName) 
 	{
 		if (!aState) {
 			aTab.removeAttribute(aAttr);
 			if (aShouldSaveToSession)
 				this.deleteTabValue(aTab, aAttr);
+			if (aPropertyName)
+				aTab[aPropertyName] = false;
 		}
 		else {
 			aTab.setAttribute(aAttr, true);
 			if (aShouldSaveToSession)
 				this.setTabValue(aTab, aAttr, 'true');
+			if (aPropertyName)
+				aTab[aPropertyName] = true;
 		}
 		this.selectionModified = true;
 
@@ -3070,7 +3074,7 @@ var MultipleTabService = {
 			var tabs = TreeStyleTabService.getDescendantTabs(aTab);
 			for (var i = 0, maxi = tabs.length; i < maxi; i++)
 			{
-				this.setBooleanAttributeToTab(tabs[i], aAttr, aState, aShouldSaveToSession);
+				this.setBooleanAttributeToTab(tabs[i], aAttr, aState, aShouldSaveToSession, aPropertyName);
 			}
 		}
 
@@ -3117,7 +3121,7 @@ var MultipleTabService = {
 	toggleSelection : function MTS_toggleSelection(aTab) 
 	{
 		this.toggleBooleanAttributeToTab(aTab, this.kSELECTED_OLD, true); // for backward compatibility
-		return this.toggleBooleanAttributeToTab(aTab, this.kSELECTED, true);
+		return this.toggleBooleanAttributeToTab(aTab, this.kSELECTED, true, this.kSELECTED);
 	},
 	
 	toggleReadyToClose : function MTS_toggleReadyToClose(aTab) 
@@ -3125,9 +3129,9 @@ var MultipleTabService = {
 		return this.toggleBooleanAttributeToTab(aTab, this.kREADY_TO_CLOSE, false);
 	},
  
-	toggleBooleanAttributeToTab : function MTS_toggleBooleanAttributeToTab(aTab, aAttr, aShouldSaveToSession) 
+	toggleBooleanAttributeToTab : function MTS_toggleBooleanAttributeToTab(aTab, aAttr, aShouldSaveToSession, aPropertyName) 
 	{
-		return this.setBooleanAttributeToTab(aTab, aAttr, aTab.getAttribute(aAttr) != 'true', aShouldSaveToSession);
+		return this.setBooleanAttributeToTab(aTab, aAttr, aTab.getAttribute(aAttr) != 'true', aShouldSaveToSession, aPropertyName);
 	},
   
 	clearSelection : function MTS_clearSelection(aTabBrowser) 
