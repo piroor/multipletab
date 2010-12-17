@@ -316,27 +316,33 @@ var MultipleTabService = {
 	getDomainFromURI : function MTS_getDomainFromURI(aURI)
 	{
 		if (!aURI) return null;
-		try {
-			if (!(aURI instanceof Ci.nsIURI)) aURI = this.makeURIFromSpec(aURI);
-		}
-		catch(e) {
-			return null;
-		}
+
+		var str = aURI;
+		if (aURI instanceof Ci.nsIURI)
+			str = aURI.spec;
+		else
+			aURI = this.makeURIFromSpec(aURI);
+
+		str = getShortcutOrURI(str);
+
+		var userHomePart = this.getPref('extensions.multipletab.checkUserHost') ?
+							str.match(/^\w+:\/\/[^\/]+(\/‾[^\/]+)\//) :
+							'' ;
+		if (userHomePart) userHomePart = userHomePart[1];
+
 		if (this.getPref('extensions.multipletab.useEffectiveTLD') && this.EffectiveTLD) {
 			try {
-				var domain = this.EffectiveTLD.getBaseDomain(aURI, 0);
-				if (domain) return domain;
+				let domain = this.EffectiveTLD.getBaseDomain(aURI, 0);
+				if (domain) return domain + userHomePart;
 			}
 			catch(e) {
 			}
 		}
-		try {
-			var host = aURI.host;
-			return host;
-		}
-		catch(e) {
-		}
-		return null;
+
+		var domainMatchResult = str.match(/^\w+:(?:\/\/)?([^:\/]+)/);
+		return domainMatchResult ?
+				domainMatchResult[1] + userHomePart :
+				null ;
 	},
 	makeURIFromSpec : function MTS_makeURIFromSpec(aURI)
 	{

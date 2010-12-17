@@ -9,6 +9,7 @@ pref("extensions.multipletab.tabclick.accel.mode", 1);
 pref("extensions.multipletab.tabclick.shift.mode", 1);
 pref("extensions.multipletab.selectionStyle", "auto");
 pref("extensions.multipletab.useEffectiveTLD", true);
+pref("extensions.multipletab.checkUserHost", true);
 
 pref("extensions.multipletab.close.selectedTab.last", true);
 // 0=left(top) to right(bottom), 1=right(bottom) to left(top)
