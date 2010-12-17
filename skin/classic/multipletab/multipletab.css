@@ -1,21 +1,21 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] {
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multiselected="true"] {
 	background-color: Highlight;
 	color: HighlightText;
 }
 
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-text,
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] > .tab-image-left,
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] > .tab-image-middle,
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] > .tab-image-middle + .tab-close-button,
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] > .tab-image-right,
-:root[multipletab-selection-style="color"] .tabbrowser-tab[multipletab-selected="true"] .tab-content {
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multiselected="true"] .tab-text,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multiselected="true"] > .tab-image-left,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multiselected="true"] > .tab-image-middle,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multiselected="true"] > .tab-image-middle + .tab-close-button,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multiselected="true"] > .tab-image-right,
+:root[multipletab-selection-style="color"] .tabbrowser-tab[multiselected="true"] .tab-content {
 	background-color: Highlight !important;
 	color: HighlightText !important;
 }
 
-:root[multipletab-selection-style="border"]  .tabbrowser-tab[multipletab-selected="true"] {
+:root[multipletab-selection-style="border"]  .tabbrowser-tab[multiselected="true"] {
 	font-weight: bold !important;
 	-moz-appearance: none !important;
 	border: 2px solid -moz-dialogtext !important;
