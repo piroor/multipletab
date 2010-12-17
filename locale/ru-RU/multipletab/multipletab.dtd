@@ -46,11 +46,11 @@
 <!ENTITY config.tabdrag.moveMultipleTabs "Переносить выбранные вкладки вместе">
 
 <!ENTITY config.tabclickmode.accel.caption "Действие при Ctrl-клике (Command-клике) по вкладкам">
-<!ENTITY config.tabclickmode.accel.default "Закрыть вкладку (по умолчанию для Firefox)">
+<!ENTITY config.tabclickmode.accel.default "Закрыть вкладку (в Firefox по умолчанию)">
 <!ENTITY config.tabclickmode.accel.select  "Переключить выбор вкладки">
 
 <!ENTITY config.tabclickmode.shift.caption "Действие при Shift-клике по вкладкам">
-<!ENTITY config.tabclickmode.shift.default "Ничего не предпринимать (по умолчанию для Firefox)">
+<!ENTITY config.tabclickmode.shift.default "Ничего не предпринимать (в Firefox по умолчанию)">
 <!ENTITY config.tabclickmode.shift.select  "Выбрать вкладки">
 
 <!ENTITY config.tabs.features "Возможности">
