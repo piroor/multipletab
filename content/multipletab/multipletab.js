@@ -40,11 +40,11 @@ var MultipleTabService = {
 	lineFeed : '\r\n',
 
 	/* event types */
-	kEVENT_TYPE_TAB_DUPLICATE   : 'MultipleTabHandler:TabDuplicate',
-	kEVENT_TYPE_WINDOW_MOVE     : 'MultipleTabHandler:TabWindowMove',
-	kEVENT_TYPE_TABS_CLOSING    : 'MultipleTabHandlerTabsClosing',
-	kEVENT_TYPE_TABS_CLOSED     : 'MultipleTabHandlerTabsClosed',
-	kEVENT_TYPE_TABS_DRAG_START : 'MultipleTabHandler:TabsDragStart',
+	kEVENT_TYPE_TAB_DUPLICATE   : 'nsDOMMultipleTabHandler:TabDuplicate',
+	kEVENT_TYPE_WINDOW_MOVE     : 'nsDOMMultipleTabHandler:TabWindowMove',
+	kEVENT_TYPE_TABS_CLOSING    : 'nsDOMMultipleTabHandlerTabsClosing',
+	kEVENT_TYPE_TABS_CLOSED     : 'nsDOMMultipleTabHandlerTabsClosed',
+	kEVENT_TYPE_TABS_DRAG_START : 'nsDOMMultipleTabHandler:TabsDragStart',
 	
 /* Utilities */ 
 	
@@ -718,10 +718,18 @@ var MultipleTabService = {
 	
 	fireDuplicatedEvent : function MTS_fireDuplicatedEvent(aNewTab, aSourceTab, aSourceEvent) 
 	{
+		var mayBeMove = aSourceEvent && !this.isAccelKeyPressed(aSourceEvent);
 		var event = aNewTab.ownerDocument.createEvent('Events');
 		event.initEvent(this.kEVENT_TYPE_TAB_DUPLICATE, true, false);
 		event.sourceTab = aSourceTab;
-		event.mayBeMove = aSourceEvent && !this.isAccelKeyPressed(aSourceEvent);
+		event.mayBeMove = mayBeMove;
+		aNewTab.dispatchEvent(event);
+
+		// for backward compatibility
+		event = aNewTab.ownerDocument.createEvent('Events');
+		event.initEvent(this.kEVENT_TYPE_TAB_DUPLICATE.replace(/^nsDOM/, ''), true, false);
+		event.sourceTab = aSourceTab;
+		event.mayBeMove = mayBeMove;
 		aNewTab.dispatchEvent(event);
 	},
  
@@ -731,18 +739,34 @@ var MultipleTabService = {
 		event.initEvent(this.kEVENT_TYPE_WINDOW_MOVE, true, false);
 		event.sourceTab = aSourceTab;
 		aNewTab.dispatchEvent(event);
+
+		// for backward compatibility
+		event = aNewTab.ownerDocument.createEvent('Events');
+		event.initEvent(this.kEVENT_TYPE_WINDOW_MOVE.replace(/^nsDOM/, ''), true, false);
+		event.sourceTab = aSourceTab;
+		aNewTab.dispatchEvent(event);
 	},
  
 	fireTabsClosingEvent : function MTS_fireTabsClosingEvent(aTabs) 
 	{
 		if (!aTabs || !aTabs.length) return false;
 		var d = aTabs[0].ownerDocument;
+
 		/* PUBLIC API */
 		var event = d.createEvent('Events');
 		event.initEvent(this.kEVENT_TYPE_TABS_CLOSING, true, true);
 		event.tabs = aTabs;
 		event.count = aTabs.length;
-		return this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
+		var canClose = this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
+
+		// for backward compatibility
+		event = d.createEvent('Events');
+		event.initEvent(this.kEVENT_TYPE_TABS_CLOSING.replace(/^nsDOM/, ''), true, true);
+		event.tabs = aTabs;
+		event.count = aTabs.length;
+		canClose = canClose && this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
+
+		return canClose;
 	},
  
 	fireTabsClosedEvent : function MTS_fireTabsClosedEvent(aTabBrowser, aTabs) 
@@ -750,9 +774,17 @@ var MultipleTabService = {
 		if (!aTabs || !aTabs.length) return false;
 		aTabs = aTabs.filter(function(aTab) { return !aTab.parentNode; });
 		var d = aTabBrowser.ownerDocument;
+
 		/* PUBLIC API */
 		var event = d.createEvent('Events');
 		event.initEvent(this.kEVENT_TYPE_TABS_CLOSED, true, false);
+		event.tabs = aTabs;
+		event.count = aTabs.length;
+		aTabBrowser.dispatchEvent(event);
+
+		// for backward compatibility
+		event = d.createEvent('Events');
+		event.initEvent(this.kEVENT_TYPE_TABS_CLOSED.replace(/^nsDOM/, ''), true, false);
 		event.tabs = aTabs;
 		event.count = aTabs.length;
 		aTabBrowser.dispatchEvent(event);
@@ -1386,7 +1418,12 @@ var MultipleTabService = {
 		/* any addon can cancel Multiple Tab Handler's handling of tab draggings */
 		var event = aEvent.originalTarget.ownerDocument.createEvent('Events');
 		event.initEvent(this.kEVENT_TYPE_TABS_DRAG_START, true, true);
-		if (!aEvent.originalTarget.dispatchEvent(event))
+		var canDrag = aEvent.originalTarget.dispatchEvent(event);
+		// for backward compatibility
+		event = aEvent.originalTarget.ownerDocument.createEvent('Events');
+		event.initEvent(this.kEVENT_TYPE_TABS_DRAG_START.replace(/^nsDOM/, ''), true, true);
+		canDrag = canDrag && aEvent.originalTarget.dispatchEvent(event);
+		if (!canDrag)
 			return false;
 
 		window['piro.sakura.ne.jp'].tabsDragUtils.startTabsDrag(aEvent, this.getSelectedTabs());
