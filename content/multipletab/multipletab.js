@@ -1077,7 +1077,7 @@ var MultipleTabService = {
 					this.cancelDelayedDragStart();
 					this.delayedDragStartTimer = window.setTimeout(function(aSelf) {
 						aSelf.startDelayedDragStartTimer(event);
-					}, 0);
+					}, 0, this);
 				}
 				return;
 
