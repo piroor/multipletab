@@ -1072,8 +1072,13 @@ var MultipleTabService = {
 
 			// restart timer after the clicked tab was completely selected.
 			case 'TabSelect':
-				if (this.lastMouseDownEvent)
-					this.startDelayedDragStartTimer();
+				if (this.lastMouseDownEvent) {
+					let event = this.lastMouseDownEvent;
+					this.cancelDelayedDragStart();
+					this.delayedDragStartTimer = window.setTimeout(function(aSelf) {
+						aSelf.startDelayedDragStartTimer(event);
+					}, 0);
+				}
 				return;
 
 			case 'TabOpen':
