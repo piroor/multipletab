@@ -25,14 +25,9 @@
 	-moz-border-left-colors: -moz-dialogtext -moz-dialogtext !important;
 }
 
-.tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button {
-	outline: 2px solid Highlight !important;
-	background-color: Highlight !important;
-}
-
 .tabbrowser-tab[multipletab-ready-to-close="true"] .tab-close-button image {
 	background-color: Highlight !important;
-	outline: 0 none important;
+	outline: 2px solid Highlight !important;
 	opacity: 0.6 !important;
 }
 
