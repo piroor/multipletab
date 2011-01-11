@@ -719,8 +719,11 @@ var MultipleTabService = {
 	fireDuplicatedEvent : function MTS_fireDuplicatedEvent(aNewTab, aSourceTab, aSourceEvent) 
 	{
 		var mayBeMove = aSourceEvent && !this.isAccelKeyPressed(aSourceEvent);
-		var event = aNewTab.ownerDocument.createEvent('Events');
+		var event = aNewTab.ownerDocument.createEvent('DataContainerEvents');
 		event.initEvent(this.kEVENT_TYPE_TAB_DUPLICATE, true, false);
+		event.setData('sourceTab', aSourceTab);
+		event.setData('mayBeMove', mayBeMove);
+		// for backward compatibility
 		event.sourceTab = aSourceTab;
 		event.mayBeMove = mayBeMove;
 		aNewTab.dispatchEvent(event);
@@ -735,8 +738,10 @@ var MultipleTabService = {
  
 	fireWindowMoveEvent : function MTS_fireWindowMoveEvent(aNewTab, aSourceTab) 
 	{
-		var event = document.createEvent('Events');
+		var event = document.createEvent('DataContainerEvents');
 		event.initEvent(this.kEVENT_TYPE_WINDOW_MOVE, true, false);
+		event.setData('sourceTab', aSourceTab);
+		// for backward compatibility
 		event.sourceTab = aSourceTab;
 		aNewTab.dispatchEvent(event);
 
@@ -753,8 +758,11 @@ var MultipleTabService = {
 		var d = aTabs[0].ownerDocument;
 
 		/* PUBLIC API */
-		var event = d.createEvent('Events');
+		var event = d.createEvent('DataContainerEvents');
 		event.initEvent(this.kEVENT_TYPE_TABS_CLOSING, true, true);
+		event.setData('tabs', aTabs);
+		event.setData('count', aTabs.length);
+		// for backward compatibility
 		event.tabs = aTabs;
 		event.count = aTabs.length;
 		var canClose = this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
@@ -776,8 +784,11 @@ var MultipleTabService = {
 		var d = aTabBrowser.ownerDocument;
 
 		/* PUBLIC API */
-		var event = d.createEvent('Events');
+		var event = d.createEvent('DataContainerEvents');
 		event.initEvent(this.kEVENT_TYPE_TABS_CLOSED, true, false);
+		event.setData('tabs', aTabs);
+		event.setData('count', aTabs.length);
+		// for backward compatibility
 		event.tabs = aTabs;
 		event.count = aTabs.length;
 		aTabBrowser.dispatchEvent(event);
