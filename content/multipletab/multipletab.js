@@ -1145,23 +1145,23 @@ var MultipleTabService = {
 			case this.kEVENT_TYPE_TAB_DUPLICATE:
 				b = this.getTabBrowserFromChild(aEvent.currentTarget);
 				if (
-					this.isSelected(aEvent.sourceTab) &&
+					this.isSelected(aEvent.getData('sourceTab')) &&
 					this.allowMoveMultipleTabs &&
 					!b.duplicatingSelectedTabs &&
 					(!('UndoTabService' in window) || UndoTabService.isUndoable())
 					)
-					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab, aEvent.mayBeMove);
+					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.getData('sourceTab'), aEvent.getData('mayBeMove'));
 				break;
 
 			case this.kEVENT_TYPE_WINDOW_MOVE:
 				b = this.getTabBrowserFromChild(aEvent.currentTarget);
 				if (
-					this.isSelected(aEvent.sourceTab) &&
+					this.isSelected(aEvent.getData('sourceTab')) &&
 					this.allowMoveMultipleTabs &&
 					!b.duplicatingSelectedTabs &&
 					(!('UndoTabService' in window) || UndoTabService.isUndoable())
 					)
-					this.importBundledTabsOf(aEvent.originalTarget, aEvent.sourceTab);
+					this.importBundledTabsOf(aEvent.originalTarget, aEvent.getData('sourceTab'));
 				break;
 
 			case 'DOMContentLoaded':
