@@ -126,6 +126,44 @@ var MultipleTabService = {
 		return toolbox && toolbox.customizing;
 	},
  
+	// called with target(nsIDOMEventTarget), document(nsIDOMDocument), type(string) and data(object)
+	fireDataContainerEvent : function()
+	{
+		var target, document, type, data, canBubble, cancellable;
+		Array.slice(arguments).forEach(function(aArg) {
+			if (typeof aArg == 'boolean') {
+				if (canBubble === void(0))
+					canBubble = aArg;
+				else
+					cancellable = aArg;
+			}
+			else if (typeof aArg == 'string')
+				type = aArg;
+			else if (aArg instanceof Ci.nsIDOMDocument)
+				document = aArg;
+			else if (aArg instanceof Ci.nsIDOMEventTarget)
+				target = aArg;
+			else
+				data = aArg;
+		});
+		if (!target)
+			target = document;
+		if (!document)
+			document = target.ownerDocument || target;
+
+		var event = document.createEvent('DataContainerEvent');
+		event.initEvent(type, canBubble, cancellable);
+		for (var i in data)
+		{
+			if (!data.hasOwnProperty(i))
+				continue;
+			event.setData(i, data[i]);
+			event[i] = data[i]; // for backward compatibility
+		}
+
+		return target.dispatchEvent(event);
+	},
+ 
 // XPConnect 
 	
 	get SessionStore() { 
@@ -718,62 +756,40 @@ var MultipleTabService = {
 	
 	fireDuplicatedEvent : function MTS_fireDuplicatedEvent(aNewTab, aSourceTab, aSourceEvent) 
 	{
-		var mayBeMove = aSourceEvent && !this.isAccelKeyPressed(aSourceEvent);
-		var event = aNewTab.ownerDocument.createEvent('DataContainerEvents');
-		event.initEvent(this.kEVENT_TYPE_TAB_DUPLICATE, true, false);
-		event.setData('sourceTab', aSourceTab);
-		event.setData('mayBeMove', mayBeMove);
+		var data = {
+				sourceTab : aSourceTab,
+				mayBeMove : aSourceEvent && !this.isAccelKeyPressed(aSourceEvent)
+			};
+		this.fireDataContainerEvent(this.kEVENT_TYPE_TAB_DUPLICATE, aNewTab, true, false, data);
 		// for backward compatibility
-		event.sourceTab = aSourceTab;
-		event.mayBeMove = mayBeMove;
-		aNewTab.dispatchEvent(event);
-
-		// for backward compatibility
-		event = aNewTab.ownerDocument.createEvent('Events');
-		event.initEvent(this.kEVENT_TYPE_TAB_DUPLICATE.replace(/^nsDOM/, ''), true, false);
-		event.sourceTab = aSourceTab;
-		event.mayBeMove = mayBeMove;
-		aNewTab.dispatchEvent(event);
+		this.fireDataContainerEvent(this.kEVENT_TYPE_TAB_DUPLICATE.replace(/^nsDOM/, ''), aNewTab, true, false, data);
 	},
  
 	fireWindowMoveEvent : function MTS_fireWindowMoveEvent(aNewTab, aSourceTab) 
 	{
-		var event = document.createEvent('DataContainerEvents');
-		event.initEvent(this.kEVENT_TYPE_WINDOW_MOVE, true, false);
-		event.setData('sourceTab', aSourceTab);
+		var data = {
+				sourceTab : aSourceTab
+			};
+		this.fireDataContainerEvent(this.kEVENT_TYPE_WINDOW_MOVE, aNewTab, true, false, data);
 		// for backward compatibility
-		event.sourceTab = aSourceTab;
-		aNewTab.dispatchEvent(event);
-
-		// for backward compatibility
-		event = aNewTab.ownerDocument.createEvent('Events');
-		event.initEvent(this.kEVENT_TYPE_WINDOW_MOVE.replace(/^nsDOM/, ''), true, false);
-		event.sourceTab = aSourceTab;
-		aNewTab.dispatchEvent(event);
+		this.fireDataContainerEvent(this.kEVENT_TYPE_WINDOW_MOVE.replace(/^nsDOM/, ''), aNewTab, true, false, data);
 	},
  
 	fireTabsClosingEvent : function MTS_fireTabsClosingEvent(aTabs) 
 	{
 		if (!aTabs || !aTabs.length) return false;
-		var d = aTabs[0].ownerDocument;
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		var data = {
+				tabs  : aTabs,
+				count : aTabs.length
+			};
 
-		/* PUBLIC API */
-		var event = d.createEvent('DataContainerEvents');
-		event.initEvent(this.kEVENT_TYPE_TABS_CLOSING, true, true);
-		event.setData('tabs', aTabs);
-		event.setData('count', aTabs.length);
-		// for backward compatibility
-		event.tabs = aTabs;
-		event.count = aTabs.length;
-		var canClose = this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
-
-		// for backward compatibility
-		event = d.createEvent('Events');
-		event.initEvent(this.kEVENT_TYPE_TABS_CLOSING.replace(/^nsDOM/, ''), true, true);
-		event.tabs = aTabs;
-		event.count = aTabs.length;
-		canClose = canClose && this.getTabBrowserFromChild(aTabs[0]).dispatchEvent(event);
-
+		var canClose = (
+			/* PUBLIC API */
+			this.fireDataContainerEvent(this.kEVENT_TYPE_TABS_CLOSING, b, true, true, data) &&
+			// for backward compatibility
+			this.fireDataContainerEvent(this.kEVENT_TYPE_TABS_CLOSING.replace(/^nsDOM/, ''), b, true, true, data)
+		);
 		return canClose;
 	},
  
@@ -781,24 +797,15 @@ var MultipleTabService = {
 	{
 		if (!aTabs || !aTabs.length) return false;
 		aTabs = aTabs.filter(function(aTab) { return !aTab.parentNode; });
-		var d = aTabBrowser.ownerDocument;
+		var data = {
+				tabs  : aTabs,
+				count : aTabs.length
+			};
 
 		/* PUBLIC API */
-		var event = d.createEvent('DataContainerEvents');
-		event.initEvent(this.kEVENT_TYPE_TABS_CLOSED, true, false);
-		event.setData('tabs', aTabs);
-		event.setData('count', aTabs.length);
+		this.fireDataContainerEvent(this.kEVENT_TYPE_TABS_CLOSED, aTabBrowser, true, false, data);
 		// for backward compatibility
-		event.tabs = aTabs;
-		event.count = aTabs.length;
-		aTabBrowser.dispatchEvent(event);
-
-		// for backward compatibility
-		event = d.createEvent('Events');
-		event.initEvent(this.kEVENT_TYPE_TABS_CLOSED.replace(/^nsDOM/, ''), true, false);
-		event.tabs = aTabs;
-		event.count = aTabs.length;
-		aTabBrowser.dispatchEvent(event);
+		this.fireDataContainerEvent(this.kEVENT_TYPE_TABS_CLOSED.replace(/^nsDOM/, ''), aTabBrowser, true, false, data);
 	},
   
 
