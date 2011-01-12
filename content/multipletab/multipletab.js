@@ -2751,6 +2751,14 @@ var MultipleTabService = {
 		if (movedTabs.length <= 1)
 			return;
 		this.rearrangeBundledTabsOf(aMovedTab, oldPosition, movedTabs);
+
+		if (
+			aMovedTab.tabItem &&
+			aMovedTab.tabItem.parent &&
+			aMovedTab.tabItem.parent.reorderTabItemsBasedOnTabOrder
+			)
+			aMovedTab.tabItem.parent.reorderTabItemsBasedOnTabOrder();
+
 		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 	},
  
