@@ -299,6 +299,7 @@ var MultipleTabService = {
 			)
 			return this.getArrayFromXPathResult(
 					'descendant::xul:tab[@'+this.kSELECTED+'="true" and not(@hidden="true")]',
+
 					(aSource || this.browser).mTabContainer
 				);
 
@@ -657,14 +658,6 @@ var MultipleTabService = {
 				b.moveTabTo(aTab, aNewPosition);
 		});
 		b.movingSelectedTabs = false;
-
-		var tabItem = baseTab._tabViewTabItem;
-		if (
-			tabItem &&
-			tabItem.parent &&
-			tabItem.parent.reorderTabItemsBasedOnTabOrder
-			)
-			tabItem.parent.reorderTabItemsBasedOnTabOrder();
 	},
  
 	moveTabsByIndex : function MTS_moveTabsByIndex(aTabBrowser, aOldPositions, aNewPositions) 
@@ -830,6 +823,7 @@ var MultipleTabService = {
 
 		window.removeEventListener('load', this, false);
 		window.addEventListener('unload', this, false);
+		window.addEventListener('tabviewshown', this, false);
 
 		window.addEventListener('UIOperationHistoryPreUndo:TabbarOperations', this, false);
 		window.addEventListener('UIOperationHistoryUndo:TabbarOperations', this, false);
@@ -1055,6 +1049,7 @@ var MultipleTabService = {
 		window.addEventListener('mouseup', this, true);
 
 		window.removeEventListener('unload', this, false);
+		window.removeEventListener('tabviewshown', this, false);
 		window.removeEventListener('UIOperationHistoryPreUndo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryUndo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryRedo:TabbarOperations', this, false);
@@ -1187,6 +1182,9 @@ var MultipleTabService = {
 
 			case 'unload':
 				return this.destroy();
+
+			case 'tabviewshown':
+				return this.clearSelection();
 
 			case 'popupshowing':
 				if (
