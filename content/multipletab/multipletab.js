@@ -2765,8 +2765,14 @@ var MultipleTabService = {
 	},
 	isAllTabsPinned : function MTS_isAllTabsPinned(aTabs)
 	{
-		return aTabs.every(function(aTab) {
+		return this.canPinTab && aTabs.every(function(aTab) {
 			return aTab.hasAttribute('pinned');
+		});
+	},
+	isNoTabPinned : function MTS_isNoTabPinned(aTabs)
+	{
+		return this.canPinTab && aTabs.every(function(aTab) {
+			return !aTab.hasAttribute('pinned');
 		});
 	},
 	get canPinTab()
