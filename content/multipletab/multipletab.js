@@ -2842,9 +2842,16 @@ var MultipleTabService = {
 		range.deleteContents();
 		range.detach();
 
+		var self = this;
 		TabView._initFrame(function() {
+			var activeGroup;
+			self.getTabsArray(gBrowser).some(function(aTab) {
+				if (!aTab._tabViewTabItem)
+					return false;
+				activeGroup = aTab._tabViewTabItem.parent;
+				return true;
+			});
 			var fragment = document.createDocumentFragment();
-			var activeGroup = gBrowser.selectedTab._tabViewTabItem.parent;
 			TabView._window.GroupItems.groupItems.forEach(function(aGroupItem) {
 				var title = aGroupItem.getTitle();
 				if (!title.length> 0 ||
