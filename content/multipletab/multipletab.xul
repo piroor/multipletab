@@ -46,11 +46,11 @@
 		<menuitem id="multipletab-selection-pinTabs"
 			label="&popup.selection.pinTabs;"
 			oncommand="MultipleTabService.pinTabs(MultipleTabService.getSelectedTabs());"
-			multipletab-available="!MultipleTabService.isAllTabsPinned(MultipleTabService.getSelectedTabs())"/>
+			multipletab-available="MultipleTabService.canPinTab &amp;&amp; !MultipleTabService.isAllTabsPinned(MultipleTabService.getSelectedTabs())"/>
 		<menuitem id="multipletab-selection-unpinTabs"
 			label="&popup.selection.unpinTabs;"
 			oncommand="MultipleTabService.unpinTabs(MultipleTabService.getSelectedTabs());"
-			multipletab-available="!MultipleTabService.isNoTabPinned(MultipleTabService.getSelectedTabs())"/>
+			multipletab-available="MultipleTabService.canPinTab &amp;&amp; !MultipleTabService.isNoTabPinned(MultipleTabService.getSelectedTabs())"/>
 		<menu id="multipletab-selection-moveToGroup"
 			label="&popup.selection.moveToGroup;"
 			multipletab-available="MultipleTabService.canMoveTabsToGroup">
