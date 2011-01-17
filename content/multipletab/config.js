@@ -41,7 +41,13 @@ function init()
 		}});
 	});
 
+	var moveToItem = document.getElementById('extensions.multipletab.show.multipletab-selection-moveToGroup-check');
+	if (comparator.compare(XULAppInfo.version, '4.0b5') >= 0)
+		moveToItem.removeAttribute('disabled');
+	else
+		moveToItem.setAttribute('disabled', true);
 
+	var canPinTabs = comparator.compare(XULAppInfo.version, '4.0b5') >= 0;
 	[
 		{
 			ids   : ['printalltabs@peculier.com'],
@@ -61,13 +67,25 @@ function init()
 			ids   : [
 				'{dc572301-7619-498c-a57d-39143191b318}', // Tab Mix Plus
 				'tabutils@ithinc.cn', // Tab Utilities
+
 				'{752a85d4-68d6-48ae-ab7d-6640f5f75d85}' // Super Tab Mode
 			],
 			items : [
 				'extensions.multipletab.show.multipletab-selection-lockTabs-check'
 			]
-		}
+		},
+		(canPinTabs ? null : {
+			ids   : [
+				'tabutils@ithinc.cn' // Tab Utilities
+			],
+			items : [
+				'extensions.multipletab.show.multipletab-selection-pinTabs-check',
+				'extensions.multipletab.show.multipletab-selection-unpinTabs-check'
+			]
+		})
 	].forEach(function(aDefinition) {
+		if (!aDefinition)
+			return;
 		var items = aDefinition.items.map(document.getElementById, document);
 		items.forEach(function(aItem) {
 			aItem.setAttribute('disabled', true);
