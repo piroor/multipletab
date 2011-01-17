@@ -299,6 +299,7 @@ var MultipleTabService = {
 			)
 			return this.getArrayFromXPathResult(
 					'descendant::xul:tab[@'+this.kSELECTED+'="true" and not(@hidden="true")]',
+
 					(aSource || this.browser).mTabContainer
 				);
 
@@ -3293,10 +3294,10 @@ var MultipleTabService = {
 	var namespace = {};
 	Components.utils.import('resource://multipletab-modules/prefs.js', namespace);
 	Components.utils.import('resource://multipletab-modules/namespace.jsm', namespace);
+	Components.utils.import('resource://multipletab-modules/autoScroll.js', namespace);
 
 	MultipleTabService.__proto__ = namespace.prefs;
 	MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];
-	Components.utils.import('resource://multipletab-modules/autoScroll.js');
 })();
 
 window.addEventListener('load', MultipleTabService, false);
