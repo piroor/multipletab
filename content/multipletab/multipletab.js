@@ -299,7 +299,6 @@ var MultipleTabService = {
 			)
 			return this.getArrayFromXPathResult(
 					'descendant::xul:tab[@'+this.kSELECTED+'="true" and not(@hidden="true")]',
-
 					(aSource || this.browser).mTabContainer
 				);
 
