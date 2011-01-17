@@ -300,6 +300,7 @@ var MultipleTabService = {
 			return this.getArrayFromXPathResult(
 					'descendant::xul:tab[@'+this.kSELECTED+'="true" and not(@hidden="true")]',
 
+
 					(aSource || this.browser).mTabContainer
 				);
 
@@ -658,6 +659,14 @@ var MultipleTabService = {
 				b.moveTabTo(aTab, aNewPosition);
 		});
 		b.movingSelectedTabs = false;
+
+		var tabItem = baseTab._tabViewTabItem;
+		if (
+			tabItem &&
+			tabItem.parent &&
+			tabItem.parent.reorderTabItemsBasedOnTabOrder
+			)
+			tabItem.parent.reorderTabItemsBasedOnTabOrder();
 	},
  
 	moveTabsByIndex : function MTS_moveTabsByIndex(aTabBrowser, aOldPositions, aNewPositions) 
@@ -2752,13 +2761,6 @@ var MultipleTabService = {
 		if (movedTabs.length <= 1)
 			return;
 		this.rearrangeBundledTabsOf(aMovedTab, oldPosition, movedTabs);
-
-		if (
-			aMovedTab.tabItem &&
-			aMovedTab.tabItem.parent &&
-			aMovedTab.tabItem.parent.reorderTabItemsBasedOnTabOrder
-			)
-			aMovedTab.tabItem.parent.reorderTabItemsBasedOnTabOrder();
 
 		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
 	},
