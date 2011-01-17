@@ -2795,6 +2795,8 @@ var MultipleTabService = {
 
 				case this.kNEW_GROUP_TITLE_FIRST:
 					aTabs.some(function(aTab) {
+						if (aTab.hasAttribute('pinned')) // pinned tabs cannot be grouped!
+							return false;
 						return title = aTab.label;
 					});
 					break;
@@ -2816,7 +2818,10 @@ var MultipleTabService = {
 		}
 
 		aTabs.forEach(function(aTab) {
+			this.setSelection(aTab, false);
 			TabView.moveTabTo(aTab, aGroupId);
+			if (!aTab._tabViewTabItem) // pinned tabs cannot be grouped!
+				return;
 			if (!aGroupId) {
 				newGroup = aTab._tabViewTabItem.parent;
 				if (title)
@@ -2846,7 +2851,7 @@ var MultipleTabService = {
 		TabView._initFrame(function() {
 			var activeGroup;
 			self.getTabsArray(gBrowser).some(function(aTab) {
-				if (!aTab._tabViewTabItem)
+				if (!aTab._tabViewTabItem) // filter pinned tabs
 					return false;
 				activeGroup = aTab._tabViewTabItem.parent;
 				return true;
