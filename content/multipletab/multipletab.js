@@ -299,8 +299,6 @@ var MultipleTabService = {
 			)
 			return this.getArrayFromXPathResult(
 					'descendant::xul:tab[@'+this.kSELECTED+'="true" and not(@hidden="true")]',
-
-
 					(aSource || this.browser).mTabContainer
 				);
 
@@ -2763,8 +2761,14 @@ var MultipleTabService = {
 		if (!aTabs) return;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		aTabs.forEach(function(aTab) {
-			b.unpinTabs(aTab);
+			b.unpinTab(aTab);
 		}, this);
+	},
+	isAllTabsPinned : function MTS_isAllTabsPinned(aTabs)
+	{
+		return aTabs.every(function(aTab) {
+			return aTab.hasAttribute('pinned');
+		});
 	},
 	get canPinTab()
 	{

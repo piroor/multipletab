@@ -10,6 +10,11 @@
 <!ENTITY popup.selection.freezeTabs  "Tab einfrieren">
 <!ENTITY popup.selection.protectTabs "Tab sch&#252;tzen">
 <!ENTITY popup.selection.lockTabs    "Tab sperren">
+<!-- from http://mxr.mozilla.org/l10n-central/source/de/browser/chrome/browser/browser.dtd -->
+<!ENTITY popup.selection.pinTabs         "Als App-tab anpinnen">
+<!ENTITY popup.selection.unpinTabs       "Tab nicht mehr anpinnen">
+<!ENTITY popup.selection.moveToGroup     "Verschieben in Gruppe">
+<!ENTITY popup.selection.moveToGroup.new "Neue Gruppe">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Linke Tabs schlie&#223;en">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Obere Tabs schlie&#223;en">

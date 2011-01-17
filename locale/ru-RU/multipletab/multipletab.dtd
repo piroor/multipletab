@@ -10,6 +10,11 @@
 <!ENTITY popup.selection.freezeTabs  "Заморозить вкладку">
 <!ENTITY popup.selection.protectTabs "Защитить вкладку">
 <!ENTITY popup.selection.lockTabs    "Заблокировать вкладку">
+<!-- from http://mxr.mozilla.org/l10n-central/source/ru/browser/chrome/browser/browser.dtd -->
+<!ENTITY popup.selection.pinTabs         "Закрепить вкладку">
+<!ENTITY popup.selection.unpinTabs       "Открепить вкладку">
+<!ENTITY popup.selection.moveToGroup     "Переместить в группу">
+<!ENTITY popup.selection.moveToGroup.new "Новая группа">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Закрыть вкладки слева">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Закрыть вкладки выше">

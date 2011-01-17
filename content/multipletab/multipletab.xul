@@ -42,6 +42,21 @@
 		<menuitem id="multipletab-selection-duplicateTabs"
 			label="&popup.selection.duplicateTabs;"
 			oncommand="MultipleTabService.duplicateTabs(MultipleTabService.getSelectedTabs());"/>
+		<menuseparator id="multipletab-selection-pin-separator"/>
+		<menuitem id="multipletab-selection-pinTabs"
+			label="&popup.selection.pinTabs;"
+			oncommand="MultipleTabService.pinTabs(MultipleTabService.getSelectedTabs());"
+			multipletab-available="
+				MultipleTabService.canPinTab &amp;&amp;
+				!MultipleTabService.isAllTabsPinned(MultipleTabService.getSelectedTabs())
+			"/>
+		<menuitem id="multipletab-selection-unpinTabs"
+			label="&popup.selection.unpinTabs;"
+			oncommand="MultipleTabService.unpinTabs(MultipleTabService.getSelectedTabs());"
+			multipletab-available="
+				MultipleTabService.canPinTab &amp;&amp;
+				MultipleTabService.isAllTabsPinned(MultipleTabService.getSelectedTabs())
+			"/>
 		<menuitem id="multipletab-selection-splitWindow"
 			label="&popup.selection.splitWindow;"
 			oncommand="MultipleTabService.splitWindowFrom(MultipleTabService.getSelectedTabs());"/>

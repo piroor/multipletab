@@ -10,6 +10,11 @@
 <!ENTITY popup.selection.freezeTabs  "Congelar pestaña">
 <!ENTITY popup.selection.protectTabs "Proteger pestaña">
 <!ENTITY popup.selection.lockTabs    "Bloquear pestaña">
+<!-- from http://mxr.mozilla.org/l10n-central/source/es-ES/browser/chrome/browser/browser.dtd -->
+<!ENTITY popup.selection.pinTabs         "Fijar pestaña">
+<!ENTITY popup.selection.unpinTabs       "Eliminar pestaña fija">
+<!ENTITY popup.selection.moveToGroup     "Mover al grupo">
+<!ENTITY popup.selection.moveToGroup.new "Nuevo grupo">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Cerrar pestañas de la izquierda">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Cerrar pestañas que están encima">

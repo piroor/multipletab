@@ -10,6 +10,11 @@
 <!ENTITY popup.selection.freezeTabs  "Zmróź kartę">
 <!ENTITY popup.selection.protectTabs "Chroń kartę">
 <!ENTITY popup.selection.lockTabs    "Zablokuj kartę">
+<!-- from http://mxr.mozilla.org/l10n-central/source/pl/browser/chrome/browser/browser.dtd -->
+<!ENTITY popup.selection.pinTabs         "Przypnij jako kartę aplikacji">
+<!ENTITY popup.selection.unpinTabs       "Odepnij kartę">
+<!ENTITY popup.selection.moveToGroup     "Przenieś do grupy">
+<!ENTITY popup.selection.moveToGroup.new "Nowa grupa">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Zamknij karty po lewej">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Zamknij karty powyżej">

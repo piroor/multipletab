@@ -10,6 +10,11 @@
 <!ENTITY popup.selection.freezeTabs  "タブを凍結">
 <!ENTITY popup.selection.protectTabs "タブを保護">
 <!ENTITY popup.selection.lockTabs    "タブをロック">
+<!-- from http://mxr.mozilla.org/l10n-central/source/ja/browser/chrome/browser/browser.dtd -->
+<!ENTITY popup.selection.pinTabs         "タブをピン留め">
+<!ENTITY popup.selection.unpinTabs       "タブのピン留めを外す">
+<!ENTITY popup.selection.moveToGroup     "グループへ移動">
+<!ENTITY popup.selection.moveToGroup.new "新しいタブグループ">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "左のタブをすべて閉じる">
 <!ENTITY popup.context.removeLeftTabs.vertical    "上のタブをすべて閉じる">

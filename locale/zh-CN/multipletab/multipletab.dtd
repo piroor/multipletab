@@ -10,6 +10,11 @@
 <!ENTITY popup.selection.freezeTabs  "冻结标签页">
 <!ENTITY popup.selection.protectTabs "保护标签页">
 <!ENTITY popup.selection.lockTabs    "锁定标签页">
+<!-- from http://mxr.mozilla.org/l10n-central/source/zh-CN/browser/chrome/browser/browser.dtd -->
+<!ENTITY popup.selection.pinTabs         "固定为应用程序标签页">
+<!ENTITY popup.selection.unpinTabs       "取消固定标签页">
+<!ENTITY popup.selection.moveToGroup     "移至组">
+<!ENTITY popup.selection.moveToGroup.new "新建组">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "关闭左侧全部标签">
 <!ENTITY popup.context.removeLeftTabs.vertical    "关闭上方全部标签">
