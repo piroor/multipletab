@@ -140,6 +140,11 @@
 					aEvent.stopPropagation();
 					aEvent.preventDefault();
 					return;
+
+				case 'DOMContentLoaded':
+					window.removeEventListener('DOMContentLoaded', this, true);
+					this.initCanvas();
+					return;
 			}
 		},
 
@@ -320,17 +325,6 @@
 			this.box = null;
 			this.canvas = null;
 			this.style = null;
-		},
-
-		handleEvent : function(aEvent)
-		{
-			switch (aEvent.type)
-			{
-				case 'DOMContentLoaded':
-					window.removeEventListener('DOMContentLoaded', this, true);
-					this.initCanvas();
-					return;
-			}
 		}
 	};
 
