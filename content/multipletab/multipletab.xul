@@ -57,6 +57,16 @@
 				MultipleTabService.canPinTab &amp;&amp;
 				MultipleTabService.isAllTabsPinned(MultipleTabService.getSelectedTabs())
 			"/>
+		<menu id="multipletab-selection-moveToGroup"
+			label="&popup.selection.moveToGroup;"
+			multipletab-available="MultipleTabService.canMoveTabsToGroup">
+			<menupopup id="multipletab-selection-moveToGroup-popup"
+				oncommand="MultipleTabService.moveTabsToGroup(MultipleTabService.getSelectedTabs(), event.target.getAttribute('group-id') || null);">
+				<menuseparator/>
+				<menuitem label="&popup.selection.moveToGroup.new;"
+					group-id=""/>
+			</menupopup>
+		</menu>
 		<menuitem id="multipletab-selection-splitWindow"
 			label="&popup.selection.splitWindow;"
 			oncommand="MultipleTabService.splitWindowFrom(MultipleTabService.getSelectedTabs());"/>

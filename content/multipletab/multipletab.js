@@ -1697,6 +1697,8 @@ var MultipleTabService = {
 				freezeItem.setAttribute('checked', true);
 			else
 				freezeItem.removeAttribute('checked');
+
+			this.updateGroupsPopup(document.getElementById('multipletab-selection-moveToGroup-popup'));
 		}
 	},
  
@@ -2773,6 +2775,92 @@ var MultipleTabService = {
 	get canPinTab()
 	{
 		return 'pinTab' in gBrowser && 'unpinTab' in gBrowser;
+	},
+ 
+	// experimental command
+	moveTabsToGroup : function MTS_moveTabsToGroup(aTabs, aGroupId)
+	{
+		if (!this.canMoveTabsToGroup)
+			return;
+
+		var title;
+		if (!aGroupId) {
+			switch (this.getPref('extensions.multipletab.moveTabsToNewGroup.defaultTitle'))
+			{
+				default:
+					break;
+
+				case this.kNEW_GROUP_TITLE_FIRST:
+					aTabs.some(function(aTab) {
+						return title = aTab.label;
+					});
+					break;
+
+				case this.kNEW_GROUP_TITLE_ASK:
+					let titleSlot = { value : '' };
+					if (!this.PromptService.prompt(window,
+							this.bundle.getString('moveTabsToGroup.newGroup.title'),
+							this.bundle.getFormattedString('moveTabsToGroup.newGroup.message', [aTabsCount]),
+							titleSlot,
+							null, null
+						))
+						return;
+					title = titleSlot.value;
+					break;
+			}
+			if (title)
+				title = title.replace(/^\s+|\s+$/g, '');
+		}
+
+		aTabs.forEach(function(aTab) {
+			TabView.moveTabTo(aTab, aGroupId);
+			if (!aGroupId) {
+				newGroup = aTab._tabViewTabItem.parent;
+				if (title)
+					newGroup.setTitle(title);
+				aGroupId = newGroup.id;
+			}
+		}, this);
+	},
+	kNEW_GROUP_TITLE_BLANK : 0,
+	kNEW_GROUP_TITLE_FIRST : 1,
+	kNEW_GROUP_TITLE_ASK   : 2,
+	updateGroupsPopup : function MTS_updateGroupsPopup(aPopup)
+	{
+		if (!this.canMoveTabsToGroup)
+			return;
+
+		var separator = aPopup.getElementsByTagName('menuseparator')[0];
+		separator.hidden = true;
+
+		var range = document.createRange();
+		range.selectNodeContents(aPopup);
+		range.setEndBefore(separator);
+		range.deleteContents();
+		range.detach();
+
+		TabView._initFrame(function() {
+			var fragment = document.createDocumentFragment();
+			var activeGroup = gBrowser.selectedTab._tabViewTabItem.parent;
+			TabView._window.GroupItems.groupItems.forEach(function(aGroupItem) {
+				var title = aGroupItem.getTitle();
+				if (!title.length> 0 ||
+					aGroupItem.hidden ||
+					(activeGroup && activeGroup.id == aGroupItem.id))
+					return;
+				var item = document.createElement('menuitem');
+				item.setAttribute('label', title);
+				item.setAttribute('group-id', aGroupItem.id);
+				fragment.appendChild(item);
+			});
+			if (fragment.hasChildNodes())
+				separator.hidden = false;
+			aPopup.insertBefore(fragment, separator);
+		});
+	},
+	get canMoveTabsToGroup()
+	{
+		return 'TabView' in window && 'moveTabTo' in TabView && '_initFrame' in TabView;
 	},
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 

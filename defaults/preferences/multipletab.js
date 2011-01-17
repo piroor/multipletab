@@ -56,6 +56,10 @@ pref("extensions.multipletab.clipboard.format.2", "<a href=\"%URL_HTMLIFIED%\">%
 pref("extensions.multipletab.clipboard.formats", "");
 // 0 = single file, 1 = complete (include embedded files), 2 = plain Text, -1 = select
 pref("extensions.multipletab.saveTabs.saveType", 1);
+// 0 = blank
+// 1 = the title of the first tab
+// 2 = always ask
+pref("extensions.multipletab.moveTabsToNewGroup.defaultTitle", 1);
 
 
 pref("extensions.multipletab.compatibility.TMP.warnForClickActions", true);
