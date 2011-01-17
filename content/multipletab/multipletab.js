@@ -2205,7 +2205,6 @@ var MultipleTabService = {
 
 		return duplicatedTabs;
 	},
-
 	
 	duplicateTabsInternal : function MTS_duplicateTabsInternal(aTabBrowser, aTabs) 
 	{
@@ -2749,6 +2748,27 @@ var MultipleTabService = {
 			'lockTab' in gBrowser || // Tab Mix Plus, Tab Utilities
 			('stmM' in window && 'togglePL' in stmM) // Super Tab Mode
 		);
+	},
+ 
+	pinTabs : function MTS_pinTabs(aTabs)
+	{
+		if (!aTabs) return;
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		aTabs.forEach(function(aTab) {
+			b.pinTab(aTab);
+		}, this);
+	},
+	unpinTabs : function MTS_unpinTabs(aTabs)
+	{
+		if (!aTabs) return;
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		aTabs.forEach(function(aTab) {
+			b.unpinTabs(aTab);
+		}, this);
+	},
+	get canPinTab()
+	{
+		return 'pinTab' in gBrowser && 'unpinTab' in gBrowser;
 	},
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 
