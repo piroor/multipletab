@@ -219,6 +219,17 @@ var MultipleTabService = {
 		return this._XULAppInfo;
 	},
 	_XULAppInfo : null,
+	get Comparator() {
+		if (!this._Comparator) {
+			this._Comparator = Cc['@mozilla.org/xpcom/version-comparator;1'].getService(Ci.nsIVersionComparator);
+		}
+		return this._Comparator;
+	},
+	_Comparator : null,
+	get isGecko2() 
+	{
+		return this.Comparator.compare(this.XULAppInfo.version, '4.0b5') > 0;
+	},
   
 	get allowMoveMultipleTabs() 
 	{
@@ -824,6 +835,8 @@ var MultipleTabService = {
 		window.removeEventListener('load', this, false);
 		window.addEventListener('unload', this, false);
 		window.addEventListener('tabviewshown', this, false);
+		window.addEventListener('beforecustomization', this, true);
+		window.addEventListener('aftercustomization', this, false);
 
 		window.addEventListener('UIOperationHistoryPreUndo:TabbarOperations', this, false);
 		window.addEventListener('UIOperationHistoryUndo:TabbarOperations', this, false);
@@ -931,21 +944,7 @@ var MultipleTabService = {
  
 	initTabBrowser : function MTS_initTabBrowser(aTabBrowser) 
 	{
-		var tabContainer = aTabBrowser.mTabContainer;
-		tabContainer.addEventListener('TabSelect', this, true);
-		tabContainer.addEventListener('TabOpen',   this, true);
-		tabContainer.addEventListener('TabClose',  this, true);
-		tabContainer.addEventListener('TabMove',   this, true);
-		tabContainer.addEventListener(this.kEVENT_TYPE_TAB_DUPLICATE, this, true);
-		tabContainer.addEventListener(this.kEVENT_TYPE_WINDOW_MOVE,   this, true);
-
-		// attach listener to a higher level element, to handle events before other listeners handle them.
-		var strip = tabContainer.parentNode;
-		strip.addEventListener('dragstart', this, true);
-		strip.addEventListener('dragend',   this, true);
-		strip.addEventListener('mouseover', this, true);
-		strip.addEventListener('mousemove', this, true);
-		strip.addEventListener('mousedown', this, true);
+		this.initTabbar(aTabBrowser);
 
 		eval('aTabBrowser.duplicateTab = '+aTabBrowser.duplicateTab.toSource().replace(
 			')',
@@ -980,6 +979,25 @@ var MultipleTabService = {
 		}, this);
 	},
 	
+	initTabbar : function MTS_initTabbar(aTabBrowser) 
+	{
+		var tabContainer = aTabBrowser.mTabContainer;
+		tabContainer.addEventListener('TabSelect', this, true);
+		tabContainer.addEventListener('TabOpen',   this, true);
+		tabContainer.addEventListener('TabClose',  this, true);
+		tabContainer.addEventListener('TabMove',   this, true);
+		tabContainer.addEventListener(this.kEVENT_TYPE_TAB_DUPLICATE, this, true);
+		tabContainer.addEventListener(this.kEVENT_TYPE_WINDOW_MOVE,   this, true);
+
+		// attach listener to a higher level element, to handle events before other listeners handle them.
+		var strip = tabContainer.parentNode;
+		strip.addEventListener('dragstart', this, true);
+		strip.addEventListener('dragend',   this, true);
+		strip.addEventListener('mouseover', this, true);
+		strip.addEventListener('mousemove', this, true);
+		strip.addEventListener('mousedown', this, true);
+	},
+ 
 	initTabBrowserContextMenu : function MTS_initTabBrowserContextMenu(aTabBrowser) 
 	{
 		var suffix = '-tabbrowser-'+(aTabBrowser.id || 'instance-'+parseInt(Math.random() * 65000));
@@ -1050,6 +1068,8 @@ var MultipleTabService = {
 
 		window.removeEventListener('unload', this, false);
 		window.removeEventListener('tabviewshown', this, false);
+		window.removeEventListener('beforecustomization', this, true);
+		window.removeEventListener('aftercustomization', this, false);
 		window.removeEventListener('UIOperationHistoryPreUndo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryUndo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryRedo:TabbarOperations', this, false);
@@ -1063,6 +1083,17 @@ var MultipleTabService = {
 	},
 	
 	destroyTabBrowser : function MTS_destroyTabBrowser(aTabBrowser) 
+	{
+		this.destroyTabbar(aTabBrowser);
+
+		var tabContextMenu = aTabBrowser.tabContextMenu ||
+							document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
+		tabContextMenu.removeEventListener('popupshowing', this, false);
+
+		window['piro.sakura.ne.jp'].tabsDragUtils.destroyTabBrowser(aTabBrowser);
+	},
+ 
+	destroyTabbar : function MTS_destroyTabbar(aTabBrowser) 
 	{
 		var tabContainer = aTabBrowser.mTabContainer;
 		tabContainer.removeEventListener('TabSelect', this, true);
@@ -1078,12 +1109,6 @@ var MultipleTabService = {
 		strip.removeEventListener('mouseover', this, true);
 		strip.removeEventListener('mousemove', this, true);
 		strip.removeEventListener('mousedown', this, true);
-
-		var tabContextMenu = aTabBrowser.tabContextMenu ||
-							document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
-		tabContextMenu.removeEventListener('popupshowing', this, false);
-
-		window['piro.sakura.ne.jp'].tabsDragUtils.destroyTabBrowser(aTabBrowser);
 	},
  
 	destroyTab : function MTS_destroyTab(aTab) 
@@ -1185,6 +1210,12 @@ var MultipleTabService = {
 
 			case 'tabviewshown':
 				return this.clearSelection();
+
+			// toolbar customizing on Firefox 4 or later
+			case 'beforecustomization':
+				return this.destroyTabbar(gBrowser);
+			case 'aftercustomization':
+				return this.initTabbar(gBrowser);
 
 			case 'popupshowing':
 				if (

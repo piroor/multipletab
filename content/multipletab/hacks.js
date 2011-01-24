@@ -28,6 +28,31 @@ MultipleTabService.overrideExtensionsOnPreInit = function MTS_overrideExtensions
 		);
 	}
 
+	// DragNDrop Toolbars
+	// https://addons.mozilla.org/firefox/addon/dragndrop-toolbars/
+	if ('globDndtb' in window && globDndtb.setTheStuff && this.isGecko2) {
+		globDndtb.__multipletab__setTheStuff = globDndtb.setTheStuff;
+		globDndtb.setTheStuff = function() {
+			var result = this.__multipletab__setTheStuff.apply(this, arguments);
+			if (this.dndObserver &&
+				this.dndObserver.onDrop &&
+				!this.dndObserver.__multipletab__onDrop) {
+				this.dndObserver.__multipletab__onDrop = this.dndObserver.onDrop;
+				this.dndObserver.onDrop = function(aEvent, aDropData, aSession) {
+					var toolbar = document.getElementById(aDropData.data);
+					if (bar.getElementsByAttribute('id', 'tabbrowser-tabs').length) {
+						self.destroyTabbar(gBrowser);
+						window.setTimeout(function() {
+							self.initTabbar(gBrowser);
+						}, 100);
+					}
+					return this.__multipletab__onDrop.apply(this, arguments);
+				};
+			}
+			return result;
+		};
+	}
+
 };
 
 MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnInit() {
