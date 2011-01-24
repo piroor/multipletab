@@ -31,6 +31,18 @@ MultipleTabService.overrideExtensionsOnPreInit = function MTS_overrideExtensions
 	// DragNDrop Toolbars
 	// https://addons.mozilla.org/firefox/addon/dragndrop-toolbars/
 	if ('globDndtb' in window && globDndtb.setTheStuff && this.isGecko2) {
+		let self = this;
+		let reinitTabbar = function() {
+				self.destroyTabbar(gBrowser);
+				window.setTimeout(function() {
+					self.initTabbar(gBrowser);
+				}, 100);
+			};
+		globDndtb.__multipletab__setOrder = globDndtb.setOrder;
+		globDndtb.setOrder = function() {
+			reinitTabbar();
+			return this.__multipletab__setOrder.apply(this, arguments);
+		};
 		globDndtb.__multipletab__setTheStuff = globDndtb.setTheStuff;
 		globDndtb.setTheStuff = function() {
 			var result = this.__multipletab__setTheStuff.apply(this, arguments);
@@ -40,12 +52,8 @@ MultipleTabService.overrideExtensionsOnPreInit = function MTS_overrideExtensions
 				this.dndObserver.__multipletab__onDrop = this.dndObserver.onDrop;
 				this.dndObserver.onDrop = function(aEvent, aDropData, aSession) {
 					var toolbar = document.getElementById(aDropData.data);
-					if (bar.getElementsByAttribute('id', 'tabbrowser-tabs').length) {
-						self.destroyTabbar(gBrowser);
-						window.setTimeout(function() {
-							self.initTabbar(gBrowser);
-						}, 100);
-					}
+					if (toolbar.getElementsByAttribute('id', 'tabbrowser-tabs').length)
+						reinitTabbar();
 					return this.__multipletab__onDrop.apply(this, arguments);
 				};
 			}
