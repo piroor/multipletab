@@ -887,6 +887,8 @@ var MultipleTabService = {
 		this.overrideExtensionsOnInit(); // hacks.js
 
 		window.setTimeout(function(aSelf) { aSelf.delayedInit(); }, 0, this);
+
+		this.initialized = true;
 	},
 	
 	preInit : function MTS_preInit() 

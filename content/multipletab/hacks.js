@@ -33,6 +33,8 @@ MultipleTabService.overrideExtensionsOnPreInit = function MTS_overrideExtensions
 	if ('globDndtb' in window && globDndtb.setTheStuff && this.isGecko2) {
 		let self = this;
 		let reinitTabbar = function() {
+				if (!self.initialized)
+					return;
 				self.destroyTabbar(gBrowser);
 				window.setTimeout(function() {
 					self.initTabbar(gBrowser);
