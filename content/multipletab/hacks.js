@@ -89,7 +89,10 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 	// Tab Mix Plus
 	var TMPWarnPref = 'extensions.multipletab.compatibility.TMP.warnForClickActions';
 	if (
-		'TM_checkClick' in window &&
+		(
+			'TM_checkClick' in window || // old version TMP
+			'TabmixTabbar' in window // newer TMP
+		) &&
 		this.getPref(TMPWarnPref) &&
 		(
 			(
