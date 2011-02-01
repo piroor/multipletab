@@ -28,6 +28,41 @@ MultipleTabService.overrideExtensionsOnPreInit = function MTS_overrideExtensions
 		);
 	}
 
+	// DragNDrop Toolbars
+	// https://addons.mozilla.org/firefox/addon/dragndrop-toolbars/
+	if ('globDndtb' in window && globDndtb.setTheStuff && this.isGecko2) {
+		let self = this;
+		let reinitTabbar = function() {
+				if (!self.initialized)
+					return;
+				self.destroyTabbar(gBrowser);
+				window.setTimeout(function() {
+					self.initTabbar(gBrowser);
+				}, 100);
+			};
+		globDndtb.__multipletab__setOrder = globDndtb.setOrder;
+		globDndtb.setOrder = function() {
+			reinitTabbar();
+			return this.__multipletab__setOrder.apply(this, arguments);
+		};
+		globDndtb.__multipletab__setTheStuff = globDndtb.setTheStuff;
+		globDndtb.setTheStuff = function() {
+			var result = this.__multipletab__setTheStuff.apply(this, arguments);
+			if (this.dndObserver &&
+				this.dndObserver.onDrop &&
+				!this.dndObserver.__multipletab__onDrop) {
+				this.dndObserver.__multipletab__onDrop = this.dndObserver.onDrop;
+				this.dndObserver.onDrop = function(aEvent, aDropData, aSession) {
+					var toolbar = document.getElementById(aDropData.data);
+					if (toolbar.getElementsByAttribute('id', 'tabbrowser-tabs').length)
+						reinitTabbar();
+					return this.__multipletab__onDrop.apply(this, arguments);
+				};
+			}
+			return result;
+		};
+	}
+
 };
 
 MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnInit() {
