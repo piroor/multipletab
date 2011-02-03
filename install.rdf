@@ -5,7 +5,7 @@
   <RDF:Description RDF:about="urn:mozilla:install-manifest"
                    em:id="multipletab@piro.sakura.ne.jp"
                    em:name="Multiple Tab Handler"
-                   em:version="0.6.2011011701"
+                   em:version="0.6.2011020301"
                    em:creator="SHIMODA Hiroshi"
                    em:description="Provides feature to close multiple tabs."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/multipletab/"
@@ -24,15 +24,6 @@
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
-		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
-		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
-		<em:translator>tito (es-ES locale)</em:translator>
-		<em:translator>L'Autour (ru-RU locale)</em:translator>
-		<em:translator>Netanyahu (ru-RU locale)</em:translator>
-		<em:translator>Tsprajna (zh-TW locale)</em:translator>
-		<em:translator>hzhbest (zh-CN locale)</em:translator>
-		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
-		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -42,15 +33,6 @@
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html"
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
-		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
-		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
-		<em:translator>tito (es-ES locale)</em:translator>
-		<em:translator>L'Autour (ru-RU locale)</em:translator>
-		<em:translator>Netanyahu (ru-RU locale)</em:translator>
-		<em:translator>Tsprajna (zh-TW locale)</em:translator>
-		<em:translator>hzhbest (zh-CN locale)</em:translator>
-		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
-		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -61,14 +43,6 @@
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
 		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
-		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
-		<em:translator>tito (es-ES locale)</em:translator>
-		<em:translator>L'Autour (ru-RU locale)</em:translator>
-		<em:translator>Netanyahu (ru-RU locale)</em:translator>
-		<em:translator>Tsprajna (zh-TW locale)</em:translator>
-		<em:translator>hzhbest (zh-CN locale)</em:translator>
-		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
-		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -78,15 +52,7 @@
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
-		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
-		<em:translator>tito (es-ES locale)</em:translator>
-		<em:translator>L'Autour (ru-RU locale)</em:translator>
-		<em:translator>Netanyahu (ru-RU locale)</em:translator>
-		<em:translator>Tsprajna (zh-TW locale)</em:translator>
-		<em:translator>hzhbest (zh-CN locale)</em:translator>
-		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
-		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -96,15 +62,7 @@
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
-		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
-		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
 		<em:translator>tito (es-ES locale)</em:translator>
-		<em:translator>L'Autour (ru-RU locale)</em:translator>
-		<em:translator>Netanyahu (ru-RU locale)</em:translator>
-		<em:translator>Tsprajna (zh-TW locale)</em:translator>
-		<em:translator>hzhbest (zh-CN locale)</em:translator>
-		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
-		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -114,15 +72,8 @@
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
-		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
-		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
-		<em:translator>tito (es-ES locale)</em:translator>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Netanyahu (ru-RU locale)</em:translator>
-		<em:translator>Tsprajna (zh-TW locale)</em:translator>
-		<em:translator>hzhbest (zh-CN locale)</em:translator>
-		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
-		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -132,15 +83,8 @@
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
-		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
-		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
-		<em:translator>tito (es-ES locale)</em:translator>
-		<em:translator>L'Autour (ru-RU locale)</em:translator>
-		<em:translator>Netanyahu (ru-RU locale)</em:translator>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
-		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
-		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -150,15 +94,7 @@
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
-		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
-		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
-		<em:translator>tito (es-ES locale)</em:translator>
-		<em:translator>L'Autour (ru-RU locale)</em:translator>
-		<em:translator>Netanyahu (ru-RU locale)</em:translator>
-		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
-		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
-		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -168,15 +104,7 @@
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
-		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
-		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
-		<em:translator>tito (es-ES locale)</em:translator>
-		<em:translator>L'Autour (ru-RU locale)</em:translator>
-		<em:translator>Netanyahu (ru-RU locale)</em:translator>
-		<em:translator>Tsprajna (zh-TW locale)</em:translator>
-		<em:translator>hzhbest (zh-CN locale)</em:translator>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
-		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
@@ -186,14 +114,6 @@
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
-		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
-		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
-		<em:translator>tito (es-ES locale)</em:translator>
-		<em:translator>L'Autour (ru-RU locale)</em:translator>
-		<em:translator>Netanyahu (ru-RU locale)</em:translator>
-		<em:translator>Tsprajna (zh-TW locale)</em:translator>
-		<em:translator>hzhbest (zh-CN locale)</em:translator>
-		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
 		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
@@ -202,7 +122,7 @@
     <em:targetApplication>
       <RDF:Description em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                        em:minVersion="3.5"
-                       em:maxVersion="4.0b10pre" />
+                       em:maxVersion="4.0b11pre" />
     </em:targetApplication>
   </RDF:Description>
 </RDF:RDF>
