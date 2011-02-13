@@ -22,7 +22,7 @@
 <!ENTITY popup.context.removeRightTabs.vertical   "关闭下方全部标签">
 <!ENTITY popup.context.removeAll                  "关闭所有标签">
 <!ENTITY popup.context.removeSimilar              "关闭相同网站的标签">
-<!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
+<!ENTITY popup.context.removeOtherSimilar         "关闭相同网站的其他标签">
 <!ENTITY popup.context.duplicate                  "复制标签">
 <!ENTITY popup.context.clipboard                  "复制 URI">
 <!ENTITY popup.context.clipboardAll               "复制所有标签的 URI">
@@ -64,8 +64,8 @@
 <!ENTITY config.saveType.select  "从子菜单中选择">
 
 <!ENTITY config.useEffectiveTLD.caption  "“相同网站”的标准">
-<!ENTITY config.useEffectiveTLD.enabled  "相同域名（“aaa.example.com”和“bbb.example.com”视为相同网站）">
-<!ENTITY config.useEffectiveTLD.disabled "相同主机（“aaa.example.com”和“bbb.example.com”视为不同网站）">
+<!ENTITY config.useEffectiveTLD.enabled  "域名一致（“aaa.example.com”和“bbb.example.com”视为相同网站）">
+<!ENTITY config.useEffectiveTLD.disabled "主站一致（“aaa.example.com”和“bbb.example.com”视为不同网站）">
 
 <!ENTITY config.tabs.clipboard "复制格式">
 
