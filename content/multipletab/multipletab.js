@@ -1215,8 +1215,15 @@ var MultipleTabService = {
 
 			// toolbar customizing on Firefox 4 or later
 			case 'beforecustomization':
+				this.toolbarCustomizing = true;
 				return this.destroyTabbar(gBrowser);
 			case 'aftercustomization':
+				// Ignore it, because 'aftercustomization' fired not
+				// following to 'beforecustomization' is invalid.
+				// Personal Titlebar addon (or others) fires a fake
+				// event on its startup process.
+				if (!this.toolbarCustomizing) return;
+				this.toolbarCustomizing = false;
 				return this.initTabbar(gBrowser);
 
 			case 'popupshowing':
