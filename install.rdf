@@ -89,7 +89,7 @@
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="zh-CN"
-                       em:name="MultipleTabHandler (多标签处理)"
+                       em:name="Multiple Tab Handler (多标签处理)"
                        em:description="对多个标签提供同时关闭或刷新等功能。"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
@@ -99,7 +99,7 @@
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="pl-PL"
-                       em:name="MultipleTabHandler"
+                       em:name="Multiple Tab Handler"
                        em:description="Umożliwia operacje (zamknięcie, odświeżenie itp.) wielu kart na raz."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
@@ -109,7 +109,7 @@
     </em:localized>
     <em:localized>
       <RDF:Description em:locale="de-DE"
-                       em:name="MultipleTabHandler"
+                       em:name="Multiple Tab Handler"
                        em:description="Fügt Features zum gleichzeitigen Schließen, Neuladen, etc. mehrerer Tabs hinzu."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="SHIMODA Hiroshi">
@@ -117,12 +117,22 @@
 		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
+    <em:localized>
+      <RDF:Description em:locale="fr"
+                       em:name="Multiple Tab Handler"
+                       em:description=""
+                       em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
+                       em:creator="SHIMODA Hiroshi">
+		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
+		<em:translator>Jean-Philippe Fleury (fr locale)</em:translator>
+      </RDF:Description>
+    </em:localized>
 
 
     <em:targetApplication>
       <RDF:Description em:id="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}"
                        em:minVersion="3.5"
-                       em:maxVersion="4.0b11pre" />
+                       em:maxVersion="4.0.*" />
     </em:targetApplication>
   </RDF:Description>
 </RDF:RDF>
