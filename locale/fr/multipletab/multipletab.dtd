@@ -51,8 +51,9 @@
 <!ENTITY config.tabdrag.moveMultipleTabs "Déplacer simultanément les onglets sélectionnés">
 
 <!ENTITY config.tabclickmode.accel.caption "Action lors d'un Ctrl(Commande)-clic des onglets">
-<!ENTITY config.tabclickmode.accel.default "Fermer l'onglet (action par défaut de Firefox)">
+<!ENTITY config.tabclickmode.accel.default "action par défaut de Firefox">
 <!ENTITY config.tabclickmode.accel.select  "Inverser la sélection de l'onglet">
+<!ENTITY config.tabclickmode.accel.close   "Fermer l'onglet">
 
 <!ENTITY config.tabclickmode.shift.caption "Action lors d'un Maj-clic des onglets">
 <!ENTITY config.tabclickmode.shift.default "Ignorer (action par défaut de Firefox)">

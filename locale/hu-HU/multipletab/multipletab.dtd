@@ -55,8 +55,9 @@
 <!ENTITY config.tabclickmode.toggle  "Lap kiválasztása">
 
 <!ENTITY config.tabclickmode.accel.caption "Ctrl+kattintás a lap fülén:">
-<!ENTITY config.tabclickmode.accel.default "Lap bezárása (Firefox alapértelmezett)">
+<!ENTITY config.tabclickmode.accel.default "Firefox alapértelmezett">
 <!ENTITY config.tabclickmode.accel.select  "Lap kiválasztása">
+<!ENTITY config.tabclickmode.accel.close   "Lap bezárása">
 
 <!ENTITY config.tabclickmode.shift.caption "Shift+kattintás a lap fülén:">
 <!ENTITY config.tabclickmode.shift.default "Mellőzés (Firefox alapértelmezett)">

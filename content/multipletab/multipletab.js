@@ -10,6 +10,7 @@ var MultipleTabService = {
 	tabShiftClickMode : -1,
 	TAB_CLICK_MODE_DEFAULT : 0,
 	TAB_CLICK_MODE_SELECT  : 1,
+	TAB_CLICK_MODE_CLOSE   : 2,
 
 	kSELECTION_STYLE : 'multipletab-selection-style',
 	kSELECTED        : 'multiselected',
@@ -1365,9 +1366,17 @@ var MultipleTabService = {
 				return;
 			}
 			else if (this.isAccelKeyPressed(aEvent)) {
-				if (this.tabAccelClickMode != this.TAB_CLICK_MODE_SELECT) {
-					b.removeTab(tab, { animate : true });
-					return;
+				switch (this.tabAccelClickMode)
+				{
+					case this.TAB_CLICK_MODE_DEFAULT:
+						return;
+
+					case this.TAB_CLICK_MODE_SELECT:
+						break;
+
+					default:
+					case this.TAB_CLICK_MODE_CLOSE:
+						return b.removeTab(tab, { animate : true, byMouse : true });
 				}
 
 				let shouldSelectCurrentTab = !this.selectionModified && !this.hasSelection();

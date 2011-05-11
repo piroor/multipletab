@@ -51,8 +51,9 @@
 <!ENTITY config.tabdrag.moveMultipleTabs "所選分頁移聚同一處">
 
 <!ENTITY config.tabclickmode.accel.caption "Ctrl(Command)-左鍵點按頁籤時執行動作">
-<!ENTITY config.tabclickmode.accel.default "關閉分頁 (Firefox default)">
+<!ENTITY config.tabclickmode.accel.default "Firefox default">
 <!ENTITY config.tabclickmode.accel.select  "切換分頁的選取">
+<!ENTITY config.tabclickmode.accel.close   "關閉分頁">
 
 <!ENTITY config.tabclickmode.shift.caption "Shift-左鍵點按頁籤時執行動作">
 <!ENTITY config.tabclickmode.shift.default "Ignore (Firefox default)">

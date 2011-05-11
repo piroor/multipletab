@@ -51,8 +51,9 @@
 <!ENTITY config.tabdrag.moveMultipleTabs "Move selected tabs together">
 
 <!ENTITY config.tabclickmode.accel.caption "Action for Ctrl(Command)-Click of tabs">
-<!ENTITY config.tabclickmode.accel.default "Close Tab (Firefox default)">
+<!ENTITY config.tabclickmode.accel.default "Firefox default">
 <!ENTITY config.tabclickmode.accel.select  "Toggle Selection of Tab">
+<!ENTITY config.tabclickmode.accel.close   "Close Tab">
 
 <!ENTITY config.tabclickmode.shift.caption "Action for Shift-Click of tabs">
 <!ENTITY config.tabclickmode.shift.default "Ignore (Firefox default)">

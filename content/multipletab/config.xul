@@ -86,6 +86,7 @@
 				orient="horizontal">
 				<radio value="0" label="&config.tabclickmode.accel.default;"/>
 				<radio value="1" label="&config.tabclickmode.accel.select;"/>
+				<radio value="2" label="&config.tabclickmode.accel.close;"/>
 			</radiogroup>
 		</vbox>
 	</groupbox>

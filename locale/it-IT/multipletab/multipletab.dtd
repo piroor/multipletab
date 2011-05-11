@@ -51,8 +51,9 @@
 <!ENTITY config.tabdrag.moveMultipleTabs "Raggruppa e sposta le schede selezionate">
 
 <!ENTITY config.tabclickmode.accel.caption "Azione per Ctrl+clic sulle schede">
-<!ENTITY config.tabclickmode.accel.default "Chiudi scheda (comportamento predefinito)"> 
+<!ENTITY config.tabclickmode.accel.default "comportamento predefinito">
 <!ENTITY config.tabclickmode.accel.select  "Inverti selezione della scheda">
+<!ENTITY config.tabclickmode.accel.close   "Chiudi scheda">
 
 <!ENTITY config.tabclickmode.shift.caption "Azione per Maiusc+clic sulle schede">
 <!ENTITY config.tabclickmode.shift.default "Nessuna (comportamento predefinito)">

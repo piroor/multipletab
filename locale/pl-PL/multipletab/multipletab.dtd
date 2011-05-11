@@ -51,8 +51,9 @@
 <!ENTITY config.tabdrag.moveMultipleTabs "Przesuwaj razem zaznaczone karty">
 
 <!ENTITY config.tabclickmode.accel.caption "Akcja dla Ctrl(Command)-Klik w kartę">
-<!ENTITY config.tabclickmode.accel.default "Zamknij kartę (Firefox default)">
+<!ENTITY config.tabclickmode.accel.default "Firefox default">
 <!ENTITY config.tabclickmode.accel.select  "Przełącz zaznaczenie karty">
+<!ENTITY config.tabclickmode.accel.close   "Zamknij kartę">
 
 <!ENTITY config.tabclickmode.shift.caption "Akcja dla Shift-Klik w kartę">
 <!ENTITY config.tabclickmode.shift.default "Ignore (Firefox default)">
