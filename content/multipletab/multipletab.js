@@ -1343,8 +1343,9 @@ var MultipleTabService = {
 			if (aEvent.shiftKey) {
 				if (this.tabShiftClickMode != this.TAB_CLICK_MODE_SELECT)
 					return;
-				var tabs = b.mTabContainer.childNodes;
-				var inSelection = false;
+
+				let tabs = b.mTabContainer.childNodes;
+				let inSelection = false;
 				this.getTabsArray(b).forEach(function(aTab) {
 					if (aTab.getAttribute('hidden') == 'true' ||
 						aTab.getAttribute('collapsed') == 'true')
@@ -1369,10 +1370,13 @@ var MultipleTabService = {
 					return;
 				}
 
-				if (!this.selectionModified && !this.hasSelection())
-					this.setSelection(b.selectedTab, true);
+				let shouldSelectCurrentTab = !this.selectionModified && !this.hasSelection();
 
 				this.toggleSelection(tab);
+
+				if (shouldSelectCurrentTab)
+					this.setSelection(b.selectedTab, true);
+
 				aEvent.preventDefault();
 				aEvent.stopPropagation();
 				return;
