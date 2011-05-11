@@ -2039,7 +2039,8 @@ var MultipleTabService = {
 
 		var removeTabs = [];
 		tabs.forEach(function(aTab) {
-			if (aTabs.indexOf(aTab) < 0) removeTabs.push(aTab);
+			if (aTabs.indexOf(aTab) < 0 && !aTab.hasAttribute('pinned'))
+				removeTabs.push(aTab);
 		});
 
 		this.closeTabsInternal(removeTabs);
