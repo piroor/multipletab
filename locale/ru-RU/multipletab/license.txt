@@ -14,7 +14,7 @@ License.
 The Original Code is the Multiple Tab Handler.
 
 The Initial Developer of the Original Code is L'Autour.
-Portions created by the Initial Developer are Copyright (C) 2008-2009
+Portions created by the Initial Developer are Copyright (C) 2008-2011
 the Initial Developer. All Rights Reserved.
 
 Contributor(s): L'Autour <LAutour@yandex.ru>
