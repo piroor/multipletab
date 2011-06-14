@@ -2727,6 +2727,7 @@ var MultipleTabService = {
 	//     freeze, protect
 	//   Super Tab Mode https://addons.mozilla.org/firefox/addon/13288
 	//     lock
+
 	
 	toggleTabsFreezed : function MTS_toggleTabsFreezed(aTabs, aNewState) 
 	{
@@ -2878,7 +2879,7 @@ var MultipleTabService = {
 			if (!aTab._tabViewTabItem) // pinned tabs cannot be grouped!
 				return;
 			if (!aGroupId) {
-				newGroup = aTab._tabViewTabItem.parent;
+				let newGroup = aTab._tabViewTabItem.parent;
 				if (title)
 					newGroup.setTitle(title);
 				aGroupId = newGroup.id;
