@@ -1088,7 +1088,6 @@ var MultipleTabService = {
 		window.removeEventListener('UIOperationHistoryRedo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryPostRedo:TabbarOperations', this, false);
 
-
 		this.removePrefListener(this);
 
 		this.getTabsArray(gBrowser).forEach(function(aTab) {
