@@ -8,6 +8,7 @@ pref("extensions.multipletab.tabdrag.moveMultipleTabs", true);
 pref("extensions.multipletab.tabclick.accel.mode", 1);
 pref("extensions.multipletab.tabclick.shift.mode", 1);
 pref("extensions.multipletab.selectionStyle", "auto");
+pref("extensions.multipletab.implicitlySelectCurrentTab", true);
 pref("extensions.multipletab.useEffectiveTLD", true);
 pref("extensions.multipletab.checkUserHost", true);
 

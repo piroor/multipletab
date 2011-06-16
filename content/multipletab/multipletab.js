@@ -40,6 +40,8 @@ var MultipleTabService = {
 
 	lineFeed : '\r\n',
 
+	implicitlySelect : true,
+
 	/* event types */
 	kEVENT_TYPE_TAB_DUPLICATE   : 'nsDOMMultipleTabHandler:TabDuplicate',
 	kEVENT_TYPE_WINDOW_MOVE     : 'nsDOMMultipleTabHandler:TabWindowMove',
@@ -311,11 +313,20 @@ var MultipleTabService = {
 			)
 			return this.getArrayFromXPathResult(
 					'descendant::xul:tab[@'+this.kSELECTED+'="true" and not(@hidden="true")]',
-
 					(aSource || this.browser).mTabContainer
 				);
 
 		return window['piro.sakura.ne.jp'].tabsDragUtils.getDraggedTabs(aSource);
+	},
+ 
+	getLastManuallySelectedTab : function MTS_getLastManuallySelectedTab(aTabBrowser) 
+	{
+		var b = aTabBrowser || this.browser;
+		var selectedTabs = this.getSelectedTabs(b);
+		if (!selectedTabs.length && this.implicitlySelect)
+			return b.selectedTab;
+
+		return this.lastManuallySelectedTab;
 	},
  
 	getReadyToCloseTabs : function MTS_getReadyToCloseTabs(aTabBrowser) 
@@ -850,6 +861,7 @@ var MultipleTabService = {
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.accel.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.shift.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.selectionStyle');
+		this.observe(null, 'nsPref:changed', 'extensions.multipletab.implicitlySelectCurrentTab');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.linefeed');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.formats');
 
@@ -1076,6 +1088,7 @@ var MultipleTabService = {
 		window.removeEventListener('UIOperationHistoryRedo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryPostRedo:TabbarOperations', this, false);
 
+
 		this.removePrefListener(this);
 
 		this.getTabsArray(gBrowser).forEach(function(aTab) {
@@ -1116,6 +1129,9 @@ var MultipleTabService = {
 		this.setSelection(aTab, false);
 		if (!this.hasSelection())
 			this.selectionModified = false;
+
+		if (this.lastManuallySelectedTab == aTab)
+			this.lastManuallySelectedTab = null;
 	},
    
 /* Event Handling */ 
@@ -1338,21 +1354,28 @@ var MultipleTabService = {
 					return;
 
 				let tabs = b.mTabContainer.childNodes;
-				let inSelection = false;
-				this.getTabsArray(b).forEach(function(aTab) {
-					if (aTab.getAttribute('hidden') == 'true' ||
-						aTab.getAttribute('collapsed') == 'true')
-						return;
+				let lastManuallySelectedTab = this.getLastManuallySelectedTab(b);
+				if (lastManuallySelectedTab) {
+					let inSelection = false;
+					this.getTabsArray(b).forEach(function(aTab) {
+						if (aTab.getAttribute('hidden') == 'true' ||
+							aTab.getAttribute('collapsed') == 'true')
+							return;
 
-					if (aTab == b.selectedTab ||
-						aTab == tab) {
-						inSelection = !inSelection;
-						this.setSelection(aTab, true);
-					}
-					else {
-						this.setSelection(aTab, inSelection);
-					}
-				}, this);
+						if (aTab == lastManuallySelectedTab ||
+							aTab == tab) {
+							inSelection = !inSelection;
+							this.setSelection(aTab, true);
+						}
+						else {
+							this.setSelection(aTab, inSelection);
+						}
+					}, this);
+				}
+				else {
+					this.setSelection(tab, true);
+					this.lastManuallySelectedTab = tab;
+				}
 				aEvent.preventDefault();
 				aEvent.stopPropagation();
 				return;
@@ -1371,12 +1394,19 @@ var MultipleTabService = {
 						return b.removeTab(tab, { animate : true, byMouse : true });
 				}
 
-				let shouldSelectCurrentTab = !this.selectionModified && !this.hasSelection();
+				let shouldSelectCurrentTab = (
+						this.implicitlySelect &&
+						!this.selectionModified &&
+						!this.hasSelection()
+					);
 
 				this.toggleSelection(tab);
 
 				if (shouldSelectCurrentTab)
 					this.setSelection(b.selectedTab, true);
+
+				if (this.isSelected(tab))
+					this.lastManuallySelectedTab = tab;
 
 				aEvent.preventDefault();
 				aEvent.stopPropagation();
@@ -3380,6 +3410,7 @@ var MultipleTabService = {
 		this.clearSelectionSub(this.getSelectedTabs(aTabBrowser), this.kSELECTED);
 		this.clearSelectionSub(this.getReadyToCloseTabs(aTabBrowser), this.kREADY_TO_CLOSE);
 		this.selectionModified = false;
+		this.lastManuallySelectedTab = null;
 	},
 	clearSelectionSub : function MTS_clearSelectionSub(aTabs, aAttr)
 	{
@@ -3427,6 +3458,10 @@ var MultipleTabService = {
 							'color' ;
 				}
 				document.documentElement.setAttribute(this.kSELECTION_STYLE, value);
+				break;
+
+			case 'extensions.multipletab.implicitlySelectCurrentTab':
+				this.implicitlySelect = value;
 				break;
 
 			case 'extensions.multipletab.clipboard.linefeed':
