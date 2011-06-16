@@ -997,7 +997,6 @@ var MultipleTabService = {
 		strip.addEventListener('dragstart', this, true);
 		strip.addEventListener('dragend',   this, true);
 		strip.addEventListener('mouseover', this, true);
-		strip.addEventListener('mousemove', this, true);
 		strip.addEventListener('mousedown', this, true);
 	},
  
@@ -1061,7 +1060,6 @@ var MultipleTabService = {
   
 	initTab : function MTS_initTab(aTab) 
 	{
-		aTab.addEventListener('mousemove', this, true);
 	},
   
 	destroy : function MTS_destroy() 
@@ -1110,7 +1108,6 @@ var MultipleTabService = {
 		strip.removeEventListener('dragstart', this, true);
 		strip.removeEventListener('dragend',   this, true);
 		strip.removeEventListener('mouseover', this, true);
-		strip.removeEventListener('mousemove', this, true);
 		strip.removeEventListener('mousedown', this, true);
 	},
  
@@ -1119,8 +1116,6 @@ var MultipleTabService = {
 		this.setSelection(aTab, false);
 		if (!this.hasSelection())
 			this.selectionModified = false;
-
-		aTab.removeEventListener('mousemove', this, true);
 	},
    
 /* Event Handling */ 
@@ -1143,9 +1138,6 @@ var MultipleTabService = {
 				return this.onTabDragEnd(aEvent);
 
 			case 'mouseover':
-				return this.onTabDragEnter(aEvent);
-
-			case 'mousemove':
 				return this.onTabDragOver(aEvent);
 
 			case 'dragend':
@@ -1538,27 +1530,6 @@ var MultipleTabService = {
 		this.lastMouseOverTarget = null;
 	},
  
-	onTabDragEnter : function MTS_onTabDragEnter(aEvent) 
-	{
-		if (
-			!(
-				this.tabDragging ||
-				this.tabCloseboxDragging
-			) ||
-			this.isToolbarCustomizing
-			)
-			return;
-
-		var b = this.getTabBrowserFromChild(aEvent.originalTarget);
-		var arrowscrollbox = b.mTabContainer.mTabstrip;
-		if (aEvent.originalTarget == document.getAnonymousElementByAttribute(arrowscrollbox, 'class', 'scrollbutton-up')) {
-			arrowscrollbox._startScroll(-1);
-		}
-		else if (aEvent.originalTarget == document.getAnonymousElementByAttribute(arrowscrollbox, 'class', 'scrollbutton-down')) {
-			arrowscrollbox._startScroll(1);
-		}
-	},
- 
 	onTabDragOver : function MTS_onTabDragOver(aEvent) 
 	{
 		if (
@@ -1571,7 +1542,7 @@ var MultipleTabService = {
 			return;
 
 		if (this.tabDragging || this.tabCloseboxDragging) {
-			this.autoScroll.processAutoScroll(aEvent);
+			this.processAutoScroll(aEvent);
 		}
 
 		if (this.tabDragging) {
@@ -1609,6 +1580,20 @@ var MultipleTabService = {
 
 			var tab = this.getTabFromEvent(aEvent, true);
 			this.toggleReadyToClose(tab);
+		}
+	},
+	processAutoScroll : function MTS_processAutoScroll(aEvent)
+	{
+		var b = this.getTabBrowserFromChild(aEvent.originalTarget);
+		var arrowscrollbox = b.mTabContainer.mTabstrip;
+		if (aEvent.originalTarget == document.getAnonymousElementByAttribute(arrowscrollbox, 'class', 'scrollbutton-up')) {
+			arrowscrollbox._startScroll(-1);
+		}
+		else if (aEvent.originalTarget == document.getAnonymousElementByAttribute(arrowscrollbox, 'class', 'scrollbutton-down')) {
+			arrowscrollbox._startScroll(1);
+		}
+		else {
+			this.autoScroll.processAutoScroll(aEvent);
 		}
 	},
  
@@ -2727,7 +2712,6 @@ var MultipleTabService = {
 	//     freeze, protect
 	//   Super Tab Mode https://addons.mozilla.org/firefox/addon/13288
 	//     lock
-
 	
 	toggleTabsFreezed : function MTS_toggleTabsFreezed(aTabs, aNewState) 
 	{
