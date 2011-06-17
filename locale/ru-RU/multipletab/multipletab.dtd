@@ -100,3 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Автоматически выбирать клонированную группу вкладок">
 <!ENTITY config.selectAfter.move      "Автоматически выбирать группу вкладок, перенесенную в другое окно">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+

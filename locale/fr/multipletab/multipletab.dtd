@@ -100,3 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Sélectionner les onglets automatiquement après leur duplication">
 <!ENTITY config.selectAfter.move      "Sélectionner les onglets automatiquement après leur déplacement vers une autre fenêtre">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+

@@ -100,3 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Automatycznie zaznacz karty po duplikacji">
 <!ENTITY config.selectAfter.move      "Automatycznie zaznacz karty po przesunięciu do nowego okna">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+

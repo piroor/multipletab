@@ -100,3 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "自动选中克隆出来的标签">
 <!ENTITY config.selectAfter.move      "自动选中移动到另一窗口的标签">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+

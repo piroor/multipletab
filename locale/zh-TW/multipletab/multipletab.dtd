@@ -100,3 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "自動選取分頁新增的副本">
 <!ENTITY config.selectAfter.move      "自動選取被移到另一視窗的分頁">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+

@@ -454,6 +454,9 @@
 		<preference id="extensions.multipletab.selectAfter.move"
 			name="extensions.multipletab.selectAfter.move"
 			type="bool"/>
+		<preference id="extensions.multipletab.implicitlySelectCurrentTab"
+			name="extensions.multipletab.implicitlySelectCurrentTab"
+			type="bool"/>
 	</preferences>
 	<groupbox>
 		<caption label="&config.close.direction.caption;"/>
@@ -469,12 +472,24 @@
 			preference="extensions.multipletab.close.selectedTab.last"
 			label="&config.close.selectedTab.last;"/>
 	</groupbox>
-	<checkbox id="extensions.multipletab.selectAfter.duplicate-check"
-		preference="extensions.multipletab.selectAfter.duplicate"
-		label="&config.selectAfter.duplicate;"/>
-	<checkbox id="extensions.multipletab.selectAfter.move-check"
-		preference="extensions.multipletab.selectAfter.move"
-		label="&config.selectAfter.move;"/>
+	<hbox>
+		<checkbox id="extensions.multipletab.selectAfter.duplicate-check"
+			preference="extensions.multipletab.selectAfter.duplicate"
+			label="&config.selectAfter.duplicate;"
+			flex="1"/>
+	</hbox>
+	<hbox>
+		<checkbox id="extensions.multipletab.selectAfter.move-check"
+			preference="extensions.multipletab.selectAfter.move"
+			label="&config.selectAfter.move;"
+			flex="1"/>
+	</hbox>
+	<hbox>
+		<checkbox id="extensions.multipletab.implicitlySelectCurrentTab-check"
+			preference="extensions.multipletab.implicitlySelectCurrentTab"
+			label="&config.implicitlySelectCurrentTab;"
+			flex="1"/>
+	</hbox>
 </prefpane>
 
 <script src="chrome://global/content/contentAreaUtils.js" type="application/javascript"/>

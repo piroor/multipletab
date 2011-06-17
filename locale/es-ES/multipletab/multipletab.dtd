@@ -100,3 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Seleccionar pestañas automáticamente, después de que son duplicadas">
 <!ENTITY config.selectAfter.move       "Seleccionar pestañas automáticamente, después de que son movidas a otra ventana">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+

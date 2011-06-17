@@ -100,3 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Tabs automatisch ausw&#228;hlen, nachdem sie dupliziert wurden ">
 <!ENTITY config.selectAfter.move      "Tabs automatisch ausw&#228;hlen, nachdem sie in ein anderes Fenster verschoben wurden">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+
