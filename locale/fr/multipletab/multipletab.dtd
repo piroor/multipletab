@@ -50,7 +50,7 @@
 <!ENTITY config.tabdrag.autoclear     "Effacer la sélection après la fermeture du menu contextuel">
 <!ENTITY config.tabdrag.moveMultipleTabs "Déplacer simultanément les onglets sélectionnés">
 
-<!ENTITY config.tabclickmode.accel.caption "Action lors d'un Ctrl(Commande)-clic des onglets">
+<!ENTITY config.tabclickmode.accel.caption "Action lors d'un Ctrl/⌘-clic des onglets">
 <!ENTITY config.tabclickmode.accel.default "action par défaut de Firefox">
 <!ENTITY config.tabclickmode.accel.select  "Inverser la sélection de l'onglet">
 <!ENTITY config.tabclickmode.accel.close   "Fermer l'onglet">
@@ -100,5 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Sélectionner les onglets automatiquement après leur duplication">
 <!ENTITY config.selectAfter.move      "Sélectionner les onglets automatiquement après leur déplacement vers une autre fenêtre">
-<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl/⌘-Click on a background tab">
 

@@ -50,7 +50,7 @@
 <!ENTITY config.tabdrag.autoclear     "Сбрасывать выбор вкладок после закрытия всплывающего меню">
 <!ENTITY config.tabdrag.moveMultipleTabs "Переносить выбранные вкладки вместе">
 
-<!ENTITY config.tabclickmode.accel.caption "Действие при Ctrl-клике (Command-клике) по вкладкам">
+<!ENTITY config.tabclickmode.accel.caption "Действие при Ctrl-клике (⌘-клике) по вкладкам">
 <!ENTITY config.tabclickmode.accel.default "По умолчанию для Firefox">
 <!ENTITY config.tabclickmode.accel.select  "Переключить выбор вкладки">
 <!ENTITY config.tabclickmode.accel.close   "Закрыть вкладку">
@@ -100,5 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Автоматически выбирать клонированную группу вкладок">
 <!ENTITY config.selectAfter.move      "Автоматически выбирать группу вкладок, перенесенную в другое окно">
-<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl/⌘-Click on a background tab">
 

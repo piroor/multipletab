@@ -50,7 +50,7 @@
 <!ENTITY config.tabdrag.autoclear     "彈跳選單關閉後自動清除分頁選取">
 <!ENTITY config.tabdrag.moveMultipleTabs "所選分頁移聚同一處">
 
-<!ENTITY config.tabclickmode.accel.caption "Ctrl(Command)-左鍵點按頁籤時執行動作">
+<!ENTITY config.tabclickmode.accel.caption "Ctrl/⌘-左鍵點按頁籤時執行動作">
 <!ENTITY config.tabclickmode.accel.default "Firefox default">
 <!ENTITY config.tabclickmode.accel.select  "切換分頁的選取">
 <!ENTITY config.tabclickmode.accel.close   "關閉分頁">
@@ -100,5 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "自動選取分頁新增的副本">
 <!ENTITY config.selectAfter.move      "自動選取被移到另一視窗的分頁">
-<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl/⌘-Click on a background tab">
 

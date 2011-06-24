@@ -50,7 +50,7 @@
 <!ENTITY config.tabdrag.autoclear     "Clear tab selection after the popup menu is closed">
 <!ENTITY config.tabdrag.moveMultipleTabs "Move selected tabs together">
 
-<!ENTITY config.tabclickmode.accel.caption "Action for Ctrl(Command)-Click of tabs">
+<!ENTITY config.tabclickmode.accel.caption "Action for Ctrl/⌘-Click of tabs">
 <!ENTITY config.tabclickmode.accel.default "Firefox default">
 <!ENTITY config.tabclickmode.accel.select  "Toggle Selection of Tab">
 <!ENTITY config.tabclickmode.accel.close   "Close Tab">
@@ -100,5 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Select tabs automatically, after they are duplicated">
 <!ENTITY config.selectAfter.move      "Select tabs automatically, after they are moved to another window">
-<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl/⌘-Click on a background tab">
 

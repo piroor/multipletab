@@ -104,5 +104,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Lapok automatikus kijelölése, ha kettőzve voltak">
 <!ENTITY config.selectAfter.move      "Lapok automatikus kijelölése, ha másik ablakba lettek áthelyezve">
-<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl/⌘-Click on a background tab">
 

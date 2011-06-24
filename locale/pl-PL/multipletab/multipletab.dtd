@@ -50,7 +50,7 @@
 <!ENTITY config.tabdrag.autoclear     "Wyczyść zaznaczenie kart po zamknięciu menu kontekstowego">
 <!ENTITY config.tabdrag.moveMultipleTabs "Przesuwaj razem zaznaczone karty">
 
-<!ENTITY config.tabclickmode.accel.caption "Akcja dla Ctrl(Command)-Klik w kartę">
+<!ENTITY config.tabclickmode.accel.caption "Akcja dla Ctrl/⌘-Klik w kartę">
 <!ENTITY config.tabclickmode.accel.default "Firefox default">
 <!ENTITY config.tabclickmode.accel.select  "Przełącz zaznaczenie karty">
 <!ENTITY config.tabclickmode.accel.close   "Zamknij kartę">
@@ -100,5 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Automatycznie zaznacz karty po duplikacji">
 <!ENTITY config.selectAfter.move      "Automatycznie zaznacz karty po przesunięciu do nowego okna">
-<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl/⌘-Click on a background tab">
 

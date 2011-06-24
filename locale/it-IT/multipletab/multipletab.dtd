@@ -100,5 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Seleziona automaticamente le schede duplicate">
 <!ENTITY config.selectAfter.move      "Seleziona automaticamente le schede spostate in un&apos;altra finestra">
-<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl(Command)-Click on a background tab">
+<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl/⌘-Click on a background tab">
 

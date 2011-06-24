@@ -3300,7 +3300,7 @@ var MultipleTabService = {
  
 	isSelected : function MTS_isSelected(aTab) 
 	{
-		return aTab.getAttribute(this.kSELECTED) == 'true';
+		return aTab && aTab.getAttribute(this.kSELECTED) == 'true';
 	},
  
 	setSelection : function MTS_setSelection(aTab, aState) 

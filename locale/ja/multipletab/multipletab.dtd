@@ -51,7 +51,7 @@
 <!ENTITY config.tabdrag.autoclear     "メニューを閉じたらタブの選択を解除する">
 <!ENTITY config.tabdrag.moveMultipleTabs "選択されたタブをまとめて移動する">
 
-<!ENTITY config.tabclickmode.accel.caption "タブをCtrl（Command）-クリックした時">
+<!ENTITY config.tabclickmode.accel.caption "タブをCtrl/⌘-クリックした時">
 <!ENTITY config.tabclickmode.accel.default "Firefox既定の動作">
 <!ENTITY config.tabclickmode.accel.select  "タブを選択する">
 <!ENTITY config.tabclickmode.accel.close   "タブを閉じる">
@@ -101,5 +101,5 @@
 
 <!ENTITY config.selectAfter.duplicate "タブを複製した後、自動的に選択する">
 <!ENTITY config.selectAfter.move      "タブを別のウィンドウに移動した後、自動的に選択する">
-<!ENTITY config.implicitlySelectCurrentTab "他のタブをShift/Ctrl（Command）-クリックした時に、現在のタブも暗黙的に選択されたものと見なす">
+<!ENTITY config.implicitlySelectCurrentTab "他のタブをShift/Ctrl/⌘-クリックした時に、現在のタブも暗黙的に選択されたものと見なす">
 
