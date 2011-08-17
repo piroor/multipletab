@@ -1150,6 +1150,7 @@ var MultipleTabService = {
 				return this.onTabDragStart(aEvent);
 
 			case 'mouseup':
+				this.fastSelectedLastTab = false;
 				return this.onTabDragEnd(aEvent);
 
 			case 'mouseover':
@@ -3305,6 +3306,8 @@ var MultipleTabService = {
  
 	setSelection : function MTS_setSelection(aTab, aState) 
 	{
+		this.fastSelectedLastTab = aTab;
+		this.fastSelectedLastTime = new Date();
 		this.setBooleanAttributeToTab(aTab, this.kSELECTED_OLD, aState, true); // for backward compatibility
 		return this.setBooleanAttributeToTab(aTab, this.kSELECTED, aState, true, this.kSELECTED);
 	},
@@ -3389,8 +3392,62 @@ var MultipleTabService = {
   
 	toggleSelection : function MTS_toggleSelection(aTab) 
 	{
+		if(
+			//if in selecting by dragging mode..
+			this.tabDragMode == this.TAB_DRAG_MODE_SELECT && this.tabDragging &&
+			
+			//if super little time from last selection
+			new Date() - this.fastSelectedLastTime < 300 &&
+			
+			//and if the tab to toggleSelection is not a previoustab or nexttab of aTab
+			this.fastSelectedLastTab != this.getPreviousTab(aTab) && 
+			this.fastSelectedLastTab != this.getNextTab(aTab) &&
+			
+			//and if is not the same tab
+			this.fastSelectedLastTab != aTab
+		)
+		{
+		  //then firefox skipped some tabs.
+	
+		  this.dump('last selected tab was: '+this.fastSelectedLastTab._tPos);
+		  this.dump('requested a toggle selection for: '+aTab._tPos);
+
+		  if(this.fastSelectedLastTab._tPos > aTab._tPos)
+		  {
+			var relativeTab = aTab;
+			var relativeTabTo = this.fastSelectedLastTab;
+		  }
+		  else
+		  {
+			var relativeTab = this.fastSelectedLastTab;
+			var relativeTabTo = aTab;
+		  }
+
+		  while(relativeTab = this.getNextTab(relativeTab))
+		  {
+			if(relativeTab == relativeTabTo)
+			{
+			  this.dump('BREAKING');
+			  break;
+			  //return aReturn;
+			}
+			this.dump('selecting the tab skipped by firefox: '+relativeTab._tPos);
+			this.toggleBooleanAttributeToTab(relativeTab, this.kSELECTED_OLD, true); // for backward compatibility
+			this.toggleBooleanAttributeToTab(relativeTab, this.kSELECTED, true, this.kSELECTED);
+		  }
+		}
+		this.fastSelectedLastTab = aTab;
+		this.fastSelectedLastTime = new Date();
+		
 		this.toggleBooleanAttributeToTab(aTab, this.kSELECTED_OLD, true); // for backward compatibility
 		return this.toggleBooleanAttributeToTab(aTab, this.kSELECTED, true, this.kSELECTED);
+	},
+	dump:function(aMsg)
+	{
+	  Components
+		.classes['@mozilla.org/consoleservice;1']
+		.getService(Components.interfaces.nsIConsoleService)
+		.logStringMessage(aMsg);
 	},
 	
 	toggleReadyToClose : function MTS_toggleReadyToClose(aTab) 
