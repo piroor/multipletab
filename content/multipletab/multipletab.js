@@ -1507,8 +1507,25 @@ var MultipleTabService = {
 	},
 	tabDragging         : false,
 	tabCloseboxDragging : false,
-	lastMouseOverTarget : null,
 	lastMouseDown       : 0,
+	set lastMouseOverTarget(target)
+	{
+		this._lastMouseOverTarget = target;
+		if (target) {
+			this.lastMouseOver = (new Date()).getTime();
+		}
+		else {
+			this.lastMouseOver = null;
+		}
+		return target;
+	},
+	get lastMouseOverTarget()
+	{
+		return this._lastMouseOverTarget;
+	},
+	_lastMouseOverTarget : null,
+	lastMouseOver : null,
+	mouseOverComplementationMaxDelay : 300,
  
 	startTabsDrag : function MTS_startTabsDrag(aEvent) 
 	{
@@ -1531,6 +1548,7 @@ var MultipleTabService = {
 	onTabDragEnd : function MTS_onTabDragEnd(aEvent) 
 	{
 		this.cancelDelayedDragStart();
+		this.lastMouseOverTarget = null;
 
 		if (this.isToolbarCustomizing)
 			return;
@@ -1555,8 +1573,6 @@ var MultipleTabService = {
 			}
 		}
 		this.delayedDragStartReady = false;
-
-		this.lastMouseOverTarget = null;
 	},
  
 	onTabDragOver : function MTS_onTabDragOver(aEvent) 
@@ -1575,7 +1591,7 @@ var MultipleTabService = {
 		}
 
 		if (this.tabDragging) {
-			var tab = this.getTabFromEvent(aEvent, true);
+			let tab = this.getTabFromEvent(aEvent, true);
 			if (tab == this.lastMouseOverTarget) return;
 
 			if (!tab) {
@@ -1583,12 +1599,11 @@ var MultipleTabService = {
 				return;
 			}
 
-			this.lastMouseOverTarget = tab;
-
 			switch(this.tabDragMode)
 			{
 				case this.TAB_DRAG_MODE_SELECT:
-					this.toggleSelection(tab);
+					// this.toggleSelection(tab);
+					this.toggleSelectionBetween(this.lastMouseOverTarget, tab);
 					break;
 
 				case this.TAB_DRAG_MODE_SWITCH:
@@ -1599,16 +1614,18 @@ var MultipleTabService = {
 				default:
 					break;
 			}
+
+			this.lastMouseOverTarget = tab;
 		}
 		else if (this.tabCloseboxDragging) {
 			if (aEvent.originalTarget == this.lastMouseOverTarget) return;
 
+			if (this.getCloseboxFromEvent(aEvent)) {
+				let tab = this.getTabFromEvent(aEvent, true);
+				// this.toggleReadyToClose(tab);
+				this.toggleReadyToCloseBetween(this.lastMouseOverTarget, tab);
+			}
 			this.lastMouseOverTarget = aEvent.originalTarget;
-
-			if (!this.getCloseboxFromEvent(aEvent)) return;
-
-			var tab = this.getTabFromEvent(aEvent, true);
-			this.toggleReadyToClose(tab);
 		}
 	},
 	processAutoScroll : function MTS_processAutoScroll(aEvent)
@@ -1624,6 +1641,42 @@ var MultipleTabService = {
 		else {
 			this.autoScroll.processAutoScroll(aEvent);
 		}
+	},
+	getComplementedDragOverTabs : function MTS_getComplementedDragOverTabs(aPrevious, aNext)
+	{
+		if (
+			aPrevious && aPrevious.parentNode &&
+			aNext && aNext.parentNode &&
+			aPrevious != aNext &&
+			aPrevious.parentNode == aNext.parentNode &&
+			this.lastMouseOver &&
+			(new Date()).getTime() - this.lastMouseOver < this.mouseOverComplementationMaxDelay
+			) {
+			let firstTab = aPrevious._tPos < aNext._tPos ? aPrevious : aNext ;
+			let lastTab = aPrevious._tPos < aNext._tPos ? aNext : aPrevious ;
+			let browser = this.getTabBrowserFromChild(firstTab) || this.browser;
+			return this.getTabsArray(browser)
+					.filter(function(aTab) {
+						return aTab._tPos > firstTab._tPos && aTab._tPos < lastTab._tPos;
+					});
+		}
+		return [];
+	},
+	toggleSelectionBetween : function MTS_toggleSelectionBetween(aPreviousTarget, aCurrentTarget)
+	{
+		this.getComplementedDragOverTabs(aPreviousTarget, aCurrentTarget).forEach(function(aTab) {
+			this.toggleSelection(aTab);
+		}, this);
+		this.toggleSelection(aCurrentTarget);
+	},
+	toggleReadyToCloseBetween : function MTS_toggleReadyToCloseBetween(aPreviousTarget, aCurrentTarget)
+	{
+		aPreviousTarget = this.getTabFromChild(aPreviousTarget);
+		aCurrentTarget = this.getTabFromChild(aCurrentTarget);
+		this.getComplementedDragOverTabs(aPreviousTarget, aCurrentTarget).forEach(function(aTab) {
+			this.toggleReadyToClose(aTab);
+		}, this);
+		this.toggleReadyToClose(aCurrentTarget);
 	},
  
 	onTabbarDragEnd : function MTS_onTabbarDragEnd(aEvent) 
