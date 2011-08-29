@@ -1248,6 +1248,7 @@ var MultipleTabService = {
 					this.showSelectionPopup({
 						screenX : this.lastMouseDownX,
 						screenY : this.lastMouseDownY,
+						sourceEvent : aEvent
 					});
 					aEvent.preventDefault();
 					aEvent.stopPropagation();
@@ -1769,24 +1770,16 @@ var MultipleTabService = {
  
 	showSelectionPopup : function MTS_showSelectionPopup(aEvent, aAutoClearSelection) 
 	{
+		var event = aEvent.sourceEvent || aEvent ;
 		var popup = this.tabSelectionPopup;
 		popup.hidePopup();
 		popup.autoClearSelection = aAutoClearSelection;
-		document.popupNode = this.browser.mTabContainer;
-		if ('openPopupAtScreen' in popup) // Firefox 3 or later
-			popup.openPopupAtScreen(
-				aEvent.screenX,
-				aEvent.screenY,
-				true,
-				aEvent
-			);
-		else
-			popup.showPopup(
-				document.documentElement,
-				aEvent.screenX - document.documentElement.boxObject.screenX,
-				aEvent.screenY - document.documentElement.boxObject.screenY,
-				'popup'
-			);
+		popup.openPopupAtScreen(
+			aEvent.screenX,
+			aEvent.screenY,
+			true,
+			event
+		);
 	},
  
 	updateMenuItems : function MTS_updateMenuItems(aPopup) 
