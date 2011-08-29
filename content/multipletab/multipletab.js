@@ -2735,23 +2735,23 @@ var MultipleTabService = {
 
 		var stringToCopy = Array.slice(aTabs).map(function(aTab) {
 				let uri = this.getCurrentURIOfTab(aTab).spec;
-				let title = aTab.linkedBrowser.contentDocument.title || aTab.getAttribute('label');
-				let escapedURI = uri
-								.replace(/&/g, '&amp;')
-								.replace(/"/g, '&quot;')
-								.replace(/</g, '&lt;')
-								.replace(/>/g, '&gt;');
-				let escapedTitle = title
-								.replace(/&/g, '&amp;')
-								.replace(/"/g, '&quot;')
-								.replace(/</g, '&lt;')
-								.replace(/>/g, '&gt;');
+				let doc = aTab.linkedBrowser.contentDocument;
+				let title = doc.title || aTab.getAttribute('label');
+				let author = this._getMetaInfo(doc, 'author');
+				let description = this._getMetaInfo(doc, 'description');
+				let keywords = this._getMetaInfo(doc, 'keywords');
 				return format
 						.replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
 						.replace(/%URL%/gi, uri)
 						.replace(/%(?:TITLE|TEXT)%/gi, title)
-						.replace(/%URL_HTML(?:IFIED)?%/gi, escapedURI)
-						.replace(/%TITLE_HTML(?:IFIED)?%/gi, escapedTitle)
+						.replace(/%URL_HTML(?:IFIED)?%/gi, this._escape(uri))
+						.replace(/%TITLE_HTML(?:IFIED)?%/gi, this._escape(title))
+						.replace(/%AUTHOR%/gi, author)
+						.replace(/%AUTHOR_HTML(?:IFIED)?%/gi, this._escape(author))
+						.replace(/%DESC(?:RIPTION)?%/gi, description)
+						.replace(/%DESC(?:RIPTION)?_HTML(?:IFIED)?%/gi, this._escape(description))
+						.replace(/%KEYWORDS%/gi, keywords)
+						.replace(/%KEYWORDS_HTML(?:IFIED)?%/gi, this._escape(keywords))
 						.replace(/%UTC_TIME%/gi, timeUTC)
 						.replace(/%LOCAL_TIME%/gi, timeLocal)
 						.replace(/%EOL%/gi, this.lineFeed);
@@ -2760,6 +2760,26 @@ var MultipleTabService = {
 			stringToCopy.push('');
 
 		return stringToCopy.join(this.lineFeed);
+	},
+	_escape : function MTS_escape(aString)
+	{
+		return aString
+				.replace(/&/g, '&amp;')
+				.replace(/"/g, '&quot;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;');
+	},
+	_getMetaInfo : function MTS_getMetaInfo(aDocument, aName)
+	{
+		var upperCase = aName.toUpperCase();
+		var lowerCase = aName.toLowerCase();
+		return aDocument.evaluate(
+				'/descendant::*[translate(local-name(), "META", "meta")="meta"][translate(@name, "'+upperCase+'", "'+lowerCase+'")="'+lowerCase+'"]/attribute::content',
+				aDocument,
+				null,
+				XPathResult.STRING_TYPE,
+				null
+			).stringValue;
 	},
 	
 	kFORMAT_TYPE_DEFAULT : 0, 

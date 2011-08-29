@@ -77,7 +77,7 @@
 <!ENTITY config.clipboardFormatType.remove.tooltip "删除此格式">
 <!ENTITY config.clipboardFormatType.default.label  "名称">
 <!ENTITY config.clipboardFormatType.default.format "格式代码">
-<!ENTITY config.clipboardFormatType.description    "可用的格式占位符：&#x25;URL&#x25;=页面 URL, &#x25;TITLE&#x25;=页面标题, &#x25;URL_HTMLIFIED&#x25;=HTML转义页面URL, &#x25;TITLE_HTMLIFIED&#x25;=HTML转义页面标题, &#x25;EOL&#x25;=换行符">
+<!ENTITY config.clipboardFormatType.description    "可用的格式占位符：&#x25;URL&#x25;=页面 URL, &#x25;TITLE&#x25;=页面标题, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=HTML转义页面URL, &#x25;TITLE_HTMLIFIED&#x25;=HTML转义页面标题, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;EOL&#x25;=换行符">
 
 <!ENTITY config.tabs.selectionMenu    "选中标签菜单">
 <!ENTITY config.selectionMenu.caption "在选中标签的上下文菜单中显示：">

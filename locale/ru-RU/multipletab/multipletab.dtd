@@ -77,7 +77,7 @@
 <!ENTITY config.clipboardFormatType.remove.tooltip "Удалить этот формат">
 <!ENTITY config.clipboardFormatType.default.label  "Название">
 <!ENTITY config.clipboardFormatType.default.format "Формат">
-<!ENTITY config.clipboardFormatType.description    "Доступные заполнители для форматов: &#x25;URL&#x25;=URL страницы, &#x25;TITLE&#x25;=Заголовок страницы, &#x25;URL_HTMLIFIED&#x25;=URL в HTML-формате, &#x25;TITLE_HTMLIFIED&#x25;=Заголовок в HTML-формате, &#x25;EOL&#x25;=Перевод строки">
+<!ENTITY config.clipboardFormatType.description    "Доступные заполнители для форматов: &#x25;URL&#x25;=URL страницы, &#x25;TITLE&#x25;=Заголовок страницы, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=URL в HTML-формате, &#x25;TITLE_HTMLIFIED&#x25;=Заголовок в HTML-формате, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;EOL&#x25;=Перевод строки">
 
 <!ENTITY config.tabs.selectionMenu    "Меню выбранных вкладок">
 <!ENTITY config.selectionMenu.caption "Доступные элементы всплывающего меню для выбранных вкладок">
