@@ -11,6 +11,10 @@ pref("extensions.multipletab.selectionStyle", "auto");
 pref("extensions.multipletab.implicitlySelectCurrentTab", true);
 pref("extensions.multipletab.useEffectiveTLD", true);
 pref("extensions.multipletab.checkUserHost", true);
+// -1 = use browser.tabs.warnOnClose
+// 0  = no warning
+// 1  = show warning
+pref("extensions.multipletab.warnOnCloseMultipleTabs", -1);
 
 pref("extensions.multipletab.close.selectedTab.last", true);
 // 0=left(top) to right(bottom), 1=right(bottom) to left(top)

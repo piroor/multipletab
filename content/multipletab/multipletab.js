@@ -264,12 +264,14 @@ var MultipleTabService = {
 	
 	warnAboutClosingTabs : function MTS_warnAboutClosingTabs(aTabsCount) 
 	{
+		var warnPref = this.getPref('extensions.multipletab.warnOnCloseMultipleTabs');
 		if (
 			aTabsCount <= 1 ||
-			!this.getPref('browser.tabs.warnOnClose')
+			warnPref == 0 ||
+			(warnPref == -1 && !this.getPref('browser.tabs.warnOnClose'))
 			)
 			return true;
-		var checked = { value:true };
+		var checked = { value: true };
 		window.focus();
 		var shouldClose = this.PromptService.confirmEx(window,
 				this.tabbrowserBundle.getString('tabs.closeWarningTitle'),
@@ -281,8 +283,12 @@ var MultipleTabService = {
 				this.tabbrowserBundle.getString('tabs.closeWarningPromptMe'),
 				checked
 			) == 0;
-		if (shouldClose && !checked.value)
-			this.setPref('browser.tabs.warnOnClose', false);
+		if (shouldClose && !checked.value) {
+			if (warnPref == -1)
+				this.setPref('browser.tabs.warnOnClose', false);
+			else
+				this.setPref('extensions.multipletab.warnOnCloseMultipleTabs', 0);
+		}
 		return shouldClose;
 	},
  
