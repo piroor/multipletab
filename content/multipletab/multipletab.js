@@ -1503,6 +1503,7 @@ var MultipleTabService = {
 
 		var tab = this.getTabFromEvent(aEvent);
 		if (!tab) {
+			this.firstMouseOverTarget = null;
 			this.lastMouseOverTarget = null;
 			// do nothing
 			return false;
@@ -1513,7 +1514,7 @@ var MultipleTabService = {
 			tab.tmp_mOverCloseButton // Tab Mix Plus
 			) {
 			this.tabCloseboxDragging = true;
-			this.lastMouseOverTarget = this.getCloseboxFromEvent(aEvent);
+			this.firstMouseOverTarget = this.lastMouseOverTarget = this.getCloseboxFromEvent(aEvent);
 			this.clearSelectionSub(this.getSelectedTabs(this.getTabBrowserFromChild(tab)), this.kSELECTED);
 			this.setReadyToClose(tab, true);
 			this.startListenESCKey();
@@ -1537,7 +1538,7 @@ var MultipleTabService = {
 			}
 			this.tabDragging = true;
 			this.delayedDragStartReady = false;
-			this.lastMouseOverTarget = tab;
+			this.firstMouseOverTarget = this.lastMouseOverTarget = tab;
 			if (this.tabDragMode == this.TAB_DRAG_MODE_SELECT)
 				this.setSelection(tab, true);
 			this.startListenESCKey();
@@ -1550,6 +1551,7 @@ var MultipleTabService = {
 	tabDragging         : false,
 	tabCloseboxDragging : false,
 	lastMouseDown       : 0,
+	firstMouseOverTarget : null,
 	set lastMouseOverTarget(target)
 	{
 		this._lastMouseOverTarget = target;
@@ -1590,6 +1592,7 @@ var MultipleTabService = {
 	onTabDragEnd : function MTS_onTabDragEnd(aEvent) 
 	{
 		this.cancelDelayedDragStart();
+		this.firstMouseOverTarget = null;
 		this.lastMouseOverTarget = null;
 		this.endListenESCKey();
 
@@ -1638,6 +1641,7 @@ var MultipleTabService = {
 			if (tab == this.lastMouseOverTarget) return;
 
 			if (!tab) {
+				this.firstMouseOverTarget = null;
 				this.lastMouseOverTarget = null;
 				return;
 			}
@@ -1705,21 +1709,103 @@ var MultipleTabService = {
 		}
 		return [];
 	},
+	isSerialSelection : function MTS_isSerialSelection(aTab)
+	{
+		var b = this.getTabBrowserFromChild(aTab);
+		var tabs = this.getTabsArray(b);
+		var boundaryCount = 0;
+		var lastSelected = false;
+		var allCount = tabs.length;
+		tabs.forEach(function(aTab, aIndex) {
+			var selected = this.isSelected(aTab);
+			if (aIndex == 0) {
+				if (selected) {
+					lastSelected = true;
+					boundaryCount++;
+				}
+			}
+			else if (aIndex == allCount-1) {
+				if (selected)
+					boundaryCount++;
+			}
+			else if (selected != lastSelected) {
+				lastSelected = !lastSelected;
+				boundaryCount++;
+			}
+		}, this);
+		if (boundaryCount > 2)
+			return false;
+
+		var selectedTabs = this.getSelectedTabs(b);
+		if (!selectedTabs.length)
+			return false;
+
+		if (selectedTabs[0]._tPos > aTab._tPos) {
+			let betweenTabs = this.getComplementedDragOverTabs(selectedTabs[0], aTab);
+			return (betweenTabs.length ? betweenTabs[0] : selectedTabs[0]).previousSibling == aTab;
+		}
+		else if (selectedTabs[selectedTabs.length-1]._tPos < aTab._tPos) {
+			let lastSelectedTab = selectedTabs[selectedTabs.length-1];
+			let betweenTabs = this.getComplementedDragOverTabs(lastSelectedTab, aTab);
+			return (betweenTabs.length ? betweenTabs[betweenTabs.length-1] : lastSelectedTab).nextSibling == aTab;
+		}
+
+		return false;
+	},
+	isSelectionMoveBack : function MTS_isSelectionMoveBack(aPreviousTarget, aCurrentTarget)
+	{
+		if (aPreviousTarget && aCurrentTarget &&
+			Math.abs(aCurrentTarget._tPos - aPreviousTarget._tPos) == 1) {
+			let forwardTabs, backwardTabs;
+			if (aCurrentTarget._tPos > aPreviousTarget._tPos) {
+				forwardTabs = this.getLeftTabsOf(aPreviousTarget);
+				backwardTabs = this.getRightTabsOf(aPreviousTarget);
+			}
+			else {
+				forwardTabs = this.getRightTabsOf(aPreviousTarget);
+				backwardTabs = this.getLeftTabsOf(aPreviousTarget).reverse();
+			}
+			let backwardSerialSelectionCount = 0;
+			return (
+				forwardTabs.every(function(aTab) {
+					return !this.isSelected(aTab);
+				}, this) &&
+				backwardTabs.some(function(aTab) {
+					if (this.isSelected(aTab)) {
+						backwardSerialSelectionCount++;
+						return false;
+					}
+					return true;
+				}, this) &&
+				backwardSerialSelectionCount
+			);
+		}
+		return false;
+	},
 	toggleSelectionBetween : function MTS_toggleSelectionBetween(aPreviousTarget, aCurrentTarget)
 	{
 		this.getComplementedDragOverTabs(aPreviousTarget, aCurrentTarget).forEach(function(aTab) {
 			this.toggleSelection(aTab);
 		}, this);
-		this.toggleSelection(aCurrentTarget);
+
+//		if (this.isSelectionMoveBack(aPreviousTarget, aCurrentTarget))
+//			this.toggleSelection(aPreviousTarget);
+//		else
+			this.toggleSelection(aCurrentTarget);
 	},
 	toggleReadyToCloseBetween : function MTS_toggleReadyToCloseBetween(aPreviousTarget, aCurrentTarget)
 	{
 		aPreviousTarget = this.getTabFromChild(aPreviousTarget);
 		aCurrentTarget = this.getTabFromChild(aCurrentTarget);
+
 		this.getComplementedDragOverTabs(aPreviousTarget, aCurrentTarget).forEach(function(aTab) {
 			this.toggleReadyToClose(aTab);
 		}, this);
-		this.toggleReadyToClose(aCurrentTarget);
+
+//		if (this.isSelectionMoveBack(aPreviousTarget, aCurrentTarget))
+//			this.toggleReadyToClose(aPreviousTarget);
+//		else
+			this.toggleReadyToClose(aCurrentTarget);
 	},
  
 	onTabbarDragEnd : function MTS_onTabbarDragEnd(aEvent) 
