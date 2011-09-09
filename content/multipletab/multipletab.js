@@ -394,7 +394,7 @@ var MultipleTabService = {
 		str = getShortcutOrURI(str);
 
 		var userHomePart = this.getPref('extensions.multipletab.checkUserHost') ?
-							str.match(/^\w+:\/\/[^\/]+(\/?[^\/]+)\//) :
+							str.match(/^\w+:\/\/[^\/]+(\/~[^\/]+)\//) :
 							'' ;
 		if (userHomePart) userHomePart = userHomePart[1];
 
