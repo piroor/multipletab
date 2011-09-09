@@ -343,18 +343,28 @@ var MultipleTabService = {
 			);
 	},
  
-	getLeftTabsOf : function MTS_getLeftTabsOf(aTab) 
+	getLeftTabsOf : function MTS_getLeftTabsOf(aTab, aExcludePinnedTabs) 
 	{
+		var conditions = [
+				'not(@hidden="true")'
+			];
+		if (aExcludePinnedTabs)
+			conditions.push('not(@pinned="true")');
 		return this.getArrayFromXPathResult(
-				'preceding-sibling::xul:tab[not(@hidden="true")]',
+				'preceding-sibling::xul:tab['+conditions.join(' and ')+']',
 				aTab
 			);
 	},
  
-	getRightTabsOf : function MTS_getRightTabsOf(aTab) 
+	getRightTabsOf : function MTS_getRightTabsOf(aTab, aExcludePinnedTabs) 
 	{
+		var conditions = [
+				'not(@hidden="true")'
+			];
+		if (aExcludePinnedTabs)
+			conditions.push('not(@pinned="true")');
 		return this.getArrayFromXPathResult(
-				'following-sibling::xul:tab[not(@hidden="true")]',
+				'following-sibling::xul:tab['+conditions.join(' and ')+']',
 				aTab
 			);
 	},
