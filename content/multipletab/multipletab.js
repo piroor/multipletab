@@ -121,7 +121,7 @@ var MultipleTabService = {
 		return void(0);
 	},
  
-	get autoScroll() { return this.namespace.autoScroll; },
+	get autoScroll() { return this.namespace.autoScroll; }, 
  
 	get isToolbarCustomizing() 
 	{
@@ -129,7 +129,7 @@ var MultipleTabService = {
 		return toolbox && toolbox.customizing;
 	},
  
-	// called with target(nsIDOMEventTarget), document(nsIDOMDocument), type(string) and data(object)
+	// called with target(nsIDOMEventTarget), document(nsIDOMDocument), type(string) and data(object) 
 	fireDataContainerEvent : function()
 	{
 		var target, document, type, data, canBubble, cancellable;
@@ -394,7 +394,7 @@ var MultipleTabService = {
 		str = getShortcutOrURI(str);
 
 		var userHomePart = this.getPref('extensions.multipletab.checkUserHost') ?
-							str.match(/^\w+:\/\/[^\/]+(\/‾[^\/]+)\//) :
+							str.match(/^\w+:\/\/[^\/]+(\/?[^\/]+)\//) :
 							'' ;
 		if (userHomePart) userHomePart = userHomePart[1];
 
@@ -930,7 +930,7 @@ var MultipleTabService = {
 		this.overrideExtensionsOnDelayedInit(); // hacks.js
 	},
  
-	applyPlatformDefaultPrefs : function TSTUtils_applyPlatformDefaultPrefs()
+	applyPlatformDefaultPrefs : function TSTUtils_applyPlatformDefaultPrefs() 
 	{
 		var OS = this.XULAppInfo.OS;
 		var processed = {};
@@ -1079,6 +1079,16 @@ var MultipleTabService = {
 	initTab : function MTS_initTab(aTab) 
 	{
 	},
+ 
+	startListenESCKey : function MTS_startListenESCKey() 
+	{
+		if (this._listeningESCKey)
+			return;
+		this._listeningESCKey = true;
+		window.addEventListener('keypress', this, true);
+	},
+	_listeningESCKey : false,
+
   
 	destroy : function MTS_destroy() 
 	{
@@ -1093,6 +1103,8 @@ var MultipleTabService = {
 		window.removeEventListener('UIOperationHistoryUndo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryRedo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryPostRedo:TabbarOperations', this, false);
+
+		this.endListenESCKey();
 
 		this.removePrefListener(this);
 
@@ -1137,6 +1149,14 @@ var MultipleTabService = {
 
 		if (this.lastManuallySelectedTab == aTab)
 			this.lastManuallySelectedTab = null;
+	},
+ 
+	endListenESCKey : function endListenESCKey() 
+	{
+		if (!this._listeningESCKey)
+			return;
+		this._listeningESCKey = false;
+		window.removeEventListener('keypress', this, true);
 	},
    
 /* Event Handling */ 
@@ -1258,6 +1278,9 @@ var MultipleTabService = {
 				this.showHideMenuItems(aEvent.target);
 				this.updateMenuItems(aEvent.target);
 				break;
+
+			case 'keypress':
+				return this.onESCKeyPress(aEvent);
 
 
 			case 'UIOperationHistoryPreUndo:TabbarOperations':
@@ -1483,6 +1506,7 @@ var MultipleTabService = {
 			this.lastMouseOverTarget = this.getCloseboxFromEvent(aEvent);
 			this.clearSelectionSub(this.getSelectedTabs(this.getTabBrowserFromChild(tab)), this.kSELECTED);
 			this.setReadyToClose(tab, true);
+			this.startListenESCKey();
 		}
 		else if (
 			this.isEventFiredOnTabIcon(aEvent) ||
@@ -1506,6 +1530,7 @@ var MultipleTabService = {
 			this.lastMouseOverTarget = tab;
 			if (this.tabDragMode == this.TAB_DRAG_MODE_SELECT)
 				this.setSelection(tab, true);
+			this.startListenESCKey();
 		}
 
 		aEvent.preventDefault();
@@ -1556,6 +1581,7 @@ var MultipleTabService = {
 	{
 		this.cancelDelayedDragStart();
 		this.lastMouseOverTarget = null;
+		this.endListenESCKey();
 
 		if (this.isToolbarCustomizing)
 			return;
@@ -1756,6 +1782,16 @@ var MultipleTabService = {
 			this.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
 		}
 		return newTab;
+	},
+ 
+	onESCKeyPress : function MTS_onESCKeyPress(aEvent) 
+	{
+		if (aEvent.keyCode != aEvent.DOM_VK_ESCAPE)
+			return;
+
+		this.endListenESCKey();
+		this.clearSelection();
+		this.onTabDragEnd(aEvent);
 	},
   
 /* Popup */ 
@@ -2888,7 +2924,7 @@ var MultipleTabService = {
 		);
 	},
  
-	pinTabs : function MTS_pinTabs(aTabs)
+	pinTabs : function MTS_pinTabs(aTabs) 
 	{
 		if (!aTabs) return;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
@@ -2921,7 +2957,7 @@ var MultipleTabService = {
 		return 'pinTab' in gBrowser && 'unpinTab' in gBrowser;
 	},
  
-	// experimental command
+	// experimental command 
 	moveTabsToGroup : function MTS_moveTabsToGroup(aTabs, aGroupId)
 	{
 		if (!this.canMoveTabsToGroup)
