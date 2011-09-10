@@ -1024,7 +1024,6 @@ var MultipleTabService = {
 		var strip = tabContainer.parentNode;
 		strip.addEventListener('dragstart', this, true);
 		strip.addEventListener('dragend',   this, true);
-		strip.addEventListener('mouseover', this, true);
 		strip.addEventListener('mousedown', this, true);
 	},
  
@@ -1090,14 +1089,22 @@ var MultipleTabService = {
 	{
 	},
  
-	startListenESCKey : function MTS_startListenESCKey() 
+	startListenWhileDragging : function MTS_startListenWhileDragging(aTab) 
 	{
-		if (this._listeningESCKey)
+		if (this._listeningTabbar)
 			return;
-		this._listeningESCKey = true;
+
+		var b = this.getTabBrowserFromChild(aTab);
+		var tabContainer = b.mTabContainer;
+		var strip = tabContainer.parentNode;
+		this._listeningTabbar = strip;
+
 		window.addEventListener('keypress', this, true);
+
+		strip.addEventListener('mouseover', this, true);
+		strip.addEventListener('mouseout',  this, true);
 	},
-	_listeningESCKey : false,
+	_listeningTabbar : null,
 
   
 	destroy : function MTS_destroy() 
@@ -1114,7 +1121,7 @@ var MultipleTabService = {
 		window.removeEventListener('UIOperationHistoryRedo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryPostRedo:TabbarOperations', this, false);
 
-		this.endListenESCKey();
+		this.endListenWhileDragging();
 
 		this.removePrefListener(this);
 
@@ -1147,7 +1154,6 @@ var MultipleTabService = {
 		var strip = tabContainer.parentNode;
 		strip.removeEventListener('dragstart', this, true);
 		strip.removeEventListener('dragend',   this, true);
-		strip.removeEventListener('mouseover', this, true);
 		strip.removeEventListener('mousedown', this, true);
 	},
  
@@ -1161,12 +1167,18 @@ var MultipleTabService = {
 			this.lastManuallySelectedTab = null;
 	},
  
-	endListenESCKey : function endListenESCKey() 
+	endListenWhileDragging : function endListenWhileDragging() 
 	{
-		if (!this._listeningESCKey)
+		if (!this._listeningTabbar)
 			return;
-		this._listeningESCKey = false;
+
 		window.removeEventListener('keypress', this, true);
+
+		var strip = this._listeningTabbar;
+		strip.removeEventListener('mouseover', this, true);
+		strip.removeEventListener('mouseout',  this, true);
+
+		this._listeningTabbar = null;
 	},
    
 /* Event Handling */ 
@@ -1190,6 +1202,9 @@ var MultipleTabService = {
 
 			case 'mouseover':
 				return this.onTabDragOver(aEvent);
+
+			case 'mouseout':
+				return this.onTabDragExit(aEvent);
 
 			case 'dragend':
 				return this.onTabbarDragEnd(aEvent);
@@ -1387,7 +1402,7 @@ var MultipleTabService = {
 
 		var tab = this.getTabFromEvent(aEvent);
 		if (tab) {
-			var b = this.getTabBrowserFromChild(tab);
+			let b = this.getTabBrowserFromChild(tab);
 			if (aEvent.shiftKey) {
 				if (this.tabShiftClickMode != this.TAB_CLICK_MODE_SELECT)
 					return;
@@ -1503,8 +1518,7 @@ var MultipleTabService = {
 
 		var tab = this.getTabFromEvent(aEvent);
 		if (!tab) {
-			this.firstMouseOverTarget = null;
-			this.lastMouseOverTarget = null;
+			this.lastMouseOverTab = this.lastMouseOverTarget = null;
 			// do nothing
 			return false;
 		}
@@ -1514,10 +1528,11 @@ var MultipleTabService = {
 			tab.tmp_mOverCloseButton // Tab Mix Plus
 			) {
 			this.tabCloseboxDragging = true;
-			this.firstMouseOverTarget = this.lastMouseOverTarget = this.getCloseboxFromEvent(aEvent);
+			this.lastMouseOverTarget = this.getCloseboxFromEvent(aEvent);
+			this.lastMouseOverTab = tab;
 			this.clearSelectionSub(this.getSelectedTabs(this.getTabBrowserFromChild(tab)), this.kSELECTED);
 			this.setReadyToClose(tab, true);
-			this.startListenESCKey();
+			this.startListenWhileDragging(tab);
 		}
 		else if (
 			this.isEventFiredOnTabIcon(aEvent) ||
@@ -1538,10 +1553,10 @@ var MultipleTabService = {
 			}
 			this.tabDragging = true;
 			this.delayedDragStartReady = false;
-			this.firstMouseOverTarget = this.lastMouseOverTarget = tab;
+			this.lastMouseOverTab = this.lastMouseOverTarget = tab;
 			if (this.tabDragMode == this.TAB_DRAG_MODE_SELECT)
 				this.setSelection(tab, true);
-			this.startListenESCKey();
+			this.startListenWhileDragging(tab);
 		}
 
 		aEvent.preventDefault();
@@ -1552,22 +1567,26 @@ var MultipleTabService = {
 	tabCloseboxDragging : false,
 	lastMouseDown       : 0,
 	firstMouseOverTarget : null,
-	set lastMouseOverTarget(target)
+	set lastMouseOverTarget(aTarget)
 	{
-		this._lastMouseOverTarget = target;
-		if (target) {
+		this._lastMouseOverTarget = aTarget;
+		if (aTarget) {
 			this.lastMouseOver = (new Date()).getTime();
+			if (!this.firstMouseOverTarget)
+				this.firstMouseOverTarget = aTarget;
 		}
 		else {
-			this.lastMouseOver = null;
+			this.lastMouseOver =
+				this.firstMouseOverTarget = null;
 		}
-		return target;
+		return aTarget;
 	},
 	get lastMouseOverTarget()
 	{
 		return this._lastMouseOverTarget;
 	},
 	_lastMouseOverTarget : null,
+	lastMouseOverTab : null,
 	lastMouseOver : null,
 	mouseOverComplementationMaxDelay : 300,
  
@@ -1592,9 +1611,8 @@ var MultipleTabService = {
 	onTabDragEnd : function MTS_onTabDragEnd(aEvent) 
 	{
 		this.cancelDelayedDragStart();
-		this.firstMouseOverTarget = null;
-		this.lastMouseOverTarget = null;
-		this.endListenESCKey();
+		this.lastMouseOverTab = this.lastMouseOverTarget = null;
+		this.endListenWhileDragging();
 
 		if (this.isToolbarCustomizing)
 			return;
@@ -1632,6 +1650,8 @@ var MultipleTabService = {
 			)
 			return;
 
+		this.cancelDelayedDragExit();
+
 		if (this.tabDragging || this.tabCloseboxDragging) {
 			this.processAutoScroll(aEvent);
 		}
@@ -1641,8 +1661,7 @@ var MultipleTabService = {
 			if (tab == this.lastMouseOverTarget) return;
 
 			if (!tab) {
-				this.firstMouseOverTarget = null;
-				this.lastMouseOverTarget = null;
+				this.lastMouseOverTab = this.lastMouseOverTarget = null;
 				return;
 			}
 
@@ -1662,7 +1681,7 @@ var MultipleTabService = {
 					break;
 			}
 
-			this.lastMouseOverTarget = tab;
+			this.lastMouseOverTab = this.lastMouseOverTarget = tab;
 		}
 		else if (this.tabCloseboxDragging) {
 			if (aEvent.originalTarget == this.lastMouseOverTarget) return;
@@ -1670,7 +1689,8 @@ var MultipleTabService = {
 			if (this.getCloseboxFromEvent(aEvent)) {
 				let tab = this.getTabFromEvent(aEvent, true);
 				// this.toggleReadyToClose(tab);
-				this.toggleReadyToCloseBetween(this.lastMouseOverTarget, tab);
+				this.toggleReadyToCloseBetween(this.lastMouseOverTab, tab);
+				this.lastMouseOverTab = tab;
 			}
 			this.lastMouseOverTarget = aEvent.originalTarget;
 		}
@@ -1709,104 +1729,69 @@ var MultipleTabService = {
 		}
 		return [];
 	},
-	isSerialSelection : function MTS_isSerialSelection(aTab)
-	{
-		var b = this.getTabBrowserFromChild(aTab);
-		var tabs = this.getTabsArray(b);
-		var boundaryCount = 0;
-		var lastSelected = false;
-		var allCount = tabs.length;
-		tabs.forEach(function(aTab, aIndex) {
-			var selected = this.isSelected(aTab);
-			if (aIndex == 0) {
-				if (selected) {
-					lastSelected = true;
-					boundaryCount++;
-				}
-			}
-			else if (aIndex == allCount-1) {
-				if (selected)
-					boundaryCount++;
-			}
-			else if (selected != lastSelected) {
-				lastSelected = !lastSelected;
-				boundaryCount++;
-			}
-		}, this);
-		if (boundaryCount > 2)
-			return false;
-
-		var selectedTabs = this.getSelectedTabs(b);
-		if (!selectedTabs.length)
-			return false;
-
-		if (selectedTabs[0]._tPos > aTab._tPos) {
-			let betweenTabs = this.getComplementedDragOverTabs(selectedTabs[0], aTab);
-			return (betweenTabs.length ? betweenTabs[0] : selectedTabs[0]).previousSibling == aTab;
-		}
-		else if (selectedTabs[selectedTabs.length-1]._tPos < aTab._tPos) {
-			let lastSelectedTab = selectedTabs[selectedTabs.length-1];
-			let betweenTabs = this.getComplementedDragOverTabs(lastSelectedTab, aTab);
-			return (betweenTabs.length ? betweenTabs[betweenTabs.length-1] : lastSelectedTab).nextSibling == aTab;
-		}
-
-		return false;
-	},
 	isSelectionMoveBack : function MTS_isSelectionMoveBack(aPreviousTarget, aCurrentTarget)
 	{
-		if (aPreviousTarget && aCurrentTarget &&
-			Math.abs(aCurrentTarget._tPos - aPreviousTarget._tPos) == 1) {
-			let forwardTabs, backwardTabs;
-			if (aCurrentTarget._tPos > aPreviousTarget._tPos) {
-				forwardTabs = this.getLeftTabsOf(aPreviousTarget);
-				backwardTabs = this.getRightTabsOf(aPreviousTarget);
-			}
-			else {
-				forwardTabs = this.getRightTabsOf(aPreviousTarget);
-				backwardTabs = this.getLeftTabsOf(aPreviousTarget).reverse();
-			}
-			let backwardSerialSelectionCount = 0;
-			return (
-				forwardTabs.every(function(aTab) {
-					return !this.isSelected(aTab);
-				}, this) &&
-				backwardTabs.some(function(aTab) {
-					if (this.isSelected(aTab)) {
-						backwardSerialSelectionCount++;
-						return false;
-					}
-					return true;
-				}, this) &&
-				backwardSerialSelectionCount
-			);
+		if (!this.firstMouseOverTarget)
+			return false;
+
+		var b = this.getTabBrowserFromChild(aCurrentTarget) || this.browser;
+		var status = this.getTabsArray(b).map(function(aTab) {
+				var selected = this.isSelected(aTab) || this.isReadyToClose(aTab);
+				return aTab == aPreviousTarget ? (selected ? 'P' : 'p' ) :
+						aTab == aCurrentTarget ? (selected ? 'C' : 'c' ) :
+						(selected ? 'S' : ' ' ) ;
+			}, this).join('');
+		return /\bS*CP\b|\bPCS*\b/.test(status);
+	},
+	toggleBetween : function MTS_toggleBetween(aPreviousTarget, aCurrentTarget, aTask)
+	{
+		var betweenTabs = this.getComplementedDragOverTabs(aPreviousTarget, aCurrentTarget);
+		betweenTabs.forEach(function(aTab) {
+			aTask(aTab);
+		});
+
+		if (aPreviousTarget && betweenTabs.length) {
+			aPreviousTarget = aPreviousTarget._tPos > aCurrentTarget._tPos ?
+								betweenTabs[0] :
+								betweenTabs[betweenTabs.length-1] ;
 		}
-		return false;
+
+		if (this.isSelectionMoveBack(aPreviousTarget, aCurrentTarget))
+			aTask(aPreviousTarget);
+		else
+			aTask(aCurrentTarget);
 	},
 	toggleSelectionBetween : function MTS_toggleSelectionBetween(aPreviousTarget, aCurrentTarget)
 	{
-		this.getComplementedDragOverTabs(aPreviousTarget, aCurrentTarget).forEach(function(aTab) {
-			this.toggleSelection(aTab);
-		}, this);
-
-//		if (this.isSelectionMoveBack(aPreviousTarget, aCurrentTarget))
-//			this.toggleSelection(aPreviousTarget);
-//		else
-			this.toggleSelection(aCurrentTarget);
+		var self = this;
+		this.toggleBetween(aPreviousTarget, aCurrentTarget, function(aTab) {
+			self.toggleSelection(aTab);
+		});
 	},
 	toggleReadyToCloseBetween : function MTS_toggleReadyToCloseBetween(aPreviousTarget, aCurrentTarget)
 	{
-		aPreviousTarget = this.getTabFromChild(aPreviousTarget);
-		aCurrentTarget = this.getTabFromChild(aCurrentTarget);
-
-		this.getComplementedDragOverTabs(aPreviousTarget, aCurrentTarget).forEach(function(aTab) {
-			this.toggleReadyToClose(aTab);
-		}, this);
-
-//		if (this.isSelectionMoveBack(aPreviousTarget, aCurrentTarget))
-//			this.toggleReadyToClose(aPreviousTarget);
-//		else
-			this.toggleReadyToClose(aCurrentTarget);
+		var self = this;
+		this.toggleBetween(aPreviousTarget, aCurrentTarget, function(aTab) {
+			self.toggleReadyToClose(aTab);
+		});
 	},
+ 
+	onTabDragExit : function MTS_onTabDragExit(aEvent) 
+	{
+		this.cancelDelayedDragExit();
+
+		this._dragExitTimer = window.setTimeout(function(aSelf) {
+			aSelf.lastMouseOverTab = aSelf.lastMouseOverTarget = null;
+		}, 10, this);
+	},
+	cancelDelayedDragExit : function MTS_cancelDelayedDragExit()
+	{
+		if (this._dragExitTimer) {
+			window.clearTimeout(this._dragExitTimer);
+			this._dragExitTimer = null;
+		}
+	},
+	_dragExitTimer : null,
  
 	onTabbarDragEnd : function MTS_onTabbarDragEnd(aEvent) 
 	{
@@ -1885,7 +1870,7 @@ var MultipleTabService = {
 		if (aEvent.keyCode != aEvent.DOM_VK_ESCAPE)
 			return;
 
-		this.endListenESCKey();
+		this.endListenWhileDragging();
 		this.clearSelection();
 		this.onTabDragEnd(aEvent);
 	},
@@ -3505,6 +3490,11 @@ var MultipleTabService = {
 	isSelected : function MTS_isSelected(aTab) 
 	{
 		return aTab && aTab.getAttribute(this.kSELECTED) == 'true';
+	},
+ 
+	isReadyToClose : function MTS_isReadyToClose(aTab) 
+	{
+		return aTab && aTab.getAttribute(this.kREADY_TO_CLOSE) == 'true';
 	},
  
 	setSelection : function MTS_setSelection(aTab, aState) 
