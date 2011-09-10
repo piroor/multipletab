@@ -1571,12 +1571,12 @@ var MultipleTabService = {
 	{
 		this._lastMouseOverTarget = aTarget;
 		if (aTarget) {
-			this.lastMouseOver = (new Date()).getTime();
+			this.lastMouseOverTime = (new Date()).getTime();
 			if (!this.firstMouseOverTarget)
 				this.firstMouseOverTarget = aTarget;
 		}
 		else {
-			this.lastMouseOver =
+			this.lastMouseOverTime =
 				this.firstMouseOverTarget = null;
 		}
 		return aTarget;
@@ -1586,8 +1586,24 @@ var MultipleTabService = {
 		return this._lastMouseOverTarget;
 	},
 	_lastMouseOverTarget : null,
-	lastMouseOverTab : null,
-	lastMouseOver : null,
+	lastMouseOverTime : null,
+	set lastMouseOverTab(aTarget)
+	{
+		this._lastMouseOverTab = aTarget;
+		if (aTarget) {
+			this.lastMouseOverTabTime = (new Date()).getTime();
+		}
+		else {
+			this.lastMouseOverTabTime = null;
+		}
+		return aTarget;
+	},
+	get lastMouseOverTab()
+	{
+		return this._lastMouseOverTab;
+	},
+	_lastMouseOverTab : null,
+	lastMouseOverTabTime : null,
 	mouseOverComplementationMaxDelay : 300,
  
 	startTabsDrag : function MTS_startTabsDrag(aEvent) 
@@ -1709,15 +1725,15 @@ var MultipleTabService = {
 			this.autoScroll.processAutoScroll(aEvent);
 		}
 	},
-	getComplementedDragOverTabs : function MTS_getComplementedDragOverTabs(aPrevious, aNext)
+	getComplementedDragOverTabs : function MTS_getComplementedDragOverTabs(aPrevious, aNext, aLastMouseOverTime)
 	{
 		if (
 			aPrevious && aPrevious.parentNode &&
 			aNext && aNext.parentNode &&
 			aPrevious != aNext &&
 			aPrevious.parentNode == aNext.parentNode &&
-			this.lastMouseOver &&
-			(new Date()).getTime() - this.lastMouseOver < this.mouseOverComplementationMaxDelay
+			aLastMouseOverTime &&
+			(new Date()).getTime() - aLastMouseOverTime < this.mouseOverComplementationMaxDelay
 			) {
 			let firstTab = aPrevious._tPos < aNext._tPos ? aPrevious : aNext ;
 			let lastTab = aPrevious._tPos < aNext._tPos ? aNext : aPrevious ;
@@ -1743,9 +1759,9 @@ var MultipleTabService = {
 			}, this).join('');
 		return /\bS*CP\b|\bPCS*\b/.test(status);
 	},
-	toggleBetween : function MTS_toggleBetween(aPreviousTarget, aCurrentTarget, aTask)
+	toggleBetween : function MTS_toggleBetween(aPreviousTarget, aCurrentTarget, aTask, aLastMouseOverTime)
 	{
-		var betweenTabs = this.getComplementedDragOverTabs(aPreviousTarget, aCurrentTarget);
+		var betweenTabs = this.getComplementedDragOverTabs(aPreviousTarget, aCurrentTarget, aLastMouseOverTime);
 		betweenTabs.forEach(function(aTab) {
 			aTask(aTab);
 		});
@@ -1766,14 +1782,14 @@ var MultipleTabService = {
 		var self = this;
 		this.toggleBetween(aPreviousTarget, aCurrentTarget, function(aTab) {
 			self.toggleSelection(aTab);
-		});
+		}, this.lastMouseOverTime);
 	},
 	toggleReadyToCloseBetween : function MTS_toggleReadyToCloseBetween(aPreviousTarget, aCurrentTarget)
 	{
 		var self = this;
 		this.toggleBetween(aPreviousTarget, aCurrentTarget, function(aTab) {
 			self.toggleReadyToClose(aTab);
-		});
+		}, this.lastMouseOverTabTime);
 	},
  
 	onTabDragExit : function MTS_onTabDragExit(aEvent) 
