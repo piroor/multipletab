@@ -1684,8 +1684,10 @@ var MultipleTabService = {
 			switch(this.tabDragMode)
 			{
 				case this.TAB_DRAG_MODE_SELECT:
-					// this.toggleSelection(tab);
-					this.toggleSelectionBetween(this.lastMouseOverTarget, tab);
+					this.toggleSelectionBetween({
+						current : tab,
+						last    : this.lastMouseOverTarget
+					});
 					break;
 
 				case this.TAB_DRAG_MODE_SWITCH:
@@ -1704,8 +1706,10 @@ var MultipleTabService = {
 
 			if (this.getCloseboxFromEvent(aEvent)) {
 				let tab = this.getTabFromEvent(aEvent, true);
-				// this.toggleReadyToClose(tab);
-				this.toggleReadyToCloseBetween(this.lastMouseOverTab, tab);
+				this.toggleReadyToCloseBetween({
+					current : tab,
+					last    : this.lastMouseOverTab
+				});
 				this.lastMouseOverTab = tab;
 			}
 			this.lastMouseOverTarget = aEvent.originalTarget;
@@ -1725,71 +1729,77 @@ var MultipleTabService = {
 			this.autoScroll.processAutoScroll(aEvent);
 		}
 	},
-	getComplementedDragOverTabs : function MTS_getComplementedDragOverTabs(aPrevious, aNext, aLastMouseOverTime)
+	getComplementedDragOverTabs : function MTS_getComplementedDragOverTabs(aTargets)
 	{
+		var last = aTargets.last;
+		var current = aTargets.current;
 		if (
-			aPrevious && aPrevious.parentNode &&
-			aNext && aNext.parentNode &&
-			aPrevious != aNext &&
-			aPrevious.parentNode == aNext.parentNode &&
-			aLastMouseOverTime &&
-			(new Date()).getTime() - aLastMouseOverTime < this.mouseOverComplementationMaxDelay
-			) {
-			let firstTab = aPrevious._tPos < aNext._tPos ? aPrevious : aNext ;
-			let lastTab = aPrevious._tPos < aNext._tPos ? aNext : aPrevious ;
-			let browser = this.getTabBrowserFromChild(firstTab) || this.browser;
-			return this.getTabsArray(browser)
-					.filter(function(aTab) {
-						return aTab._tPos > firstTab._tPos && aTab._tPos < lastTab._tPos;
-					});
-		}
-		return [];
+			!last || !last.parentNode ||
+			!current || !current.parentNode ||
+			last == current ||
+			last.parentNode != current.parentNode ||
+			!aTargets.lastTime ||
+			(new Date()).getTime() - aTargets.lastTime >= this.mouseOverComplementationMaxDelay
+			)
+			return [];
+
+		let firstTab = last._tPos < current._tPos ? last : current ;
+		let lastTab = last._tPos < current._tPos ? current : last ;
+		let browser = this.getTabBrowserFromChild(firstTab) || this.browser;
+		return this.getTabsArray(browser)
+				.filter(function(aTab) {
+					return aTab._tPos > firstTab._tPos && aTab._tPos < lastTab._tPos;
+				});
 	},
-	isSelectionMoveBack : function MTS_isSelectionMoveBack(aPreviousTarget, aCurrentTarget)
+	isSelectionMoveBack : function MTS_isSelectionMoveBack(aTargets)
 	{
 		if (!this.firstMouseOverTarget)
 			return false;
 
-		var b = this.getTabBrowserFromChild(aCurrentTarget) || this.browser;
+		var b = this.getTabBrowserFromChild(aTargets.current) || this.browser;
 		var status = this.getTabsArray(b).map(function(aTab) {
 				var selected = this.isSelected(aTab) || this.isReadyToClose(aTab);
-				return aTab == aPreviousTarget ? (selected ? 'P' : 'p' ) :
-						aTab == aCurrentTarget ? (selected ? 'C' : 'c' ) :
+				return aTab == aTargets.last ? (selected ? 'P' : 'p' ) :
+						aTab == aTargets.current ? (selected ? 'C' : 'c' ) :
 						(selected ? 'S' : ' ' ) ;
 			}, this).join('');
 		return /\bS*CP\b|\bPCS*\b/.test(status);
 	},
-	toggleBetween : function MTS_toggleBetween(aPreviousTarget, aCurrentTarget, aTask, aLastMouseOverTime)
+	toggleBetween : function MTS_toggleBetween(aTargets)
 	{
-		var betweenTabs = this.getComplementedDragOverTabs(aPreviousTarget, aCurrentTarget, aLastMouseOverTime);
+		var betweenTabs = this.getComplementedDragOverTabs(aTargets);
 		betweenTabs.forEach(function(aTab) {
-			aTask(aTab);
+			aTargets.task(aTab);
 		});
 
-		if (aPreviousTarget && betweenTabs.length) {
-			aPreviousTarget = aPreviousTarget._tPos > aCurrentTarget._tPos ?
+		if (aTargets.last && betweenTabs.length) {
+			aTargets.last = aTargets.last._tPos > aTargets.current._tPos ?
 								betweenTabs[0] :
 								betweenTabs[betweenTabs.length-1] ;
 		}
 
-		if (this.isSelectionMoveBack(aPreviousTarget, aCurrentTarget))
-			aTask(aPreviousTarget);
+		if (this.isSelectionMoveBack(aTargets))
+			aTargets.task(aTargets.last);
 		else
-			aTask(aCurrentTarget);
+			aTargets.task(aTargets.current);
 	},
-	toggleSelectionBetween : function MTS_toggleSelectionBetween(aPreviousTarget, aCurrentTarget)
+	toggleSelectionBetween : function MTS_toggleSelectionBetween(aTargets)
 	{
 		var self = this;
-		this.toggleBetween(aPreviousTarget, aCurrentTarget, function(aTab) {
+		aTargets.task = function(aTab) {
 			self.toggleSelection(aTab);
-		}, this.lastMouseOverTime);
+		};
+		aTargets.lastTime = this.lastMouseOverTime;
+		this.toggleBetween(aTargets);
 	},
-	toggleReadyToCloseBetween : function MTS_toggleReadyToCloseBetween(aPreviousTarget, aCurrentTarget)
+	toggleReadyToCloseBetween : function MTS_toggleReadyToCloseBetween(aTargets)
 	{
 		var self = this;
-		this.toggleBetween(aPreviousTarget, aCurrentTarget, function(aTab) {
+		aTargets.task = function(aTab) {
 			self.toggleReadyToClose(aTab);
-		}, this.lastMouseOverTabTime);
+		};
+		aTargets.lastTime = this.lastMouseOverTabTime;
+		this.toggleBetween(aTargets);
 	},
  
 	onTabDragExit : function MTS_onTabDragExit(aEvent) 
