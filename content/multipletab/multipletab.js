@@ -532,7 +532,7 @@ var MultipleTabService = {
 	getNextTab : function MTS_getNextTab(aTab) 
 	{
 		return this.evaluateXPath(
-				'following-sibling::xul:tab[1][not(@hidden="true")]',
+				'following-sibling::xul:tab[not(@hidden="true")][1]',
 				aTab,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
@@ -541,7 +541,7 @@ var MultipleTabService = {
 	getPreviousTab : function MTS_getPreviousTab(aTab) 
 	{
 		return this.evaluateXPath(
-				'preceding-sibling::xul:tab[1][not(@hidden="true")]',
+				'preceding-sibling::xul:tab[not(@hidden="true")][1]',
 				aTab,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
