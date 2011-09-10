@@ -261,6 +261,13 @@ var MultipleTabService = {
 	},
 	_tabbrowserBundle : null,
  
+	isVerticalTabBar : function(aTabBrowser)
+	{
+		aTabBrowser = this.getTabBrowserFromChild(aTabBrowser) || this.browser
+		var box = aTabBrowser.mTabContainer.mTabstrip || aTabBrowser.mTabContainer ;
+		return ((box.getAttribute('orient') || window.getComputedStyle(box, '').getPropertyValue('-moz-box-orient')) == 'vertical');
+	},
+ 
 // tabs 
 	
 	warnAboutClosingTabs : function MTS_warnAboutClosingTabs(aTabsCount) 
@@ -801,6 +808,22 @@ var MultipleTabService = {
 			).booleanValue;
 	},
  
+	isEventFiredOnCloseboxArea : function MTS_isEventFiredOnCloseboxArea(aEvent)
+	{
+		var tab = this.getTabFromEvent(aEvent);
+		if (!tab)
+			return false;
+
+		var closebox = this.getCloseboxFromTab(tab);
+		if (!closebox)
+			return false;
+
+		var box = closebox.boxObject;
+		return (this.isVerticalTabBar(tab)) ?
+			(aEvent.screenX >= box.screenX && aEvent.screenX <= box.screenX + box.width ) :
+			(aEvent.screenY >= box.screenY && aEvent.screenY <= box.screenY + box.height ) ;
+	},
+ 
 	getCloseboxFromEvent : function MTS_getCloseboxFromEvent(aEvent) 
 	{
 		return this.evaluateXPath(
@@ -808,6 +831,27 @@ var MultipleTabService = {
 				aEvent.originalTarget || aEvent.target,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
+	},
+ 
+	getCloseboxFromTab : function MTS_getCloseboxFromTab(aTab)
+	{
+		var finder = function(aNode) {
+				if (aNode.localName == 'toolbarbutton' &&
+					aNode.className.indexOf('tab-close-button') > -1)
+					return aNode;
+
+				var nodes = document.getAnonymousNodes(aNode) || aNode.childNodes;
+				if (nodes) {
+					for (let i = 0, maxi = nodes.length; i < maxi; i++)
+					{
+						let closebox = arguments.callee(nodes[i]);
+						if (closebox)
+							return closebox;
+					}
+				}
+				return null;
+			};
+		return finder(aTab);
 	},
  
 	isAccelKeyPressed : function MTS_isAccelKeyPressed(aEvent) 
@@ -1691,13 +1735,13 @@ var MultipleTabService = {
 			)
 			return;
 
-		this.cancelDelayedDragExit();
-
 		if (this.tabDragging || this.tabCloseboxDragging) {
 			this.processAutoScroll(aEvent);
 		}
 
 		if (this.tabDragging) {
+			this.cancelDelayedDragExit();
+
 			let tab = this.getTabFromEvent(aEvent, true);
 			if (tab == this.lastMouseOverTarget)
 				return;
@@ -1726,6 +1770,12 @@ var MultipleTabService = {
 		else if (this.tabCloseboxDragging) {
 			if (aEvent.originalTarget == this.lastMouseOverTarget)
 				return;
+
+			if (
+				!this.isVerticalTabBar(aEvent.originalTarget) ||
+				this.isEventFiredOnCloseboxArea(aEvent)
+				)
+				this.cancelDelayedDragExit();
 
 			if (this.getCloseboxFromEvent(aEvent)) {
 				let tab = this.getTabFromEvent(aEvent, true);
@@ -2001,9 +2051,8 @@ var MultipleTabService = {
  
 	showHideMenuItems : function MTS_showHideMenuItems(aPopup) 
 	{
-		var b   = this.getTabBrowserFromChild(aPopup) || this.browser;
-		var box = b.mTabContainer.mTabstrip || b.mTabContainer ;
-		var isVertical = ((box.getAttribute('orient') || window.getComputedStyle(box, '').getPropertyValue('-moz-box-orient')) == 'vertical');
+		var b          = this.getTabBrowserFromChild(aPopup) || this.browser;
+		var isVertical = this.isVerticalTabBar(b);
 
 		var selectableItemsRegExp = new RegExp(
 				'^(multipletab-(?:context|selection)-('+
