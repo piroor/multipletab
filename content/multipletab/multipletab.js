@@ -17,6 +17,7 @@ var MultipleTabService = {
 	kSELECTED_OLD    : 'multipletab-selected',
 	kSELECTED_DUPLICATING : 'multipletab-selected-duplicating',
 	kREADY_TO_CLOSE  : 'multipletab-ready-to-close',
+	kIN_UNDETERMINED_RANGE : 'multipletab-in-undefermined-range',
 	kINSERT_AFTER    : 'multipletab-insertafter',
 	kINSERT_BEFORE   : 'multipletab-insertbefore',
 	kAVAILABLE       : 'multipletab-available',
@@ -1512,6 +1513,7 @@ var MultipleTabService = {
 	onTabDragStart : function MTS_onTabDragStart(aEvent, aIsTimeout) 
 	{
 		this.cancelDelayedDragStart();
+		this.clearUndeterminedRange();
 
 		if (this.isToolbarCustomizing)
 			return false;
@@ -1532,6 +1534,7 @@ var MultipleTabService = {
 			this.lastMouseOverTab = tab;
 			this.clearSelectionSub(this.getSelectedTabs(this.getTabBrowserFromChild(tab)), this.kSELECTED);
 			this.setReadyToClose(tab, true);
+			this.addTabInUndeterminedRange(tab);
 			this.startListenWhileDragging(tab);
 		}
 		else if (
@@ -1554,8 +1557,10 @@ var MultipleTabService = {
 			this.tabDragging = true;
 			this.delayedDragStartReady = false;
 			this.lastMouseOverTab = this.lastMouseOverTarget = tab;
-			if (this.tabDragMode == this.TAB_DRAG_MODE_SELECT)
+			if (this.tabDragMode == this.TAB_DRAG_MODE_SELECT) {
 				this.setSelection(tab, true);
+				this.addTabInUndeterminedRange(tab);
+			}
 			this.startListenWhileDragging(tab);
 		}
 
@@ -1571,13 +1576,11 @@ var MultipleTabService = {
 	{
 		this._lastMouseOverTarget = aTarget;
 		if (aTarget) {
-			this.lastMouseOverTime = (new Date()).getTime();
 			if (!this.firstMouseOverTarget)
 				this.firstMouseOverTarget = aTarget;
 		}
 		else {
-			this.lastMouseOverTime =
-				this.firstMouseOverTarget = null;
+			this.firstMouseOverTarget = null;
 		}
 		return aTarget;
 	},
@@ -1586,15 +1589,15 @@ var MultipleTabService = {
 		return this._lastMouseOverTarget;
 	},
 	_lastMouseOverTarget : null,
-	lastMouseOverTime : null,
 	set lastMouseOverTab(aTarget)
 	{
 		this._lastMouseOverTab = aTarget;
 		if (aTarget) {
-			this.lastMouseOverTabTime = (new Date()).getTime();
+			if (!this.firstMouseOverTab)
+				this.firstMouseOverTab = aTarget;
 		}
 		else {
-			this.lastMouseOverTabTime = null;
+			this.firstMouseOverTab = null;
 		}
 		return aTarget;
 	},
@@ -1603,8 +1606,7 @@ var MultipleTabService = {
 		return this._lastMouseOverTab;
 	},
 	_lastMouseOverTab : null,
-	lastMouseOverTabTime : null,
-	mouseOverComplementationMaxDelay : 300,
+	firstMouseOverTab : null,
  
 	startTabsDrag : function MTS_startTabsDrag(aEvent) 
 	{
@@ -1627,6 +1629,7 @@ var MultipleTabService = {
 	onTabDragEnd : function MTS_onTabDragEnd(aEvent) 
 	{
 		this.cancelDelayedDragStart();
+		this.clearUndeterminedRange();
 		this.lastMouseOverTab = this.lastMouseOverTarget = null;
 		this.endListenWhileDragging();
 
@@ -1674,35 +1677,33 @@ var MultipleTabService = {
 
 		if (this.tabDragging) {
 			let tab = this.getTabFromEvent(aEvent, true);
-			if (tab == this.lastMouseOverTarget) return;
-
-			if (!tab) {
-				this.lastMouseOverTab = this.lastMouseOverTarget = null;
+			if (tab == this.lastMouseOverTarget)
 				return;
+
+			if (tab) {
+				switch(this.tabDragMode)
+				{
+					case this.TAB_DRAG_MODE_SELECT:
+						this.toggleSelectionBetween({
+							current : tab,
+							last    : this.lastMouseOverTarget
+						});
+						break;
+
+					case this.TAB_DRAG_MODE_SWITCH:
+						var b = this.getTabBrowserFromChild(tab);
+						b.selectedTab = tab;
+						break;
+
+					default:
+						break;
+				}
 			}
-
-			switch(this.tabDragMode)
-			{
-				case this.TAB_DRAG_MODE_SELECT:
-					this.toggleSelectionBetween({
-						current : tab,
-						last    : this.lastMouseOverTarget
-					});
-					break;
-
-				case this.TAB_DRAG_MODE_SWITCH:
-					var b = this.getTabBrowserFromChild(tab);
-					b.selectedTab = tab;
-					break;
-
-				default:
-					break;
-			}
-
 			this.lastMouseOverTab = this.lastMouseOverTarget = tab;
 		}
 		else if (this.tabCloseboxDragging) {
-			if (aEvent.originalTarget == this.lastMouseOverTarget) return;
+			if (aEvent.originalTarget == this.lastMouseOverTarget)
+				return;
 
 			if (this.getCloseboxFromEvent(aEvent)) {
 				let tab = this.getTabFromEvent(aEvent, true);
@@ -1717,7 +1718,7 @@ var MultipleTabService = {
 	},
 	processAutoScroll : function MTS_processAutoScroll(aEvent)
 	{
-		var b = this.getTabBrowserFromChild(aEvent.originalTarget);
+		var b = this.getTabBrowserFromChild(aEvent.originalTarget) || this.browser;
 		var arrowscrollbox = b.mTabContainer.mTabstrip;
 		if (aEvent.originalTarget == document.getAnonymousElementByAttribute(arrowscrollbox, 'class', 'scrollbutton-up')) {
 			arrowscrollbox._startScroll(-1);
@@ -1729,22 +1730,18 @@ var MultipleTabService = {
 			this.autoScroll.processAutoScroll(aEvent);
 		}
 	},
-	getComplementedDragOverTabs : function MTS_getComplementedDragOverTabs(aTargets)
+	getTabsBetween : function MTS_getTabsBetween(aBase, aAnchor)
 	{
-		var last = aTargets.last;
-		var current = aTargets.current;
 		if (
-			!last || !last.parentNode ||
-			!current || !current.parentNode ||
-			last == current ||
-			last.parentNode != current.parentNode ||
-			!aTargets.lastTime ||
-			(new Date()).getTime() - aTargets.lastTime >= this.mouseOverComplementationMaxDelay
+			!aBase || !aBase.parentNode ||
+			!aAnchor || !aAnchor.parentNode ||
+			aBase == aAnchor ||
+			aBase.parentNode != aAnchor.parentNode
 			)
 			return [];
 
-		let firstTab = last._tPos < current._tPos ? last : current ;
-		let lastTab = last._tPos < current._tPos ? current : last ;
+		let firstTab = aBase._tPos < aAnchor._tPos ? aBase : aAnchor ;
+		let lastTab = aBase._tPos < aAnchor._tPos ? aAnchor : aBase ;
 		let browser = this.getTabBrowserFromChild(firstTab) || this.browser;
 		return this.getTabsArray(browser)
 				.filter(function(aTab) {
@@ -1757,7 +1754,7 @@ var MultipleTabService = {
 	},
 	isSelectionMoveBack : function MTS_isSelectionMoveBack(aTargets)
 	{
-		if (!this.firstMouseOverTarget)
+		if (!aTargets.first)
 			return false;
 
 		var b = this.getTabBrowserFromChild(aTargets.current) || this.browser;
@@ -1773,21 +1770,26 @@ var MultipleTabService = {
 	},
 	toggleBetween : function MTS_toggleBetween(aTargets)
 	{
-		var betweenTabs = this.getComplementedDragOverTabs(aTargets);
-		betweenTabs.forEach(function(aTab) {
-			aTargets.task(aTab);
-		});
+		if (aTargets.first) {
+			this.getTabsInUndeterminedRange(aTargets.current).forEach(function(aTab) {
+				aTargets.task(aTab);
+			}, this);
+			this.clearUndeterminedRange();
 
-		if (aTargets.last && betweenTabs.length) {
-			aTargets.last = aTargets.last._tPos > aTargets.current._tPos ?
-								betweenTabs[0] :
-								betweenTabs[betweenTabs.length-1] ;
+			let undeterminedRangeTabs = [aTargets.current];
+			if (aTargets.first && aTargets.first != aTargets.current)
+				undeterminedRangeTabs.push(aTargets.first);
+
+			undeterminedRangeTabs = undeterminedRangeTabs.concat(this.getTabsBetween(aTargets.first, aTargets.current));
+			undeterminedRangeTabs.forEach(function(aTab) {
+				aTargets.task(aTab);
+				this.addTabInUndeterminedRange(aTab);
+			}, this);
 		}
-
-		if (this.isSelectionMoveBack(aTargets))
-			aTargets.task(aTargets.last);
-		else
+		else {
+			this.addTabInUndeterminedRange(aTargets.current);
 			aTargets.task(aTargets.current);
+		}
 	},
 	toggleSelectionBetween : function MTS_toggleSelectionBetween(aTargets)
 	{
@@ -1795,7 +1797,7 @@ var MultipleTabService = {
 		aTargets.task = function(aTab) {
 			self.toggleSelection(aTab);
 		};
-		aTargets.lastTime = this.lastMouseOverTime;
+		aTargets.first = this.firstMouseOverTarget;
 		this.toggleBetween(aTargets);
 	},
 	toggleReadyToCloseBetween : function MTS_toggleReadyToCloseBetween(aTargets)
@@ -1804,7 +1806,7 @@ var MultipleTabService = {
 		aTargets.task = function(aTab) {
 			self.toggleReadyToClose(aTab);
 		};
-		aTargets.lastTime = this.lastMouseOverTabTime;
+		aTargets.first = this.firstMouseOverTab;
 		this.toggleBetween(aTargets);
 	},
  
@@ -1814,6 +1816,7 @@ var MultipleTabService = {
 
 		this._dragExitTimer = window.setTimeout(function(aSelf) {
 			aSelf.lastMouseOverTab = aSelf.lastMouseOverTarget = null;
+			aSelf.clearUndeterminedRange();
 		}, 10, this);
 	},
 	cancelDelayedDragExit : function MTS_cancelDelayedDragExit()
@@ -3663,6 +3666,27 @@ var MultipleTabService = {
 		}
 	},
 	selectionModified : false,
+ 
+	getTabsInUndeterminedRange : function MTS_getTabsInUndeterminedRange(aSource) 
+	{
+		var b = this.getTabBrowserFromChild(aSource) || this.browser;
+		return this.getArrayFromXPathResult(
+				'descendant::xul:tab[@'+this.kIN_UNDETERMINED_RANGE+'="true" and not(@hidden="true")]',
+				b.mTabContainer
+			);
+	},
+ 
+	addTabInUndeterminedRange : function MTS_addTabInUndeterminedRange(aTab) 
+	{
+		aTab.setAttribute(this.kIN_UNDETERMINED_RANGE, true);
+	},
+ 
+	clearUndeterminedRange : function MTS_clearUndeterminedRange(aSource) 
+	{
+		this.getTabsInUndeterminedRange(aSource).forEach(function(aTab) {
+			aTab.removeAttribute(this.kIN_UNDETERMINED_RANGE);
+		}, this);
+	},
   
 /* Pref Listener */ 
 	
