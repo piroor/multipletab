@@ -539,6 +539,28 @@ var MultipleTabService = {
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
 	},
+ 
+	getTabsBetween : function MTS_getTabsBetween(aBase, aAnchor)
+	{
+		if (
+			!aBase || !aBase.parentNode ||
+			!aAnchor || !aAnchor.parentNode ||
+			aBase == aAnchor ||
+			aBase.parentNode != aAnchor.parentNode
+			)
+			return [];
+
+		let firstTab = aBase._tPos < aAnchor._tPos ? aBase : aAnchor ;
+		let lastTab = aBase._tPos < aAnchor._tPos ? aAnchor : aBase ;
+		let browser = this.getTabBrowserFromChild(firstTab) || this.browser;
+		return this.getTabsArray(browser)
+				.filter(function(aTab) {
+					return (
+						aTab._tPos > firstTab._tPos &&
+						aTab._tPos < lastTab._tPos
+					);
+				}, this);
+	},
 	
 	// old method (for backward compatibility) 
 	getTabBrowserFromChildren : function MTS_getTabBrowserFromChildren(aTab)
@@ -1730,49 +1752,13 @@ var MultipleTabService = {
 			this.autoScroll.processAutoScroll(aEvent);
 		}
 	},
-	getTabsBetween : function MTS_getTabsBetween(aBase, aAnchor)
-	{
-		if (
-			!aBase || !aBase.parentNode ||
-			!aAnchor || !aAnchor.parentNode ||
-			aBase == aAnchor ||
-			aBase.parentNode != aAnchor.parentNode
-			)
-			return [];
-
-		let firstTab = aBase._tPos < aAnchor._tPos ? aBase : aAnchor ;
-		let lastTab = aBase._tPos < aAnchor._tPos ? aAnchor : aBase ;
-		let browser = this.getTabBrowserFromChild(firstTab) || this.browser;
-		return this.getTabsArray(browser)
-				.filter(function(aTab) {
-					return (
-						!this.isCollapsed(aTab) &&
-						aTab._tPos > firstTab._tPos &&
-						aTab._tPos < lastTab._tPos
-					);
-				}, this);
-	},
-	isSelectionMoveBack : function MTS_isSelectionMoveBack(aTargets)
-	{
-		if (!aTargets.first)
-			return false;
-
-		var b = this.getTabBrowserFromChild(aTargets.current) || this.browser;
-		var status = this.getTabsArray(b).map(function(aTab) {
-				if (this.isCollapsed(aTab))
-					return '';
-				var selected = this.isSelected(aTab) || this.isReadyToClose(aTab);
-				return aTab == aTargets.last ? (selected ? 'P' : 'p' ) :
-						aTab == aTargets.current ? (selected ? 'C' : 'c' ) :
-						(selected ? 'S' : ' ' ) ;
-			}, this).join('');
-		return /\bS*CP\b|\bPCS*\b/.test(status);
-	},
 	toggleBetween : function MTS_toggleBetween(aTargets)
 	{
 		if (aTargets.first) {
+			// At first, toggle state to reset all existing items in the undetermined selection.
 			this.getTabsInUndeterminedRange(aTargets.current).forEach(function(aTab) {
-				aTargets.task(aTab);
+				if (!this.isCollapsed(aTab))
+					aTargets.task(aTab);
 			}, this);
 			this.clearUndeterminedRange();
 
@@ -1782,7 +1768,8 @@ var MultipleTabService = {
 
 			undeterminedRangeTabs = undeterminedRangeTabs.concat(this.getTabsBetween(aTargets.first, aTargets.current));
 			undeterminedRangeTabs.forEach(function(aTab) {
-				aTargets.task(aTab);
+				if (!this.isCollapsed(aTab))
+					aTargets.task(aTab);
 				this.addTabInUndeterminedRange(aTab);
 			}, this);
 		}
