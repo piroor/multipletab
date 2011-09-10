@@ -1748,8 +1748,12 @@ var MultipleTabService = {
 		let browser = this.getTabBrowserFromChild(firstTab) || this.browser;
 		return this.getTabsArray(browser)
 				.filter(function(aTab) {
-					return aTab._tPos > firstTab._tPos && aTab._tPos < lastTab._tPos;
-				});
+					return (
+						!this.isCollapsed(aTab) &&
+						aTab._tPos > firstTab._tPos &&
+						aTab._tPos < lastTab._tPos
+					);
+				}, this);
 	},
 	isSelectionMoveBack : function MTS_isSelectionMoveBack(aTargets)
 	{
@@ -1758,6 +1762,8 @@ var MultipleTabService = {
 
 		var b = this.getTabBrowserFromChild(aTargets.current) || this.browser;
 		var status = this.getTabsArray(b).map(function(aTab) {
+				if (this.isCollapsed(aTab))
+					return '';
 				var selected = this.isSelected(aTab) || this.isReadyToClose(aTab);
 				return aTab == aTargets.last ? (selected ? 'P' : 'p' ) :
 						aTab == aTargets.current ? (selected ? 'C' : 'c' ) :
@@ -3521,6 +3527,16 @@ var MultipleTabService = {
 	isReadyToClose : function MTS_isReadyToClose(aTab) 
 	{
 		return aTab && aTab.getAttribute(this.kREADY_TO_CLOSE) == 'true';
+	},
+ 
+	isCollapsed : function MTS_isCollapsed(aTab) 
+	{
+		return (
+			'TreeStyleTabService' in window &&
+			('isCollapsed' in TreeStyleTabService ?
+				TreeStyleTabService.isCollapsed(aTab) :
+				aTab.getAttribute(TreeStyleTabService.kCOLLAPSED) == 'true')
+		);
 	},
  
 	setSelection : function MTS_setSelection(aTab, aState) 
