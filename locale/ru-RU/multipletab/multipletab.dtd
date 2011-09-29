@@ -50,7 +50,7 @@
 <!ENTITY config.tabdrag.autoclear     "Сбрасывать выбор вкладок после закрытия всплывающего меню">
 <!ENTITY config.tabdrag.moveMultipleTabs "Переносить выбранные вкладки вместе">
 
-<!ENTITY config.tabclickmode.accel.caption "Действие при Ctrl-клике (⌘-клике) по вкладкам">
+<!ENTITY config.tabclickmode.accel.caption "Действие при Ctrl/⌘-клике по вкладкам">
 <!ENTITY config.tabclickmode.accel.default "По умолчанию для Firefox">
 <!ENTITY config.tabclickmode.accel.select  "Переключить выбор вкладки">
 <!ENTITY config.tabclickmode.accel.close   "Закрыть вкладку">
@@ -77,7 +77,7 @@
 <!ENTITY config.clipboardFormatType.remove.tooltip "Удалить этот формат">
 <!ENTITY config.clipboardFormatType.default.label  "Название">
 <!ENTITY config.clipboardFormatType.default.format "Формат">
-<!ENTITY config.clipboardFormatType.description    "Доступные заполнители для форматов: &#x25;URL&#x25;=URL страницы, &#x25;TITLE&#x25;=Заголовок страницы, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=URL в HTML-формате, &#x25;TITLE_HTMLIFIED&#x25;=Заголовок в HTML-формате, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;EOL&#x25;=Перевод строки">
+<!ENTITY config.clipboardFormatType.description    "Доступные заполнители для форматов: &#x25;URL&#x25;=URL страницы, &#x25;TITLE&#x25;=Заголовок страницы, &#x25;AUTHOR&#x25;=Имя автора (указанное в META), &#x25;DESCRIPTION&#x25;=Описание страницы (указанное в META), &#x25;KEYWORDS&#x25;=Ключевые слова (указанные в META), &#x25;URL_HTMLIFIED&#x25;=URL в HTML-формате, &#x25;TITLE_HTMLIFIED&#x25;=Заголовок в HTML-формате, &#x25;AUTHOR_HTMLIFIED&#x25;=Автор в HTML-формате, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Описание в HTML-формате, &#x25;KEYWORDS_HTMLIFIED&#x25;=Ключевые слова в HTML-формате, &#x25;EOL&#x25;=Перевод строки">
 
 <!ENTITY config.tabs.selectionMenu    "Меню выбранных вкладок">
 <!ENTITY config.selectionMenu.caption "Доступные элементы всплывающего меню для выбранных вкладок">
@@ -100,5 +100,5 @@
 
 <!ENTITY config.selectAfter.duplicate "Автоматически выбирать клонированную группу вкладок">
 <!ENTITY config.selectAfter.move      "Автоматически выбирать группу вкладок, перенесенную в другое окно">
-<!ENTITY config.implicitlySelectCurrentTab "Implicitly select the current tab for Shift/Ctrl/⌘-Click on a background tab">
+<!ENTITY config.implicitlySelectCurrentTab "При Shift/Ctrl/⌘-клике по фоновой вкладке также выбирать текущую вкладку">
 
