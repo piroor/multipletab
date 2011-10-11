@@ -1550,9 +1550,13 @@ var MultipleTabService = {
 	
 	startDelayedDragStartTimer : function MTS_startDelayedDragStartTimer(aEvent) 
 	{
-		let delay = (
-				tab.mOverCloseButton ||
-				tab.tmp_mOverCloseButton // Tab Mix Plus
+		var tab = this.getTabFromEvent(aEvent);
+		var delay = (
+				tab &&
+				(
+					tab.mOverCloseButton ||
+					tab.tmp_mOverCloseButton // Tab Mix Plus
+				)
 			) ? this.getPref('extensions.multipletab.tabdrag.close.delay') :
 				this.getPref('extensions.multipletab.tabdrag.delay') ;
 		if (delay > 0) {
