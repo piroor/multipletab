@@ -1611,7 +1611,7 @@ var MultipleTabService = {
 			return this.startTabsDrag(aEvent);
 		}
 		else {
-			var delay = this.getPref('extensions.multipletab.tabdrag.delay');
+			let delay = this.getPref('extensions.multipletab.tabdrag.delay');
 			if (
 				delay > 0 &&
 				(Date.now() - this.lastMouseDown < delay) &&
