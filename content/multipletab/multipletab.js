@@ -1550,9 +1550,17 @@ var MultipleTabService = {
 	
 	startDelayedDragStartTimer : function MTS_startDelayedDragStartTimer(aEvent) 
 	{
-		var delay = this.getPref('extensions.multipletab.tabdrag.delay');
+		var tab = this.getTabFromEvent(aEvent);
+		var delay = (
+				tab &&
+				(
+					tab.mOverCloseButton ||
+					tab.tmp_mOverCloseButton // Tab Mix Plus
+				)
+			) ? this.getPref('extensions.multipletab.tabdrag.close.delay') :
+				this.getPref('extensions.multipletab.tabdrag.delay') ;
 		if (delay > 0) {
-			var unprocessedEvent = this.lastMouseDownEvent;
+			let unprocessedEvent = this.lastMouseDownEvent;
 			this.cancelDelayedDragStart();
 			this.lastMouseDown = Date.now();
 			this.lastMouseDownEvent = aEvent || unprocessedEvent;
@@ -1592,9 +1600,25 @@ var MultipleTabService = {
 		}
 
 		if (
+			this.isEventFiredOnTabIcon(aEvent) ||
+			this.tabDragMode == this.TAB_DRAG_MODE_DEFAULT
+			) {
+			// drag tabs
+			return this.startTabsDrag(aEvent);
+		}
+		else if (
 			tab.mOverCloseButton ||
 			tab.tmp_mOverCloseButton // Tab Mix Plus
 			) {
+			let delay = this.getPref('extensions.multipletab.tabdrag.close.delay');
+			if (
+				delay > 0 &&
+				(Date.now() - this.lastMouseDown < delay) &&
+				!aIsTimeout
+				) {
+				// drag tabs
+				return this.startTabsDrag(aEvent);
+			}
 			this.tabCloseboxDragging = true;
 			this.lastMouseOverTarget = this.getCloseboxFromEvent(aEvent);
 			this.lastMouseOverTab = tab;
@@ -1602,13 +1626,6 @@ var MultipleTabService = {
 			this.setReadyToClose(tab, true);
 			this.addTabInUndeterminedRange(tab);
 			this.startListenWhileDragging(tab);
-		}
-		else if (
-			this.isEventFiredOnTabIcon(aEvent) ||
-			this.tabDragMode == this.TAB_DRAG_MODE_DEFAULT
-			) {
-			// drag tabs
-			return this.startTabsDrag(aEvent);
 		}
 		else {
 			let delay = this.getPref('extensions.multipletab.tabdrag.delay');
