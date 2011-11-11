@@ -820,8 +820,19 @@ var MultipleTabService = {
 
 		var box = closebox.boxObject;
 		return (this.isVerticalTabBar(tab)) ?
-			(aEvent.screenX >= box.screenX && aEvent.screenX <= box.screenX + box.width ) :
-			(aEvent.screenY >= box.screenY && aEvent.screenY <= box.screenY + box.height ) ;
+			(aEvent.screenX >= box.screenX && aEvent.screenX <= box.screenX + box.width - 1 ) :
+			(aEvent.screenY >= box.screenY && aEvent.screenY <= box.screenY + box.height - 1 ) ;
+	},
+ 
+	isOnElement : function MTS_isOnElement(aX, aY, aElement)
+	{
+		if (!aElement)
+			return false;
+		var box = aElement.boxObject;
+		return (
+			aX >= box.screenX && aX <= box.screenX + box.width - 1 &&
+			aY >= box.screenY && aY <= box.screenY + box.height - 1
+		);
 	},
  
 	getCloseboxFromEvent : function MTS_getCloseboxFromEvent(aEvent) 
@@ -1611,8 +1622,11 @@ var MultipleTabService = {
 			return this.startTabsDrag(aEvent);
 		}
 		else if (
-			tab.mOverCloseButton ||
-			tab.tmp_mOverCloseButton // Tab Mix Plus
+			(
+				tab.mOverCloseButton ||
+				tab.tmp_mOverCloseButton // Tab Mix Plus
+			) &&
+			this.isOnElement(this.lastMouseDownX, this.lastMouseDownY, this.getCloseboxFromTab(tab))
 			) {
 			let delay = this.getPref('extensions.multipletab.tabdrag.close.delay');
 			if (
