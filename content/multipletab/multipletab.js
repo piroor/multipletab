@@ -1600,11 +1600,7 @@ var MultipleTabService = {
 		this.cancelDelayedDragStart();
 		this.clearUndeterminedRange();
 
-		if (
-			this.isToolbarCustomizing ||
-			this.tabCloseboxDragging ||
-			this.tabDragging
-			)
+		if (this.isToolbarCustomizing)
 			return false;
 
 		var tab = this.getTabFromEvent(aEvent);
