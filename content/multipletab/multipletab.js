@@ -1759,7 +1759,11 @@ var MultipleTabService = {
 				this.clearSelection();
 			}
 		}
-		else if (!this.selectionChanging) {
+		else if (
+			!this.selectionChanging &&
+			this.getTabFromEvent(aEvent) &&
+			aEvent.button == 0
+			) {
 			this.clearSelection();
 		}
 		this.delayedDragStartReady = false;
