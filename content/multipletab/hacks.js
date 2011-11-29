@@ -123,12 +123,20 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 
 	// Tab Mix Plus
 	var TMPWarnPref = 'extensions.multipletab.compatibility.TMP.warnForClickActions';
+	if (!this.getPref(TMPWarnPref)) {
+		let TMPChecked = { value : false };
+		this.ensureWorkWithTMP();
+		if (TMPChecked.value)
+			this.setPref(TMPWarnPref, false);
+	}
+};
+
+MultipleTabService.ensureWorkWithTMP = function(aChecked) {
 	if (
 		(
 			'TM_checkClick' in window || // old version TMP
 			'TabmixTabbar' in window // newer TMP
 		) &&
-		this.getPref(TMPWarnPref) &&
 		(
 			(
 				this.getPref('extensions.tabmix.ctrlClickTab') != 0 &&
@@ -140,7 +148,7 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 			)
 		)
 		) {
-		let checked = { value : false };
+		let checked = aChecked || null;
 		switch (this.PromptService.confirmEx(
 				null,
 				this.bundle.getString('compatibility_TMP_warning_title'),
@@ -152,7 +160,7 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 				this.bundle.getString('compatibility_TMP_warning_use_multipletab'),
 				this.bundle.getString('compatibility_TMP_warning_use_TMP'),
 				this.bundle.getString('compatibility_TMP_warning_keep'),
-				this.bundle.getString('compatibility_TMP_warning_never'),
+				checked ? this.bundle.getString('compatibility_TMP_warning_never') : null ,
 				checked
 			))
 		{
@@ -165,10 +173,7 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 				this.setPref('extensions.multipletab.tabclick.shift.mode', 0);
 				break;
 		}
-		if (checked.value)
-			this.setPref(TMPWarnPref, false);
 	}
-
 };
 
 MultipleTabService.overrideExtensionsOnDelayedInit = function MTS_overrideExtensionsOnDelayedInit() {
