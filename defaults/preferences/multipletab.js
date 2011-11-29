@@ -70,6 +70,7 @@ pref("extensions.multipletab.moveTabsToNewGroup.defaultTitle", 1);
 
 
 pref("extensions.multipletab.compatibility.TMP.warnForClickActions", true);
+pref("extensions.multipletab.compatibility.TMP.choice", -1); // -1 = unknown, 0 = MTH, 1 = TMP, 2 = both
 
 
 pref("extensions.multipletab@piro.sakura.ne.jp.name", "chrome://multipletab/locale/multipletab.properties");

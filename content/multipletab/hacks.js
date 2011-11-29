@@ -123,7 +123,7 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 
 	// Tab Mix Plus
 	var TMPWarnPref = 'extensions.multipletab.compatibility.TMP.warnForClickActions';
-	if (!this.getPref(TMPWarnPref)) {
+	if (this.getPref(TMPWarnPref)) {
 		let checked = { value : false };
 		this.ensureWorkWithTMP(checked);
 		if (checked.value)
@@ -131,49 +131,109 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 	}
 };
 
-MultipleTabService.ensureWorkWithTMP = function(aChecked) {
-	if (
-		(
-			'TM_checkClick' in window || // old version TMP
-			'TabmixTabbar' in window // newer TMP
-		) &&
-		(
+(function() {
+	const BACKUP = 'extensions.multipletab.compatibility.TMP.backup.';
+	const CHOICE = 'extensions.multipletab.compatibility.TMP.choice';
+	const TMPAccelClick = 'extensions.tabmix.ctrlClickTab';
+	const TMPShiftClick = 'extensions.tabmix.shiftClickTab';
+	const SelfAccelClick = 'extensions.multipletab.tabclick.accel.mode';
+	const SelfShiftClick = 'extensions.multipletab.tabclick.shift.mode';
+
+	MultipleTabService.ensureWorkWithTMP = function(aChecked) {
+		if (
 			(
-				this.getPref('extensions.tabmix.ctrlClickTab') != 0 &&
-				this.getPref('extensions.multipletab.tabclick.accel.mode') != 0
-			) ||
+				'TM_checkClick' in window || // old version TMP
+				'TabmixTabbar' in window // newer TMP
+			) &&
 			(
-				this.getPref('extensions.tabmix.shiftClickTab') != 0 &&
-				this.getPref('extensions.multipletab.tabclick.shift.mode') != 0
+				(
+					this.getPref(TMPAccelClick) != 0 &&
+					this.getPref(SelfAccelClick) != 0
+				) ||
+				(
+					this.getPref(TMPShiftClick) != 0 &&
+					this.getPref(SelfShiftClick) != 0
+				)
 			)
-		)
-		) {
-		switch (this.PromptService.confirmEx(
-				null,
-				this.bundle.getString('compatibility_TMP_warning_title'),
-				this.bundle.getString(/mac/i.test(navigator.platform) ? 'compatibility_TMP_warning_text_mac' : 'compatibility_TMP_warning_text' ) + '\n'+
-					this.bundle.getString('compatibility_TMP_warning_text_note'),
-				(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_0) +
-				(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_1) +
-				(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_2),
-				this.bundle.getString('compatibility_TMP_warning_use_multipletab'),
-				this.bundle.getString('compatibility_TMP_warning_use_TMP'),
-				this.bundle.getString('compatibility_TMP_warning_keep'),
-				aChecked ? this.bundle.getString('compatibility_TMP_warning_never') : null ,
-				aChecked
-			))
-		{
-			case 0:
-				this.setPref('extensions.tabmix.ctrlClickTab', 0);
-				this.setPref('extensions.tabmix.shiftClickTab', 0);
-				break;
-			case 1:
-				this.setPref('extensions.multipletab.tabclick.accel.mode', 0);
-				this.setPref('extensions.multipletab.tabclick.shift.mode', 0);
-				break;
+			) {
+			switch (this.PromptService.confirmEx(
+					null,
+					this.bundle.getString('compatibility_TMP_warning_title'),
+					this.bundle.getString(/mac/i.test(navigator.platform) ? 'compatibility_TMP_warning_text_mac' : 'compatibility_TMP_warning_text' ) + '\n'+
+						this.bundle.getString('compatibility_TMP_warning_text_note'),
+					(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_0) +
+					(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_1) +
+					(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_2),
+					this.bundle.getString('compatibility_TMP_warning_use_multipletab'),
+					this.bundle.getString('compatibility_TMP_warning_use_TMP'),
+					this.bundle.getString('compatibility_TMP_warning_keep'),
+					aChecked ? this.bundle.getString('compatibility_TMP_warning_never') : null ,
+					aChecked
+				))
+			{
+				case 0:
+					this.setPref(BACKUP+TMPAccelClick, this.getPref(TMPAccelClick));
+					this.setPref(BACKUP+TMPShiftClick, this.getPref(TMPShiftClick));
+					this.setPref(TMPAccelClick, 0);
+					this.setPref(TMPShiftClick, 0);
+					this.setPref(CHOICE, 0);
+					break;
+				case 1:
+					this.setPref(BACKUP+SelfAccelClick, this.getPref(SelfAccelClick));
+					this.setPref(BACKUP+SelfShiftClick, this.getPref(SelfShiftClick));
+					this.setPref(SelfAccelClick, 0);
+					this.setPref(SelfShiftClick, 0);
+					this.setPref(CHOICE, 1);
+					break;
+				default:
+					this.setPref(CHOICE, 2);
+					break;
+			}
 		}
-	}
-};
+	};
+
+	var namespace = {};
+	Components.utils.import(
+		'resource://multipletab-modules/prefs.js',
+		namespace
+	);
+	var prefs = namespace.prefs;
+	namespace = void(0);
+	var restoreTMPPrefs = function() {
+			var choice = prefs.getPref(CHOICE);
+			var backupAccelPref = prefs.getPref(BACKUP+TMPAccelClick);
+			var backupShiftPref = prefs.getPref(BACKUP+TMPShiftClick);
+			prefs.clearPref(CHOICE);
+			prefs.clearPref(BACKUP+TMPAccelClick);
+			prefs.clearPref(BACKUP+TMPShiftClick);
+			if (choice == 0) {
+				if (backupAccelPref !== null) prefs.setPref(TMPAccelClick, backupAccelPref);
+				if (backupShiftPref !== null) prefs.setPref(TMPShiftClick, backupShiftPref);
+			}
+		};
+	var restoreMTHPrefs = function() {
+			var choice = prefs.getPref(CHOICE);
+			var backupAccelPref = prefs.getPref(BACKUP+SelfAccelClick);
+			var backupShiftPref = prefs.getPref(BACKUP+SelfShiftClick);
+			prefs.clearPref(CHOICE);
+			prefs.clearPref(BACKUP+SelfAccelClick);
+			prefs.clearPref(BACKUP+SelfShiftClick);
+			if (choice == 1) {
+				if (backupAccelPref !== null) prefs.setPref(SelfAccelClick, backupAccelPref);
+				if (backupShiftPref !== null) prefs.setPref(SelfShiftClick, backupShiftPref);
+			}
+		};
+	new window['piro.sakura.ne.jp'].UninstallationListener({
+		id : 'multipletab@piro.sakura.ne.jp',
+		onuninstalled : restoreTMPPrefs,
+		ondisabled : restoreTMPPrefs
+	});
+	new window['piro.sakura.ne.jp'].UninstallationListener({
+		id : '{dc572301-7619-498c-a57d-39143191b318}', // Tab Mix Plus
+		onuninstalled : restoreMTHPrefs,
+		ondisabled : restoreMTHPrefs
+	});
+})();
 
 MultipleTabService.overrideExtensionsOnDelayedInit = function MTS_overrideExtensionsOnDelayedInit() {
 };
