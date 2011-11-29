@@ -42,6 +42,8 @@ var MultipleTabService = {
 	lineFeed : '\r\n',
 
 	implicitlySelect : true,
+	selectionModified : false,
+	selectionChanging : false,
 
 	/* event types */
 	kEVENT_TYPE_TAB_DUPLICATE   : 'nsDOMMultipleTabHandler:TabDuplicate',
@@ -1508,6 +1510,9 @@ var MultipleTabService = {
 					this.setSelection(tab, true);
 					this.lastManuallySelectedTab = tab;
 				}
+
+				this.selectionChanging = true;
+
 				aEvent.preventDefault();
 				aEvent.stopPropagation();
 				return;
@@ -1539,6 +1544,8 @@ var MultipleTabService = {
 
 				if (this.isSelected(tab))
 					this.lastManuallySelectedTab = tab;
+
+				this.selectionChanging = true;
 
 				aEvent.preventDefault();
 				aEvent.stopPropagation();
@@ -1752,7 +1759,11 @@ var MultipleTabService = {
 				this.clearSelection();
 			}
 		}
+		else if (!this.selectionChanging) {
+			this.clearSelection();
+		}
 		this.delayedDragStartReady = false;
+		this.selectionChanging = false;
 	},
  
 	onTabDragOver : function MTS_onTabDragOver(aEvent) 
@@ -3732,7 +3743,6 @@ var MultipleTabService = {
 			}
 		}
 	},
-	selectionModified : false,
  
 	getTabsInUndeterminedRange : function MTS_getTabsInUndeterminedRange(aSource) 
 	{
