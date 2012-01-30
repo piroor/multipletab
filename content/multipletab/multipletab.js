@@ -580,7 +580,8 @@ var MultipleTabService = {
 	filterBlankTabs : function MTS_filterBlankTabs(aTabs) 
 	{
 		return aTabs.filter(function(aTab) {
-				return this.getCurrentURIOfTab(aTab).spec != 'about:blank' ||
+				var uri = this.getCurrentURIOfTab(aTab).spec;
+				return (window.isBlankPageURL ? !isBlankPageURL(uri) : (uri != 'about:blank') ||
 						// for BarTap ( https://addons.mozilla.org/firefox/addon/67651 )
 						aTab.getAttribute('ontap') == 'true';
 			}, this);
