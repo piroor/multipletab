@@ -581,7 +581,7 @@ var MultipleTabService = {
 	{
 		return aTabs.filter(function(aTab) {
 				var uri = this.getCurrentURIOfTab(aTab).spec;
-				return (window.isBlankPageURL ? !isBlankPageURL(uri) : (uri != 'about:blank') ||
+				return (window.isBlankPageURL ? !isBlankPageURL(uri) : (uri != 'about:blank')) ||
 						// for BarTap ( https://addons.mozilla.org/firefox/addon/67651 )
 						aTab.getAttribute('ontap') == 'true';
 			}, this);
