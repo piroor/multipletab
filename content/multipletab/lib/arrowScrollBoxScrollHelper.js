@@ -20,9 +20,9 @@
      // 2nd argument: DOMNode, ID of an element, or local name of a child element
 
  license: The MIT License, Copyright (c) 2009 SHIMODA "Piro" Hiroshi
-   http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/license.txt
+   http://github.com/piroor/fxaddonlibs/blob/master/license.txt
  original:
-   http://www.cozmixng.org/repos/piro/fx3-compatibility-lib/trunk/arrowScrollBoxScrollHelper.js
+   http://github.com/piroor/fxaddonlibs/blob/master/arrowScrollBoxScrollHelper.js
 */
 (function() {
 	const currentRevision = 1;
