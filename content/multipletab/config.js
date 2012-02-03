@@ -1,8 +1,3 @@
-const XULAppInfo = Components.classes['@mozilla.org/xre/app-info;1']
-		.getService(Components.interfaces.nsIXULAppInfo);
-const comparator = Components.classes['@mozilla.org/xpcom/version-comparator;1']
-					.getService(Components.interfaces.nsIVersionComparator);
-
 Components.utils.import('resource://multipletab-modules/extensions.js', {});
 Components.utils.import('resource://multipletab-modules/namespace.jsm');
 var extensions = getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'].extensions;
@@ -41,13 +36,6 @@ function init()
 		}});
 	});
 
-	var moveToItem = document.getElementById('extensions.multipletab.show.multipletab-selection-moveToGroup-check');
-	if (comparator.compare(XULAppInfo.version, '4.0b5') >= 0)
-		moveToItem.removeAttribute('disabled');
-	else
-		moveToItem.setAttribute('disabled', true);
-
-	var canPinTabs = comparator.compare(XULAppInfo.version, '4.0b5') >= 0;
 	[
 		{
 			ids   : ['printalltabs@peculier.com'],
@@ -73,16 +61,7 @@ function init()
 			items : [
 				'extensions.multipletab.show.multipletab-selection-lockTabs-check'
 			]
-		},
-		(canPinTabs ? null : {
-			ids   : [
-				'tabutils@ithinc.cn' // Tab Utilities
-			],
-			items : [
-				'extensions.multipletab.show.multipletab-selection-pinTabs-check',
-				'extensions.multipletab.show.multipletab-selection-unpinTabs-check'
-			]
-		})
+		}
 	].forEach(function(aDefinition) {
 		if (!aDefinition)
 			return;

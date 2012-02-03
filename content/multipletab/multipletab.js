@@ -225,17 +225,6 @@ var MultipleTabService = {
 		return this._XULAppInfo;
 	},
 	_XULAppInfo : null,
-	get Comparator() {
-		if (!this._Comparator) {
-			this._Comparator = Cc['@mozilla.org/xpcom/version-comparator;1'].getService(Ci.nsIVersionComparator);
-		}
-		return this._Comparator;
-	},
-	_Comparator : null,
-	get isGecko2() 
-	{
-		return this.Comparator.compare(this.XULAppInfo.version, '4.0b5') > 0;
-	},
   
 	get allowMoveMultipleTabs() 
 	{
@@ -601,8 +590,7 @@ var MultipleTabService = {
 		if (b.contentWindow && b.contentWindow.location)
 			b.contentWindow.location.replace('about:blank');
 
-		delete aTab.linkedBrowser.__SS_data; // Firefox 3.6-
-		delete aTab.linkedBrowser.parentNode.__SS_data; // -Firefox 3.5
+		delete aTab.linkedBrowser.__SS_data;
 		delete aTab.__SS_extdata;
 	},
  
@@ -613,12 +601,10 @@ var MultipleTabService = {
 		this.makeTabBlank(aTab);
 
 		// override session data to prevent undo
-		var data = {
-				entries : [],
-				_tabStillLoading : true // for Firefox 3.5 or later
-			};
-		aTab.linkedBrowser.__SS_data = data; // Firefox 3.6-
-		aTab.linkedBrowser.parentNode.__SS_data = data; // -Firefox 3.5
+		aTab.linkedBrowser.__SS_data = {
+			entries : [],
+			_tabStillLoading : true
+		};
 
 		(aTabBrowser || this.getTabBrowserFromChild(aTab))
 			.removeTab(aTab, { animate : true });
@@ -971,10 +957,7 @@ var MultipleTabService = {
 						saveMode = SAVEMODE_FILEONLY | SAVEMODE_COMPLETE_TEXT;
 					}
 				$&]]>
-			).replace( // Firefox 3.5 or older
-				/(!aChosenData)( && useSaveDocument && saveAsType == kSaveAsType_Text)/,
-				'($1 || "saveAsType" in aChosenData)$2'
-			).replace( // Firefox 3.6 or later
+			).replace(
 				/(targetContentType: )(saveAsType == kSaveAsType_Text)/,
 				'$1 (!aChosenData || "saveAsType" in aChosenData) && $2'
 			));
@@ -1075,7 +1058,7 @@ var MultipleTabService = {
 			$1]]>
 		));
 
-		if ('swapBrowsersAndCloseOther' in aTabBrowser) { // Firefox 3.5 or later
+		if ('swapBrowsersAndCloseOther' in aTabBrowser) {
 			aTabBrowser.__multipletab__canDoWindowMove = true;
 		}
 		else {
@@ -3700,8 +3683,7 @@ var MultipleTabService = {
 	// workaround for http://piro.sakura.ne.jp/latest/blosxom/mozilla/extension/treestyletab/2009-09-29_debug.htm
 	checkCachedSessionDataExpiration : function MTS_checkCachedSessionDataExpiration(aTab) 
 	{
-		var data = aTab.linkedBrowser.__SS_data || // Firefox 3.6-
-					aTab.linkedBrowser.parentNode.__SS_data; // -Firefox 3.5
+		var data = aTab.linkedBrowser.__SS_data;
 		if (data &&
 			data._tabStillLoading &&
 			aTab.getAttribute('busy') != 'true' &&
