@@ -66,9 +66,10 @@ function init()
 		if (!aDefinition)
 			return;
 		var items = aDefinition.items.map(document.getElementById, document);
-		items.forEach(function(aItem) {
-			aItem.setAttribute('disabled', true);
-		});
+		for (let [, item] in Iterator(items))
+		{
+			item.setAttribute('disabled', true);
+		}
 		aDefinition.ids.forEach(function(aId) {
 			extensions.isAvailable(aId, { ok : function() {
 				aItem.removeAttribute('disabled');
@@ -99,18 +100,20 @@ function initGeneralPane()
 
 function onDragModeChange()
 {
-	gDelayItems.forEach(function(aItem) {
+	for (let [, item] in Iterator(gDelayItems))
+	{
 		if (gDragModeRadio.value == 0)
-			aItem.setAttribute('disabled', true);
+			item.setAttribute('disabled', true);
 		else
-			aItem.removeAttribute('disabled');
-	});
-	gAutoPopupItems.forEach(function(aItem) {
+			item.removeAttribute('disabled');
+	}
+	for (let [, item] in Iterator(gAutoPopupItems))
+	{
 		if (gDragModeRadio.value == 1)
-			aItem.removeAttribute('disabled');
+			item.removeAttribute('disabled');
 		else
-			aItem.setAttribute('disabled', true);
-	});
+			item.setAttribute('disabled', true);
+	}
 }
 
 function openMenuEditorConfig()
@@ -298,12 +301,12 @@ function initCustomFormats()
 	var value = gFormatsPref.value
 		.replace(/[\|\/]+$/, ''); // delete last blank rows
 	if (!value) return;
-	value.split('|')
-		.forEach(function(aFormat) {
-			let format, label;
-			[format, label] = aFormat.split('/').map(decodeURIComponent);
-			addNewFormat(label, format);
-		});
+	for (let [, formatDefinition] in Iterator(value.split('|')))
+	{
+		let format, label;
+		[format, label] = formatDefinition.split('/').map(decodeURIComponent);
+		addNewFormat(label, format);
+	}
 }
 
 function onFormatInput(aRow)
