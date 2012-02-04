@@ -136,8 +136,9 @@ var MultipleTabService = {
 	fireDataContainerEvent : function()
 	{
 		var target, document, type, data, canBubble, cancellable;
-		for (let [, arg] in Iterator(arguments))
+		for (let i = 0, maxi = arguments.length; i < maxi; i++)
 		{
+			let arg = arguments[i];
 			if (typeof arg == 'boolean') {
 				if (canBubble === void(0))
 					canBubble = arg;
@@ -160,8 +161,11 @@ var MultipleTabService = {
 
 		var event = document.createEvent('DataContainerEvent');
 		event.initEvent(type, canBubble, cancellable);
-		for (let [property, value] in Iterator(data))
+		var properties = Object.keys(data);
+		for (let i = 0, maxi = properties.length; i < maxi; i++)
 		{
+			let property = properties[i];
+			let value = data[property];
 			event.setData(property, value);
 			event[property] = value; // for backward compatibility
 		}
@@ -382,8 +386,9 @@ var MultipleTabService = {
 			return resultTabs;
 		}
 
-		for (let [, tab] in Iterator(aTabs))
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 		{
+			let tab = aTabs[i];
 			if (tab == aCurrentTab) continue;
 			if (this.getDomainFromURI(this.getCurrentURIOfTab(tab)) == currentDomain)
 				resultTabs.push(tab);
@@ -659,8 +664,9 @@ var MultipleTabService = {
 		var baseTab,
 			oldBasePosition = -1,
 			tabs;
-		for (let [, arg] in Iterator(arguments))
+		for (let i = 0, maxi = arguments.length; i < maxi; i++)
 		{
+			let arg = arguments[i];
 			if (arg instanceof Components.interfaces.nsIDOMNode)
 				baseTab = arg;
 			else if (typeof arg == 'number')
@@ -705,8 +711,11 @@ var MultipleTabService = {
 
 		// step 4: rearrange target tabs by the result of simulation
 		b.movingSelectedTabs = true;
-		for (let [newPosition, tab] in Iterator(rearranged))
+		for (let i = 0, maxi = rearranged.length; i < maxi; i++)
 		{
+			let tab = rearranged[i];
+			let newPosition = i;
+
 			if (otherTabs.indexOf(tab) < 0) continue;
 
 			let previousTab = newPosition > 0 ? rearranged[newPosition-1] : null ;
@@ -726,8 +735,9 @@ var MultipleTabService = {
 		var restOldPositions = [];
 		var restNewPositions = [];
 		var tabs = this.getTabsArray(aTabBrowser);
-		for (let [i, tab] in Iterator(tabs))
+		for (let i = 0, maxi = tabs.length; i < maxi; i++)
 		{
+			let tab = tabs[i];
 			if (aOldPositions.indexOf(i) < 0)
 				restOldPositions.push(i);
 			if (aNewPositions.indexOf(i) < 0)
@@ -747,8 +757,11 @@ var MultipleTabService = {
 		var allOldPositions = rearranged.map(function(aTab) {
 			return aTab._tPos;
 			});
-		for (let [newPosition, tab] in Iterator(rearranged))
+		for (let i = 0, maxi = rearranged.length; i < maxi; i++)
 		{
+			let tab = rearranged[i];
+			let newPosition = i;
+
 			let index = aOldPositions.indexOf(allOldPositions[aNewPosition]);
 			if (index < 0) continue; // it's not a target!
 			newPosition = newPosition[index ];
@@ -967,15 +980,16 @@ var MultipleTabService = {
 			));
 		}
 
-		for (let [, ids] in Iterator([
+		let ids = [
 				'tm-freezeTab\tmultipletab-selection-freezeTabs',
 				'tm-protectTab\tmultipletab-selection-protectTabs',
 				'tm-lockTab\tmultipletab-selection-lockTabs'
-			]))
+			];
+		for (let i = 0, maxi = ids.length; i < maxi; i++)
 		{
-			ids = ids.split('\t');
-			let source = document.getElementById(ids[0]);
-			let target = document.getElementById(ids[1]);
+			let pair = ids[i].split('\t');
+			let source = document.getElementById(pair[0]);
+			let target = document.getElementById(pair[1]);
 			if (source)
 				target.setAttribute('label', source.getAttribute('label'));
 		}
@@ -1013,14 +1027,18 @@ var MultipleTabService = {
 	{
 		var OS = this.XULAppInfo.OS;
 		var processed = {};
-		for (let [, originalKey] in Iterator(this.getDescendant('extensions.multipletab.platform.'+OS)))
+		var originalKeys = this.getDescendant('extensions.multipletab.platform.'+OS);
+		for (let i = 0, maxi = originalKeys.length; i < maxi; i++)
 		{
+			let originalKey = originalKeys[i];
 			let key = originalKey.replace('platform.'+OS+'.', '');
 			this.setDefaultPref(key, this.getPref(originalKey));
 			processed[key] = true;
 		}
-		for (let [, originalKey] in Iterator(this.getDescendant('extensions.multipletab.platform.default')))
+		originalKeys = this.getDescendant('extensions.multipletab.platform.default');
+		for (let i = 0, maxi = originalKeys.length; i < maxi; i++)
 		{
+			let originalKey = originalKeys[i];
 			let key = originalKey.replace('platform.default.', '');
 			if (!(key in processed))
 				this.setDefaultPref(key, this.getPref(originalKey));
@@ -1076,9 +1094,10 @@ var MultipleTabService = {
 
 		this.initTabBrowserContextMenu(aTabBrowser);
 
-		for (let [, tab] in Iterator(this.getTabsArray(aTabBrowser)))
+		var tabs = this.getTabsArray(aTabBrowser);
+		for (let i = 0, maxi = tabs.length; i < maxi; i++)
 		{
-			this.initTab(tab);
+			this.initTab(tabs[i]);
 		}
 	},
 	
@@ -1105,12 +1124,11 @@ var MultipleTabService = {
 		var tabContextMenu = aTabBrowser.tabContextMenu ||
 							document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		var template = document.getElementById(this.kCONTEXT_MENU_TEMPLATE);
-		for (let [, item] in Iterator(
-				this.getArrayFromXPathResult('child::*[starts-with(@id, "multipletab-context-")]', template)
+		var items = this.getArrayFromXPathResult('child::*[starts-with(@id, "multipletab-context-")]', template)
 					.concat(this.getArrayFromXPathResult('child::*[not(@id) or not(starts-with(@id, "multipletab-context-"))]', template))
-			))
+		for (let i = 0, maxi = items.length; i < maxi; i++)
 		{
-			item = item.cloneNode(true);
+			let item = items[i].cloneNode(true);
 			if (item.getAttribute('id'))
 				item.setAttribute('id', item.getAttribute('id')+suffix);
 
@@ -1199,9 +1217,10 @@ var MultipleTabService = {
 
 		this.removePrefListener(this);
 
-		for (let [, tab] in Iterator(this.getTabsArray(gBrowser)))
+		var tabs = this.getTabsArray(gBrowser);
+		for (let i = 0, maxi = tabs.length; i < maxi; i++)
 		{
-			this.destroyTab(tab);
+			this.destroyTab(tabs[i]);
 		}
 	},
 	
@@ -1487,8 +1506,10 @@ var MultipleTabService = {
 				if (lastManuallySelectedTab) {
 					let inSelection = false;
 					let clickedTab = tab;
-					for (let [, tab] in Iterator(this.getTabsArray(b)))
+					let tabs = this.getTabsArray(b);
+					for (let i = 0, maxi = tabs.length; i < maxi; i++)
 					{
+						let tab = tabs[i];
 						if (tab.getAttribute('hidden') == 'true' ||
 							tab.getAttribute('collapsed') == 'true')
 							continue;
@@ -1849,8 +1870,10 @@ var MultipleTabService = {
 	{
 		if (aTargets.first) {
 			// At first, toggle state to reset all existing items in the undetermined selection.
-			for (let [, tab] in Iterator(this.getTabsInUndeterminedRange(aTargets.current)))
+			let tabs = this.getTabsInUndeterminedRange(aTargets.current);
+			for (let i = 0, maxi = tabs.length; i < maxi; i++)
 			{
+				let tab = tabs[i];
 				if (!this.isCollapsed(tab))
 					aTargets.task(tab);
 			}
@@ -1861,8 +1884,9 @@ var MultipleTabService = {
 				undeterminedRangeTabs.push(aTargets.first);
 
 			undeterminedRangeTabs = undeterminedRangeTabs.concat(this.getTabsBetween(aTargets.first, aTargets.current));
-			for (let [, tab] in Iterator(undeterminedRangeTabs))
+			for (let i = 0, maxi = undeterminedRangeTabs.length; i < maxi; i++)
 			{
+				let tab = undeterminedRangeTabs[i];
 				if (!this.isCollapsed(tab))
 					aTargets.task(tab);
 				this.addTabInUndeterminedRange(tab);
@@ -2108,16 +2132,19 @@ var MultipleTabService = {
 			);
 
 		var selectType = {};
-		for (let [, item] in Iterator(this.selectableItems))
+		for (let i = 0, maxi = this.selectableItems.length; i < maxi; i++)
 		{
+			let item = this.selectableItems[i];
 			selectType[item.name] = this.getPref(item.key) < 0;
 		}
 
 		var selectedTabs = this.getSelectedTabs(b);
 		var tabbrowser = b;
 		var tabs = this.getTabsArray(b);
-		for (let [i, node] in Iterator(aPopup.childNodes))
+		var nodes = aPopup.childNodes;
+		for (let i = 0, maxi = nodes.length; i < maxi; i++)
 		{
+			let node = nodes[i];
 			let label;
 			if (
 				(isVertical && (label = node.getAttribute('label-vertical'))) ||
@@ -2227,8 +2254,9 @@ var MultipleTabService = {
 		if (this.formats.length) {
 			separator.removeAttribute('hidden');
 			let fragment = document.createDocumentFragment();
-			for (let [, format] in Iterator(this.formats))
+			for (let i = 0, maxi = this.formats.length; i < maxi; i++)
 			{
+				let format = this.formats[i];
 				let item = document.createElement('menuitem');
 				item.setAttribute('label', format.label);
 				item.setAttribute('value', format.format);
@@ -2274,8 +2302,9 @@ var MultipleTabService = {
 		var self = this;
 		var operation = function() {
 			var selected;
-			for (let [, tab] in Iterator(aTabs))
+			for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 			{
+				let tab = aTabs[i];
 				if (closeSelectedLast && tab.selected)
 					selected = tab;
 				else
@@ -2341,8 +2370,9 @@ var MultipleTabService = {
 			return;
 
 		var removeTabs = [];
-		for (let [, tab] in Iterator(allTabs))
+		for (let i = 0, maxi = allTabs.length; i < maxi; i++)
 		{
+			let tab = allTabs[i];
 			if (aTabs.indexOf(tab) < 0 && !tab.hasAttribute('pinned'))
 				removeTabs.push(tab);
 		}
@@ -2358,8 +2388,9 @@ var MultipleTabService = {
 		if (!aTabs.length) return;
 
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		for (let [, tab] in Iterator(aTabs))
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 		{
+			let tab = aTabs[i];
 			if (!this.ensureLoaded(tab))
 				b.reloadTab(tab);
 		}
@@ -2534,8 +2565,9 @@ var MultipleTabService = {
 		var operation = function() {
 			duplicatedTabs = self.duplicateTabsInternal(b, aTabs);
 			if (shouldSelectAfter) {
-				for (let [, tab] in Iterator(duplicatedTabs))
+				for (let i = 0, maxi = duplicatedTabs.length; i < maxi; i++)
 				{
+					let tab = duplicatedTabs[i];
 					self.setSelection(tab, true);
 				}
 			}
@@ -2586,9 +2618,9 @@ var MultipleTabService = {
 
 		var duplicatedTabs = aTabs.map(function(aTab) {
 				var state = this.evalInSandbox('('+this.SessionStore.getTabState(aTab)+')');
-				for (let [, key] in Iterator(this._clearTabValueKeys))
+				for (let i = 0, maxi = this._clearTabValueKeys.length; i < maxi; i++)
 				{
-					delete state.extData[key];
+					delete state.extData[this._clearTabValueKeys[i]];
 				}
 				state = 'JSON' in window ? JSON.stringify(state) : state.toSource() ;
 				var tab = b.addTab();
@@ -2665,8 +2697,10 @@ var MultipleTabService = {
 					var remoteBrowser = aRemoteWindow.gBrowser;
 					var importedTabs = remoteService.importTabsTo(aTabs, remoteBrowser);
 					remoteService.clearSelection(remoteBrowser);
-					for (let [, tab] in Iterator(remoteService))
+					var tabs = remoteService.getTabsArray(remoteBrowser);
+					for (let i = 0, maxi = tabs.length; i < maxi; i++)
 					{
+						let tab = tabs[i];
 						let index = importedTabs.indexOf(tab);
 						if (index > -1) {
 							if (
@@ -2870,8 +2904,9 @@ var MultipleTabService = {
 		var aTabs = [],
 			aTabBrowser,
 			aClone;
-		for (let [, arg] in Iterator(arguments))
+		for (let i = 0, maxi = arguments.length; i < maxi; i++)
 		{
+			let arg = arguments[i];
 			if (typeof arg == 'boolean') {
 				aClone = arg;
 			}
@@ -2907,27 +2942,31 @@ var MultipleTabService = {
 		sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
 
 		if (targetBrowser.__multipletab__canDoWindowMove && !aClone) {// move tabs
-			for (let [, tab] in Iterator(aTabs))
+			for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 			{
+				let tab = aTabs[i];
 				let newTab = targetBrowser.addTab();
 				importedTabs.push(newTab);
 				newTab.linkedBrowser.stop();
 				newTab.linkedBrowser.docShell;
 				targetBrowser.swapBrowsersAndCloseOther(newTab, tab);
 				targetBrowser.setTabTitle(newTab);
-				for (let [, process] in Iterator(this._duplicatedTabPostProcesses))
+				for (let i = 0, maxi = this._duplicatedTabPostProcesses.length; i < maxi; i++)
 				{
+					let process = this._duplicatedTabPostProcesses[i];
 					process(newTab, newTab._tPos);
 				}
 			}
 		}
 		else { // duplicate tabs
-			for (let [, tab] in Iterator(aTabs))
+			for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 			{
+				let tab = aTabs[i];
 				let newTab = targetBrowser.duplicateTab(tab);
 				importedTabs.push(newTab);
-				for (let [, process] in Iterator(this._duplicatedTabPostProcesses))
+				for (let i = 0, maxi = this._duplicatedTabPostProcesses.length; i < maxi; i++)
 				{
+					let process = this._duplicatedTabPostProcesses[i];
 					process(newTab, newTab._tPos);
 				}
 				if (!aClone) {
@@ -3066,8 +3105,9 @@ var MultipleTabService = {
 		if (aNewState === void(0))
 			aNewState = !tabs.every(this._isTabFreezed);
 
-		for (let [, tab] in Iterator(aTabs))
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 		{
+			let tab = aTabs[i];
 			if (aNewState != this._isTabFreezed(tab))
 				gBrowser.freezeTab(tab);
 		}
@@ -3086,8 +3126,9 @@ var MultipleTabService = {
 		if (aNewState === void(0))
 			aNewState = !tabs.every(this._isTabProtected);
 
-		for (let [, tab] in Iterator(aTabs))
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 		{
+			let tab = aTabs[i];
 			if (aNewState != this._isTabProtected(tab))
 				gBrowser.protectTab(tab);
 		}
@@ -3106,8 +3147,9 @@ var MultipleTabService = {
 		if (aNewState === void(0))
 			aNewState = !tabs.every(this._isTabLocked);
 
-		for (let [, tab] in Iterator(aTabs))
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 		{
+			let tab = aTabs[i];
 			if (aNewState == this._isTabLocked(aTab)) continue;
 
 			// Tab Mix Plus, Tab Utilities
@@ -3142,18 +3184,18 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		for (let [, tab] in Iterator(aTabs))
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 		{
-			b.pinTab(tab);
+			b.pinTab(aTabs[i]);
 		}
 	},
 	unpinTabs : function MTS_unpinTabs(aTabs)
 	{
 		if (!aTabs) return;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		for (let [, tab] in Iterator(aTabs))
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 		{
-			b.unpinTab(tab);
+			b.unpinTab(aTabs[i]);
 		}
 	},
 	isAllTabsPinned : function MTS_isAllTabsPinned(aTabs)
@@ -3210,8 +3252,9 @@ var MultipleTabService = {
 				title = title.replace(/^\s+|\s+$/g, '');
 		}
 
-		for (let [, tab] in Iterator(aTabs))
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 		{
+			let tab = aTabs[i];
 			this.setSelection(tab, false);
 			TabView.moveTabTo(tab, aGroupId);
 			if (!tab._tabViewTabItem) // pinned tabs cannot be grouped!
@@ -3251,8 +3294,10 @@ var MultipleTabService = {
 				return true;
 			});
 			var fragment = document.createDocumentFragment();
-			for (let [, groupItem] in Iterator(TabView._window.GroupItems.groupItems))
+			var items = TabView._window.GroupItems.groupItems;
+			for (let i = 0, maxi = items.length; i < maxi; i++)
 			{
+				let groupItem = items[i];
 				let title = groupItem.getTitle();
 				if (!title.length> 0 ||
 					groupItem.hidden ||
@@ -3491,9 +3536,9 @@ var MultipleTabService = {
 			targetService.rearrangeBundledTabsOf(aNewTab, duplicatedTabs);
 
 			if (shouldSelectAfter) {
-				for (let [, tab] in Iterator(duplicatedTabs))
+				for (let i = 0, maxi = duplicatedTabs.length; i < maxi; i++)
 				{
-					targetService.setSelection(tab, true);
+					targetService.setSelection(tabs[i], true);
 				}
 			}
 
@@ -3785,9 +3830,10 @@ var MultipleTabService = {
  
 	clearUndeterminedRange : function MTS_clearUndeterminedRange(aSource) 
 	{
-		for (let [, tab] in Iterator(this.getTabsInUndeterminedRange(aSource)))
+		var tabs = this.getTabsInUndeterminedRange(aSource);
+		for (let i = 0, maxi = tabs.length; i < maxi; i++)
 		{
-			tab.removeAttribute(this.kIN_UNDETERMINED_RANGE);
+			tabs[i].removeAttribute(this.kIN_UNDETERMINED_RANGE);
 		}
 	},
   
@@ -3833,20 +3879,23 @@ var MultipleTabService = {
 			case 'extensions.multipletab.clipboard.formats':
 				this.formats = [];
 				this.formatsTimeStamp = Date.now();
-				for (let [i, part] in Iterator(value.split('|')))
-				{
-					try {
-						let format, label;
-						[format, label] = part.split('/').map(decodeURIComponent);
-						if (!format) continue;
-						if (!label) label = format;
-						this.formats.push({
-							id     : i + this.kCUSTOM_TYPE_OFFSET,
-							label  : label,
-							format : format
-						});
-					}
-					catch(e) {
+				let (parts = value.split('|')) {
+					for (let i = 0, maxi = parts.length; i < maxi; i++)
+					{
+						let part = parts[i];
+						try {
+							let format, label;
+							[format, label] = part.split('/').map(decodeURIComponent);
+							if (!format) continue;
+							if (!label) label = format;
+							this.formats.push({
+								id     : i + this.kCUSTOM_TYPE_OFFSET,
+								label  : label,
+								format : format
+							});
+						}
+						catch(e) {
+						}
 					}
 				}
 				break;

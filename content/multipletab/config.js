@@ -66,9 +66,9 @@ function init()
 		if (!aDefinition)
 			return;
 		var items = aDefinition.items.map(document.getElementById, document);
-		for (let [, item] in Iterator(items))
+		for (let i = 0, maxi = items.length; i < maxi; i++)
 		{
-			item.setAttribute('disabled', true);
+			items[i].setAttribute('disabled', true);
 		}
 		aDefinition.ids.forEach(function(aId) {
 			extensions.isAvailable(aId, { ok : function() {
@@ -100,15 +100,17 @@ function initGeneralPane()
 
 function onDragModeChange()
 {
-	for (let [, item] in Iterator(gDelayItems))
+	for (let i = 0, maxi = gDelayItems.length; i < maxi; i++)
 	{
+		let item = gDelayItems[i];
 		if (gDragModeRadio.value == 0)
 			item.setAttribute('disabled', true);
 		else
 			item.removeAttribute('disabled');
 	}
-	for (let [, item] in Iterator(gAutoPopupItems))
+	for (let i = 0, maxi = gAutoPopupItems.length; i < maxi; i++)
 	{
+		let item = gAutoPopupItems[i];
 		if (gDragModeRadio.value == 1)
 			item.removeAttribute('disabled');
 		else
@@ -301,8 +303,10 @@ function initCustomFormats()
 	var value = gFormatsPref.value
 		.replace(/[\|\/]+$/, ''); // delete last blank rows
 	if (!value) return;
-	for (let [, formatDefinition] in Iterator(value.split('|')))
+	var formatDefinitions = value.split('|');
+	for (let i = 0, maxi = formatDefinitions.length; i < maxi; i++)
 	{
+		let formatDefinition = formatDefinitions[i];
 		let format, label;
 		[format, label] = formatDefinition.split('/').map(decodeURIComponent);
 		addNewFormat(label, format);
