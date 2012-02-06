@@ -30,7 +30,7 @@ MultipleTabService.overrideExtensionsOnPreInit = function MTS_overrideExtensions
 
 	// DragNDrop Toolbars
 	// https://addons.mozilla.org/firefox/addon/dragndrop-toolbars/
-	if ('globDndtb' in window && globDndtb.setTheStuff && this.isGecko2) {
+	if ('globDndtb' in window && globDndtb.setTheStuff) {
 		let self = this;
 		let reinitTabbar = function() {
 				if (!self.initialized)

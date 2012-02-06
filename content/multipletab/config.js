@@ -1,8 +1,3 @@
-const XULAppInfo = Components.classes['@mozilla.org/xre/app-info;1']
-		.getService(Components.interfaces.nsIXULAppInfo);
-const comparator = Components.classes['@mozilla.org/xpcom/version-comparator;1']
-					.getService(Components.interfaces.nsIVersionComparator);
-
 Components.utils.import('resource://multipletab-modules/extensions.js', {});
 Components.utils.import('resource://multipletab-modules/namespace.jsm');
 var extensions = getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'].extensions;
@@ -41,13 +36,6 @@ function init()
 		}});
 	});
 
-	var moveToItem = document.getElementById('extensions.multipletab.show.multipletab-selection-moveToGroup-check');
-	if (comparator.compare(XULAppInfo.version, '4.0b5') >= 0)
-		moveToItem.removeAttribute('disabled');
-	else
-		moveToItem.setAttribute('disabled', true);
-
-	var canPinTabs = comparator.compare(XULAppInfo.version, '4.0b5') >= 0;
 	[
 		{
 			ids   : ['printalltabs@peculier.com'],
@@ -73,23 +61,15 @@ function init()
 			items : [
 				'extensions.multipletab.show.multipletab-selection-lockTabs-check'
 			]
-		},
-		(canPinTabs ? null : {
-			ids   : [
-				'tabutils@ithinc.cn' // Tab Utilities
-			],
-			items : [
-				'extensions.multipletab.show.multipletab-selection-pinTabs-check',
-				'extensions.multipletab.show.multipletab-selection-unpinTabs-check'
-			]
-		})
+		}
 	].forEach(function(aDefinition) {
 		if (!aDefinition)
 			return;
 		var items = aDefinition.items.map(document.getElementById, document);
-		items.forEach(function(aItem) {
-			aItem.setAttribute('disabled', true);
-		});
+		for (let i = 0, maxi = items.length; i < maxi; i++)
+		{
+			items[i].setAttribute('disabled', true);
+		}
 		aDefinition.ids.forEach(function(aId) {
 			extensions.isAvailable(aId, { ok : function() {
 				aItem.removeAttribute('disabled');
@@ -120,18 +100,22 @@ function initGeneralPane()
 
 function onDragModeChange()
 {
-	gDelayItems.forEach(function(aItem) {
+	for (let i = 0, maxi = gDelayItems.length; i < maxi; i++)
+	{
+		let item = gDelayItems[i];
 		if (gDragModeRadio.value == 0)
-			aItem.setAttribute('disabled', true);
+			item.setAttribute('disabled', true);
 		else
-			aItem.removeAttribute('disabled');
-	});
-	gAutoPopupItems.forEach(function(aItem) {
+			item.removeAttribute('disabled');
+	}
+	for (let i = 0, maxi = gAutoPopupItems.length; i < maxi; i++)
+	{
+		let item = gAutoPopupItems[i];
 		if (gDragModeRadio.value == 1)
-			aItem.removeAttribute('disabled');
+			item.removeAttribute('disabled');
 		else
-			aItem.setAttribute('disabled', true);
-	});
+			item.setAttribute('disabled', true);
+	}
 }
 
 function openMenuEditorConfig()
@@ -319,12 +303,14 @@ function initCustomFormats()
 	var value = gFormatsPref.value
 		.replace(/[\|\/]+$/, ''); // delete last blank rows
 	if (!value) return;
-	value.split('|')
-		.forEach(function(aFormat) {
-			let format, label;
-			[format, label] = aFormat.split('/').map(decodeURIComponent);
-			addNewFormat(label, format);
-		});
+	var formatDefinitions = value.split('|');
+	for (let i = 0, maxi = formatDefinitions.length; i < maxi; i++)
+	{
+		let formatDefinition = formatDefinitions[i];
+		let format, label;
+		[format, label] = formatDefinition.split('/').map(decodeURIComponent);
+		addNewFormat(label, format);
+	}
 }
 
 function onFormatInput(aRow)

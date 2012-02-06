@@ -136,22 +136,24 @@ var MultipleTabService = {
 	fireDataContainerEvent : function()
 	{
 		var target, document, type, data, canBubble, cancellable;
-		Array.slice(arguments).forEach(function(aArg) {
-			if (typeof aArg == 'boolean') {
+		for (let i = 0, maxi = arguments.length; i < maxi; i++)
+		{
+			let arg = arguments[i];
+			if (typeof arg == 'boolean') {
 				if (canBubble === void(0))
-					canBubble = aArg;
+					canBubble = arg;
 				else
-					cancellable = aArg;
+					cancellable = arg;
 			}
-			else if (typeof aArg == 'string')
-				type = aArg;
-			else if (aArg instanceof Ci.nsIDOMDocument)
-				document = aArg;
-			else if (aArg instanceof Ci.nsIDOMEventTarget)
-				target = aArg;
+			else if (typeof arg == 'string')
+				type = arg;
+			else if (arg instanceof Ci.nsIDOMDocument)
+				document = arg;
+			else if (arg instanceof Ci.nsIDOMEventTarget)
+				target = arg;
 			else
-				data = aArg;
-		});
+				data = arg;
+		}
 		if (!target)
 			target = document;
 		if (!document)
@@ -159,12 +161,13 @@ var MultipleTabService = {
 
 		var event = document.createEvent('DataContainerEvent');
 		event.initEvent(type, canBubble, cancellable);
-		for (var i in data)
+		var properties = Object.keys(data);
+		for (let i = 0, maxi = properties.length; i < maxi; i++)
 		{
-			if (!data.hasOwnProperty(i))
-				continue;
-			event.setData(i, data[i]);
-			event[i] = data[i]; // for backward compatibility
+			let property = properties[i];
+			let value = data[property];
+			event.setData(property, value);
+			event[property] = value; // for backward compatibility
 		}
 
 		return target.dispatchEvent(event);
@@ -225,17 +228,6 @@ var MultipleTabService = {
 		return this._XULAppInfo;
 	},
 	_XULAppInfo : null,
-	get Comparator() {
-		if (!this._Comparator) {
-			this._Comparator = Cc['@mozilla.org/xpcom/version-comparator;1'].getService(Ci.nsIVersionComparator);
-		}
-		return this._Comparator;
-	},
-	_Comparator : null,
-	get isGecko2() 
-	{
-		return this.Comparator.compare(this.XULAppInfo.version, '4.0b5') > 0;
-	},
   
 	get allowMoveMultipleTabs() 
 	{
@@ -394,11 +386,13 @@ var MultipleTabService = {
 			return resultTabs;
 		}
 
-		Array.slice(aTabs).forEach(function(aTab) {
-			if (aTab == aCurrentTab) return;
-			if (this.getDomainFromURI(this.getCurrentURIOfTab(aTab)) == currentDomain)
-				resultTabs.push(aTab);
-		}, this);
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			let tab = aTabs[i];
+			if (tab == aCurrentTab) continue;
+			if (this.getDomainFromURI(this.getCurrentURIOfTab(tab)) == currentDomain)
+				resultTabs.push(tab);
+		}
 		return resultTabs;
 	},
 	getDomainFromURI : function MTS_getDomainFromURI(aURI)
@@ -601,8 +595,7 @@ var MultipleTabService = {
 		if (b.contentWindow && b.contentWindow.location)
 			b.contentWindow.location.replace('about:blank');
 
-		delete aTab.linkedBrowser.__SS_data; // Firefox 3.6-
-		delete aTab.linkedBrowser.parentNode.__SS_data; // -Firefox 3.5
+		delete aTab.linkedBrowser.__SS_data;
 		delete aTab.__SS_extdata;
 	},
  
@@ -613,12 +606,10 @@ var MultipleTabService = {
 		this.makeTabBlank(aTab);
 
 		// override session data to prevent undo
-		var data = {
-				entries : [],
-				_tabStillLoading : true // for Firefox 3.5 or later
-			};
-		aTab.linkedBrowser.__SS_data = data; // Firefox 3.6-
-		aTab.linkedBrowser.parentNode.__SS_data = data; // -Firefox 3.5
+		aTab.linkedBrowser.__SS_data = {
+			entries : [],
+			_tabStillLoading : true
+		};
 
 		(aTabBrowser || this.getTabBrowserFromChild(aTab))
 			.removeTab(aTab, { animate : true });
@@ -673,14 +664,16 @@ var MultipleTabService = {
 		var baseTab,
 			oldBasePosition = -1,
 			tabs;
-		Array.slice(arguments).forEach(function(aArg) {
-			if (aArg instanceof Components.interfaces.nsIDOMNode)
-				baseTab = aArg;
-			else if (typeof aArg == 'number')
-				oldBasePosition = aArg;
-			else if (typeof aArg == 'object')
-				tabs = aArg;
-		});
+		for (let i = 0, maxi = arguments.length; i < maxi; i++)
+		{
+			let arg = arguments[i];
+			if (arg instanceof Components.interfaces.nsIDOMNode)
+				baseTab = arg;
+			else if (typeof arg == 'number')
+				oldBasePosition = arg;
+			else if (typeof arg == 'object')
+				tabs = arg;
+		}
 
 		var b       = this.getTabBrowserFromChild(baseTab);
 		var allTabs = this.getTabsArray(b);
@@ -718,17 +711,21 @@ var MultipleTabService = {
 
 		// step 4: rearrange target tabs by the result of simulation
 		b.movingSelectedTabs = true;
-		rearranged.forEach(function(aTab, aNewPosition) {
-			if (otherTabs.indexOf(aTab) < 0) return;
+		for (let i = 0, maxi = rearranged.length; i < maxi; i++)
+		{
+			let tab = rearranged[i];
+			let newPosition = i;
 
-			var previousTab = aNewPosition > 0 ? rearranged[aNewPosition-1] : null ;
+			if (otherTabs.indexOf(tab) < 0) continue;
+
+			let previousTab = newPosition > 0 ? rearranged[newPosition-1] : null ;
 			if (previousTab)
-				aNewPosition = previousTab._tPos + 1;
-			if (aNewPosition > aTab._tPos)
-				aNewPosition--;
-			if (aTab._tPos != aNewPosition)
-				b.moveTabTo(aTab, aNewPosition);
-		});
+				newPosition = previousTab._tPos + 1;
+			if (newPosition > tab._tPos)
+				newPosition--;
+			if (tab._tPos != newPosition)
+				b.moveTabTo(tab, newPosition);
+		}
 		b.movingSelectedTabs = false;
 	},
  
@@ -738,12 +735,14 @@ var MultipleTabService = {
 		var restOldPositions = [];
 		var restNewPositions = [];
 		var tabs = this.getTabsArray(aTabBrowser);
-		tabs.forEach(function(aTab, aIndex) {
-			if (aOldPositions.indexOf(aIndex) < 0)
-				restOldPositions.push(aIndex);
-			if (aNewPositions.indexOf(aIndex) < 0)
-				restNewPositions.push(aIndex);
-		});
+		for (let i = 0, maxi = tabs.length; i < maxi; i++)
+		{
+			let tab = tabs[i];
+			if (aOldPositions.indexOf(i) < 0)
+				restOldPositions.push(i);
+			if (aNewPositions.indexOf(i) < 0)
+				restNewPositions.push(i);
+		}
 
 		// step 2: simulate rearranging
 		var rearranged = tabs.map(function(aTab, aOldPosition) {
@@ -758,18 +757,22 @@ var MultipleTabService = {
 		var allOldPositions = rearranged.map(function(aTab) {
 			return aTab._tPos;
 			});
-		rearranged.forEach(function(aTab, aNewPosition) {
-			var index = aOldPositions.indexOf(allOldPositions[aNewPosition]);
-			if (index < 0) return; // it's not a target!
-			var newPosition = aNewPositions[index ];
-			var previousTab = newPosition > 0 ? rearranged[newPosition-1] : null ;
+		for (let i = 0, maxi = rearranged.length; i < maxi; i++)
+		{
+			let tab = rearranged[i];
+			let newPosition = i;
+
+			let index = aOldPositions.indexOf(allOldPositions[aNewPosition]);
+			if (index < 0) continue; // it's not a target!
+			newPosition = newPosition[index ];
+			let previousTab = newPosition > 0 ? rearranged[newPosition-1] : null ;
 			if (previousTab)
 				newPosition = previousTab._tPos + 1;
-			if (newPosition > aTab._tPos)
+			if (newPosition > tab._tPos)
 				newPosition--;
-			if (aTab._tPos != newPosition)
-				aTabBrowser.moveTabTo(aTab, newPosition);
-		});
+			if (tab._tPos != newPosition)
+				aTabBrowser.moveTabTo(tab, newPosition);
+		}
 		aTabBrowser.movingSelectedTabs = false;
 	},
 	
@@ -971,26 +974,25 @@ var MultipleTabService = {
 						saveMode = SAVEMODE_FILEONLY | SAVEMODE_COMPLETE_TEXT;
 					}
 				$&]]>
-			).replace( // Firefox 3.5 or older
-				/(!aChosenData)( && useSaveDocument && saveAsType == kSaveAsType_Text)/,
-				'($1 || "saveAsType" in aChosenData)$2'
-			).replace( // Firefox 3.6 or later
+			).replace(
 				/(targetContentType: )(saveAsType == kSaveAsType_Text)/,
 				'$1 (!aChosenData || "saveAsType" in aChosenData) && $2'
 			));
 		}
 
-		[
-			'tm-freezeTab\tmultipletab-selection-freezeTabs',
-			'tm-protectTab\tmultipletab-selection-protectTabs',
-			'tm-lockTab\tmultipletab-selection-lockTabs'
-		].forEach(function(aIDs) {
-			aIDs = aIDs.split('\t');
-			var source = document.getElementById(aIDs[0]);
-			var target = document.getElementById(aIDs[1]);
+		let ids = [
+				'tm-freezeTab\tmultipletab-selection-freezeTabs',
+				'tm-protectTab\tmultipletab-selection-protectTabs',
+				'tm-lockTab\tmultipletab-selection-lockTabs'
+			];
+		for (let i = 0, maxi = ids.length; i < maxi; i++)
+		{
+			let pair = ids[i].split('\t');
+			let source = document.getElementById(pair[0]);
+			let target = document.getElementById(pair[1]);
 			if (source)
 				target.setAttribute('label', source.getAttribute('label'));
-		}, this);
+		}
 
 		this.initTabBrowser(gBrowser);
 
@@ -1025,16 +1027,22 @@ var MultipleTabService = {
 	{
 		var OS = this.XULAppInfo.OS;
 		var processed = {};
-		this.getDescendant('extensions.multipletab.platform.'+OS).forEach(function(aKey) {
-			var key = aKey.replace('platform.'+OS+'.', '');
-			this.setDefaultPref(key, this.getPref(aKey));
+		var originalKeys = this.getDescendant('extensions.multipletab.platform.'+OS);
+		for (let i = 0, maxi = originalKeys.length; i < maxi; i++)
+		{
+			let originalKey = originalKeys[i];
+			let key = originalKey.replace('platform.'+OS+'.', '');
+			this.setDefaultPref(key, this.getPref(originalKey));
 			processed[key] = true;
-		}, this);
-		this.getDescendant('extensions.multipletab.platform.default').forEach(function(aKey) {
-			var key = aKey.replace('platform.default.', '');
+		}
+		originalKeys = this.getDescendant('extensions.multipletab.platform.default');
+		for (let i = 0, maxi = originalKeys.length; i < maxi; i++)
+		{
+			let originalKey = originalKeys[i];
+			let key = originalKey.replace('platform.default.', '');
 			if (!(key in processed))
-				this.setDefaultPref(key, this.getPref(aKey));
-		}, this);
+				this.setDefaultPref(key, this.getPref(originalKey));
+		}
 	},
  
 	kPREF_VERSION : 1,
@@ -1075,7 +1083,7 @@ var MultipleTabService = {
 			$1]]>
 		));
 
-		if ('swapBrowsersAndCloseOther' in aTabBrowser) { // Firefox 3.5 or later
+		if ('swapBrowsersAndCloseOther' in aTabBrowser) {
 			aTabBrowser.__multipletab__canDoWindowMove = true;
 		}
 		else {
@@ -1086,9 +1094,11 @@ var MultipleTabService = {
 
 		this.initTabBrowserContextMenu(aTabBrowser);
 
-		this.getTabsArray(aTabBrowser).forEach(function(aTab) {
-			this.initTab(aTab);
-		}, this);
+		var tabs = this.getTabsArray(aTabBrowser);
+		for (let i = 0, maxi = tabs.length; i < maxi; i++)
+		{
+			this.initTab(tabs[i]);
+		}
 	},
 	
 	initTabbar : function MTS_initTabbar(aTabBrowser) 
@@ -1114,54 +1124,55 @@ var MultipleTabService = {
 		var tabContextMenu = aTabBrowser.tabContextMenu ||
 							document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		var template = document.getElementById(this.kCONTEXT_MENU_TEMPLATE);
-		this.getArrayFromXPathResult('child::*[starts-with(@id, "multipletab-context-")]', template)
-			.concat(this.getArrayFromXPathResult('child::*[not(@id) or not(starts-with(@id, "multipletab-context-"))]', template))
-			.forEach(function(aItem) {
-				let item = aItem.cloneNode(true);
-				if (item.getAttribute('id'))
-					item.setAttribute('id', item.getAttribute('id')+suffix);
+		var items = this.getArrayFromXPathResult('child::*[starts-with(@id, "multipletab-context-")]', template)
+					.concat(this.getArrayFromXPathResult('child::*[not(@id) or not(starts-with(@id, "multipletab-context-"))]', template))
+		for (let i = 0, maxi = items.length; i < maxi; i++)
+		{
+			let item = items[i].cloneNode(true);
+			if (item.getAttribute('id'))
+				item.setAttribute('id', item.getAttribute('id')+suffix);
 
-				let refNode = void(0);
+			let refNode = void(0);
 
-				let insertAfter = item.getAttribute(this.kINSERT_AFTER);
-				if (insertAfter) {
-					try {
-						if (/^\s*xpath:/i.test(insertAfter)) {
-							refNode = this.evaluateXPath(
-									insertAfter.replace(/^\s*xpath:\s*/i, ''),
-									tabContextMenu,
-									XPathResult.FIRST_ORDERED_NODE_TYPE
-								).singleNodeValue;
-							if (refNode) refNode = refNode.nextSibling;
-						}
-						else {
-							eval('refNode = ('+insertAfter+').nextSibling');
-						}
+			let insertAfter = item.getAttribute(this.kINSERT_AFTER);
+			if (insertAfter) {
+				try {
+					if (/^\s*xpath:/i.test(insertAfter)) {
+						refNode = this.evaluateXPath(
+								insertAfter.replace(/^\s*xpath:\s*/i, ''),
+								tabContextMenu,
+								XPathResult.FIRST_ORDERED_NODE_TYPE
+							).singleNodeValue;
+						if (refNode) refNode = refNode.nextSibling;
 					}
-					catch(e) {
+					else {
+						eval('refNode = ('+insertAfter+').nextSibling');
 					}
 				}
+				catch(e) {
+				}
+			}
 
-				let insertBefore = item.getAttribute(this.kINSERT_BEFORE);
-				if (refNode === void(0) && insertBefore) {
-					try {
-						if (/^\s*xpath:/i.test(insertBefore)) {
-							refNode = this.evaluateXPath(
-									insertBefore.replace(/^\s*xpath:\s*/i, ''),
-									tabContextMenu,
-									XPathResult.FIRST_ORDERED_NODE_TYPE
-								).singleNodeValue;
-						}
-						else {
-							eval('refNode = '+insertBefore);
-						}
+			let insertBefore = item.getAttribute(this.kINSERT_BEFORE);
+			if (refNode === void(0) && insertBefore) {
+				try {
+					if (/^\s*xpath:/i.test(insertBefore)) {
+						refNode = this.evaluateXPath(
+								insertBefore.replace(/^\s*xpath:\s*/i, ''),
+								tabContextMenu,
+								XPathResult.FIRST_ORDERED_NODE_TYPE
+							).singleNodeValue;
 					}
-					catch(e) {
+					else {
+						eval('refNode = '+insertBefore);
 					}
 				}
+				catch(e) {
+				}
+			}
 
-				tabContextMenu.insertBefore(item, refNode || null);
-			}, this);
+			tabContextMenu.insertBefore(item, refNode || null);
+		}
 
 		tabContextMenu.addEventListener('popupshowing', this, false);
 	},
@@ -1206,9 +1217,11 @@ var MultipleTabService = {
 
 		this.removePrefListener(this);
 
-		this.getTabsArray(gBrowser).forEach(function(aTab) {
-			this.destroyTab(aTab);
-		}, this);
+		var tabs = this.getTabsArray(gBrowser);
+		for (let i = 0, maxi = tabs.length; i < maxi; i++)
+		{
+			this.destroyTab(tabs[i]);
+		}
 	},
 	
 	destroyTabBrowser : function MTS_destroyTabBrowser(aTabBrowser) 
@@ -1492,20 +1505,24 @@ var MultipleTabService = {
 				let lastManuallySelectedTab = this.getLastManuallySelectedTab(b);
 				if (lastManuallySelectedTab) {
 					let inSelection = false;
-					this.getTabsArray(b).forEach(function(aTab) {
-						if (aTab.getAttribute('hidden') == 'true' ||
-							aTab.getAttribute('collapsed') == 'true')
-							return;
+					let clickedTab = tab;
+					let tabs = this.getTabsArray(b);
+					for (let i = 0, maxi = tabs.length; i < maxi; i++)
+					{
+						let tab = tabs[i];
+						if (tab.getAttribute('hidden') == 'true' ||
+							tab.getAttribute('collapsed') == 'true')
+							continue;
 
-						if (aTab == lastManuallySelectedTab ||
-							aTab == tab) {
+						if (tab == lastManuallySelectedTab ||
+							tab == clickedTab) {
 							inSelection = !inSelection;
-							this.setSelection(aTab, true);
+							this.setSelection(tab, true);
 						}
 						else {
-							this.setSelection(aTab, inSelection);
+							this.setSelection(tab, inSelection);
 						}
-					}, this);
+					}
 				}
 				else {
 					this.setSelection(tab, true);
@@ -1853,10 +1870,13 @@ var MultipleTabService = {
 	{
 		if (aTargets.first) {
 			// At first, toggle state to reset all existing items in the undetermined selection.
-			this.getTabsInUndeterminedRange(aTargets.current).forEach(function(aTab) {
-				if (!this.isCollapsed(aTab))
-					aTargets.task(aTab);
-			}, this);
+			let tabs = this.getTabsInUndeterminedRange(aTargets.current);
+			for (let i = 0, maxi = tabs.length; i < maxi; i++)
+			{
+				let tab = tabs[i];
+				if (!this.isCollapsed(tab))
+					aTargets.task(tab);
+			}
 			this.clearUndeterminedRange();
 
 			let undeterminedRangeTabs = [aTargets.current];
@@ -1864,11 +1884,13 @@ var MultipleTabService = {
 				undeterminedRangeTabs.push(aTargets.first);
 
 			undeterminedRangeTabs = undeterminedRangeTabs.concat(this.getTabsBetween(aTargets.first, aTargets.current));
-			undeterminedRangeTabs.forEach(function(aTab) {
-				if (!this.isCollapsed(aTab))
-					aTargets.task(aTab);
-				this.addTabInUndeterminedRange(aTab);
-			}, this);
+			for (let i = 0, maxi = undeterminedRangeTabs.length; i < maxi; i++)
+			{
+				let tab = undeterminedRangeTabs[i];
+				if (!this.isCollapsed(tab))
+					aTargets.task(tab);
+				this.addTabInUndeterminedRange(tab);
+			}
 		}
 		else {
 			this.addTabInUndeterminedRange(aTargets.current);
@@ -2110,23 +2132,28 @@ var MultipleTabService = {
 			);
 
 		var selectType = {};
-		this.selectableItems.forEach(function(aItem) {
-			selectType[aItem.name] = this.getPref(aItem.key) < 0;
-		}, this);
+		for (let i = 0, maxi = this.selectableItems.length; i < maxi; i++)
+		{
+			let item = this.selectableItems[i];
+			selectType[item.name] = this.getPref(item.key) < 0;
+		}
 
 		var selectedTabs = this.getSelectedTabs(b);
 		var tabbrowser = b;
 		var tabs = this.getTabsArray(b);
-		Array.slice(aPopup.childNodes).forEach(function(aNode, aIndex) {
-			var label;
+		var nodes = aPopup.childNodes;
+		for (let i = 0, maxi = nodes.length; i < maxi; i++)
+		{
+			let node = nodes[i];
+			let label;
 			if (
-				(isVertical && (label = aNode.getAttribute('label-vertical'))) ||
-				(!isVertical && (label = aNode.getAttribute('label-horizontal')))
+				(isVertical && (label = node.getAttribute('label-vertical'))) ||
+				(!isVertical && (label = node.getAttribute('label-horizontal')))
 				)
-				aNode.setAttribute('label', label);
+				node.setAttribute('label', label);
 
-			var key = aNode.getAttribute('id').replace(/-tabbrowser-.*$/, '');
-			var pref;
+			let key = node.getAttribute('id').replace(/-tabbrowser-.*$/, '');
+			let pref;
 			if (selectableItemsRegExp.test(key)) {
 				key  = RegExp.$1
 				pref = this.getPref('extensions.multipletab.show.'+key) &&
@@ -2136,7 +2163,7 @@ var MultipleTabService = {
 				pref = this.getPref('extensions.multipletab.show.'+key);
 			}
 
-			var available = aNode.getAttribute(this.kAVAILABLE);
+			let available = node.getAttribute(this.kAVAILABLE);
 			if (available) {
 				/* tabbrowser
 				   tabs
@@ -2145,26 +2172,26 @@ var MultipleTabService = {
 				if (pref) pref = !!available;
 			}
 
-			if (pref === null) return;
+			if (pref === null) continue;
 
 			if (pref) {
-				aNode.removeAttribute('hidden');
-				var enabled = aNode.getAttribute(this.kENABLED);
+				node.removeAttribute('hidden');
+				let enabled = node.getAttribute(this.kENABLED);
 				if (enabled) {
 					/* tabbrowser
 					   tabs
 					   selectedTabs */
 					eval('enabled = ('+enabled+')');
 					if (enabled)
-						aNode.removeAttribute('disabled');
+						node.removeAttribute('disabled');
 					else
-						aNode.setAttribute('disabled', true);
+						node.setAttribute('disabled', true);
 				}
 			}
 			else {
-				aNode.setAttribute('hidden', true);
+				node.setAttribute('hidden', true);
 			}
-		}, this);
+		}
 
 		var separators = this.getSeparators(aPopup);
 		for (var i = separators.snapshotLength-1; i > -1; i--)
@@ -2227,13 +2254,15 @@ var MultipleTabService = {
 		if (this.formats.length) {
 			separator.removeAttribute('hidden');
 			let fragment = document.createDocumentFragment();
-			this.formats.forEach(function(aItem) {
+			for (let i = 0, maxi = this.formats.length; i < maxi; i++)
+			{
+				let format = this.formats[i];
 				let item = document.createElement('menuitem');
-				item.setAttribute('label', aItem.label);
-				item.setAttribute('value', aItem.format);
-				item.setAttribute('format-type', aItem.id);
+				item.setAttribute('label', format.label);
+				item.setAttribute('value', format.format);
+				item.setAttribute('format-type', format.id);
 				fragment.appendChild(item);
-			}, this);
+			}
 			range.insertNode(fragment);
 		}
 		else {
@@ -2273,12 +2302,14 @@ var MultipleTabService = {
 		var self = this;
 		var operation = function() {
 			var selected;
-			aTabs.forEach(function(aTab) {
-				if (closeSelectedLast && aTab.selected)
-					selected = aTab;
+			for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+			{
+				let tab = aTabs[i];
+				if (closeSelectedLast && tab.selected)
+					selected = tab;
 				else
-					b.removeTab(aTab, { animate : true });
-			});
+					b.removeTab(tab, { animate : true });
+			}
 			if (selected)
 				b.removeTab(selected, { animate : true });
 		};
@@ -2333,16 +2364,18 @@ var MultipleTabService = {
 
 		aTabs = Array.slice(aTabs);
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		var tabs = this.getTabsArray(b);
+		var allTabs = this.getTabsArray(b);
 
-		if (!this.warnAboutClosingTabs(tabs.length - aTabs.length))
+		if (!this.warnAboutClosingTabs(allTabs.length - aTabs.length))
 			return;
 
 		var removeTabs = [];
-		tabs.forEach(function(aTab) {
-			if (aTabs.indexOf(aTab) < 0 && !aTab.hasAttribute('pinned'))
-				removeTabs.push(aTab);
-		});
+		for (let i = 0, maxi = allTabs.length; i < maxi; i++)
+		{
+			let tab = allTabs[i];
+			if (aTabs.indexOf(tab) < 0 && !tab.hasAttribute('pinned'))
+				removeTabs.push(tab);
+		}
 
 		this.closeTabsInternal(removeTabs);
 	},
@@ -2355,10 +2388,12 @@ var MultipleTabService = {
 		if (!aTabs.length) return;
 
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		aTabs.forEach(function(aTab) {
-			if (!this.ensureLoaded(aTab))
-				b.reloadTab(aTab);
-		}, this);
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			let tab = aTabs[i];
+			if (!this.ensureLoaded(tab))
+				b.reloadTab(tab);
+		}
 	},
  
 	saveTabs : function MTS_saveTabs(aTabs, aSaveType, aFolder) 
@@ -2389,10 +2424,10 @@ var MultipleTabService = {
 		if (!folder) return;
 
 		var fileExistence = {};
-		aTabs.forEach(function(aTab) {
+		aTabs.forEach(function processTab(aTab) {
 			if (this.ensureLoaded(aTab)) {
 				window.setTimeout(function(aSelf) {
-					arguments.callee.call(aSelf);
+					processTab.call(aSelf, aTab);
 				}, 200, this);
 				return;
 			}
@@ -2529,10 +2564,13 @@ var MultipleTabService = {
 		var self = this;
 		var operation = function() {
 			duplicatedTabs = self.duplicateTabsInternal(b, aTabs);
-			if (shouldSelectAfter)
-				duplicatedTabs.forEach(function(aTab) {
-					self.setSelection(aTab, true);
-				});
+			if (shouldSelectAfter) {
+				for (let i = 0, maxi = duplicatedTabs.length; i < maxi; i++)
+				{
+					let tab = duplicatedTabs[i];
+					self.setSelection(tab, true);
+				}
+			}
 		};
 		w['piro.sakura.ne.jp'].stopRendering.stop();
 		if ('UndoTabService' in window && UndoTabService.isUndoable()) {
@@ -2580,9 +2618,10 @@ var MultipleTabService = {
 
 		var duplicatedTabs = aTabs.map(function(aTab) {
 				var state = this.evalInSandbox('('+this.SessionStore.getTabState(aTab)+')');
-				this._clearTabValueKeys.forEach(function(aKey) {
-					delete state.extData[aKey];
-				});
+				for (let i = 0, maxi = this._clearTabValueKeys.length; i < maxi; i++)
+				{
+					delete state.extData[this._clearTabValueKeys[i]];
+				}
 				state = 'JSON' in window ? JSON.stringify(state) : state.toSource() ;
 				var tab = b.addTab();
 				this.SessionStore.setTabState(tab, state);
@@ -2658,24 +2697,26 @@ var MultipleTabService = {
 					var remoteBrowser = aRemoteWindow.gBrowser;
 					var importedTabs = remoteService.importTabsTo(aTabs, remoteBrowser);
 					remoteService.clearSelection(remoteBrowser);
-					remoteService.getTabsArray(remoteBrowser)
-						.forEach(function(aTab) {
-							var index = importedTabs.indexOf(aTab);
-							if (index > -1) {
-								if (
-									!allSelected &&
-									selectionState[index] &&
-									selectAfter
-									) {
-									remoteService.setSelection(aTab, true);
-								}
+					var tabs = remoteService.getTabsArray(remoteBrowser);
+					for (let i = 0, maxi = tabs.length; i < maxi; i++)
+					{
+						let tab = tabs[i];
+						let index = importedTabs.indexOf(tab);
+						if (index > -1) {
+							if (
+								!allSelected &&
+								selectionState[index] &&
+								selectAfter
+								) {
+								remoteService.setSelection(tab, true);
 							}
-							else {
-								// causes error. why?
-								// remoteService.irrevocableRemoveTab(aTab, remoteBrowser);
-								remoteBrowser.removeTab(aTab, { animate : true });
-							}
-						});
+						}
+						else {
+							// causes error. why?
+							// remoteService.irrevocableRemoveTab(tab, remoteBrowser);
+							remoteBrowser.removeTab(tab, { animate : true });
+						}
+					}
 					aRemoteWindow['piro.sakura.ne.jp'].stopRendering.start();
 
 					if (aData) {
@@ -2863,23 +2904,25 @@ var MultipleTabService = {
 		var aTabs = [],
 			aTabBrowser,
 			aClone;
-		Array.slice(arguments).forEach(function(aArg) {
-			if (typeof aArg == 'boolean') {
-				aClone = aArg;
+		for (let i = 0, maxi = arguments.length; i < maxi; i++)
+		{
+			let arg = arguments[i];
+			if (typeof arg == 'boolean') {
+				aClone = arg;
 			}
-			else if (!aArg) {
-				return;
+			else if (!arg) {
+				continue;
 			}
-			else if (aArg instanceof Components.interfaces.nsIDOMNode) {
-				if (aArg.localName == 'tabbrowser')
-					aTabBrowser = aArg;
-				else if (aArg.localName == 'tab')
-					aTabs.push(aArg);
+			else if (arg instanceof Components.interfaces.nsIDOMNode) {
+				if (arg.localName == 'tabbrowser')
+					aTabBrowser = arg;
+				else if (arg.localName == 'tab')
+					aTabs.push(arg);
 			}
-			else if (typeof aArg == 'object') {
-				aTabs = aTabs.concat(aArg);
+			else if (typeof arg == 'object') {
+				aTabs = aTabs.concat(arg);
 			}
-		});
+		}
 
 		var importedTabs = [];
 		if (!aTabs.length)
@@ -2899,29 +2942,37 @@ var MultipleTabService = {
 		sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
 
 		if (targetBrowser.__multipletab__canDoWindowMove && !aClone) {// move tabs
-			aTabs.forEach(function(aTab, aIndex) {
-				var newTab = targetBrowser.addTab();
+			for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+			{
+				let tab = aTabs[i];
+				let newTab = targetBrowser.addTab();
 				importedTabs.push(newTab);
 				newTab.linkedBrowser.stop();
 				newTab.linkedBrowser.docShell;
-				targetBrowser.swapBrowsersAndCloseOther(newTab, aTab);
+				targetBrowser.swapBrowsersAndCloseOther(newTab, tab);
 				targetBrowser.setTabTitle(newTab);
-				this._duplicatedTabPostProcesses.forEach(function(aProcess) {
-					aProcess(newTab, newTab._tPos);
-				});
-			}, this);
+				for (let i = 0, maxi = this._duplicatedTabPostProcesses.length; i < maxi; i++)
+				{
+					let process = this._duplicatedTabPostProcesses[i];
+					process(newTab, newTab._tPos);
+				}
+			}
 		}
 		else { // duplicate tabs
-			aTabs.forEach(function(aTab) {
-				var newTab = targetBrowser.duplicateTab(aTab);
+			for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+			{
+				let tab = aTabs[i];
+				let newTab = targetBrowser.duplicateTab(tab);
 				importedTabs.push(newTab);
-				this._duplicatedTabPostProcesses.forEach(function(aProcess) {
-					aProcess(newTab, newTab._tPos);
-				});
-				if (!aClone) {
-					sourceService.irrevocableRemoveTab(aTab, sourceBrowser);
+				for (let i = 0, maxi = this._duplicatedTabPostProcesses.length; i < maxi; i++)
+				{
+					let process = this._duplicatedTabPostProcesses[i];
+					process(newTab, newTab._tPos);
 				}
-			}, this);
+				if (!aClone) {
+					sourceService.irrevocableRemoveTab(tab, sourceBrowser);
+				}
+			}
 		}
 
 		targetWindow['piro.sakura.ne.jp'].stopRendering.start();
@@ -3054,10 +3105,12 @@ var MultipleTabService = {
 		if (aNewState === void(0))
 			aNewState = !tabs.every(this._isTabFreezed);
 
-		aTabs.forEach(function(aTab) {
-			if (aNewState != this._isTabFreezed(aTab))
-				gBrowser.freezeTab(aTab);
-		}, this);
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			let tab = aTabs[i];
+			if (aNewState != this._isTabFreezed(tab))
+				gBrowser.freezeTab(tab);
+		}
 	},
 	_isTabFreezed : function MTS__isTabFreezed(aTab)
 	{
@@ -3073,10 +3126,12 @@ var MultipleTabService = {
 		if (aNewState === void(0))
 			aNewState = !tabs.every(this._isTabProtected);
 
-		aTabs.forEach(function(aTab) {
-			if (aNewState != this._isTabProtected(aTab))
-				gBrowser.protectTab(aTab);
-		}, this);
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			let tab = aTabs[i];
+			if (aNewState != this._isTabProtected(tab))
+				gBrowser.protectTab(tab);
+		}
 	},
 	_isTabProtected : function MTS__isTabProtected(aTab)
 	{
@@ -3092,21 +3147,23 @@ var MultipleTabService = {
 		if (aNewState === void(0))
 			aNewState = !tabs.every(this._isTabLocked);
 
-		aTabs.forEach(function(aTab) {
-			if (aNewState == this._isTabLocked(aTab)) return;
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			let tab = aTabs[i];
+			if (aNewState == this._isTabLocked(aTab)) continue;
 
 			// Tab Mix Plus, Tab Utilities
 			if ('lockTab' in gBrowser)
-				gBrowser.lockTab(aTab);
+				gBrowser.lockTab(tab);
 
 			// Super Tab Mode
 			if ('stmM' in window && 'togglePL' in stmM) {
 				if (aNewState)
-					aTab.setAttribute('isPageLocked', true);
+					tab.setAttribute('isPageLocked', true);
 				else
-					aTab.removeAttribute('isPageLocked');
+					tab.removeAttribute('isPageLocked');
 			}
-		}, this);
+		}
 	},
 	_isTabLocked : function MTS__isTabLocked(aTab)
 	{
@@ -3127,17 +3184,19 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		aTabs.forEach(function(aTab) {
-			b.pinTab(aTab);
-		}, this);
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			b.pinTab(aTabs[i]);
+		}
 	},
 	unpinTabs : function MTS_unpinTabs(aTabs)
 	{
 		if (!aTabs) return;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		aTabs.forEach(function(aTab) {
-			b.unpinTab(aTab);
-		}, this);
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			b.unpinTab(aTabs[i]);
+		}
 	},
 	isAllTabsPinned : function MTS_isAllTabsPinned(aTabs)
 	{
@@ -3193,18 +3252,20 @@ var MultipleTabService = {
 				title = title.replace(/^\s+|\s+$/g, '');
 		}
 
-		aTabs.forEach(function(aTab) {
-			this.setSelection(aTab, false);
-			TabView.moveTabTo(aTab, aGroupId);
-			if (!aTab._tabViewTabItem) // pinned tabs cannot be grouped!
-				return;
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			let tab = aTabs[i];
+			this.setSelection(tab, false);
+			TabView.moveTabTo(tab, aGroupId);
+			if (!tab._tabViewTabItem) // pinned tabs cannot be grouped!
+				continue;
 			if (!aGroupId) {
-				let newGroup = aTab._tabViewTabItem.parent;
+				let newGroup = tab._tabViewTabItem.parent;
 				if (title)
 					newGroup.setTitle(title);
 				aGroupId = newGroup.id;
 			}
-		}, this);
+		}
 	},
 	kNEW_GROUP_TITLE_BLANK : 0,
 	kNEW_GROUP_TITLE_FIRST : 1,
@@ -3233,17 +3294,20 @@ var MultipleTabService = {
 				return true;
 			});
 			var fragment = document.createDocumentFragment();
-			TabView._window.GroupItems.groupItems.forEach(function(aGroupItem) {
-				var title = aGroupItem.getTitle();
+			var items = TabView._window.GroupItems.groupItems;
+			for (let i = 0, maxi = items.length; i < maxi; i++)
+			{
+				let groupItem = items[i];
+				let title = groupItem.getTitle();
 				if (!title.length> 0 ||
-					aGroupItem.hidden ||
-					(activeGroup && activeGroup.id == aGroupItem.id))
-					return;
-				var item = document.createElement('menuitem');
+					groupItem.hidden ||
+					(activeGroup && activeGroup.id == groupItem.id))
+					continue;
+				let item = document.createElement('menuitem');
 				item.setAttribute('label', title);
-				item.setAttribute('group-id', aGroupItem.id);
+				item.setAttribute('group-id', groupItem.id);
 				fragment.appendChild(item);
-			});
+			}
 			if (fragment.hasChildNodes())
 				separator.hidden = false;
 			aPopup.insertBefore(fragment, separator);
@@ -3471,10 +3535,12 @@ var MultipleTabService = {
 			duplicatedTabs.splice(sourceBaseIndex, 0, aNewTab);
 			targetService.rearrangeBundledTabsOf(aNewTab, duplicatedTabs);
 
-			if (shouldSelectAfter)
-				duplicatedTabs.forEach(function(aTab) {
-					targetService.setSelection(aTab, true);
-				});
+			if (shouldSelectAfter) {
+				for (let i = 0, maxi = duplicatedTabs.length; i < maxi; i++)
+				{
+					targetService.setSelection(tabs[i], true);
+				}
+			}
 
 			result.target = !aCollectData ? null :
 				{
@@ -3700,8 +3766,7 @@ var MultipleTabService = {
 	// workaround for http://piro.sakura.ne.jp/latest/blosxom/mozilla/extension/treestyletab/2009-09-29_debug.htm
 	checkCachedSessionDataExpiration : function MTS_checkCachedSessionDataExpiration(aTab) 
 	{
-		var data = aTab.linkedBrowser.__SS_data || // Firefox 3.6-
-					aTab.linkedBrowser.parentNode.__SS_data; // -Firefox 3.5
+		var data = aTab.linkedBrowser.__SS_data;
 		if (data &&
 			data._tabStillLoading &&
 			aTab.getAttribute('busy') != 'true' &&
@@ -3765,9 +3830,11 @@ var MultipleTabService = {
  
 	clearUndeterminedRange : function MTS_clearUndeterminedRange(aSource) 
 	{
-		this.getTabsInUndeterminedRange(aSource).forEach(function(aTab) {
-			aTab.removeAttribute(this.kIN_UNDETERMINED_RANGE);
-		}, this);
+		var tabs = this.getTabsInUndeterminedRange(aSource);
+		for (let i = 0, maxi = tabs.length; i < maxi; i++)
+		{
+			tabs[i].removeAttribute(this.kIN_UNDETERMINED_RANGE);
+		}
 	},
   
 /* Pref Listener */ 
@@ -3812,21 +3879,25 @@ var MultipleTabService = {
 			case 'extensions.multipletab.clipboard.formats':
 				this.formats = [];
 				this.formatsTimeStamp = Date.now();
-				value.split('|').forEach(function(aPart, aIndex) {
-					try {
-						let format, label;
-						[format, label] = aPart.split('/').map(decodeURIComponent);
-						if (!format) return;
-						if (!label) label = format;
-						this.formats.push({
-							id     : aIndex + this.kCUSTOM_TYPE_OFFSET,
-							label  : label,
-							format : format
-						});
+				let (parts = value.split('|')) {
+					for (let i = 0, maxi = parts.length; i < maxi; i++)
+					{
+						let part = parts[i];
+						try {
+							let format, label;
+							[format, label] = part.split('/').map(decodeURIComponent);
+							if (!format) continue;
+							if (!label) label = format;
+							this.formats.push({
+								id     : i + this.kCUSTOM_TYPE_OFFSET,
+								label  : label,
+								format : format
+							});
+						}
+						catch(e) {
+						}
 					}
-					catch(e) {
-					}
-				}, this);
+				}
 				break;
 
 			default:
