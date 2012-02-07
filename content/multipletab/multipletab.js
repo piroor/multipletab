@@ -1023,7 +1023,7 @@ var MultipleTabService = {
 		this.overrideExtensionsOnDelayedInit(); // hacks.js
 	},
  
-	applyPlatformDefaultPrefs : function TSTUtils_applyPlatformDefaultPrefs() 
+	applyPlatformDefaultPrefs : function MTS_applyPlatformDefaultPrefs() 
 	{
 		var OS = this.XULAppInfo.OS;
 		var processed = {};
