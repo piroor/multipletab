@@ -1504,6 +1504,11 @@ var MultipleTabService = {
 				let tabs = b.mTabContainer.childNodes;
 				let lastManuallySelectedTab = this.getLastManuallySelectedTab(b);
 				if (lastManuallySelectedTab) {
+					/**
+					 * If it is detected from tabbrowser.selectedTab,
+					 * we have to save it as the manually selected tab.
+					 */
+					this.lastManuallySelectedTab = lastManuallySelectedTab;
 					let inSelection = false;
 					let clickedTab = tab;
 					let tabs = this.getTabsArray(b);
