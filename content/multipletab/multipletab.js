@@ -1009,10 +1009,18 @@ var MultipleTabService = {
 
 		var b = document.getElementById('content');
 		if (b && 'swapBrowsersAndCloseOther' in b) {
-			eval('window.BrowserStartup = '+window.BrowserStartup.toSource().replace(
-				'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
-				'if (!MultipleTabService.tearOffSelectedTabsFromRemote()) { $& }'
-			));
+			if ('gBrowserInit' in window && 'onLoad' in gBrowserInit) { // Firefox 16 and later (after https://bugzilla.mozilla.org/show_bug.cgi?id=731926 )
+				eval('gBrowserInit.onLoad = '+gBrowserInit.onLoad.toSource().replace(
+					'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
+					'if (!MultipleTabService.tearOffSelectedTabsFromRemote()) { $& }'
+				));
+			}
+			else if ('BrowserStartup' in window) { // legacy code for Firefox 15 and older
+				eval('window.BrowserStartup = '+window.BrowserStartup.toSource().replace(
+					'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
+					'if (!MultipleTabService.tearOffSelectedTabsFromRemote()) { $& }'
+				));
+			}
 		}
 
 		this.overrideExtensionsOnPreInit(); // hacks.js
