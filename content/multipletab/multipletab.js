@@ -186,9 +186,7 @@ var MultipleTabService = {
 	get IOService() 
 	{
 		if (!this._IOService) {
-			this._IOService = Components
-					.classes['@mozilla.org/network/io-service;1']
-					.getService(Components.interfaces.nsIIOService);
+			this._IOService = Services.io;
 		}
 		return this._IOService;
 	},
@@ -197,9 +195,7 @@ var MultipleTabService = {
 	get PromptService() 
 	{
 		if (!this._PromptService) {
-			this._PromptService = Components
-					.classes['@mozilla.org/embedcomp/prompt-service;1']
-					.getService(Components.interfaces.nsIPromptService);
+			this._PromptService = Services.prompt;
 		}
 		return this._PromptService;
 	},
@@ -207,23 +203,17 @@ var MultipleTabService = {
  
 	get EffectiveTLD() 
 	{
-		if (!('_EffectiveTLD' in this)) {
-			this._EffectiveTLD = 'nsIEffectiveTLDService' in Components.interfaces ?
-				Components
-					.classes['@mozilla.org/network/effective-tld-service;1']
-					.getService(Components.interfaces.nsIEffectiveTLDService) :
-				null ;
+		if (!this._EffectiveTLD) {
+			this._EffectiveTLD = Services.eTLD;
 		}
 		return this._EffectiveTLD;
 	},
-//	_EffectiveTLD : null,
+	_EffectiveTLD : null,
  
 	get XULAppInfo()
 	{
 		if (!this._XULAppInfo) {
-			this._XULAppInfo = Components.classes['@mozilla.org/xre/app-info;1']
-								.getService(Components.interfaces.nsIXULAppInfo)
-								.QueryInterface(Components.interfaces.nsIXULRuntime);
+			this._XULAppInfo = Services.appinfo;
 		}
 		return this._XULAppInfo;
 	},
