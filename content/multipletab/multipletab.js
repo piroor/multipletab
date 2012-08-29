@@ -3252,7 +3252,7 @@ var MultipleTabService = {
 					break;
 			}
 			if (title)
-				title = title.replace(/^\s+|\s+$/g, '');
+				title = title.trim();
 		}
 
 		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
