@@ -3318,7 +3318,8 @@ var MultipleTabService = {
 	},
 	get canMoveTabsToGroup()
 	{
-		return 'TabView' in window && 'moveTabTo' in TabView && '_initFrame' in TabView;
+		return 'TabView' in window && 'moveTabTo' in TabView && '_initFrame' in TabView &&
+			TabView.firstUseExperienced;
 	},
    
 /* Move and Duplicate multiple tabs on Drag and Drop */ 
