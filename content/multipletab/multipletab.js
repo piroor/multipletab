@@ -1323,7 +1323,6 @@ var MultipleTabService = {
 				if (
 					this.isSelected(aEvent.originalTarget) &&
 					this.allowMoveMultipleTabs &&
-
 					!b.movingSelectedTabs &&
 					(!('UndoTabService' in window) || UndoTabService.isUndoable())
 					)
@@ -1735,6 +1734,10 @@ var MultipleTabService = {
  
 	startTabsDrag : function MTS_startTabsDrag(aEvent) 
 	{
+		var movingTabs = this.getSelectedTabs();
+		if (!movingTabs.length)
+			return false;
+
 		/* PUBLIC API */
 		/* any addon can cancel Multiple Tab Handler's handling of tab draggings */
 		var event = aEvent.originalTarget.ownerDocument.createEvent('Events');
@@ -1747,7 +1750,13 @@ var MultipleTabService = {
 		if (!canDrag)
 			return false;
 
-		window['piro.sakura.ne.jp'].tabsDragUtils.startTabsDrag(aEvent, this.getSelectedTabs());
+		// for animation effect, we must collect selected tabs at first.
+		if (window['piro.sakura.ne.jp'].tabsDragUtils.shouldAnimateDragggedTabs(aEvent)) {
+			let focusedTab = this.getTabBrowserFromChild(movingTabs[0]).selectedTab;
+			this.rearrangeBundledTabsOf(focusedTab, focusedTab._tPos, movingTabs);
+		}
+
+		window['piro.sakura.ne.jp'].tabsDragUtils.startTabsDrag(aEvent, movingTabs);
 		return true;
 	},
  
