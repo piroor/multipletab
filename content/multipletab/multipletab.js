@@ -1749,7 +1749,7 @@ var MultipleTabService = {
 			return false;
 
 		// for animation effect, we must collect selected tabs at first.
-		if (window['piro.sakura.ne.jp'].tabsDragUtils.shouldAnimateDragggedTabs(aEvent)) {
+		if (window['piro.sakura.ne.jp'].tabsDragUtils.canAnimateDraggedTabs(aEvent)) {
 			let focusedTab = this.getTabBrowserFromChild(movingTabs[0]).selectedTab;
 			this.rearrangeBundledTabsOf(focusedTab, focusedTab._tPos, movingTabs);
 		}
