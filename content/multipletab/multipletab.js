@@ -958,10 +958,10 @@ var MultipleTabService = {
 		if ('internalSave' in window) {
 			eval('window.internalSave = '+window.internalSave.toSource().replace(
 				'var useSaveDocument =',
-				'if (aChosenData && "saveAsType" in aChosenData) {' +
-				'  saveAsType = aChosenData.saveAsType;' +
-				'  saveMode = SAVEMODE_FILEONLY | SAVEMODE_COMPLETE_TEXT;' +
-				'}' +
+				'if (aChosenData && "saveAsType" in aChosenData) {\n' +
+				'  saveAsType = aChosenData.saveAsType;\n' +
+				'  saveMode = SAVEMODE_FILEONLY | SAVEMODE_COMPLETE_TEXT;\n' +
+				'}\n' +
 				'$&'
 			).replace(
 				/(targetContentType: )(saveAsType == kSaveAsType_Text)/,
@@ -1071,11 +1071,11 @@ var MultipleTabService = {
 			'{ return MultipleTabService.onDuplicateTab(function() {'
 		).replace(
 			/(\}\)?)$/,
-			'  },' +
-			'  this,' +
-			'  aTab,' +
-			'  aSourceEvent' +
-			');' +
+			'  },\n' +
+			'  this,\n' +
+			'  aTab,\n' +
+			'  aSourceEvent\n' +
+			');\n' +
 			'$1'
 		));
 
