@@ -5,9 +5,8 @@ MultipleTabService.overrideExtensionsOnPreInit = function MTS_overrideExtensions
 		eval('window.TG_Tab_SSTabRestoring_Event = '+
 			window.TG_Tab_SSTabRestoring_Event.toSource().replace(
 				'{',
-				<><![CDATA[$&
-					if (MultipleTabService.duplicatingTabs) return;
-				]]></>
+				'{' +
+				'  if (MultipleTabService.duplicatingTabs) return;'
 			)
 		);
 		this.registerDuplicatedTabPostProcess(function(aTab, aIndex) {
@@ -72,16 +71,14 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 		eval('TG_Group_DnD_Observer.onDrop = '+
 			TG_Group_DnD_Observer.onDrop.toSource().replace(
 				/(TG_Move_To_Group\([^\)]+\))/,
-				<><![CDATA[
-					var info = {};
-					var tabs = MultipleTabService.getBundledTabsOf(tab, info);
-					if (tabs.length) {
-						tabs.forEach(function(tab) {
-							$1;
-						});
-						return;
-					}
-				]]></>
+				'var info = {};' +
+				'var tabs = MultipleTabService.getBundledTabsOf(tab, info);' +
+				'if (tabs.length) {' +
+				'  tabs.forEach(function(tab) {' +
+				'    $1;' +
+				'  });' +
+				'  return;' +
+				'}'
 			)
 		);
 		this.registerClearTabValueKey('tg_gname');
@@ -96,17 +93,16 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 			eval('sessionObserver.onDrop = '+
 				sessionObserver.onDrop.toSource().replace(
 					'{',
-					<><![CDATA[$&
-						var info = {};
-						var tabs = MultipleTabService.getBundledTabsOf(arguments[2].sourceNode, info);
-						if (tabs.length) {
-							var wadid = arguments[0].target.getAttribute('wad_id');
-							tabs.forEach(function(aTab) {
-								addURLtoSession(aTab.linkedBrowser.currentURI.spec, wadid);
-							});
-							return;
-						}
-					]]></>
+					'{' +
+					'  var info = {};' +
+					'  var tabs = MultipleTabService.getBundledTabsOf(arguments[2].sourceNode, info);' +
+					'  if (tabs.length) {' +
+					'    var wadid = arguments[0].target.getAttribute("wad_id");' +
+					'    tabs.forEach(function(aTab) {' +
+					'      addURLtoSession(aTab.linkedBrowser.currentURI.spec, wadid);' +
+					'    });' +
+					'    return;' +
+					'  }'
 				)
 			);
 	}

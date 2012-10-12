@@ -958,12 +958,11 @@ var MultipleTabService = {
 		if ('internalSave' in window) {
 			eval('window.internalSave = '+window.internalSave.toSource().replace(
 				'var useSaveDocument =',
-				<![CDATA[
-					if (aChosenData && 'saveAsType' in aChosenData) {
-						saveAsType = aChosenData.saveAsType;
-						saveMode = SAVEMODE_FILEONLY | SAVEMODE_COMPLETE_TEXT;
-					}
-				$&]]>
+				'if (aChosenData && "saveAsType" in aChosenData) {' +
+				'  saveAsType = aChosenData.saveAsType;' +
+				'  saveMode = SAVEMODE_FILEONLY | SAVEMODE_COMPLETE_TEXT;' +
+				'}' +
+				'$&'
 			).replace(
 				/(targetContentType: )(saveAsType == kSaveAsType_Text)/,
 				'$1 (!aChosenData || "saveAsType" in aChosenData) && $2'
@@ -1072,13 +1071,12 @@ var MultipleTabService = {
 			'{ return MultipleTabService.onDuplicateTab(function() {'
 		).replace(
 			/(\}\)?)$/,
-			<![CDATA[
-					},
-					this,
-					aTab,
-					aSourceEvent
-				);
-			$1]]>
+			'  },' +
+			'  this,' +
+			'  aTab,' +
+			'  aSourceEvent' +
+			');' +
+			'$1'
 		));
 
 		if ('swapBrowsersAndCloseOther' in aTabBrowser) {
