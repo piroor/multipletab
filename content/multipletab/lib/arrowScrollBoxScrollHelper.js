@@ -19,7 +19,7 @@
      // 1st argument: DOMNode or ID of an element
      // 2nd argument: DOMNode, ID of an element, or local name of a child element
 
- license: The MIT License, Copyright (c) 2009 SHIMODA "Piro" Hiroshi
+ license: The MIT License, Copyright (c) 2009 YUKI "Piro" Hiroshi
    http://github.com/piroor/fxaddonlibs/blob/master/license.txt
  original:
    http://github.com/piroor/fxaddonlibs/blob/master/arrowScrollBoxScrollHelper.js

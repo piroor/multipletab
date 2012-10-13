@@ -6,7 +6,7 @@
                    em:id="multipletab@piro.sakura.ne.jp"
                    em:name="Multiple Tab Handler"
                    em:version="0.7.2012020901"
-                   em:creator="SHIMODA Hiroshi"
+                   em:creator="YUKI &quot;Piro&quot; Hiroshi"
                    em:description="Provides feature to close multiple tabs."
                    em:homepageURL="http://piro.sakura.ne.jp/xul/multipletab/"
                    em:iconURL="chrome://multipletab/content/icon.png"
@@ -22,7 +22,7 @@
                        em:name="Multiple Tab Handler"
                        em:description="Provides features to close (, reload, etc.) multiple tabs at once."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
-                       em:creator="SHIMODA Hiroshi">
+                       em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
       </RDF:Description>
     </em:localized>
@@ -31,7 +31,7 @@
                        em:name="マルチプルタブハンドラ"
                        em:description="複数のタブをまとめて閉じたり再読み込みしたりといった機能を加えます。"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html"
-                       em:creator="SHIMODA Hiroshi">
+                       em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
       </RDF:Description>
     </em:localized>
@@ -40,7 +40,7 @@
                        em:name="Multiple Tab Handler"
                        em:description="Lehetővé teszi több lap egyidejű bezárását, újratöltését, ..."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
-                       em:creator="SHIMODA Hiroshi">
+                       em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
 		<em:translator>Mikes Kaszmán István (hu-HU locale)</em:translator>
       </RDF:Description>
@@ -50,7 +50,7 @@
                        em:name="Multiple Tab Handler"
                        em:description="Fornisce funzionalità per la gestione contemporanea di più schede"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
-                       em:creator="SHIMODA Hiroshi">
+                       em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
 		<em:translator>Godai71.Extenzilla (it-IT locale)</em:translator>
       </RDF:Description>
@@ -60,7 +60,7 @@
                        em:name="Multiple Tab Handler (Manipulador múltiple de Pestañas)"
                        em:description="Implementa la habilidad de seleccionar múltiples pestañas para cerrarlas, recargarlas, marcarlas, moverlas o duplicarlas todas a la vez"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
-                       em:creator="SHIMODA Hiroshi">
+                       em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
 		<em:translator>tito (es-ES locale)</em:translator>
       </RDF:Description>
@@ -70,7 +70,7 @@
                        em:name="Multiple Tab Handler (Обработка группы вкладок)"
                        em:description="Обеспечивает возможность закрытия, перезагрузки, сохранения и т. д. группы вкладок одним действием."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
-                       em:creator="SHIMODA Hiroshi">
+                       em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
 		<em:translator>L'Autour (ru-RU locale)</em:translator>
 		<em:translator>Netanyahu (ru-RU locale)</em:translator>
@@ -81,7 +81,7 @@
                        em:name="Multiple Tab Handler (複數分頁處理)"
                        em:description="對複數分頁提供同時關閉或重新載入等功能。"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
-                       em:creator="SHIMODA Hiroshi">
+                       em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
 		<em:translator>Tsprajna (zh-TW locale)</em:translator>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
@@ -92,7 +92,7 @@
                        em:name="Multiple Tab Handler (多标签处理)"
                        em:description="对多个标签提供同时关闭或刷新等功能。"
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
-                       em:creator="SHIMODA Hiroshi">
+                       em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
 		<em:translator>hzhbest (zh-CN locale)</em:translator>
       </RDF:Description>
@@ -102,7 +102,7 @@
                        em:name="Multiple Tab Handler"
                        em:description="Umożliwia operacje (zamknięcie, odświeżenie itp.) wielu kart na raz."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
-                       em:creator="SHIMODA Hiroshi">
+                       em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
 		<em:translator>Jacek Chrząszcz (pl-PL locale)</em:translator>
       </RDF:Description>
@@ -112,7 +112,7 @@
                        em:name="Multiple Tab Handler"
                        em:description="Fügt Features zum gleichzeitigen Schließen, Neuladen, etc. mehrerer Tabs hinzu."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
-                       em:creator="SHIMODA Hiroshi">
+                       em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
 		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
       </RDF:Description>
@@ -122,7 +122,7 @@
                        em:name="Multiple Tab Handler"
                        em:description="Permet de sélectionner plusieurs onglets à la fois et de choisir une action à exécuter (fermer, dupliquer, actualiser, etc.)."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
-                       em:creator="SHIMODA Hiroshi">
+                       em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
 		<em:translator>Jean-Philippe Fleury (fr locale)</em:translator>
       </RDF:Description>
