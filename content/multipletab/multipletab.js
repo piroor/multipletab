@@ -2456,6 +2456,11 @@ var MultipleTabService = {
 		var folder = aFolder || this.selectFolder(this.bundle.getString('saveTabs_chooseFolderTitle'));
 		if (!folder) return;
 
+		if (!folder.exists()) {
+			window.alert('Unexpected error: selected folder "' + folder.path + '" does not exist!');
+			return;
+		}
+
 		var fileExistence = {};
 		var processTab = function processTab(aTab) {
 			var b = aTab.linkedBrowser;
@@ -2524,7 +2529,17 @@ var MultipleTabService = {
 		if (downloadDir) picker.displayDirectory = downloadDir;
 		picker.appendFilters(picker.filterAll);
 		if (picker.show() == picker.returnOK) {
-			return picker.file.QueryInterface(Components.interfaces.nsILocalFile);
+			let folder = picker.file.QueryInterface(Components.interfaces.nsILocalFile);
+			// Windows's file picker sometimes returns wrong path like
+			// "c:\folder\folder" even if I actually selected "c:\folder".
+			// However, when the "OK" button is chosen, any existing folder
+			// must be selected. So, I find existing ancestor folder from
+			// the path.
+			while (!folder.exists() && folder.parent)
+			{
+				folder = folder.parent;
+			}
+			return folder;
 		}
 		return null;
 	},
