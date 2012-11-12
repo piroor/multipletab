@@ -2427,7 +2427,8 @@ var MultipleTabService = {
  
 	saveTabs : function MTS_saveTabs(aTabs, aSaveType, aFolder) 
 	{
-		if (!aTabs) return;
+		if (!aTabs)
+			return this.Deferred.next(function() {});
 
 		aTabs = this.filterBlankTabs(aTabs);
 
@@ -2441,7 +2442,7 @@ var MultipleTabService = {
 		var self = this;
 
 		if (aTabs.length == 1) {
-			this.ensureLoaded(aTabs[0])
+			return this.ensureLoaded(aTabs[0])
 				.next(function(aLoaded) {
 					var saveType = aSaveType;
 					if (aSaveType & self.kSAVE_TYPE_TEXT &&
@@ -2450,21 +2451,25 @@ var MultipleTabService = {
 					}
 					self.saveOneTab(aTabs[0], null, aSaveType);
 				});
-			return;
 		}
 
-		var folder = aFolder || this.selectFolder(this.bundle.getString('saveTabs_chooseFolderTitle'));
-		if (!folder) return;
+		if (!aFolder) {
+			return this.selectFolder(this.bundle.getString('saveTabs_chooseFolderTitle'))
+					.next(function(aFolder) {
+						if (aFolder)
+							return self.saveTabs(aTabs, aSaveType, aFolder);
+					});
+		}
 
-		if (!folder.exists()) {
-			window.alert('Unexpected error: selected folder "' + folder.path + '" does not exist!');
-			return;
+		if (!aFolder.exists()) {
+			window.alert('Unexpected error: selected folder "' + aFolder.path + '" does not exist!');
+			return this.Deferred.next(function() {});
 		}
 
 		var fileExistence = {};
 		var processTab = function processTab(aTab) {
 			var b = aTab.linkedBrowser;
-			var destFile = folder.clone();
+			var destFile = aFolder.clone();
 			var uri = self.getCurrentURIOfTab(aTab);
 			var shouldConvertToText = self.shouldConvertTabToText(aTab, aSaveType);
 			var fileInfo = new FileInfo(aTab.label);
@@ -2486,7 +2491,7 @@ var MultipleTabService = {
 			var existingFile;
 			do {
 				fileName = fileName ? base+'('+(count++)+')'+extension : base+extension ;
-				destFile = folder.clone();
+				destFile = aFolder.clone();
 				destFile.append(fileName);
 			}
 			while (destFile.exists() || destFile.path in fileExistence);
@@ -2499,12 +2504,13 @@ var MultipleTabService = {
 				self.saveOneTab(aTab, destFile, saveType);
 			}, 200);
 		};
-		aTabs.forEach(function(aTab) {
-			this.ensureLoaded(aTab)
-				.next(function(aLoaded) {
-					processTab(aTab);
-				});
-		}, this);
+		var deferreds = aTabs.map(function(aTab) {
+				return this.ensureLoaded(aTab)
+						.next(function(aLoaded) {
+							processTab(aTab);
+						});
+			}, this);
+		return this.Deferred.parallel(deferreds);
 	},
 	
 	kSAVE_TYPE_FILE     : 0, 
@@ -2528,20 +2534,39 @@ var MultipleTabService = {
 		var downloadDir = this.getPref('browser.download.dir', Components.interfaces.nsILocalFile);
 		if (downloadDir) picker.displayDirectory = downloadDir;
 		picker.appendFilters(picker.filterAll);
-		if (picker.show() == picker.returnOK) {
-			let folder = picker.file.QueryInterface(Components.interfaces.nsILocalFile);
+
+		function findExistingFolder(aFile) {
 			// Windows's file picker sometimes returns wrong path like
 			// "c:\folder\folder" even if I actually selected "c:\folder".
 			// However, when the "OK" button is chosen, any existing folder
 			// must be selected. So, I find existing ancestor folder from
 			// the path.
-			while (!folder.exists() && folder.parent)
+			while (aFile && !aFile.exists() && aFile.parent)
 			{
-				folder = folder.parent;
+				aFile = aFile.parent;
 			}
-			return folder;
+			return aFile;
 		}
-		return null;
+
+		if (typeof picker.open != 'function') { // Firefox 18 and olders
+			let folder = (picker.show() == picker.returnOK) ?
+							picker.file.QueryInterface(Components.interfaces.nsILocalFile) : null ;
+			return this.Deferred.next(function() {
+				return findExistingFolder(folder);
+			});
+		}
+
+		var deferred = new this.Deferred();
+		picker.open(function(aResult) {
+			if (aResult == picker.returnOK) {
+				let folder = picker.file.QueryInterface(Components.interfaces.nsILocalFile);
+				deferred.call(findExistingFolder(folder));
+			}
+			else {
+				deferred.call(null);
+			}
+		});
+		return deferred;
 	},
  
 	saveOneTab : function MTS_saveOneTab(aTab, aDestFile, aSaveType) 
