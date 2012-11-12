@@ -2539,19 +2539,37 @@ var MultipleTabService = {
 			autoChosen.saveAsType = kSaveAsType_Text;
 		}
 
-		internalSave(
-			uri.spec,
-			(aSaveType != this.kSAVE_TYPE_FILE ? b.contentDocument : null ),
-			null, // default file name
-			null, // content disposition
-			b.contentDocument.contentType,
-			false, // should bypass cache?
-			null, // title of picker
-			autoChosen,
-			b.referringURI, // referrer
-			true, // skip prompt?
-			null // cache key
-		);
+		if (internalSave.length < 12) { // Firefox 16 and olders
+			internalSave(
+				uri.spec,
+				(aSaveType != this.kSAVE_TYPE_FILE ? b.contentDocument : null ),
+				null, // default file name
+				null, // content disposition
+				b.contentDocument.contentType,
+				false, // should bypass cache?
+				null, // title of picker
+				autoChosen,
+				b.referringURI, // referrer
+				true, // skip prompt?
+				null // cache key
+			);
+		}
+		else {
+			internalSave(
+				uri.spec,
+				(aSaveType != this.kSAVE_TYPE_FILE ? b.contentDocument : null ),
+				null, // default file name
+				null, // content disposition
+				b.contentDocument.contentType,
+				false, // should bypass cache?
+				null, // title of picker
+				autoChosen,
+				b.referringURI, // referrer
+				document, // initiating document
+				true, // skip prompt?
+				null // cache key
+			);
+		}
 	},
   
 	addBookmarkFor : function MTS_addBookmarkFor(aTabs, aFolderName) 
