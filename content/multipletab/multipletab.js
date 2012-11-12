@@ -2420,7 +2420,7 @@ var MultipleTabService = {
 			this.ensureLoaded(tab)
 				.next(function(aLoaded) {
 					if (!aLoaded)
-						b.reload();
+						tab.linkedBrowser.reload();
 				});
 		}
 	},
