@@ -2557,7 +2557,7 @@ var MultipleTabService = {
 		}
 
 		var deferred = new this.Deferred();
-		picker.open(function(aResult) {
+		picker.open({ done: function(aResult) {
 			if (aResult == picker.returnOK) {
 				let folder = picker.file.QueryInterface(Components.interfaces.nsILocalFile);
 				deferred.call(findExistingFolder(folder));
@@ -2565,7 +2565,7 @@ var MultipleTabService = {
 			else {
 				deferred.call(null);
 			}
-		});
+		}});
 		return deferred;
 	},
  
