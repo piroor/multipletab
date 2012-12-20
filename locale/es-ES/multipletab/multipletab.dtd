@@ -77,7 +77,7 @@
 <!ENTITY config.clipboardFormatType.remove.tooltip "Remover este formato">
 <!ENTITY config.clipboardFormatType.default.label  "Nombre">
 <!ENTITY config.clipboardFormatType.default.format "Formato">
-<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;EOL&#x25;=Line Feed">
+<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;TAB&#x25;=Tab, &#x25;EOL&#x25;=Line Feed">
 
 <!ENTITY config.tabs.selectionMenu    "Menú de selección de pestañas">
 <!ENTITY config.selectionMenu.caption "Items disponibles en el menú para las pestañas seleccionadas">

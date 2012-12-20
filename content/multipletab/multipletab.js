@@ -3151,6 +3151,7 @@ var MultipleTabService = {
 								.replace(/%KEYWORDS_HTML(?:IFIED)?%/gi, self._escape(keywords))
 								.replace(/%UTC_TIME%/gi, timeUTC)
 								.replace(/%LOCAL_TIME%/gi, timeLocal)
+								.replace(/%TAB%/gi, '\t')
 								.replace(/%EOL%/gi, self.lineFeed);
 					}, self);
 				if (stringToCopy.length > 1)

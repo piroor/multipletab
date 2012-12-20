@@ -77,7 +77,7 @@
 <!ENTITY config.clipboardFormatType.remove.tooltip "Usuń ten format">
 <!ENTITY config.clipboardFormatType.default.label  "Nazwa">
 <!ENTITY config.clipboardFormatType.default.format "Format">
-<!ENTITY config.clipboardFormatType.description    "Dostępne skróty dla formatów: &#x25;URL&#x25;=URL strony, &#x25;TITLE&#x25;=tytuł strony, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=URL zakodowany dla HTML, &#x25;TITLE_HTMLIFIED&#x25;=tytuł zakodowany dla HTML, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;EOL&#x25;=koniec wiersza">
+<!ENTITY config.clipboardFormatType.description    "Dostępne skróty dla formatów: &#x25;URL&#x25;=URL strony, &#x25;TITLE&#x25;=tytuł strony, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=URL zakodowany dla HTML, &#x25;TITLE_HTMLIFIED&#x25;=tytuł zakodowany dla HTML, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;TAB&#x25;=Tab, &#x25;EOL&#x25;=koniec wiersza">
 
 <!ENTITY config.tabs.selectionMenu    "Menu wyboru kart">
 <!ENTITY config.selectionMenu.caption "Dostępne elementy menu wyboru kart">
