@@ -13,7 +13,7 @@ locale	multipletab	ja	jar:chrome/multipletab.jar!/locale/ja/multipletab/
 locale	multipletab	hu-HU	jar:chrome/multipletab.jar!/locale/hu-HU/multipletab/
 locale	multipletab	it-IT	jar:chrome/multipletab.jar!/locale/it-IT/multipletab/
 locale	multipletab	es-ES	jar:chrome/multipletab.jar!/locale/es-ES/multipletab/
-locale	multipletab	ru-RU	jar:chrome/multipletab.jar!/locale/ru-RU/multipletab/
+locale	multipletab	ru	jar:chrome/multipletab.jar!/locale/ru/multipletab/
 locale	multipletab	zh-TW	jar:chrome/multipletab.jar!/locale/zh-TW/multipletab/
 locale	multipletab	zh-CN	jar:chrome/multipletab.jar!/locale/zh-CN/multipletab/
 locale	multipletab	pl-PL	jar:chrome/multipletab.jar!/locale/pl-PL/multipletab/
