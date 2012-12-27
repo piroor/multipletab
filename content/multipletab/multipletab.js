@@ -3297,23 +3297,39 @@ var MultipleTabService = {
 	// Tab suspending commands 
 	//   Suspend Tab http://piro.sakura.ne.jp/xul/suspendtab/
 	//     SuspendTab.suspend, SuspendTab.resume
+	//   UnloadTab https://addons.mozilla.org/firefox/addon/unloadtab/
+	//     unloadTabObj.tabUnload, unloadTabObj.tabRestore
 	suspendTabs : function MTS_suspendTabs(aTabs) 
 	{
 		if (!aTabs) return;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
-		{
-			SuspendTab.suspend(aTabs[i]); // Suspend Tab
-		}
+		aTabs.forEach(
+			'SuspendTab' in window ? // Suspend Tab
+				function(aTab) {
+					SuspendTab.suspend(aTab);
+				} :
+			'unloadTabObj' in window ? // UnloadTab
+				function(aTab) {
+					unloadTabObj.tabUnload(aTab, { bypassCheck: true });
+				} :
+				function() {}
+		);
 	},
 	resumeTabs : function MTS_resumeTabs(aTabs)
 	{
 		if (!aTabs) return;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
-		{
-			SuspendTab.resume(aTabs[i]); // Suspend Tab
-		}
+		aTabs.forEach(
+			'SuspendTab' in window ? // Suspend Tab
+				function(aTab) {
+					SuspendTab.resume(aTab);
+				} :
+			'unloadTabObj' in window ? // UnloadTab
+				function(aTab) {
+					unloadTabObj.tabRestore(aTab);
+				} :
+				function() {}
+		);
 	},
 	isAllTabsSuspended : function MTS_isAllTabsSuspended(aTabs)
 	{
@@ -3330,16 +3346,23 @@ var MultipleTabService = {
 	_isTabSuspended : function MTS__isTabSuspended(aTab)
 	{
 		return (
-			aTab.hasAttribute('pending') // Suspend Tab
+			aTab.hasAttribute('pending') || // Suspend Tab
+			aTab.hasAttribute('uT_tabUnload') // UnloadTab
 		);
 	},
 	get canSuspendTab()
 	{
 		return (
-			// Suspend Tab
-			'SuspendTab' in window &&
-			typeof SuspendTab.suspend == 'function' &&
-			typeof SuspendTab.resume == 'function'
+			( // Suspend Tab
+				'SuspendTab' in window &&
+				typeof SuspendTab.suspend == 'function' &&
+				typeof SuspendTab.resume == 'function'
+			) ||
+			( // UnloadTab
+				'unloadTabObj' in window &&
+				typeof unloadTabObj.tabUnload == 'function' &&
+				typeof unloadTabObj.tabRestore == 'function'
+			)
 		);
 	},
  
