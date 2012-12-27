@@ -7,9 +7,11 @@
 <!ENTITY popup.selection.clipboard     "URIをコピー">
 <!ENTITY popup.selection.saveTabs      "ファイルとして保存">
 <!ENTITY popup.selection.printTabs     "印刷">
-<!ENTITY popup.selection.freezeTabs  "タブを凍結">
-<!ENTITY popup.selection.protectTabs "タブを保護">
-<!ENTITY popup.selection.lockTabs    "タブをロック">
+<!ENTITY popup.selection.freezeTabs    "タブを凍結">
+<!ENTITY popup.selection.protectTabs   "タブを保護">
+<!ENTITY popup.selection.lockTabs      "タブをロック">
+<!ENTITY popup.selection.suspendTabs   "タブをサスペンド">
+<!ENTITY popup.selection.resumeTabs    "タブを復帰">
 <!-- from http://mxr.mozilla.org/l10n-central/source/ja/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "タブをピン留め">
 <!ENTITY popup.selection.unpinTabs       "タブのピン留めを外す">

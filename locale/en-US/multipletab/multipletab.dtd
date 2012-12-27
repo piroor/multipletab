@@ -1,15 +1,17 @@
-<!ENTITY popup.selection.removeTabs  "Close Selected Tabs">
-<!ENTITY popup.selection.removeOther "Close Other Tabs">
-<!ENTITY popup.selection.reloadTabs  "Reload Selected Tabs">
-<!ENTITY popup.selection.addBookmark "Bookmark Selected Tabs to New Folder">
+<!ENTITY popup.selection.removeTabs    "Close Selected Tabs">
+<!ENTITY popup.selection.removeOther   "Close Other Tabs">
+<!ENTITY popup.selection.reloadTabs    "Reload Selected Tabs">
+<!ENTITY popup.selection.addBookmark   "Bookmark Selected Tabs to New Folder">
 <!ENTITY popup.selection.duplicateTabs "Duplicate Selected Tabs">
-<!ENTITY popup.selection.splitWindow "Move to New Window">
-<!ENTITY popup.selection.clipboard   "Copy URIs of Selected Tabs">
+<!ENTITY popup.selection.splitWindow   "Move to New Window">
+<!ENTITY popup.selection.clipboard     "Copy URIs of Selected Tabs">
 <!ENTITY popup.selection.saveTabs      "Save Selected Tabs as files">
 <!ENTITY popup.selection.printTabs     "Print Selected Tabs">
-<!ENTITY popup.selection.freezeTabs  "Freeze Tab">
-<!ENTITY popup.selection.protectTabs "Protect Tab">
-<!ENTITY popup.selection.lockTabs    "Lock Tab">
+<!ENTITY popup.selection.freezeTabs    "Freeze Tabs">
+<!ENTITY popup.selection.protectTabs   "Protect Tabs">
+<!ENTITY popup.selection.lockTabs      "Lock Tabs">
+<!ENTITY popup.selection.suspendTabs   "Suspend Tabs">
+<!ENTITY popup.selection.resumeTabs    "Resume Tabs">
 <!-- from http://mxr.mozilla.org/mozilla-central/source/browser/locales/en-US/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "Pin as App Tab">
 <!ENTITY popup.selection.unpinTabs       "Unpin Tab">

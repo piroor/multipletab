@@ -10,6 +10,8 @@
 <!ENTITY popup.selection.freezeTabs  "Zmróź kartę">
 <!ENTITY popup.selection.protectTabs "Chroń kartę">
 <!ENTITY popup.selection.lockTabs    "Zablokuj kartę">
+<!ENTITY popup.selection.suspendTabs   "Suspend Tabs">
+<!ENTITY popup.selection.resumeTabs    "Resume Tabs">
 <!-- from http://mxr.mozilla.org/l10n-central/source/pl/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "Przypnij jako kartę aplikacji">
 <!ENTITY popup.selection.unpinTabs       "Odepnij kartę">

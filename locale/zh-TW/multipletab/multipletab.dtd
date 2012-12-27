@@ -10,6 +10,8 @@
 <!ENTITY popup.selection.freezeTabs  "保護並鎖定分頁">
 <!ENTITY popup.selection.protectTabs "保護分頁">
 <!ENTITY popup.selection.lockTabs    "鎖定分頁">
+<!ENTITY popup.selection.suspendTabs   "Suspend Tabs">
+<!ENTITY popup.selection.resumeTabs    "Resume Tabs">
 <!-- from http://mxr.mozilla.org/l10n-central/source/zh-TW/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "釘選成應用程式分頁">
 <!ENTITY popup.selection.unpinTabs       "還原成普通分頁">

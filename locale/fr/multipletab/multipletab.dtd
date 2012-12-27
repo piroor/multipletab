@@ -7,9 +7,11 @@
 <!ENTITY popup.selection.clipboard   "Copier l'adresse de chaque onglet sélectionné">
 <!ENTITY popup.selection.saveTabs      "Enregistrer les onglets sélectionnés en tant que fichiers">
 <!ENTITY popup.selection.printTabs     "Imprimer les onglets sélectionnés">
-<!ENTITY popup.selection.freezeTabs  "Geler l'onglet">
-<!ENTITY popup.selection.protectTabs "Protéger l'onglet">
-<!ENTITY popup.selection.lockTabs    "Verrouiller l'onglet">
+<!ENTITY popup.selection.freezeTabs    "Geler l'onglet">
+<!ENTITY popup.selection.protectTabs   "Protéger l'onglet">
+<!ENTITY popup.selection.lockTabs      "Verrouiller l'onglet">
+<!ENTITY popup.selection.suspendTabs   "Suspend Tabs">
+<!ENTITY popup.selection.resumeTabs    "Resume Tabs">
 <!-- from ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/latest-4.0/linux-i686/xpi/fr.xpi -->
 <!ENTITY popup.selection.pinTabs         "Épingler cet onglet">
 <!ENTITY popup.selection.unpinTabs       "Relâcher l'onglet">

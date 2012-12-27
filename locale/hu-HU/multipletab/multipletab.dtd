@@ -10,6 +10,8 @@
 <!ENTITY popup.selection.freezeTabs  "Lapfagyasztás">
 <!ENTITY popup.selection.protectTabs "Lapvédelem">
 <!ENTITY popup.selection.lockTabs    "Lapzárolás">
+<!ENTITY popup.selection.suspendTabs   "Suspend Tabs">
+<!ENTITY popup.selection.resumeTabs    "Resume Tabs">
 <!-- from http://mxr.mozilla.org/l10n-central/source/hu/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "Rögzítés alkalmazáslapként">
 <!ENTITY popup.selection.unpinTabs       "Lap feloldása">

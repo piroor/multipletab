@@ -10,6 +10,8 @@
 <!ENTITY popup.selection.freezeTabs  "Congela scheda">
 <!ENTITY popup.selection.protectTabs "Proteggi scheda">
 <!ENTITY popup.selection.lockTabs    "Blocca scheda">
+<!ENTITY popup.selection.suspendTabs   "Suspend Tabs">
+<!ENTITY popup.selection.resumeTabs    "Resume Tabs">
 <!-- from http://mxr.mozilla.org/l10n-central/source/it/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "Blocca come Scheda applicazione">
 <!ENTITY popup.selection.unpinTabs       "Sblocca scheda">

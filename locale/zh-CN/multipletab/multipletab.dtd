@@ -10,6 +10,8 @@
 <!ENTITY popup.selection.freezeTabs  "冻结标签页">
 <!ENTITY popup.selection.protectTabs "保护标签页">
 <!ENTITY popup.selection.lockTabs    "锁定标签页">
+<!ENTITY popup.selection.suspendTabs   "Suspend Tabs">
+<!ENTITY popup.selection.resumeTabs    "Resume Tabs">
 <!-- from http://mxr.mozilla.org/l10n-central/source/zh-CN/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "固定为应用程序标签页">
 <!ENTITY popup.selection.unpinTabs       "取消固定标签页">

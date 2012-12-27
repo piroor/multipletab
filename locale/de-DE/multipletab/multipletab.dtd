@@ -7,9 +7,11 @@
 <!ENTITY popup.selection.clipboard   "URIs ausgew&#228;hlter Tabs kopieren">
 <!ENTITY popup.selection.saveTabs      "Ausgew&#228;hlte Tabs als Dateien speichern">
 <!ENTITY popup.selection.printTabs     "Ausgew&#228;hlte Tabs drucken">
-<!ENTITY popup.selection.freezeTabs  "Tab einfrieren">
-<!ENTITY popup.selection.protectTabs "Tab sch&#252;tzen">
-<!ENTITY popup.selection.lockTabs    "Tab sperren">
+<!ENTITY popup.selection.freezeTabs    "Tabs einfrieren">
+<!ENTITY popup.selection.protectTabs   "Tabs sch&#252;tzen">
+<!ENTITY popup.selection.lockTabs      "Tabs sperren">
+<!ENTITY popup.selection.suspendTabs   "Suspend Tabs">
+<!ENTITY popup.selection.resumeTabs    "Resume Tabs">
 <!-- from http://mxr.mozilla.org/l10n-central/source/de/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "Als App-tab anpinnen">
 <!ENTITY popup.selection.unpinTabs       "Tab nicht mehr anpinnen">

@@ -7,9 +7,11 @@
 <!ENTITY popup.selection.clipboard   "Copiar URIs de las pestañas seleccionadas">
 <!ENTITY popup.selection.saveTabs      "Guardar pestañas seleccionadas en archivos">
 <!ENTITY popup.selection.printTabs     "Imprimir pestañas seleccionadas">
-<!ENTITY popup.selection.freezeTabs  "Congelar pestaña">
-<!ENTITY popup.selection.protectTabs "Proteger pestaña">
-<!ENTITY popup.selection.lockTabs    "Bloquear pestaña">
+<!ENTITY popup.selection.freezeTabs    "Congelar pestañas">
+<!ENTITY popup.selection.protectTabs   "Proteger pestañas">
+<!ENTITY popup.selection.lockTabs      "Bloquear pestañas">
+<!ENTITY popup.selection.suspendTabs   "Suspend Tabs">
+<!ENTITY popup.selection.resumeTabs    "Resume Tabs">
 <!-- from http://mxr.mozilla.org/l10n-central/source/es-ES/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "Fijar pestaña">
 <!ENTITY popup.selection.unpinTabs       "Eliminar pestaña fija">

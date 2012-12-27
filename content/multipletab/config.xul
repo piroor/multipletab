@@ -284,6 +284,12 @@
 		<preference id="extensions.multipletab.show.multipletab-selection-lockTabs"
 			name="extensions.multipletab.show.multipletab-selection-lockTabs"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-suspendTabs"
+			name="extensions.multipletab.show.multipletab-selection-suspendTabs"
+			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-resumeTabs"
+			name="extensions.multipletab.show.multipletab-selection-resumeTabs"
+			type="bool"/>
 	</preferences>
 	<groupbox>
 		<caption label="&config.selectionMenu.caption;"/>
@@ -340,6 +346,13 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-lockTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-lockTabs"
 				label="&popup.selection.lockTabs;"/>
+			<separator id="multipletab-selection-separator-suspendTabs"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-suspendTabs-check"
+				preference="extensions.multipletab.show.multipletab-selection-suspendTabs"
+				label="&popup.selection.suspendTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-resumeTabs-check"
+				preference="extensions.multipletab.show.multipletab-selection-resumeTabs"
+				label="&popup.selection.resumeTabs;"/>
 		</vbox>
 		</arrowscrollbox>
 	</groupbox>

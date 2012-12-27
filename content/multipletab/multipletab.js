@@ -210,7 +210,7 @@ var MultipleTabService = {
 	},
 	_EffectiveTLD : null,
  
-	get XULAppInfo()
+	get XULAppInfo() 
 	{
 		if (!this._XULAppInfo) {
 			this._XULAppInfo = Services.appinfo;
@@ -245,7 +245,7 @@ var MultipleTabService = {
 	},
 	_tabbrowserBundle : null,
  
-	isVerticalTabBar : function(aTabBrowser)
+	isVerticalTabBar : function(aTabBrowser) 
 	{
 		aTabBrowser = this.getTabBrowserFromChild(aTabBrowser) || this.browser
 		var box = aTabBrowser.mTabContainer.mTabstrip || aTabBrowser.mTabContainer ;
@@ -533,7 +533,7 @@ var MultipleTabService = {
 			).singleNodeValue;
 	},
  
-	getTabsBetween : function MTS_getTabsBetween(aBase, aAnchor)
+	getTabsBetween : function MTS_getTabsBetween(aBase, aAnchor) 
 	{
 		if (
 			!aBase || !aBase.parentNode ||
@@ -821,7 +821,7 @@ var MultipleTabService = {
 			).booleanValue;
 	},
  
-	isEventFiredOnCloseboxArea : function MTS_isEventFiredOnCloseboxArea(aEvent)
+	isEventFiredOnCloseboxArea : function MTS_isEventFiredOnCloseboxArea(aEvent) 
 	{
 		var tab = this.getTabFromEvent(aEvent);
 		if (!tab)
@@ -837,7 +837,7 @@ var MultipleTabService = {
 			(aEvent.screenY >= box.screenY && aEvent.screenY <= box.screenY + box.height - 1 ) ;
 	},
  
-	isOnElement : function MTS_isOnElement(aX, aY, aElement)
+	isOnElement : function MTS_isOnElement(aX, aY, aElement) 
 	{
 		if (!aElement)
 			return false;
@@ -857,7 +857,7 @@ var MultipleTabService = {
 			).singleNodeValue;
 	},
  
-	getCloseboxFromTab : function MTS_getCloseboxFromTab(aTab)
+	getCloseboxFromTab : function MTS_getCloseboxFromTab(aTab) 
 	{
 		var finder = function(aNode) {
 				if (aNode.localName == 'toolbarbutton' &&
@@ -2630,6 +2630,7 @@ var MultipleTabService = {
 			TreeStyleTabBookmarksService.endAddBookmarksFromTabs();
 	},
  
+	// for Print All Tabs https://addons.mozilla.org/firefox/addon/5142
 	printTabs : function MTS_printTabs(aTabs) 
 	{
 		if (!('PrintAllTabs' in window)) return;
@@ -3292,6 +3293,55 @@ var MultipleTabService = {
 			('stmM' in window && 'togglePL' in stmM) // Super Tab Mode
 		);
 	},
+  
+	// Tab suspending commands 
+	//   Suspend Tab http://piro.sakura.ne.jp/xul/suspendtab/
+	//     SuspendTab.suspend, SuspendTab.resume
+	suspendTabs : function MTS_suspendTabs(aTabs) 
+	{
+		if (!aTabs) return;
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			SuspendTab.suspend(aTabs[i]); // Suspend Tab
+		}
+	},
+	resumeTabs : function MTS_resumeTabs(aTabs)
+	{
+		if (!aTabs) return;
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			SuspendTab.resume(aTabs[i]); // Suspend Tab
+		}
+	},
+	isAllTabsSuspended : function MTS_isAllTabsSuspended(aTabs)
+	{
+		return aTabs.every(function(aTab) {
+			return this._isTabSuspended(aTab);
+		}, this);
+	},
+	isNoTabSuspended : function MTS_isNoTabSuspended(aTabs)
+	{
+		return aTabs.every(function(aTab) {
+			return !this._isTabSuspended(aTab);
+		}, this);
+	},
+	_isTabSuspended : function MTS__isTabSuspended(aTab)
+	{
+		return (
+			aTab.hasAttribute('pending') // Suspend Tab
+		);
+	},
+	get canSuspendTab()
+	{
+		return (
+			// Suspend Tab
+			'SuspendTab' in window &&
+			typeof SuspendTab.suspend == 'function' &&
+			typeof SuspendTab.resume == 'function'
+		);
+	},
  
 	pinTabs : function MTS_pinTabs(aTabs) 
 	{
@@ -3431,7 +3481,7 @@ var MultipleTabService = {
 		return 'TabView' in window && 'moveTabTo' in TabView && '_initFrame' in TabView &&
 			TabView.firstUseExperienced;
 	},
-   
+  
 /* Move and Duplicate multiple tabs on Drag and Drop */ 
 	
 	moveBundledTabsOf : function MTS_moveBundledTabsOf(aMovedTab, aEvent) 
