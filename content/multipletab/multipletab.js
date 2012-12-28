@@ -1016,7 +1016,8 @@ var MultipleTabService = {
 		var b = document.getElementById('content');
 		if (b && 'swapBrowsersAndCloseOther' in b) {
 			if ('gBrowserInit' in window && 'onLoad' in gBrowserInit) { // Firefox 16 and later (after https://bugzilla.mozilla.org/show_bug.cgi?id=731926 )
-				eval('gBrowserInit.onLoad = '+gBrowserInit.onLoad.toSource().replace(
+				let method = '_delayedStartup' in gBrowserInit ? '_delayedStartup' : 'onLoad';
+				eval('gBrowserInit.' + method + ' = '+gBrowserInit[method].toSource().replace(
 					'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
 					'if (!MultipleTabService.tearOffSelectedTabsFromRemote()) { $& }'
 				));
