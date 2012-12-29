@@ -1,4 +1,4 @@
-content	multipletab	jar:chrome/multipletab.jar!/content/multipletab/
+content	multipletab	content/multipletab/
 
 overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/multipletab.xul
 overlay	chrome://browser/content/browser.xul	chrome://multipletab/content/lib/bookmarkMultipleTabs.xul
@@ -8,18 +8,18 @@ overlay	chrome://browser/content/places/bookmarkProperties2.xul	chrome://multipl
 overlay	chrome://browser/content/bookmarks/bookmarksPanel.xul	chrome://multipletab/content/bookmarksOverlay.xul
 overlay	chrome://browser/content/places/places.xul	chrome://multipletab/content/bookmarksOverlay.xul
 
-locale	multipletab	en-US	jar:chrome/multipletab.jar!/locale/en-US/multipletab/
-locale	multipletab	ja	jar:chrome/multipletab.jar!/locale/ja/multipletab/
-locale	multipletab	hu-HU	jar:chrome/multipletab.jar!/locale/hu-HU/multipletab/
-locale	multipletab	it-IT	jar:chrome/multipletab.jar!/locale/it-IT/multipletab/
-locale	multipletab	es-ES	jar:chrome/multipletab.jar!/locale/es-ES/multipletab/
-locale	multipletab	ru-RU	jar:chrome/multipletab.jar!/locale/ru-RU/multipletab/
-locale	multipletab	zh-TW	jar:chrome/multipletab.jar!/locale/zh-TW/multipletab/
-locale	multipletab	zh-CN	jar:chrome/multipletab.jar!/locale/zh-CN/multipletab/
-locale	multipletab	pl-PL	jar:chrome/multipletab.jar!/locale/pl-PL/multipletab/
-locale	multipletab	de-DE	jar:chrome/multipletab.jar!/locale/de-DE/multipletab/
-locale	multipletab	fr	jar:chrome/multipletab.jar!/locale/fr/multipletab/
+locale	multipletab	en-US	locale/en-US/multipletab/
+locale	multipletab	ja	locale/ja/multipletab/
+locale	multipletab	hu-HU	locale/hu-HU/multipletab/
+locale	multipletab	it-IT	locale/it-IT/multipletab/
+locale	multipletab	es-ES	locale/es-ES/multipletab/
+locale	multipletab	ru-RU	locale/ru-RU/multipletab/
+locale	multipletab	zh-TW	locale/zh-TW/multipletab/
+locale	multipletab	zh-CN	locale/zh-CN/multipletab/
+locale	multipletab	pl-PL	locale/pl-PL/multipletab/
+locale	multipletab	de-DE	locale/de-DE/multipletab/
+locale	multipletab	fr	locale/fr/multipletab/
 
-skin	multipletab	classic/1.0	jar:chrome/multipletab.jar!/skin/classic/multipletab/
+skin	multipletab	classic/1.0	skin/classic/multipletab/
 
 resource multipletab-modules modules/

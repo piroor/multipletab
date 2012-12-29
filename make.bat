@@ -1,3 +1,3 @@
 copy buildscript\makexpi.sh .\
-bash makexpi.sh multipletab version=0
+bash makexpi.sh -n multipletab -o
 del makexpi.sh

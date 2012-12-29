@@ -4,7 +4,7 @@ all: xpi
 
 xpi: buildscript/makexpi.sh
 	cp buildscript/makexpi.sh ./
-	./makexpi.sh -n $(PACKAGE_NAME)
+	./makexpi.sh -n $(PACKAGE_NAME) -o
 	rm ./makexpi.sh
 
 buildscript/makexpi.sh:
