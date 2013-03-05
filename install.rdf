@@ -67,14 +67,15 @@
       </RDF:Description>
     </em:localized>
     <em:localized>
-      <RDF:Description em:locale="ru-RU"
+      <RDF:Description em:locale="ru"
                        em:name="Multiple Tab Handler (Обработка группы вкладок)"
                        em:description="Обеспечивает возможность закрытия, перезагрузки, сохранения и т. д. группы вкладок одним действием."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
-		<em:translator>L'Autour (ru-RU locale)</em:translator>
-		<em:translator>Netanyahu (ru-RU locale)</em:translator>
+		<em:translator>L'Autour (ru locale)</em:translator>
+		<em:translator>Netanyahu (ru locale)</em:translator>
+		<em:translator>Infocatcher (ru locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
