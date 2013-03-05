@@ -13,7 +13,7 @@ locale	multipletab	ja	locale/ja/multipletab/
 locale	multipletab	hu-HU	locale/hu-HU/multipletab/
 locale	multipletab	it-IT	locale/it-IT/multipletab/
 locale	multipletab	es-ES	locale/es-ES/multipletab/
-locale	multipletab	ru-RU	locale/ru-RU/multipletab/
+locale	multipletab	ru	locale/ru/multipletab/
 locale	multipletab	zh-TW	locale/zh-TW/multipletab/
 locale	multipletab	zh-CN	locale/zh-CN/multipletab/
 locale	multipletab	pl-PL	locale/pl-PL/multipletab/
