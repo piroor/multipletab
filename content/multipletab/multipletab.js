@@ -1015,15 +1015,32 @@ var MultipleTabService = {
 
 		var b = document.getElementById('content');
 		if (b && 'swapBrowsersAndCloseOther' in b) {
-			if ('gBrowserInit' in window && 'onLoad' in gBrowserInit) { // Firefox 16 and later (after https://bugzilla.mozilla.org/show_bug.cgi?id=731926 )
-				let method = '_delayedStartup' in gBrowserInit ? '_delayedStartup' : 'onLoad';
-				eval('gBrowserInit.' + method + ' = '+gBrowserInit[method].toSource().replace(
-					'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
-					'if (!MultipleTabService.tearOffSelectedTabsFromRemote()) { $& }'
-				));
+			let source;
+			let target;
+			if ('gBrowserInit' in window) {
+				if (
+					'_delayedStartup' in gBrowserInit &&
+					(source = gBrowserInit._delayedStartup.toSource()) &&
+					source.indexOf('swapBrowsersAndCloseOther') > -1
+					) {
+					target = 'gBrowserInit._delayedStartup';
+				}
+				else if ( // legacy code for Firefox 18 and olders
+					'onLoad' in gBrowserInit &&
+					(source = gBrowserInit.onLoad.toSource()) &&
+					source.indexOf('swapBrowsersAndCloseOther') > -1
+					) {
+					target = 'gBrowserInit.onLoad';
+				}
 			}
-			else if ('BrowserStartup' in window) { // legacy code for Firefox 15 and older
-				eval('window.BrowserStartup = '+window.BrowserStartup.toSource().replace(
+			else if ('BrowserStartup' in window) { // legacy code for Firefox 15 and olders
+				source = window.BrowserStartup.toSource();
+				target = 'BrowserStartup';
+			}
+			if (!target)
+				dump('Multiple Tab Handler: failed to initialize startup function!');
+			if (source.indexOf('gBrowser.swapBrowsersAndCloseOther') > -1) {
+				eval(target+' = '+source.replace(
 					'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
 					'if (!MultipleTabService.tearOffSelectedTabsFromRemote()) { $& }'
 				));
