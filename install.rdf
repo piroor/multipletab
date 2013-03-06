@@ -69,7 +69,7 @@
     <em:localized>
       <RDF:Description em:locale="ru"
                        em:name="Multiple Tab Handler (Обработка группы вкладок)"
-                       em:description="Обеспечивает возможность закрытия, перезагрузки, сохранения и т. д. группы вкладок одним действием."
+                       em:description="Обеспечивает возможность закрытия, обновления, сохранения и т. д. нескольких вкладок одновременно."
                        em:homepageURL="http://piro.sakura.ne.jp/xul/_multipletab.html.en"
                        em:creator="YUKI &quot;Piro&quot; Hiroshi">
 		<em:contributor>Mikes Kaszmán István (some features)</em:contributor>
