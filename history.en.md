@@ -1,5 +1,10 @@
 # History
 
+ - master/HEAD
+   * Fixed: Move all selected tabs to a newly opened window correctly on Firefox 19 and later.
+   * Update "ru" locale (by Infocatcher)
+   * Update "zh-TW" locale (by HJL)
+   * Modified: "jar" archive is no longer included.
  - 0.7.2012122901
    * Works on Nightly 20.0a1.
    * Improved: A new special character pattern "%TAB%" (means a horizontal tab character) is available for "copy selected tabs" feature.
