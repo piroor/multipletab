@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.7.2013040601
    * Fixed: Move all selected tabs to a newly opened window correctly on Firefox 19 and later.
    * Update "ru" locale (by Infocatcher)
    * Update "zh-TW" locale (by HJL)
