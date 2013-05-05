@@ -3501,37 +3501,39 @@ var MultipleTabService = {
 			var items = TabView._window.GroupItems.groupItems;
 			for (let i = 0, maxi = items.length; i < maxi; i++)
 			{
-				// see http://mxr.mozilla.org/mozilla-central/ident?i=TabView__createGroupMenuItem
 				let groupItem = items[i];
-				let title = groupItem.getTitle().trim();
-				if (!title) {
-					let topChildLabel = groupItem.getTopChild().tab.label;
-					let childNum = groupItem.getChildren().length;
-					title = self.tabbrowserBundle.getString('tabview.moveToUnnamedGroup.label');
-					if (childNum > 1 && title) {
-						let num = childNum - 1;
-						title = PluralForm.get(num, title)
-									.replace('#1', topChildLabel)
-									.replace('#2', num);
-					}
-					else {
-						title = topChildLabel;
-					}
-				}
-
 				if (groupItem.hidden ||
 					(activeGroup && activeGroup.id == groupItem.id))
 					continue;
-
-				let item = document.createElement('menuitem');
-				item.setAttribute('label', title);
-				item.setAttribute('group-id', groupItem.id);
-				fragment.appendChild(item);
+				fragment.appendChild(self._createMoveToGroupItem(groupItem));
 			}
 			if (fragment.hasChildNodes())
 				separator.hidden = false;
 			aPopup.insertBefore(fragment, separator);
 		});
+	},
+	// see http://mxr.mozilla.org/mozilla-central/ident?i=TabView__createGroupMenuItem
+	_createMoveToGroupItem : function MTS_createMoveToGroupItem(aGroupItem)
+	{
+		let title = aGroupItem.getTitle().trim();
+		if (!title) {
+			let topChildLabel = aGroupItem.getTopChild().tab.label;
+			let childNum = aGroupItem.getChildren().length;
+			title = this.tabbrowserBundle.getString('tabview.moveToUnnamedGroup.label');
+			if (childNum > 1 && title) {
+				let num = childNum - 1;
+				title = PluralForm.get(num, title)
+							.replace('#1', topChildLabel)
+							.replace('#2', num);
+			}
+			else {
+				title = topChildLabel;
+			}
+		}
+		let item = document.createElement('menuitem');
+		item.setAttribute('label', title);
+		item.setAttribute('group-id', aGroupItem.id);
+		return item;
 	},
 	get canMoveTabsToGroup()
 	{
