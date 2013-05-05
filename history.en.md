@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Improved: Show unnamed tab groups in the "Move to Group" popup.
  - 0.7.2013040601
    * Fixed: Move all selected tabs to a newly opened window correctly on Firefox 19 and later.
    * Update "ru" locale (by Infocatcher)
