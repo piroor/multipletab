@@ -3519,7 +3519,7 @@ var MultipleTabService = {
 		if (!title) {
 			let topChildLabel = aGroupItem.getTopChild().tab.label;
 			let childNum = aGroupItem.getChildren().length;
-			title = this.tabbrowserBundle.getString('tabview.moveToUnnamedGroup.label');
+			title = gNavigatorBundle.getString('tabview.moveToUnnamedGroup.label');
 			if (childNum > 1 && title) {
 				let num = childNum - 1;
 				title = PluralForm.get(num, title)
