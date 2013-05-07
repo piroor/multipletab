@@ -3147,11 +3147,11 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return;
 		this.formatURIsForClipboard(aTabs, aFormatType, aFormat)
-			.next(function(aStringToCopy) {
+			.next(function(aData) {
 				Components
 					.classes['@mozilla.org/widget/clipboardhelper;1']
 					.getService(Components.interfaces.nsIClipboardHelper)
-					.copyString(aStringToCopy);
+					.copyString(aData.string, aData.sourceDocument);
 			});
 	},
 	formatURIsForClipboard : function MTS_formatURIsForClipboard(aTabs, aFormatType, aFormat)
@@ -3170,13 +3170,25 @@ var MultipleTabService = {
 		var self = this;
 		return this.Deferred.parallel(aTabs.map(this.ensureLoaded, this))
 			.next(function() {
+				var sourceDoc, privateDoc;
 				var stringToCopy = Array.slice(aTabs).map(function(aTab) {
 						let uri = self.getCurrentURIOfTab(aTab).spec;
-						let doc = aTab.linkedBrowser.contentDocument;
+						let browser = aTab.linkedBrowser;
+						let doc = browser.contentDocument;
 						let title = doc.title || aTab.getAttribute('label');
 						let author = self._getMetaInfo(doc, 'author');
 						let description = self._getMetaInfo(doc, 'description');
 						let keywords = self._getMetaInfo(doc, 'keywords');
+						if (
+							!privateDoc &&
+							'PrivateBrowsingUtils' in window && // Firefox 20 or later
+							PrivateBrowsingUtils.isWindowPrivate(browser.contentWindow)) {
+							// Will use private document, if at least one tab are private
+							privateDoc = doc;
+						}
+						else if (!sourceDoc) {
+							sourceDoc = doc;
+						}
 						return format
 								.replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
 								.replace(/%URL%/gi, uri)
@@ -3197,7 +3209,14 @@ var MultipleTabService = {
 				if (stringToCopy.length > 1)
 					stringToCopy.push('');
 
-				return stringToCopy.join(self.lineFeed);
+				stringToCopy = stringToCopy.join(self.lineFeed);
+				return {
+					string: stringToCopy,
+					sourceDocument: privateDoc || sourceDoc,
+					toString: function() {
+						return stringToCopy;
+					}
+				};
 			});
 	},
 	_escape : function MTS_escape(aString)
