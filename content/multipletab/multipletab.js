@@ -3147,11 +3147,11 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return;
 		this.formatURIsForClipboard(aTabs, aFormatType, aFormat)
-			.next(function(aData) {
+			.next(function(aCopyData) {
 				Components
 					.classes['@mozilla.org/widget/clipboardhelper;1']
 					.getService(Components.interfaces.nsIClipboardHelper)
-					.copyString(aData.string, aData.sourceDocument);
+					.copyString(aCopyData.string, aCopyData.sourceDocument);
 			});
 	},
 	formatURIsForClipboard : function MTS_formatURIsForClipboard(aTabs, aFormatType, aFormat)
@@ -3182,7 +3182,8 @@ var MultipleTabService = {
 						if (
 							!privateDoc &&
 							'PrivateBrowsingUtils' in window && // Firefox 20 or later
-							PrivateBrowsingUtils.isWindowPrivate(browser.contentWindow)) {
+							PrivateBrowsingUtils.isWindowPrivate(browser.contentWindow)
+							) {
 							// Will use private document, if at least one tab are private
 							privateDoc = doc;
 						}
