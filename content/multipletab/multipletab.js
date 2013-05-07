@@ -183,6 +183,20 @@ var MultipleTabService = {
 	},
 	_SessionStore : null,
  
+	get SessionStoreNS() {
+		if (!this._SessionStoreNS) {
+			try {
+				// resource://app/modules/sessionstore/SessionStore.jsm ?
+				this._SessionStoreNS = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm', {});
+			}
+			catch(e) {
+				this._SessionStoreNS = {};
+			}
+		}
+		return this._SessionStoreNS;
+	},
+	_SessionStoreNS : null,
+
 	get IOService() 
 	{
 		if (!this._IOService) {
@@ -585,6 +599,9 @@ var MultipleTabService = {
 		if (b.contentWindow && b.contentWindow.location)
 			b.contentWindow.location.replace('about:blank');
 
+		if (this.SessionStoreNS.RestoringTabsData) // Firefox 23-
+			this.SessionStoreNS.RestoringTabsData.remove(aTab.linkedBrowser);
+
 		delete aTab.linkedBrowser.__SS_data;
 		delete aTab.__SS_extdata;
 	},
@@ -596,10 +613,14 @@ var MultipleTabService = {
 		this.makeTabBlank(aTab);
 
 		// override session data to prevent undo
-		aTab.linkedBrowser.__SS_data = {
+		var data = {
 			entries : [],
 			_tabStillLoading : true
 		};
+		if (this.SessionStoreNS.RestoringTabsData) // Firefox 23-
+			this.SessionStoreNS.RestoringTabsData.set(aTab.linkedBrowser, data);
+		else // Firefox -22
+			aTab.linkedBrowser.__SS_data = data;
 
 		(aTabBrowser || this.getTabBrowserFromChild(aTab))
 			.removeTab(aTab, { animate : true });
