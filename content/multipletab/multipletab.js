@@ -98,7 +98,7 @@ var MultipleTabService = {
 	
 	getArrayFromXPathResult : function MTS_getArrayFromXPathResult(aXPathResult) 
 	{
-		if (!(aXPathResult instanceof Components.interfaces.nsIDOMXPathResult)) {
+		if (!(aXPathResult instanceof Ci.nsIDOMXPathResult)) {
 			aXPathResult = this.evaluateXPath.apply(this, arguments);
 		}
 		var max = aXPathResult.snapshotLength;
@@ -177,7 +177,7 @@ var MultipleTabService = {
 	
 	get SessionStore() { 
 		if (!this._SessionStore) {
-			this._SessionStore = Components.classes['@mozilla.org/browser/sessionstore;1'].getService(Components.interfaces.nsISessionStore);
+			this._SessionStore = Cc['@mozilla.org/browser/sessionstore;1'].getService(Ci.nsISessionStore);
 		}
 		return this._SessionStore;
 	},
@@ -320,7 +320,7 @@ var MultipleTabService = {
 		var dt;
 		if (
 			!aSource ||
-			!(aSource instanceof Components.interfaces.nsIDOMEvent) ||
+			!(aSource instanceof Ci.nsIDOMEvent) ||
 			!(dt = aSource.dataTransfer)
 			)
 			return this.getArrayFromXPathResult(
@@ -437,7 +437,7 @@ var MultipleTabService = {
 		if (aURI && String(aURI).indexOf('file:') == 0) {
 			var fileHandler = this.IOService
 						.getProtocolHandler('file')
-						.QueryInterface(Components.interfaces.nsIFileProtocolHandler);
+						.QueryInterface(Ci.nsIFileProtocolHandler);
 			var tempLocalFile = fileHandler.getFileFromURLSpec(aURI);
 			newURI = this.IOService.newFileURI(tempLocalFile);
 		}
@@ -695,7 +695,7 @@ var MultipleTabService = {
 		for (let i = 0, maxi = arguments.length; i < maxi; i++)
 		{
 			let arg = arguments[i];
-			if (arg instanceof Components.interfaces.nsIDOMNode)
+			if (arg instanceof Ci.nsIDOMNode)
 				baseTab = arg;
 			else if (typeof arg == 'number')
 				oldBasePosition = arg;
@@ -2018,9 +2018,8 @@ var MultipleTabService = {
 		var tab = aEvent.originalTarget;
 		this.initTab(tab);
 
-		var session = Components
-						.classes['@mozilla.org/widget/dragservice;1']
-						.getService(Components.interfaces.nsIDragService)
+		var session = Cc['@mozilla.org/widget/dragservice;1']
+						.getService(Ci.nsIDragService)
 						.getCurrentSession();
 		var draggedTab = session && session.sourceNode ?
 							this.getTabFromChild(session.sourceNode) :
@@ -2566,11 +2565,10 @@ var MultipleTabService = {
  
 	selectFolder : function MTS_selectFolder(aTitle) 
 	{
-		var picker = Components
-						.classes['@mozilla.org/filepicker;1']
-						.createInstance(Components.interfaces.nsIFilePicker);
+		var picker = Cc['@mozilla.org/filepicker;1']
+						.createInstance(Ci.nsIFilePicker);
 		picker.init(window, aTitle, picker.modeGetFolder);
-		var downloadDir = this.getPref('browser.download.dir', Components.interfaces.nsILocalFile);
+		var downloadDir = this.getPref('browser.download.dir', Ci.nsILocalFile);
 		if (downloadDir) picker.displayDirectory = downloadDir;
 		picker.appendFilters(picker.filterAll);
 
@@ -2589,7 +2587,7 @@ var MultipleTabService = {
 
 		if (typeof picker.open != 'function') { // Firefox 18 and olders
 			let folder = (picker.show() == picker.returnOK) ?
-							picker.file.QueryInterface(Components.interfaces.nsILocalFile) : null ;
+							picker.file.QueryInterface(Ci.nsILocalFile) : null ;
 			return this.Deferred.next(function() {
 				return findExistingFolder(folder);
 			});
@@ -2598,7 +2596,7 @@ var MultipleTabService = {
 		var deferred = new this.Deferred();
 		picker.open({ done: function(aResult) {
 			if (aResult == picker.returnOK) {
-				let folder = picker.file.QueryInterface(Components.interfaces.nsILocalFile);
+				let folder = picker.file.QueryInterface(Ci.nsILocalFile);
 				deferred.call(findExistingFolder(folder));
 			}
 			else {
@@ -3059,7 +3057,7 @@ var MultipleTabService = {
 			else if (!arg) {
 				continue;
 			}
-			else if (arg instanceof Components.interfaces.nsIDOMNode) {
+			else if (arg instanceof Ci.nsIDOMNode) {
 				if (arg.localName == 'tabbrowser')
 					aTabBrowser = arg;
 				else if (arg.localName == 'tab')
@@ -3157,7 +3155,7 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return '';
 
-		if (aTabs instanceof Components.interfaces.nsIDOMNode) aTabs = [aTabs];
+		if (aTabs instanceof Ci.nsIDOMNode) aTabs = [aTabs];
 
 		var format = aFormat || this.getClopboardFormatForType(aFormatType);
 		if (!format) format = '%URL%';
@@ -3253,9 +3251,8 @@ var MultipleTabService = {
 	{
 		if (aCopyData.richText) {
 			// Borrowed from CoLT
-			var trans = Components
-							.classes['@mozilla.org/widget/transferable;1']
-							.createInstance(Components.interfaces.nsITransferable);
+			var trans = Cc['@mozilla.org/widget/transferable;1']
+							.createInstance(Ci.nsITransferable);
 
 			// Not sure if section below works as it originally created since I'm not 
 			// that familiar with MAF (Mozilla Application Framework)
@@ -3264,36 +3261,32 @@ var MultipleTabService = {
 			// See https://bugzilla.mozilla.org/show_bug.cgi?id=722872 for more information
 			if ('init' in trans) {
 				var privacyContext = document.commandDispatcher.focusedWindow
-					.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
-					.getInterface(Components.interfaces.nsIWebNavigation)
-					.QueryInterface(Components.interfaces.nsILoadContext);
+					.QueryInterface(Ci.nsIInterfaceRequestor)
+					.getInterface(Ci.nsIWebNavigation)
+					.QueryInterface(Ci.nsILoadContext);
 				trans.init(privacyContext);
 			}
 
 			// Rich Text HTML Format
 			trans.addDataFlavor('text/html');
-			var htmlString = Components
-								.classes['@mozilla.org/supports-string;1']
-								.createInstance(Components.interfaces.nsISupportsString);
+			var htmlString = Cc['@mozilla.org/supports-string;1']
+								.createInstance(Ci.nsISupportsString);
 			htmlString.data = aCopyData.richText;
 			trans.setTransferData('text/html', htmlString, aCopyData.richText.length * 2);
 
 			// Plain Text Format
-			var textString = Components
-								.classes['@mozilla.org/supports-string;1']
-								.createInstance(Components.interfaces.nsISupportsString);
+			var textString = Cc['@mozilla.org/supports-string;1']
+								.createInstance(Ci.nsISupportsString);
 			textString.data = aCopyData.string;
 			trans.setTransferData('text/unicode', textString, aCopyData.string.length * 2);
 
-			var clipboard = Components
-								.classes['@mozilla.org/widget/clipboard;1']
-								.getService(Components.interfaces.nsIClipboard);
-			clipboard.setData(trans, null, Components.interfaces.nsIClipboard.kGlobalClipboard);
+			var clipboard = Cc['@mozilla.org/widget/clipboard;1']
+								.getService(Ci.nsIClipboard);
+			clipboard.setData(trans, null, Ci.nsIClipboard.kGlobalClipboard);
 		}
 		else {
-			Components
-				.classes['@mozilla.org/widget/clipboardhelper;1']
-				.getService(Components.interfaces.nsIClipboardHelper)
+			Cc['@mozilla.org/widget/clipboardhelper;1']
+				.getService(Ci.nsIClipboardHelper)
 				.copyString(aCopyData.string, aCopyData.sourceDocument);
 		}
 	},
