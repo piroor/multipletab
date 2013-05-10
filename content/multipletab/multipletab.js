@@ -3263,10 +3263,14 @@ var MultipleTabService = {
 			// The init() function was added to FF 16 for upcoming changes to private browsing mode
 			// See https://bugzilla.mozilla.org/show_bug.cgi?id=722872 for more information
 			if ('init' in trans) {
-				var privacyContext = document.commandDispatcher.focusedWindow
-					.QueryInterface(Ci.nsIInterfaceRequestor)
-					.getInterface(Ci.nsIWebNavigation)
-					.QueryInterface(Ci.nsILoadContext);
+				var sourceWin = aCopyData.sourceDocument && aCopyData.sourceDocument.defaultView ||
+					document.commandDispatcher.focusedWindow;
+				var privacyContext = 'PrivateBrowsingUtils' in window ? // Firefox 20 or later
+					PrivateBrowsingUtils.privacyContextFromWindow(sourceWin) :
+					sourceWin
+						.QueryInterface(Ci.nsIInterfaceRequestor)
+						.getInterface(Ci.nsIWebNavigation)
+						.QueryInterface(Ci.nsILoadContext);
 				trans.init(privacyContext);
 			}
 
