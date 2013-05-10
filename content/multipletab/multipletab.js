@@ -3217,8 +3217,8 @@ var MultipleTabService = {
 				if (stringToCopy.length > 1)
 					stringToCopy.push('');
 
-				stringToCopy = stringToCopy.join(self.lineFeed);
 				var richText = isRichText ? stringToCopy.join('<br />') : null ;
+				stringToCopy = stringToCopy.join(self.lineFeed);
 
 				return {
 					string: stringToCopy,
