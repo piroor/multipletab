@@ -3170,6 +3170,7 @@ var MultipleTabService = {
 		return this.Deferred.parallel(aTabs.map(this.ensureLoaded, this))
 			.next(function() {
 				var sourceDoc, privateDoc;
+				var isRichText = /%RT%/i.test(format);
 				var stringToCopy = Array.slice(aTabs).map(function(aTab) {
 						let uri = self.getCurrentURIOfTab(aTab).spec;
 						let browser = aTab.linkedBrowser;
@@ -3189,7 +3190,7 @@ var MultipleTabService = {
 						else if (!sourceDoc) {
 							sourceDoc = doc;
 						}
-						return format
+						var formatted = format
 								.replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
 								.replace(/%URL%/gi, uri)
 								.replace(/%(?:TITLE|TEXT)%/gi, title)
@@ -3205,21 +3206,22 @@ var MultipleTabService = {
 								.replace(/%LOCAL_TIME%/gi, timeLocal)
 								.replace(/%TAB%/gi, '\t')
 								.replace(/%EOL%/gi, self.lineFeed)
-								.replace(/%RT%/gi, '<a href=\"' + self._escape(uri) + '\">' + self._escape(title) + '</a>');
+								.replace(/%RT%/gi, '');
+
+						if (isRichText && !formatted.trim())
+							formatted = '<a href=\"' + self._escape(uri) + '\">' + self._escape(title) + '</a>';
+
+						return formatted;
 					}, self);
 				if (stringToCopy.length > 1)
 					stringToCopy.push('');
 
-				// Workaround Simple Protocol
-				if (format.indexOf('%RT%') != -1) {
-					stringToCopy = 'rt' + stringToCopy.join('<br />');
-				}
-				else {
-					stringToCopy = stringToCopy.join(self.lineFeed);
-				}
-				
+				stringToCopy = stringToCopy.join(self.lineFeed);
+				var richText = isRichText ? stringToCopy.join('<br />') : null ;
+
 				return {
 					string: stringToCopy,
+					richText: richText,
 					sourceDocument: privateDoc || sourceDoc,
 					toString: function() {
 						return stringToCopy;
@@ -3249,9 +3251,7 @@ var MultipleTabService = {
 	},
 	copyToClipboard : function MTS_copyToClipboard(aCopyData)
 	{
-		if (aCopyData.string.substring(0, 2) == 'rt') {
-			var buffer = aCopyData.string.substring(2);
-
+		if (aCopyData.richText) {
 			// Borrowed from CoLT
 			var trans = Components.classes['@mozilla.org/widget/transferable;1'].
 				createInstance(Components.interfaces.nsITransferable);
@@ -3272,15 +3272,13 @@ var MultipleTabService = {
 			// Rich Text HTML Format
 			trans.addDataFlavor('text/html');
 			var htmlString = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString);
-			htmlString.data = buffer;
-			trans.setTransferData('text/html', htmlString, buffer.length * 2);
-
+			htmlString.data = aCopyData.richText;
+			trans.setTransferData('text/html', htmlString, aCopyData.richText.length * 2);
 
 			// Plain Text Format
-			buffer = buffer.replace(/<br \/>/gi, this.lineFeed);
 			var textString = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString);
-			textString.data = buffer;
-			trans.setTransferData('text/unicode', textString, buffer.length * 2);
+			textString.data = aCopyData.string;
+			trans.setTransferData('text/unicode', textString, aCopyData.string.length * 2);
 
 			var clipboard = Components.classes['@mozilla.org/widget/clipboard;1'].getService(Components.interfaces.nsIClipboard);
 			clipboard.setData(trans, null, Components.interfaces.nsIClipboard.kGlobalClipboard);
