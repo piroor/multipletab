@@ -3146,12 +3146,51 @@ var MultipleTabService = {
 	copyURIsToClipboard : function MTS_copyURIsToClipboard(aTabs, aFormatType, aFormat) 
 	{
 		if (!aTabs) return;
+
+		var self = this
 		this.formatURIsForClipboard(aTabs, aFormatType, aFormat)
 			.next(function(aCopyData) {
-				Components
-					.classes['@mozilla.org/widget/clipboardhelper;1']
-					.getService(Components.interfaces.nsIClipboardHelper)
-					.copyString(aCopyData.string, aCopyData.sourceDocument);
+				if (aCopyData.string.substring(0, 2) == 'rt') {
+					var buffer = aCopyData.string.substring(2);
+
+					// Borrowed from CoLT
+					var trans = Components.classes['@mozilla.org/widget/transferable;1'].
+						createInstance(Components.interfaces.nsITransferable);
+
+					// Not sure if section below works as it originally created since I'm not 
+					// that familiar with MAF (Mozilla Application Framework)
+					
+					// The init() function was added to FF 16 for upcoming changes to private browsing mode
+					// See https://bugzilla.mozilla.org/show_bug.cgi?id=722872 for more information
+					if ('init' in trans) {
+						var privacyContext = document.commandDispatcher.focusedWindow.
+							QueryInterface(Components.interfaces.nsIInterfaceRequestor).
+							getInterface(Components.interfaces.nsIWebNavigation).
+							QueryInterface(Components.interfaces.nsILoadContext);
+						trans.init(privacyContext);
+					}
+
+					// Rich Text HTML Format
+					trans.addDataFlavor('text/html');
+					var htmlString = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString);
+					htmlString.data = buffer;
+					trans.setTransferData('text/html', htmlString, buffer.length * 2);
+
+					// Plain Text Format
+					buffer = buffer.replace(/<br \/>/gi, self.lineFeed);
+					var textString = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString);
+					textString.data = buffer;
+					trans.setTransferData('text/unicode', textString, buffer.length * 2);
+
+					var clipboard = Components.classes['@mozilla.org/widget/clipboard;1'].getService(Components.interfaces.nsIClipboard);
+					clipboard.setData(trans, null, Components.interfaces.nsIClipboard.kGlobalClipboard);
+				}
+				else {
+					Components
+						.classes['@mozilla.org/widget/clipboardhelper;1']
+						.getService(Components.interfaces.nsIClipboardHelper)
+						.copyString(aCopyData.string, aCopyData.sourceDocument);
+				}
 			});
 	},
 	formatURIsForClipboard : function MTS_formatURIsForClipboard(aTabs, aFormatType, aFormat)
@@ -3205,12 +3244,20 @@ var MultipleTabService = {
 								.replace(/%UTC_TIME%/gi, timeUTC)
 								.replace(/%LOCAL_TIME%/gi, timeLocal)
 								.replace(/%TAB%/gi, '\t')
-								.replace(/%EOL%/gi, self.lineFeed);
+								.replace(/%EOL%/gi, self.lineFeed)
+								.replace(/%RT%/gi, '<a href=\"' + self._escape(uri) + '\">' + self._escape(title) + '</a>');
 					}, self);
 				if (stringToCopy.length > 1)
 					stringToCopy.push('');
 
-				stringToCopy = stringToCopy.join(self.lineFeed);
+				// Workaround Simple Protocol
+				if (format.indexOf('%RT%') != -1) {
+					stringToCopy = 'rt' + stringToCopy.join('<br />');
+				}
+				else {
+					stringToCopy = stringToCopy.join(self.lineFeed);
+				}
+				
 				return {
 					string: stringToCopy,
 					sourceDocument: privateDoc || sourceDoc,
