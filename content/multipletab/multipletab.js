@@ -3253,34 +3253,41 @@ var MultipleTabService = {
 	{
 		if (aCopyData.richText) {
 			// Borrowed from CoLT
-			var trans = Components.classes['@mozilla.org/widget/transferable;1'].
-				createInstance(Components.interfaces.nsITransferable);
+			var trans = Components
+							.classes['@mozilla.org/widget/transferable;1']
+							.createInstance(Components.interfaces.nsITransferable);
 
 			// Not sure if section below works as it originally created since I'm not 
 			// that familiar with MAF (Mozilla Application Framework)
-			
+
 			// The init() function was added to FF 16 for upcoming changes to private browsing mode
 			// See https://bugzilla.mozilla.org/show_bug.cgi?id=722872 for more information
 			if ('init' in trans) {
-				var privacyContext = document.commandDispatcher.focusedWindow.
-					QueryInterface(Components.interfaces.nsIInterfaceRequestor).
-					getInterface(Components.interfaces.nsIWebNavigation).
-					QueryInterface(Components.interfaces.nsILoadContext);
+				var privacyContext = document.commandDispatcher.focusedWindow
+					.QueryInterface(Components.interfaces.nsIInterfaceRequestor)
+					.getInterface(Components.interfaces.nsIWebNavigation)
+					.QueryInterface(Components.interfaces.nsILoadContext);
 				trans.init(privacyContext);
 			}
 
 			// Rich Text HTML Format
 			trans.addDataFlavor('text/html');
-			var htmlString = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString);
+			var htmlString = Components
+								.classes['@mozilla.org/supports-string;1']
+								.createInstance(Components.interfaces.nsISupportsString);
 			htmlString.data = aCopyData.richText;
 			trans.setTransferData('text/html', htmlString, aCopyData.richText.length * 2);
 
 			// Plain Text Format
-			var textString = Components.classes['@mozilla.org/supports-string;1'].createInstance(Components.interfaces.nsISupportsString);
+			var textString = Components
+								.classes['@mozilla.org/supports-string;1']
+								.createInstance(Components.interfaces.nsISupportsString);
 			textString.data = aCopyData.string;
 			trans.setTransferData('text/unicode', textString, aCopyData.string.length * 2);
 
-			var clipboard = Components.classes['@mozilla.org/widget/clipboard;1'].getService(Components.interfaces.nsIClipboard);
+			var clipboard = Components
+								.classes['@mozilla.org/widget/clipboard;1']
+								.getService(Components.interfaces.nsIClipboard);
 			clipboard.setData(trans, null, Components.interfaces.nsIClipboard.kGlobalClipboard);
 		}
 		else {
