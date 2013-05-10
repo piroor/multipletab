@@ -3149,6 +3149,9 @@ var MultipleTabService = {
 		this.formatURIsForClipboard(aTabs, aFormatType, aFormat)
 			.next(function(aCopyData) {
 				self.copyToClipboard(aCopyData);
+			})
+			.error(function(error) {
+				Components.utils.reportError(error);
 			});
 	},
 	formatURIsForClipboard : function MTS_formatURIsForClipboard(aTabs, aFormatType, aFormat)
