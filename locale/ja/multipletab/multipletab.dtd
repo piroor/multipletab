@@ -80,7 +80,7 @@
 <!ENTITY config.clipboardFormatType.remove.tooltip "この形式を削除">
 <!ENTITY config.clipboardFormatType.default.label  "名前">
 <!ENTITY config.clipboardFormatType.default.format "書式">
-<!ENTITY config.clipboardFormatType.description    "書式には以下のプレースホルダを使えます：&#x25;URL&#x25;=ページのURL, &#x25;TITLE&#x25;=ページのタイトル, &#x25;AUTHOR&#x25;=metaタグで指定された作者名, &#x25;DESCRIPTION&#x25;=metaタグで指定された説明文, &#x25;KEYWORDS&#x25;=metaタグで指定された検索用キーワード, &#x25;URL_HTMLIFIED&#x25;=HTML用にエスケープされたURL, &#x25;TITLE_HTMLIFIED&#x25;=HTML用にエスケープされたタイトル, &#x25;AUTHOR_HTMLIFIED&#x25;=HTML用にエスケープされた作者名, &#x25;DESCRIPTION_HTMLIFIED&#x25;=HTML用にエスケープされた説明文, &#x25;KEYWORDS_HTMLIFIED&#x25;=HTML用にエスケープされた検索用キーワード, &#x25;TAB&#x25;=タブ文字, &#x25;EOL&#x25;=改行">
+<!ENTITY config.clipboardFormatType.description    "書式には以下のプレースホルダを使えます：&#x25;URL&#x25;=ページのURL, &#x25;TITLE&#x25;=ページのタイトル, &#x25;AUTHOR&#x25;=metaタグで指定された作者名, &#x25;DESCRIPTION&#x25;=metaタグで指定された説明文, &#x25;KEYWORDS&#x25;=metaタグで指定された検索用キーワード, &#x25;URL_HTMLIFIED&#x25;=HTML用にエスケープされたURL, &#x25;TITLE_HTMLIFIED&#x25;=HTML用にエスケープされたタイトル, &#x25;AUTHOR_HTMLIFIED&#x25;=HTML用にエスケープされた作者名, &#x25;DESCRIPTION_HTMLIFIED&#x25;=HTML用にエスケープされた説明文, &#x25;KEYWORDS_HTMLIFIED&#x25;=HTML用にエスケープされた検索用キーワード, &#x25;TAB&#x25;=タブ文字, &#x25;EOL&#x25;=改行, &#x25;RT&#x25;=リッチテキストとしてコピーする（このプレースホルダ自体は空文字に変換されます）">
 
 <!ENTITY config.tabs.selectionMenu    "タブ選択時のメニュー">
 <!ENTITY config.selectionMenu.caption "タブ選択時のメニューに表示する項目">

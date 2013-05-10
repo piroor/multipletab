@@ -83,7 +83,7 @@
 <!ENTITY config.clipboardFormatType.remove.tooltip "Formátum eltávolítása">
 <!ENTITY config.clipboardFormatType.default.label  "Név">
 <!ENTITY config.clipboardFormatType.default.format "Formátum">
-<!ENTITY config.clipboardFormatType.description    "Elérhető formázás: &#x25;URL&#x25;=Oldal webcíme, &#x25;TITLE&#x25;=Oldalcím, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=Webcím HTML-ként, &#x25;TITLE_HTMLIFIED&#x25;=Oldalcím HTML-ként, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;TAB&#x25;=Tab, &#x25;EOL&#x25;=Sorvégjel">
+<!ENTITY config.clipboardFormatType.description    "Elérhető formázás: &#x25;URL&#x25;=Oldal webcíme, &#x25;TITLE&#x25;=Oldalcím, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=Webcím HTML-ként, &#x25;TITLE_HTMLIFIED&#x25;=Oldalcím HTML-ként, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;TAB&#x25;=Tab, &#x25;EOL&#x25;=Sorvégjel, &#x25;RT&#x25;=Copy as a rich text (Note: this placeholder itself is cleared from the copied text)">
 
 <!ENTITY config.tabs.selectionMenu    "Kiválasztott lapok">
 <!ENTITY config.selectionMenu.caption "A kiválasztott lapok füleinek helyi menüje:">

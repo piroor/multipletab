@@ -79,7 +79,7 @@
 <!ENTITY config.clipboardFormatType.remove.tooltip "移除這個格式">
 <!ENTITY config.clipboardFormatType.default.label  "名稱">
 <!ENTITY config.clipboardFormatType.default.format "格式">
-<!ENTITY config.clipboardFormatType.description    "可用的格式代碼: &#x25;URL&#x25;=網頁URL, &#x25;TITLE&#x25;=網頁標題, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=供HTML使用的URL, &#x25;TITLE_HTMLIFIED&#x25;=供HTML使用的標題, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;TAB&#x25;=Tab, &#x25;EOL&#x25;=換行符號">
+<!ENTITY config.clipboardFormatType.description    "可用的格式代碼: &#x25;URL&#x25;=網頁URL, &#x25;TITLE&#x25;=網頁標題, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=供HTML使用的URL, &#x25;TITLE_HTMLIFIED&#x25;=供HTML使用的標題, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;TAB&#x25;=Tab, &#x25;EOL&#x25;=換行符號, &#x25;RT&#x25;=Copy as a rich text (Note: this placeholder itself is cleared from the copied text)">
 
 <!ENTITY config.tabs.selectionMenu    "已選分頁選單">
 <!ENTITY config.selectionMenu.caption "已選分頁右鍵選單可選項目">

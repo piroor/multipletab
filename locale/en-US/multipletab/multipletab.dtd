@@ -79,7 +79,7 @@
 <!ENTITY config.clipboardFormatType.remove.tooltip "Remove This Format">
 <!ENTITY config.clipboardFormatType.default.label  "Name">
 <!ENTITY config.clipboardFormatType.default.format "Format">
-<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;TAB&#x25;=Tab, &#x25;EOL&#x25;=Line Feed">
+<!ENTITY config.clipboardFormatType.description    "Available place holders for formats: &#x25;URL&#x25;=Page URL, &#x25;TITLE&#x25;=Page Title, &#x25;URL_HTMLIFIED&#x25;=URL escaped for HTML, &#x25;TITLE_HTMLIFIED&#x25;=Title escaped for HTML, &#x25;TAB&#x25;=Tab, &#x25;EOL&#x25;=Line Feed, &#x25;RT&#x25;=Copy as a rich text (Note: this placeholder itself is cleared from the copied text)">
 
 <!ENTITY config.tabs.selectionMenu    "Tab Selection Menu">
 <!ENTITY config.selectionMenu.caption "Available items of the popup menu for selected tabs">
