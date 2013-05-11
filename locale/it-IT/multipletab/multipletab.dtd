@@ -79,7 +79,20 @@
 <!ENTITY config.clipboardFormatType.remove.tooltip "Rimuovi formato">
 <!ENTITY config.clipboardFormatType.default.label  "Nome">
 <!ENTITY config.clipboardFormatType.default.format "Formato">
-<!ENTITY config.clipboardFormatType.description    "Segnaposti disponibili per i formati: &#x25;URL&#x25;=URL della pagina, &#x25;TITLE&#x25;=Titolo della pagina, &#x25;AUTHOR&#x25;=Author name (specified by META), &#x25;DESCRIPTION&#x25;=Description (specified by META), &#x25;KEYWORDS&#x25;=Search keywords (specified by META), &#x25;URL_HTMLIFIED&#x25;=URL con caratteri di escape per HTML, &#x25;TITLE_HTMLIFIED&#x25;=Titolo con caratteri di escape per HTML, &#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML, &#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML, &#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML, &#x25;TAB&#x25;=Tab, &#x25;EOL&#x25;=Carattere di avanzamento riga, &#x25;RT&#x25;=Copy as a rich text (Note: this placeholder itself is cleared from the copied text)">
+<!ENTITY config.clipboardFormatType.description    "Segnaposti disponibili per i formati:
+&#x25;URL&#x25;=URL della pagina,
+&#x25;TITLE&#x25;=Titolo della pagina,
+&#x25;AUTHOR&#x25;=Author name (specified by META),
+&#x25;DESCRIPTION&#x25;=Description (specified by META),
+&#x25;KEYWORDS&#x25;=Search keywords (specified by META),
+&#x25;URL_HTMLIFIED&#x25;=URL con caratteri di escape per HTML,
+&#x25;TITLE_HTMLIFIED&#x25;=Titolo con caratteri di escape per HTML,
+&#x25;AUTHOR_HTMLIFIED&#x25;=Author name escaped for HTML,
+&#x25;DESCRIPTION_HTMLIFIED&#x25;=Description escaped for HTML,
+&#x25;KEYWORDS_HTMLIFIED&#x25;=Search keywords escaped for HTML,
+&#x25;TAB&#x25;=Tab,
+&#x25;EOL&#x25;=Carattere di avanzamento riga,
+&#x25;RT&#x25;=Copy as a rich text (Note: this placeholder itself is cleared from the copied text)">
 
 <!ENTITY config.tabs.selectionMenu    "Menu contestuale delle schede">
 <!ENTITY config.selectionMenu.caption "Aggiungi le seguenti voci al menu contestuale delle schede selezionate">
