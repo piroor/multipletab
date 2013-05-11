@@ -183,7 +183,7 @@
 							<textbox readonly="true"
 								id="extensions.multipletab.clipboard.format.0-textbox"
 								preference="extensions.multipletab.clipboard.format.0"
-								tooltiptext="&config.clipboardFormatType.description;"/>
+								tooltip="formats-tip"/>
 							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
 						</row>
 						<row align="center">
@@ -191,7 +191,7 @@
 							<textbox readonly="true"
 								id="extensions.multipletab.clipboard.format.1-textbox"
 								preference="extensions.multipletab.clipboard.format.1"
-								tooltiptext="&config.clipboardFormatType.description;"/>
+								tooltip="formats-tip"/>
 							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
 						</row>
 						<row align="center">
@@ -199,7 +199,7 @@
 							<textbox readonly="true"
 								id="extensions.multipletab.clipboard.format.2-textbox"
 								preference="extensions.multipletab.clipboard.format.2"
-								tooltiptext="&config.clipboardFormatType.description;"/>
+								tooltip="formats-tip"/>
 							<button label="&config.clipboardFormatType.remove.label;" class="delete-button dummy-button"/>
 						</row>
 						<row id="format-template"
@@ -209,11 +209,11 @@
 								<radio value="999" disabled="true"/>
 								<textbox class="format-label-textbox"
 									emptytext="&config.clipboardFormatType.default.label;"
-									tooltiptext="&config.clipboardFormatType.description;"/>
+									tooltip="formats-tip"/>
 							</hbox>
 							<textbox class="format-textbox"
 								emptytext="&config.clipboardFormatType.default.format;"
-								tooltiptext="&config.clipboardFormatType.description;"
+								tooltip="formats-tip"
 								oninput="onFormatInput(this.parentNode);"/>
 							<button class="delete-button"
 								label="&config.clipboardFormatType.remove.label;"
@@ -235,6 +235,9 @@
 				oncommand="undoRemoveFormat();"/>
 		</hbox>
 	</groupbox>
+	<tooltip id="formats-tip">
+		<label>&config.clipboardFormatType.description;</label>
+	</tooltip>
 </prefpane>
 
 <prefpane id="prefpane-selection-menu" label="&config.tabs.selectionMenu;">
