@@ -19,6 +19,7 @@ the Initial Developer. All Rights Reserved.
 
 Contributor(s): Tsprajna <oceant.adsl@msa.hinet.net>
                 HJL <newgene01@gmail.com>
+                Infocatcher <https://github.com/Infocatcher>
 
 Alternatively, the contents of these files may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
