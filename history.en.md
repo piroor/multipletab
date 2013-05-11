@@ -3,6 +3,7 @@
  - master/HEAD
    * Improved: Show unnamed tab groups in the "Move to Group" popup.
    * Improved: Add support of rich text format for the "copy to clipboard" feature. Now "%RT%" keyboard means "copy the result as a rich text HTML to the clipboard". (by Yue Hu (ximellon). Thanks!)
+   * Improved: Make help topics readable, about placeholders for "Copy URIs of Tabs" (by Infocatcher. Thanks!)
  - 0.7.2013040601
    * Fixed: Move all selected tabs to a newly opened window correctly on Firefox 19 and later.
    * Update "ru" locale (by Infocatcher)
