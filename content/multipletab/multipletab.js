@@ -2642,7 +2642,7 @@ var MultipleTabService = {
 				null, // title of picker
 				autoChosen,
 				b.referringURI, // referrer
-				document, // initiating document
+				b.contentDocument, // initiating document
 				true, // skip prompt?
 				null // cache key
 			);
