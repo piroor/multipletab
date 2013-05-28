@@ -4,6 +4,7 @@
    * 「グループに移動」のポップアップに、名前が付いていないグループも表示するようにした
    * 選択したタブをコピーする機能において、リッチテキスト形式でのコピーに対応した（「%RT%」というキーワードをフォーマット中で指定すると、結果がリッチテキストHTMLとしてコピーされます）（by Yue Hu (ximellon). Thanks!）
    * 「タブのURIをコピー」機能で利用できるプレースホルダのヘルプ文字列をより読みやすい形に整形（by Infocatcher. Thanks!）
+   * [セッション保存APIの仕様変更](http://dutherenverseauborddelatable.wordpress.com/2013/05/23/add-on-breakage-continued-list-of-add-ons-that-will-probably-be-affected/)に追従
  - 0.7.2013040601
    * Firefox 19以降で複数のタブをウィンドウ外にドラッグして新しいウィンドウに移動する時に、他のタブが追従しない問題を修正
    * "ru"ロケール更新 (by Infocatcher)
