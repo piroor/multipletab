@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.7.2013052901
    * Improved: Show unnamed tab groups in the "Move to Group" popup.
    * Improved: Add support of rich text format for the "copy to clipboard" feature. Now "%RT%" keyboard means "copy the result as a rich text HTML to the clipboard". (by Yue Hu (ximellon). Thanks!)
    * Improved: Make help topics readable, about placeholders for "Copy URIs of Tabs" (by Infocatcher. Thanks!)
