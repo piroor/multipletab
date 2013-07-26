@@ -409,8 +409,6 @@ var MultipleTabService = {
 		else
 			aURI = this.makeURIFromSpec(aURI);
 
-		str = getShortcutOrURI(str);
-
 		var userHomePart = this.getPref('extensions.multipletab.checkUserHost') ?
 							str.match(/^\w+:\/\/[^\/]+(\/~[^\/]+)\//) :
 							'' ;
