@@ -2,6 +2,8 @@ Components.utils.import('resource://multipletab-modules/extensions.js', {});
 Components.utils.import('resource://multipletab-modules/namespace.jsm');
 var extensions = getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'].extensions;
 
+Components.utils.import('resource://gre/modules/Services.jsm');
+
 const MENU_EDITOR_ID = '{EDA7B1D7-F793-4e03-B074-E6F303317FB0}';
 
 var gAutoPopupItems = [];
@@ -80,6 +82,12 @@ function init()
 	new window['piro.sakura.ne.jp'].arrowScrollBoxScrollHelper('formatTypeBox', 'radio');
 	new window['piro.sakura.ne.jp'].arrowScrollBoxScrollHelper('selectionMenuItemsBox', 'checkbox');
 	new window['piro.sakura.ne.jp'].arrowScrollBoxScrollHelper('contextMenuItemsBox', 'checkbox');
+
+	if (Services.vc.compare(Services.appinfo. platformVersion, '24.0a') > 0) {
+		let removeRight = document.getElementById('extensions.multipletab.show.multipletab-context-removeRightTabs-check');
+		removeRight.setAttribute('checked', true);
+		removeRight.setAttribute('disabled', true);
+	}
 
 //	sizeToContent();
 }
