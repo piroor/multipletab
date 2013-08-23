@@ -18,10 +18,10 @@
 <!ENTITY popup.selection.moveToGroup     "Move to Group">
 <!ENTITY popup.selection.moveToGroup.new "New Group">
 
-<!ENTITY popup.context.removeLeftTabs.horizontal  "Close Left Tabs">
-<!ENTITY popup.context.removeLeftTabs.vertical    "Close Above Tabs">
-<!ENTITY popup.context.removeRightTabs.horizontal "Close Right Tabs">
-<!ENTITY popup.context.removeRightTabs.vertical   "Close Below Tabs">
+<!ENTITY popup.context.removeLeftTabs.horizontal  "Close Tabs to the Left">
+<!ENTITY popup.context.removeLeftTabs.vertical    "Close Tabs to the Top">
+<!ENTITY popup.context.removeRightTabs.horizontal "Close Tabs to the Right">
+<!ENTITY popup.context.removeRightTabs.vertical   "Close Tabs to the Bottom">
 <!ENTITY popup.context.removeAll                  "Close All Tabs">
 <!ENTITY popup.context.removeSimilar              "Close Similar Tabs">
 <!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
