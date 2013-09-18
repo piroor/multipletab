@@ -3648,7 +3648,9 @@ var MultipleTabService = {
 			return;
 		this.rearrangeBundledTabsOf(aMovedTab, oldPosition, movedTabs);
 
-		b.mTabDropIndicatorBar.collapsed = true; // hide anyway!
+		var indicator = b.mTabDropIndicatorBar || b.tabContainer._tabDropIndicator;
+		if (indicator)
+			indicator.collapsed = true; // hide anyway!
 	},
  
 	importBundledTabsOf : function MTS_importBundledTabsOf(aNewTab, aSourceTab) 
@@ -3882,7 +3884,9 @@ var MultipleTabService = {
 
 					targetBrowser.movingSelectedTabs = false;
 					targetBrowser.duplicatingSelectedTabs = false;
-					targetBrowser.mTabDropIndicatorBar.collapsed = true; // hide anyway!
+					var indicator = targetBrowser.mTabDropIndicatorBar || targetBrowser.tabContainer._tabDropIndicator;
+					if (indicator)
+						indicator.collapsed = true; // hide anyway!
 
 					return result;
 				});
