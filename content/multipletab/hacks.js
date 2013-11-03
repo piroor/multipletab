@@ -152,14 +152,14 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 				)
 			)
 			) {
-			switch (this.PromptService.confirmEx(
+			switch (Services.prompt.confirmEx(
 					null,
 					this.bundle.getString('compatibility_TMP_warning_title'),
 					this.bundle.getString(/mac/i.test(navigator.platform) ? 'compatibility_TMP_warning_text_mac' : 'compatibility_TMP_warning_text' ) + '\n'+
 						this.bundle.getString('compatibility_TMP_warning_text_note'),
-					(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_0) +
-					(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_1) +
-					(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_2),
+					(Services.prompt.BUTTON_TITLE_IS_STRING * Services.prompt.BUTTON_POS_0) +
+					(Services.prompt.BUTTON_TITLE_IS_STRING * Services.prompt.BUTTON_POS_1) +
+					(Services.prompt.BUTTON_TITLE_IS_STRING * Services.prompt.BUTTON_POS_2),
 					this.bundle.getString('compatibility_TMP_warning_use_multipletab'),
 					this.bundle.getString('compatibility_TMP_warning_use_TMP'),
 					this.bundle.getString('compatibility_TMP_warning_keep'),

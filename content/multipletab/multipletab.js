@@ -197,15 +197,6 @@ var MultipleTabService = {
 	},
 	_SessionStoreNS : null,
 
-	get PromptService() 
-	{
-		if (!this._PromptService) {
-			this._PromptService = Services.prompt;
-		}
-		return this._PromptService;
-	},
-	_PromptService : null,
- 
 	get EffectiveTLD() 
 	{
 		if (!this._EffectiveTLD) {
@@ -270,11 +261,11 @@ var MultipleTabService = {
 			return true;
 		var checked = { value: true };
 		window.focus();
-		var shouldClose = this.PromptService.confirmEx(window,
+		var shouldClose = Services.prompt.confirmEx(window,
 				this.tabbrowserBundle.getString('tabs.closeWarningTitle'),
 				this.tabbrowserBundle.getFormattedString('tabs.closeWarningMultipleTabs', [aTabsCount]),
-				(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_0) +
-				(this.PromptService.BUTTON_TITLE_CANCEL * this.PromptService.BUTTON_POS_1),
+				(Services.prompt.BUTTON_TITLE_IS_STRING * Services.prompt.BUTTON_POS_0) +
+				(Services.prompt.BUTTON_TITLE_CANCEL * Services.prompt.BUTTON_POS_1),
 				this.tabbrowserBundle.getString('tabs.closeButtonMultiple'),
 				null, null,
 				this.tabbrowserBundle.getString('tabs.closeWarningPromptMe'),
@@ -3529,7 +3520,7 @@ var MultipleTabService = {
 
 				case this.kNEW_GROUP_TITLE_ASK:
 					let titleSlot = { value : '' };
-					if (!this.PromptService.prompt(window,
+					if (!Services.prompt.prompt(window,
 							this.bundle.getString('moveTabsToGroup.newGroup.title'),
 							this.bundle.getFormattedString('moveTabsToGroup.newGroup.message', [aTabsCount]),
 							titleSlot,
