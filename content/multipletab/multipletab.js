@@ -205,16 +205,7 @@ var MultipleTabService = {
 		return this._EffectiveTLD;
 	},
 	_EffectiveTLD : null,
- 
-	get XULAppInfo() 
-	{
-		if (!this._XULAppInfo) {
-			this._XULAppInfo = Services.appinfo;
-		}
-		return this._XULAppInfo;
-	},
-	_XULAppInfo : null,
-  
+
 	get allowMoveMultipleTabs() 
 	{
 		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
@@ -881,7 +872,7 @@ var MultipleTabService = {
  
 	isAccelKeyPressed : function MTS_isAccelKeyPressed(aEvent) 
 	{
-		return this.XULAppInfo.OS == 'Darwin' ? aEvent.metaKey : aEvent.ctrlKey ;
+		return Services.appinfo.OS == 'Darwin' ? aEvent.metaKey : aEvent.ctrlKey ;
 	},
   
 // fire custom events 
@@ -1058,7 +1049,7 @@ var MultipleTabService = {
  
 	applyPlatformDefaultPrefs : function MTS_applyPlatformDefaultPrefs() 
 	{
-		var OS = this.XULAppInfo.OS;
+		var OS = Services.appinfo.OS;
 		var processed = {};
 		var originalKeys = this.getDescendant('extensions.multipletab.platform.'+OS);
 		for (let i = 0, maxi = originalKeys.length; i < maxi; i++)
