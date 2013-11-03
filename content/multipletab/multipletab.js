@@ -197,15 +197,6 @@ var MultipleTabService = {
 	},
 	_SessionStoreNS : null,
 
-	get EffectiveTLD() 
-	{
-		if (!this._EffectiveTLD) {
-			this._EffectiveTLD = Services.eTLD;
-		}
-		return this._EffectiveTLD;
-	},
-	_EffectiveTLD : null,
-
 	get allowMoveMultipleTabs() 
 	{
 		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
@@ -387,9 +378,9 @@ var MultipleTabService = {
 							'' ;
 		if (userHomePart) userHomePart = userHomePart[1];
 
-		if (this.getPref('extensions.multipletab.useEffectiveTLD') && this.EffectiveTLD) {
+		if (this.getPref('extensions.multipletab.useEffectiveTLD') && Services.eTLD) {
 			try {
-				let domain = this.EffectiveTLD.getBaseDomain(aURI, 0);
+				let domain = Services.eTLD.getBaseDomain(aURI, 0);
 				if (domain) return domain + userHomePart;
 			}
 			catch(e) {
