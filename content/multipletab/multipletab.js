@@ -197,42 +197,6 @@ var MultipleTabService = {
 	},
 	_SessionStoreNS : null,
 
-	get IOService() 
-	{
-		if (!this._IOService) {
-			this._IOService = Services.io;
-		}
-		return this._IOService;
-	},
-	_IOService : null,
- 
-	get PromptService() 
-	{
-		if (!this._PromptService) {
-			this._PromptService = Services.prompt;
-		}
-		return this._PromptService;
-	},
-	_PromptService : null,
- 
-	get EffectiveTLD() 
-	{
-		if (!this._EffectiveTLD) {
-			this._EffectiveTLD = Services.eTLD;
-		}
-		return this._EffectiveTLD;
-	},
-	_EffectiveTLD : null,
- 
-	get XULAppInfo() 
-	{
-		if (!this._XULAppInfo) {
-			this._XULAppInfo = Services.appinfo;
-		}
-		return this._XULAppInfo;
-	},
-	_XULAppInfo : null,
-  
 	get allowMoveMultipleTabs() 
 	{
 		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
@@ -279,11 +243,11 @@ var MultipleTabService = {
 			return true;
 		var checked = { value: true };
 		window.focus();
-		var shouldClose = this.PromptService.confirmEx(window,
+		var shouldClose = Services.prompt.confirmEx(window,
 				this.tabbrowserBundle.getString('tabs.closeWarningTitle'),
 				this.tabbrowserBundle.getFormattedString('tabs.closeWarningMultipleTabs', [aTabsCount]),
-				(this.PromptService.BUTTON_TITLE_IS_STRING * this.PromptService.BUTTON_POS_0) +
-				(this.PromptService.BUTTON_TITLE_CANCEL * this.PromptService.BUTTON_POS_1),
+				(Services.prompt.BUTTON_TITLE_IS_STRING * Services.prompt.BUTTON_POS_0) +
+				(Services.prompt.BUTTON_TITLE_CANCEL * Services.prompt.BUTTON_POS_1),
 				this.tabbrowserBundle.getString('tabs.closeButtonMultiple'),
 				null, null,
 				this.tabbrowserBundle.getString('tabs.closeWarningPromptMe'),
@@ -414,9 +378,9 @@ var MultipleTabService = {
 							'' ;
 		if (userHomePart) userHomePart = userHomePart[1];
 
-		if (this.getPref('extensions.multipletab.useEffectiveTLD') && this.EffectiveTLD) {
+		if (this.getPref('extensions.multipletab.useEffectiveTLD') && Services.eTLD) {
 			try {
-				let domain = this.EffectiveTLD.getBaseDomain(aURI, 0);
+				let domain = Services.eTLD.getBaseDomain(aURI, 0);
 				if (domain) return domain + userHomePart;
 			}
 			catch(e) {
@@ -433,14 +397,14 @@ var MultipleTabService = {
 		var newURI;
 		aURI = aURI || '';
 		if (aURI && String(aURI).indexOf('file:') == 0) {
-			var fileHandler = this.IOService
+			var fileHandler = Services.io
 						.getProtocolHandler('file')
 						.QueryInterface(Ci.nsIFileProtocolHandler);
 			var tempLocalFile = fileHandler.getFileFromURLSpec(aURI);
-			newURI = this.IOService.newFileURI(tempLocalFile);
+			newURI = Services.io.newFileURI(tempLocalFile);
 		}
 		else {
-			newURI = this.IOService.newURI(aURI, null, null);
+			newURI = Services.io.newURI(aURI, null, null);
 		}
 		return newURI;
 	},
@@ -899,7 +863,7 @@ var MultipleTabService = {
  
 	isAccelKeyPressed : function MTS_isAccelKeyPressed(aEvent) 
 	{
-		return this.XULAppInfo.OS == 'Darwin' ? aEvent.metaKey : aEvent.ctrlKey ;
+		return Services.appinfo.OS == 'Darwin' ? aEvent.metaKey : aEvent.ctrlKey ;
 	},
   
 // fire custom events 
@@ -1076,7 +1040,7 @@ var MultipleTabService = {
  
 	applyPlatformDefaultPrefs : function MTS_applyPlatformDefaultPrefs() 
 	{
-		var OS = this.XULAppInfo.OS;
+		var OS = Services.appinfo.OS;
 		var processed = {};
 		var originalKeys = this.getDescendant('extensions.multipletab.platform.'+OS);
 		for (let i = 0, maxi = originalKeys.length; i < maxi; i++)
@@ -3538,7 +3502,7 @@ var MultipleTabService = {
 
 				case this.kNEW_GROUP_TITLE_ASK:
 					let titleSlot = { value : '' };
-					if (!this.PromptService.prompt(window,
+					if (!Services.prompt.prompt(window,
 							this.bundle.getString('moveTabsToGroup.newGroup.title'),
 							this.bundle.getFormattedString('moveTabsToGroup.newGroup.message', [aTabsCount]),
 							titleSlot,
