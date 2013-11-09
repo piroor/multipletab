@@ -840,7 +840,7 @@ var MultipleTabService = {
  
 	getCloseboxFromTab : function MTS_getCloseboxFromTab(aTab) 
 	{
-		var finder = function finder_fn(aNode) {
+		var finder = function findCloseBox(aNode) {
 				if (aNode.localName == 'toolbarbutton' &&
 					aNode.className.indexOf('tab-close-button') > -1)
 					return aNode;
@@ -849,7 +849,7 @@ var MultipleTabService = {
 				if (nodes) {
 					for (let i = 0, maxi = nodes.length; i < maxi; i++)
 					{
-						let closebox = finder_fn(nodes[i]);
+						let closebox = findCloseBox(nodes[i]);
 						if (closebox)
 							return closebox;
 					}
