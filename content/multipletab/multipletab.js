@@ -96,10 +96,11 @@ var MultipleTabService = {
 		return xpathResult;
 	},
 	
-	getArrayFromXPathResult : function MTS_getArrayFromXPathResult(aXPathResult) 
+	getArrayFromXPathResult : function MTS_getArrayFromXPathResult(aXPathResult, ...aExtraArgs) 
 	{
 		if (!(aXPathResult instanceof Ci.nsIDOMXPathResult)) {
-			aXPathResult = this.evaluateXPath(aXPathResult);
+			let allArgs = [aXPathResult].concat(aExtraArgs);
+			aXPathResult = this.evaluateXPath.apply(this, allArgs);
 		}
 		var max = aXPathResult.snapshotLength;
 		var array = new Array(max);
