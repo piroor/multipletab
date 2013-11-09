@@ -99,7 +99,7 @@ var MultipleTabService = {
 	getArrayFromXPathResult : function MTS_getArrayFromXPathResult(aXPathResult) 
 	{
 		if (!(aXPathResult instanceof Ci.nsIDOMXPathResult)) {
-			aXPathResult = this.evaluateXPath.apply(this, arguments);
+			aXPathResult = this.evaluateXPath(aXPathResult);
 		}
 		var max = aXPathResult.snapshotLength;
 		var array = new Array(max);
@@ -133,12 +133,11 @@ var MultipleTabService = {
 	},
  
 	// called with target(nsIDOMEventTarget), document(nsIDOMDocument), type(string) and data(object) 
-	fireDataContainerEvent : function()
+	fireDataContainerEvent : function(...aArgs)
 	{
 		var target, document, type, data, canBubble, cancellable;
-		for (let i = 0, maxi = arguments.length; i < maxi; i++)
+		for (let arg of aArgs)
 		{
-			let arg = arguments[i];
 			if (typeof arg == 'boolean') {
 				if (canBubble === void(0))
 					canBubble = arg;
@@ -162,12 +161,12 @@ var MultipleTabService = {
 		var event = document.createEvent('DataContainerEvent');
 		event.initEvent(type, canBubble, cancellable);
 		var properties = Object.keys(data);
-		for (let i = 0, maxi = properties.length; i < maxi; i++)
+		for (let prop of properties)
 		{
-			let property = properties[i];
-			let value = data[property];
-			event.setData(property, value);
-			event[property] = value; // for backward compatibility
+			let prop = properties[i];
+			let value = data[prop];
+			event.setData(prop, value);
+			event[prop] = value; // for backward compatibility
 		}
 
 		return target.dispatchEvent(event);
@@ -649,14 +648,13 @@ var MultipleTabService = {
 		return w.MultipleTabService.getSelectedTabs(b);
 	},
  
-	rearrangeBundledTabsOf : function MTS_rearrangeBundledTabsOf() 
+	rearrangeBundledTabsOf : function MTS_rearrangeBundledTabsOf(...aArgs)
 	{
 		var baseTab,
 			oldBasePosition = -1,
 			tabs;
-		for (let i = 0, maxi = arguments.length; i < maxi; i++)
+		for (let arg of aArgs)
 		{
-			let arg = arguments[i];
 			if (arg instanceof Ci.nsIDOMNode)
 				baseTab = arg;
 			else if (typeof arg == 'number')
@@ -842,7 +840,7 @@ var MultipleTabService = {
  
 	getCloseboxFromTab : function MTS_getCloseboxFromTab(aTab) 
 	{
-		var finder = function(aNode) {
+		var finder = function finder_fn(aNode) {
 				if (aNode.localName == 'toolbarbutton' &&
 					aNode.className.indexOf('tab-close-button') > -1)
 					return aNode;
@@ -851,7 +849,7 @@ var MultipleTabService = {
 				if (nodes) {
 					for (let i = 0, maxi = nodes.length; i < maxi; i++)
 					{
-						let closebox = arguments.callee(nodes[i]);
+						let closebox = finder_fn(nodes[i]);
 						if (closebox)
 							return closebox;
 					}
@@ -2748,8 +2746,8 @@ var MultipleTabService = {
 
 				if (!aRemoteWindow) {
 					aRemoteWindow = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
-					aRemoteWindow.addEventListener('load', function() {
-						aRemoteWindow.removeEventListener('load', arguments.callee, false);
+					aRemoteWindow.addEventListener('load', function onload() {
+						aRemoteWindow.removeEventListener('load', onload, false);
 						aRemoteWindow.setTimeout(function() {
 							self.tearOffTabsToNewWindow(aTabs, aRemoteWindow);
 						}, 0);
@@ -2955,8 +2953,8 @@ var MultipleTabService = {
 
 		aEvent.wait();
 		var remoteWindow = window.openDialog(location.href, '_blank', 'chrome,all,dialog=no', 'about:blank');
-		remoteWindow.addEventListener('load', function() {
-			remoteWindow.removeEventListener('load', arguments.callee, false);
+		remoteWindow.addEventListener('load', function onload() {
+			remoteWindow.removeEventListener('load', onload, false);
 			data.remote.window = UndoTabService.setWindowId(remoteWindow, data.remote.window);
 			remoteWindow.resizeTo(data.remote.width, data.remote.height);
 			remoteWindow.moveTo(data.remote.x, data.remote.y);
@@ -3005,14 +3003,13 @@ var MultipleTabService = {
 		return this.splitWindowFromTabs(aTabs);
 	},
   
-	importTabsTo : function MTS_importTabsTo() 
+	importTabsTo : function MTS_importTabsTo(...aArgs) 
 	{
 		var aTabs = [],
 			aTabBrowser,
 			aClone;
-		for (let i = 0, maxi = arguments.length; i < maxi; i++)
+		for (let arg of aArgs)
 		{
-			let arg = arguments[i];
 			if (typeof arg == 'boolean') {
 				aClone = arg;
 			}
