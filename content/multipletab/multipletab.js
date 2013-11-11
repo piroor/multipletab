@@ -164,7 +164,6 @@ var MultipleTabService = {
 		var properties = Object.keys(data);
 		for (let prop of properties)
 		{
-			let prop = properties[i];
 			let value = data[prop];
 			event.setData(prop, value);
 			event[prop] = value; // for backward compatibility
