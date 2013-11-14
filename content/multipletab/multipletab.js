@@ -179,7 +179,6 @@ var MultipleTabService = {
 	// This shouldn't be the part of this object.
 	get SessionStoreNS() {
 		if (!this._SessionStoreNS) {
-			// resource://app/modules/sessionstore/SessionStore.jsm ?
 			this._SessionStoreNS = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm', {});
 		}
 		return this._SessionStoreNS;
