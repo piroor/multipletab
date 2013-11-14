@@ -1,3 +1,5 @@
+Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm');
+
 var MultipleTabService = { 
 	PREFROOT : 'extensions.multipletab@piro.sakura.ne.jp',
 
@@ -172,26 +174,13 @@ var MultipleTabService = {
 
 		return target.dispatchEvent(event);
 	},
- 
-// XPConnect 
-	
-	get SessionStore() { 
-		if (!this._SessionStore) {
-			this._SessionStore = Cc['@mozilla.org/browser/sessionstore;1'].getService(Ci.nsISessionStore);
-		}
-		return this._SessionStore;
-	},
-	_SessionStore : null,
- 
+
+	// XXX: this getter is the way to access internal properties of SessionStore.jsm.
+	// This shouldn't be the part of this object.
 	get SessionStoreNS() {
 		if (!this._SessionStoreNS) {
-			try {
-				// resource://app/modules/sessionstore/SessionStore.jsm ?
-				this._SessionStoreNS = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm', {});
-			}
-			catch(e) {
-				this._SessionStoreNS = {};
-			}
+			// resource://app/modules/sessionstore/SessionStore.jsm ?
+			this._SessionStoreNS = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm', {});
 		}
 		return this._SessionStoreNS;
 	},
@@ -561,7 +550,12 @@ var MultipleTabService = {
 		if (b.contentWindow && b.contentWindow.location)
 			b.contentWindow.location.replace('about:blank');
 
-		if (this.SessionStoreNS.RestoringTabsData) // Firefox 23-
+		// XXX: This is forward compatibility.
+		// `RestoringTabData` doesn't exist in Firefox 23-27. This path doesn't work on them.
+		// It had been introduced to refactor Firefox SessionStore code.
+		// But it was backed out at https://hg.mozilla.org/mozilla-central/rev/0d6e59222717.
+		// It might be restore by https://bugzilla.mozilla.org/show_bug.cgi?id=871246.
+		if (this.SessionStoreNS.RestoringTabsData)
 			this.SessionStoreNS.RestoringTabsData.remove(aTab.linkedBrowser);
 
 		delete aTab.linkedBrowser.__SS_data;
@@ -579,9 +573,15 @@ var MultipleTabService = {
 			entries : [],
 			_tabStillLoading : true
 		};
-		if (this.SessionStoreNS.RestoringTabsData) // Firefox 23
+
+		// XXX: This is forward compatibility.
+		// `RestoringTabData` doesn't exist in Firefox 23-27. This path doesn't work on them.
+		// It had been introduced to refactor Firefox SessionStore code.
+		// But it was backed out at https://hg.mozilla.org/mozilla-central/rev/0d6e59222717.
+		// It might be restore by https://bugzilla.mozilla.org/show_bug.cgi?id=871246.
+		if (this.SessionStoreNS.RestoringTabsData)
 			this.SessionStoreNS.RestoringTabsData.set(aTab.linkedBrowser, data);
-		else // Firefox -22
+		else
 			aTab.linkedBrowser.__SS_data = data;
 
 		(aTabBrowser || this.getTabBrowserFromChild(aTab))
@@ -2663,14 +2663,14 @@ var MultipleTabService = {
 				w['piro.sakura.ne.jp'].stopRendering.stop();
 
 				var duplicatedTabs = aTabs.map(function(aTab) {
-						var state = self.evalInSandbox('('+self.SessionStore.getTabState(aTab)+')');
+						var state = self.evalInSandbox('('+SessionStore.getTabState(aTab)+')');
 						for (let i = 0, maxi = self._clearTabValueKeys.length; i < maxi; i++)
 						{
 							delete state.extData[self._clearTabValueKeys[i]];
 						}
 						state = 'JSON' in window ? JSON.stringify(state) : state.toSource() ;
 						var tab = b.addTab();
-						self.SessionStore.setTabState(tab, state);
+						SessionStore.setTabState(tab, state);
 						return tab;
 					});
 
@@ -3979,7 +3979,7 @@ var MultipleTabService = {
 
 		try {
 			this.checkCachedSessionDataExpiration(aTab);
-			this.SessionStore.setTabValue(aTab, aKey, aValue);
+			SessionStore.setTabValue(aTab, aKey, aValue);
 		}
 		catch(e) {
 		}
@@ -3991,8 +3991,8 @@ var MultipleTabService = {
 	{
 		try {
 			this.checkCachedSessionDataExpiration(aTab);
-			this.SessionStore.setTabValue(aTab, aKey, '');
-			this.SessionStore.deleteTabValue(aTab, aKey);
+			SessionStore.setTabValue(aTab, aKey, '');
+			SessionStore.deleteTabValue(aTab, aKey);
 		}
 		catch(e) {
 		}
@@ -4041,8 +4041,8 @@ var MultipleTabService = {
 		{
 			aTabs[i].removeAttribute(aAttr);
 			try {
-				this.SessionStore.setTabValue(aTabs[i], aAttr, '');
-				this.SessionStore.deleteTabValue(aTabs[i], aAttr);
+				SessionStore.setTabValue(aTabs[i], aAttr, '');
+				SessionStore.deleteTabValue(aTabs[i], aAttr);
 			}
 			catch(e) {
 			}
