@@ -1,3 +1,5 @@
+Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm');
+
 var MultipleTabService = { 
 	PREFROOT : 'extensions.multipletab@piro.sakura.ne.jp',
 
@@ -171,26 +173,12 @@ var MultipleTabService = {
 
 		return target.dispatchEvent(event);
 	},
- 
-// XPConnect 
-	
-	get SessionStore() { 
-		if (!this._SessionStore) {
-			this._SessionStore = Cc['@mozilla.org/browser/sessionstore;1'].getService(Ci.nsISessionStore);
-		}
-		return this._SessionStore;
-	},
-	_SessionStore : null,
- 
+
+	// XXX: this getter is the way to access internal properties of SessionStore.jsm.
+	// This shouldn't be the part of this object.
 	get SessionStoreNS() {
 		if (!this._SessionStoreNS) {
-			try {
-				// resource://app/modules/sessionstore/SessionStore.jsm ?
-				this._SessionStoreNS = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm', {});
-			}
-			catch(e) {
-				this._SessionStoreNS = {};
-			}
+			this._SessionStoreNS = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm', {});
 		}
 		return this._SessionStoreNS;
 	},
@@ -560,7 +548,12 @@ var MultipleTabService = {
 		if (b.contentWindow && b.contentWindow.location)
 			b.contentWindow.location.replace('about:blank');
 
-		if (this.SessionStoreNS.RestoringTabsData) // Firefox 23-
+		// XXX: This is forward compatibility.
+		// `RestoringTabData` doesn't exist in Firefox 23-27. This path doesn't work on them.
+		// It had been introduced to refactor Firefox SessionStore code.
+		// But it was backed out at https://hg.mozilla.org/mozilla-central/rev/0d6e59222717.
+		// It might be restore by https://bugzilla.mozilla.org/show_bug.cgi?id=871246.
+		if (this.SessionStoreNS.RestoringTabsData)
 			this.SessionStoreNS.RestoringTabsData.remove(aTab.linkedBrowser);
 
 		delete aTab.linkedBrowser.__SS_data;
@@ -578,9 +571,15 @@ var MultipleTabService = {
 			entries : [],
 			_tabStillLoading : true
 		};
-		if (this.SessionStoreNS.RestoringTabsData) // Firefox 23-
+
+		// XXX: This is forward compatibility.
+		// `RestoringTabData` doesn't exist in Firefox 23-27. This path doesn't work on them.
+		// It had been introduced to refactor Firefox SessionStore code.
+		// But it was backed out at https://hg.mozilla.org/mozilla-central/rev/0d6e59222717.
+		// It might be restore by https://bugzilla.mozilla.org/show_bug.cgi?id=871246.
+		if (this.SessionStoreNS.RestoringTabsData)
 			this.SessionStoreNS.RestoringTabsData.set(aTab.linkedBrowser, data);
-		else // Firefox -22
+		else
 			aTab.linkedBrowser.__SS_data = data;
 
 		(aTabBrowser || this.getTabBrowserFromChild(aTab))
@@ -996,30 +995,8 @@ var MultipleTabService = {
 
 		var b = document.getElementById('content');
 		if (b && 'swapBrowsersAndCloseOther' in b) {
-			let source;
-			let target;
-			if ('gBrowserInit' in window) {
-				if (
-					'_delayedStartup' in gBrowserInit &&
-					(source = gBrowserInit._delayedStartup.toSource()) &&
-					source.indexOf('swapBrowsersAndCloseOther') > -1
-					) {
-					target = 'gBrowserInit._delayedStartup';
-				}
-				else if ( // legacy code for Firefox 18 and olders
-					'onLoad' in gBrowserInit &&
-					(source = gBrowserInit.onLoad.toSource()) &&
-					source.indexOf('swapBrowsersAndCloseOther') > -1
-					) {
-					target = 'gBrowserInit.onLoad';
-				}
-			}
-			else if ('BrowserStartup' in window) { // legacy code for Firefox 15 and olders
-				source = window.BrowserStartup.toSource();
-				target = 'BrowserStartup';
-			}
-			if (!target)
-				dump('Multiple Tab Handler: failed to initialize startup function!');
+			let source = gBrowserInit._delayedStartup.toSource();
+			let target = 'gBrowserInit._delayedStartup';
 			if (source.indexOf('gBrowser.swapBrowsersAndCloseOther') > -1) {
 				eval(target+' = '+source.replace(
 					'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
@@ -2545,14 +2522,6 @@ var MultipleTabService = {
 			return aFile;
 		}
 
-		if (typeof picker.open != 'function') { // Firefox 18 and olders
-			let folder = (picker.show() == picker.returnOK) ?
-							picker.file.QueryInterface(Ci.nsILocalFile) : null ;
-			return this.Deferred.next(function() {
-				return findExistingFolder(folder);
-			});
-		}
-
 		var deferred = new this.Deferred();
 		picker.open({ done: function(aResult) {
 			if (aResult == picker.returnOK) {
@@ -2576,37 +2545,20 @@ var MultipleTabService = {
 			autoChosen.saveAsType = kSaveAsType_Text;
 		}
 
-		if (internalSave.length < 12) { // Firefox 16 and olders
-			internalSave(
-				uri.spec,
-				(aSaveType != this.kSAVE_TYPE_FILE ? b.contentDocument : null ),
-				null, // default file name
-				null, // content disposition
-				b.contentDocument.contentType,
-				false, // should bypass cache?
-				null, // title of picker
-				autoChosen,
-				b.referringURI, // referrer
-				true, // skip prompt?
-				null // cache key
-			);
-		}
-		else {
-			internalSave(
-				uri.spec,
-				(aSaveType != this.kSAVE_TYPE_FILE ? b.contentDocument : null ),
-				null, // default file name
-				null, // content disposition
-				b.contentDocument.contentType,
-				false, // should bypass cache?
-				null, // title of picker
-				autoChosen,
-				b.referringURI, // referrer
-				b.contentDocument, // initiating document
-				true, // skip prompt?
-				null // cache key
-			);
-		}
+		internalSave(
+			uri.spec,
+			(aSaveType != this.kSAVE_TYPE_FILE ? b.contentDocument : null ),
+			null, // default file name
+			null, // content disposition
+			b.contentDocument.contentType,
+			false, // should bypass cache?
+			null, // title of picker
+			autoChosen,
+			b.referringURI, // referrer
+			b.contentDocument, // initiating document
+			true, // skip prompt?
+			null // cache key
+		);
 	},
   
 	addBookmarkFor : function MTS_addBookmarkFor(aTabs, aFolderName) 
@@ -2709,14 +2661,14 @@ var MultipleTabService = {
 				w['piro.sakura.ne.jp'].stopRendering.stop();
 
 				var duplicatedTabs = aTabs.map(function(aTab) {
-						var state = self.evalInSandbox('('+self.SessionStore.getTabState(aTab)+')');
+						var state = self.evalInSandbox('('+SessionStore.getTabState(aTab)+')');
 						for (let i = 0, maxi = self._clearTabValueKeys.length; i < maxi; i++)
 						{
 							delete state.extData[self._clearTabValueKeys[i]];
 						}
 						state = 'JSON' in window ? JSON.stringify(state) : state.toSource() ;
 						var tab = b.addTab();
-						self.SessionStore.setTabState(tab, state);
+						SessionStore.setTabState(tab, state);
 						return tab;
 					});
 
@@ -3141,7 +3093,6 @@ var MultipleTabService = {
 						let keywords = self._getMetaInfo(doc, 'keywords');
 						if (
 							!privateDoc &&
-							'PrivateBrowsingUtils' in window && // Firefox 20 or later
 							PrivateBrowsingUtils.isWindowPrivate(browser.contentWindow)
 							) {
 							// Will use private document, if at least one tab are private
@@ -3219,19 +3170,10 @@ var MultipleTabService = {
 			// Not sure if section below works as it originally created since I'm not 
 			// that familiar with MAF (Mozilla Application Framework)
 
-			// The init() function was added to FF 16 for upcoming changes to private browsing mode
-			// See https://bugzilla.mozilla.org/show_bug.cgi?id=722872 for more information
-			if ('init' in trans) {
-				var sourceWin = aCopyData.sourceDocument && aCopyData.sourceDocument.defaultView ||
-					document.commandDispatcher.focusedWindow;
-				var privacyContext = 'PrivateBrowsingUtils' in window ? // Firefox 20 or later
-					PrivateBrowsingUtils.privacyContextFromWindow(sourceWin) :
-					sourceWin
-						.QueryInterface(Ci.nsIInterfaceRequestor)
-						.getInterface(Ci.nsIWebNavigation)
-						.QueryInterface(Ci.nsILoadContext);
-				trans.init(privacyContext);
-			}
+			var sourceWin = aCopyData.sourceDocument && aCopyData.sourceDocument.defaultView ||
+				document.commandDispatcher.focusedWindow;
+			var privacyContext = PrivateBrowsingUtils.privacyContextFromWindow(sourceWin);
+			trans.init(privacyContext);
 
 			// Rich Text HTML Format
 			trans.addDataFlavor('text/html');
@@ -4035,7 +3977,7 @@ var MultipleTabService = {
 
 		try {
 			this.checkCachedSessionDataExpiration(aTab);
-			this.SessionStore.setTabValue(aTab, aKey, aValue);
+			SessionStore.setTabValue(aTab, aKey, aValue);
 		}
 		catch(e) {
 		}
@@ -4047,8 +3989,8 @@ var MultipleTabService = {
 	{
 		try {
 			this.checkCachedSessionDataExpiration(aTab);
-			this.SessionStore.setTabValue(aTab, aKey, '');
-			this.SessionStore.deleteTabValue(aTab, aKey);
+			SessionStore.setTabValue(aTab, aKey, '');
+			SessionStore.deleteTabValue(aTab, aKey);
 		}
 		catch(e) {
 		}
@@ -4097,8 +4039,8 @@ var MultipleTabService = {
 		{
 			aTabs[i].removeAttribute(aAttr);
 			try {
-				this.SessionStore.setTabValue(aTabs[i], aAttr, '');
-				this.SessionStore.deleteTabValue(aTabs[i], aAttr);
+				SessionStore.setTabValue(aTabs[i], aAttr, '');
+				SessionStore.deleteTabValue(aTabs[i], aAttr);
 			}
 			catch(e) {
 			}
