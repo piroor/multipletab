@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Drop support for Firefox 23 and olders.
  - 0.7.2013100801
    * Support "Close Tabs to Right" feature on Firefox 24 and later. Multiple Tab Handler's own feature is disabled if it is provided by Firefox itself.
    * Works on Firefox 25 and later.
