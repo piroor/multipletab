@@ -3078,19 +3078,24 @@ var MultipleTabService = {
 		var timeUTC = now.toUTCString();
 		var timeLocal = now.toLocaleString();
 
+		var requireLoaded = /%AUTHOR%|%AUTHOR_HTML(?:IFIED)?%|%DESC(?:RIPTION)?%|%DESC(?:RIPTION)?_HTML(?:IFIED)?%|%KEYWORDS%%KEYWORDS_HTML(?:IFIED)?%/i.test(format);
+
 		var self = this;
-		return this.Deferred.parallel(aTabs.map(this.ensureLoaded, this))
-			.next(function() {
+		var start = this.Deferred;
+		if (requireLoaded)
+			start = this.Deferred.parallel(aTabs.map(this.ensureLoaded, this));
+		return start.next(function() {
 				var sourceDoc, privateDoc;
 				var isRichText = /%RT%/i.test(format);
 				var stringToCopy = Array.slice(aTabs).map(function(aTab) {
 						let uri = self.getCurrentURIOfTab(aTab).spec;
 						let browser = aTab.linkedBrowser;
 						let doc = browser.contentDocument;
-						let title = doc.title || aTab.getAttribute('label');
-						let author = self._getMetaInfo(doc, 'author');
-						let description = self._getMetaInfo(doc, 'description');
-						let keywords = self._getMetaInfo(doc, 'keywords');
+						let title = doc.title;
+						if (!title || uri == 'about:blank') title = aTab.getAttribute('label');
+						let author = requireLoaded && self._getMetaInfo(doc, 'author') || '';
+						let description = requireLoaded && self._getMetaInfo(doc, 'description') || '';
+						let keywords = requireLoaded && self._getMetaInfo(doc, 'keywords') || '';
 						if (
 							!privateDoc &&
 							PrivateBrowsingUtils.isWindowPrivate(browser.contentWindow)
