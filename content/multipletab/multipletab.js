@@ -2315,7 +2315,6 @@ var MultipleTabService = {
 				b.removeTab(selected, { animate : true });
 		};
 
-		w['piro.sakura.ne.jp'].stopRendering.stop();
 		if ('UndoTabService' in window && UndoTabService.isUndoable()) {
 			let data = UndoTabService.getTabOpetarionTargetsData({
 					browser : b
@@ -2335,7 +2334,6 @@ var MultipleTabService = {
 		else {
 			operation();
 		}
-		w['piro.sakura.ne.jp'].stopRendering.start();
 
 		/* PUBLIC API */
 		this.fireTabsClosedEvent(b, aTabs);
@@ -2615,7 +2613,6 @@ var MultipleTabService = {
 					}
 				});
 		};
-		w['piro.sakura.ne.jp'].stopRendering.stop();
 		if ('UndoTabService' in window && UndoTabService.isUndoable()) {
 			let data = UndoTabService.getTabOpetarionTargetsData({
 					browser : b
@@ -2635,7 +2632,6 @@ var MultipleTabService = {
 		else {
 			operation();
 		}
-		w['piro.sakura.ne.jp'].stopRendering.start();
 
 		return duplicatedTabs;
 	},
@@ -2658,7 +2654,6 @@ var MultipleTabService = {
 		var self = this;
 		return this.Deferred.parallel(aTabs.map(this.ensureLoaded, this))
 			.next(function() {
-				w['piro.sakura.ne.jp'].stopRendering.stop();
 
 				var duplicatedTabs = aTabs.map(function(aTab) {
 						var state = self.evalInSandbox('('+SessionStore.getTabState(aTab)+')');
@@ -2677,7 +2672,6 @@ var MultipleTabService = {
 				if (selectedIndex > -1)
 					b.selectedTab = duplicatedTabs[selectedIndex];
 
-				w['piro.sakura.ne.jp'].stopRendering.start();
 
 				return duplicatedTabs;
 			})
@@ -2732,7 +2726,6 @@ var MultipleTabService = {
 					});
 
 				remoteService.duplicatingTabs = true;
-				aRemoteWindow['piro.sakura.ne.jp'].stopRendering.stop();
 
 				if (aOurParams)
 					aOurParams.wait();
@@ -2763,7 +2756,6 @@ var MultipleTabService = {
 								remoteBrowser.removeTab(tab, { animate : true });
 							}
 						}
-						aRemoteWindow['piro.sakura.ne.jp'].stopRendering.start();
 
 						if (aData) {
 							aData.remote.positions = [];
@@ -2925,7 +2917,6 @@ var MultipleTabService = {
 			return aEvent.preventDefault();
 
 		if (remote.tabs.length == data.remote.tabs.length) {
-			remote.window['piro.sakura.ne.jp'].stopRendering.start();
 			remote.window.MultipleTabService.getTabsArray(remote.browser)
 				.some(function(aTab) {
 					if (remote.tabs.indexOf(aTab) > -1)
@@ -2941,7 +2932,6 @@ var MultipleTabService = {
 				}),
 				data.remote.positions
 			);
-			remote.window['piro.sakura.ne.jp'].stopRendering.start();
 		}
 
 		remote.window.setTimeout(function() {
@@ -2994,9 +2984,6 @@ var MultipleTabService = {
 		var self = this;
 		return this.Deferred.parallel(aTabs.map(this.ensureLoaded, this))
 			.next(function() {
-				targetWindow['piro.sakura.ne.jp'].stopRendering.stop();
-				sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
-
 				if (targetBrowser.__multipletab__canDoWindowMove && !aClone) {// move tabs
 					for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 					{
@@ -3030,9 +3017,6 @@ var MultipleTabService = {
 						}
 					}
 				}
-
-				targetWindow['piro.sakura.ne.jp'].stopRendering.start();
-				sourceWindow['piro.sakura.ne.jp'].stopRendering.start();
 
 				self.duplicatingTabs = false;
 
@@ -3610,9 +3594,6 @@ var MultipleTabService = {
 			targetService.clearSelection(targetBrowser);
 			sourceService.clearSelection(sourceBrowser);
 
-			targetWindow['piro.sakura.ne.jp'].stopRendering.stop();
-			sourceWindow['piro.sakura.ne.jp'].stopRendering.stop();
-
 			return targetService.importTabsTo(otherSourceTabs, targetBrowser)
 				.next(function(importedTabs) {
 					importedTabs.splice(sourceBaseIndex, 0, aNewTab);
@@ -3637,14 +3618,9 @@ var MultipleTabService = {
 					if (isAllTabsMove) {
 						targetService.closeOwner(sourceBrowser);
 					}
-					else {
-						sourceWindow['piro.sakura.ne.jp'].stopRendering.start();
-					}
 
 					targetService.setSelection(aNewTab, shouldSelectAfter);
 					targetBrowser.movingSelectedTabs = false;
-
-					targetWindow['piro.sakura.ne.jp'].stopRendering.start();
 
 					return result;
 				});
