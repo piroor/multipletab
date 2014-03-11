@@ -136,16 +136,16 @@ var MultipleTabService = {
 	},
  
 	// called with target(nsIDOMEventTarget), document(nsIDOMDocument), type(string) and data(object) 
-	fireDataContainerEvent : function(...aArgs)
+	fireCustomEvent : function(...aArgs)
 	{
-		var target, document, type, data, canBubble, cancellable;
+		var target, document, type, data, canBubble, cancelable;
 		for (let arg of aArgs)
 		{
 			if (typeof arg == 'boolean') {
 				if (canBubble === void(0))
 					canBubble = arg;
 				else
-					cancellable = arg;
+					cancelable = arg;
 			}
 			else if (typeof arg == 'string')
 				type = arg;
@@ -161,16 +161,11 @@ var MultipleTabService = {
 		if (!document)
 			document = target.ownerDocument || target;
 
-		var event = document.createEvent('DataContainerEvent');
-		event.initEvent(type, canBubble, cancellable);
-		var properties = Object.keys(data);
-		for (let prop of properties)
-		{
-			let value = data[prop];
-			event.setData(prop, value);
-			event[prop] = value; // for backward compatibility
-		}
-
+		var event = new CustomEvent(type, {
+			bubbles    : canBubble,
+			cancelable : cancelable,
+			detail     : data
+		});
 		return target.dispatchEvent(event);
 	},
 
@@ -871,9 +866,9 @@ var MultipleTabService = {
 				sourceTab : aSourceTab,
 				mayBeMove : aSourceEvent && !this.isAccelKeyPressed(aSourceEvent)
 			};
-		this.fireDataContainerEvent(this.kEVENT_TYPE_TAB_DUPLICATE, aNewTab, true, false, data);
+		this.fireCustomEvent(this.kEVENT_TYPE_TAB_DUPLICATE, aNewTab, true, false, data);
 		// for backward compatibility
-		this.fireDataContainerEvent(this.kEVENT_TYPE_TAB_DUPLICATE.replace(/^nsDOM/, ''), aNewTab, true, false, data);
+		this.fireCustomEvent(this.kEVENT_TYPE_TAB_DUPLICATE.replace(/^nsDOM/, ''), aNewTab, true, false, data);
 	},
  
 	fireWindowMoveEvent : function MTS_fireWindowMoveEvent(aNewTab, aSourceTab) 
@@ -881,9 +876,9 @@ var MultipleTabService = {
 		var data = {
 				sourceTab : aSourceTab
 			};
-		this.fireDataContainerEvent(this.kEVENT_TYPE_WINDOW_MOVE, aNewTab, true, false, data);
+		this.fireCustomEvent(this.kEVENT_TYPE_WINDOW_MOVE, aNewTab, true, false, data);
 		// for backward compatibility
-		this.fireDataContainerEvent(this.kEVENT_TYPE_WINDOW_MOVE.replace(/^nsDOM/, ''), aNewTab, true, false, data);
+		this.fireCustomEvent(this.kEVENT_TYPE_WINDOW_MOVE.replace(/^nsDOM/, ''), aNewTab, true, false, data);
 	},
  
 	fireTabsClosingEvent : function MTS_fireTabsClosingEvent(aTabs) 
@@ -897,9 +892,9 @@ var MultipleTabService = {
 
 		var canClose = (
 			/* PUBLIC API */
-			this.fireDataContainerEvent(this.kEVENT_TYPE_TABS_CLOSING, b, true, true, data) &&
+			this.fireCustomEvent(this.kEVENT_TYPE_TABS_CLOSING, b, true, true, data) &&
 			// for backward compatibility
-			this.fireDataContainerEvent(this.kEVENT_TYPE_TABS_CLOSING.replace(/^nsDOM/, ''), b, true, true, data)
+			this.fireCustomEvent(this.kEVENT_TYPE_TABS_CLOSING.replace(/^nsDOM/, ''), b, true, true, data)
 		);
 		return canClose;
 	},
@@ -914,9 +909,9 @@ var MultipleTabService = {
 			};
 
 		/* PUBLIC API */
-		this.fireDataContainerEvent(this.kEVENT_TYPE_TABS_CLOSED, aTabBrowser, true, false, data);
+		this.fireCustomEvent(this.kEVENT_TYPE_TABS_CLOSED, aTabBrowser, true, false, data);
 		// for backward compatibility
-		this.fireDataContainerEvent(this.kEVENT_TYPE_TABS_CLOSED.replace(/^nsDOM/, ''), aTabBrowser, true, false, data);
+		this.fireCustomEvent(this.kEVENT_TYPE_TABS_CLOSED.replace(/^nsDOM/, ''), aTabBrowser, true, false, data);
 	},
   
 
@@ -1322,23 +1317,23 @@ var MultipleTabService = {
 			case this.kEVENT_TYPE_TAB_DUPLICATE:
 				b = this.getTabBrowserFromChild(aEvent.currentTarget);
 				if (
-					this.isSelected(aEvent.getData('sourceTab')) &&
+					this.isSelected(aEvent.detail.sourceTab) &&
 					this.allowMoveMultipleTabs &&
 					!b.duplicatingSelectedTabs &&
 					(!('UndoTabService' in window) || UndoTabService.isUndoable())
 					)
-					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.getData('sourceTab'), aEvent.getData('mayBeMove'));
+					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.detail.sourceTab, aEvent.detail.mayBeMove);
 				break;
 
 			case this.kEVENT_TYPE_WINDOW_MOVE:
 				b = this.getTabBrowserFromChild(aEvent.currentTarget);
 				if (
-					this.isSelected(aEvent.getData('sourceTab')) &&
+					this.isSelected(aEvent.detail.sourceTab) &&
 					this.allowMoveMultipleTabs &&
 					!b.duplicatingSelectedTabs &&
 					(!('UndoTabService' in window) || UndoTabService.isUndoable())
 					)
-					this.importBundledTabsOf(aEvent.originalTarget, aEvent.getData('sourceTab'));
+					this.importBundledTabsOf(aEvent.originalTarget, aEvent.detail.sourceTab);
 				break;
 
 			case 'DOMContentLoaded':
