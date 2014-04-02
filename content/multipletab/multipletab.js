@@ -181,7 +181,7 @@ var MultipleTabService = {
 
 	get allowMoveMultipleTabs() 
 	{
-		return this.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
+		return this.prefs.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
 	},
  
 	get browser() 
@@ -216,11 +216,11 @@ var MultipleTabService = {
 	
 	warnAboutClosingTabs : function MTS_warnAboutClosingTabs(aTabsCount) 
 	{
-		var warnPref = this.getPref('extensions.multipletab.warnOnCloseMultipleTabs');
+		var warnPref = this.prefs.getPref('extensions.multipletab.warnOnCloseMultipleTabs');
 		if (
 			aTabsCount <= 1 ||
 			warnPref == 0 ||
-			(warnPref == -1 && !this.getPref('browser.tabs.warnOnClose'))
+			(warnPref == -1 && !this.prefs.getPref('browser.tabs.warnOnClose'))
 			)
 			return true;
 		var checked = { value: true };
@@ -237,9 +237,9 @@ var MultipleTabService = {
 			) == 0;
 		if (shouldClose && !checked.value) {
 			if (warnPref == -1)
-				this.setPref('browser.tabs.warnOnClose', false);
+				this.prefs.setPref('browser.tabs.warnOnClose', false);
 			else
-				this.setPref('extensions.multipletab.warnOnCloseMultipleTabs', 0);
+				this.prefs.setPref('extensions.multipletab.warnOnCloseMultipleTabs', 0);
 		}
 		return shouldClose;
 	},
@@ -355,12 +355,12 @@ var MultipleTabService = {
 		else
 			aURI = this.makeURIFromSpec(aURI);
 
-		var userHomePart = this.getPref('extensions.multipletab.checkUserHost') ?
+		var userHomePart = this.prefs.getPref('extensions.multipletab.checkUserHost') ?
 							str.match(/^\w+:\/\/[^\/]+(\/~[^\/]+)\//) :
 							'' ;
 		if (userHomePart) userHomePart = userHomePart[1];
 
-		if (this.getPref('extensions.multipletab.useEffectiveTLD') && Services.eTLD) {
+		if (this.prefs.getPref('extensions.multipletab.useEffectiveTLD') && Services.eTLD) {
 			try {
 				let domain = Services.eTLD.getBaseDomain(aURI, 0);
 				if (domain) return domain + userHomePart;
@@ -938,7 +938,7 @@ var MultipleTabService = {
 		window.addEventListener('UIOperationHistoryPostRedo:TabbarOperations', this, false);
 
 		this.migratePrefs();
-		this.addPrefListener(this);
+		this.prefs.addPrefListener(this);
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabdrag.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.accel.mode');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabclick.shift.mode');
@@ -1012,39 +1012,39 @@ var MultipleTabService = {
 	{
 		var OS = Services.appinfo.OS;
 		var processed = {};
-		var originalKeys = this.getDescendant('extensions.multipletab.platform.'+OS);
+		var originalKeys = this.prefs.getDescendant('extensions.multipletab.platform.'+OS);
 		for (let i = 0, maxi = originalKeys.length; i < maxi; i++)
 		{
 			let originalKey = originalKeys[i];
 			let key = originalKey.replace('platform.'+OS+'.', '');
-			this.setDefaultPref(key, this.getPref(originalKey));
+			this.prefs.setDefaultPref(key, this.getPref(originalKey));
 			processed[key] = true;
 		}
-		originalKeys = this.getDescendant('extensions.multipletab.platform.default');
+		originalKeys = this.prefs.getDescendant('extensions.multipletab.platform.default');
 		for (let i = 0, maxi = originalKeys.length; i < maxi; i++)
 		{
 			let originalKey = originalKeys[i];
 			let key = originalKey.replace('platform.default.', '');
 			if (!(key in processed))
-				this.setDefaultPref(key, this.getPref(originalKey));
+				this.prefs.setDefaultPref(key, this.getPref(originalKey));
 		}
 	},
  
 	kPREF_VERSION : 1,
 	migratePrefs : function MTS_migratePrefs() 
 	{
-		switch (this.getPref('extensions.multipletab.prefsVersion') || 0)
+		switch (this.prefs.getPref('extensions.multipletab.prefsVersion') || 0)
 		{
 			case 0:
-				var clickModeValue = this.getPref('extensions.multipletab.tabclick.mode');
+				var clickModeValue = this.prefs.getPref('extensions.multipletab.tabclick.mode');
 				if (clickModeValue !== null) {
-					this.setPref('extensions.multipletab.tabclick.accel.mode', clickModeValue);
+					this.prefs.setPref('extensions.multipletab.tabclick.accel.mode', clickModeValue);
 				}
-				this.clearPref('extensions.multipletab.tabclick.mode');
+				this.prefs.clearPref('extensions.multipletab.tabclick.mode');
 			default:
 				break;
 		}
-		this.setPref('extensions.multipletab.prefsVersion', this.kPREF_VERSION);
+		this.prefs.setPref('extensions.multipletab.prefsVersion', this.kPREF_VERSION);
 	},
  
 	initTabBrowser : function MTS_initTabBrowser(aTabBrowser) 
@@ -1198,7 +1198,7 @@ var MultipleTabService = {
 
 		this.endListenWhileDragging();
 
-		this.removePrefListener(this);
+		this.prefs.removePrefListener(this);
 
 		var tabs = this.getTabsArray(gBrowser);
 		for (let i = 0, maxi = tabs.length; i < maxi; i++)
@@ -1580,8 +1580,8 @@ var MultipleTabService = {
 					tab.mOverCloseButton ||
 					tab.tmp_mOverCloseButton // Tab Mix Plus
 				)
-			) ? this.getPref('extensions.multipletab.tabdrag.close.delay') :
-				this.getPref('extensions.multipletab.tabdrag.delay') ;
+			) ? this.prefs.getPref('extensions.multipletab.tabdrag.close.delay') :
+				this.prefs.getPref('extensions.multipletab.tabdrag.delay') ;
 		if (delay > 0) {
 			let unprocessedEvent = this.lastMouseDownEvent;
 			this.cancelDelayedDragStart();
@@ -1636,7 +1636,7 @@ var MultipleTabService = {
 			) &&
 			this.isOnElement(this.lastMouseDownX, this.lastMouseDownY, this.getCloseboxFromTab(tab))
 			) {
-			let delay = this.getPref('extensions.multipletab.tabdrag.close.delay');
+			let delay = this.prefs.getPref('extensions.multipletab.tabdrag.close.delay');
 			if (
 				delay > 0 &&
 				(Date.now() - this.lastMouseDown < delay) &&
@@ -1654,7 +1654,7 @@ var MultipleTabService = {
 			this.startListenWhileDragging(tab);
 		}
 		else {
-			let delay = this.getPref('extensions.multipletab.tabdrag.delay');
+			let delay = this.prefs.getPref('extensions.multipletab.tabdrag.delay');
 			if (
 				delay > 0 &&
 				(Date.now() - this.lastMouseDown < delay) &&
@@ -1767,8 +1767,8 @@ var MultipleTabService = {
 		else if (this.tabDragging) {
 			this.tabDragging = false;
 			if (this.hasSelection()) {
-				if (this.getPref('extensions.multipletab.tabdrag.autopopup'))
-					this.showSelectionPopup(aEvent, this.getPref('extensions.multipletab.tabdrag.autoclear'));
+				if (this.prefs.getPref('extensions.multipletab.tabdrag.autopopup'))
+					this.showSelectionPopup(aEvent, this.prefs.getPref('extensions.multipletab.tabdrag.autoclear'));
 			}
 			else {
 				this.clearSelection();
@@ -2131,7 +2131,7 @@ var MultipleTabService = {
 		for (let i = 0, maxi = this.selectableItems.length; i < maxi; i++)
 		{
 			let item = this.selectableItems[i];
-			selectType[item.name] = this.getPref(item.key) < 0;
+			selectType[item.name] = this.prefs.getPref(item.key) < 0;
 		}
 
 		var selectedTabs = this.getSelectedTabs(b);
@@ -2152,11 +2152,11 @@ var MultipleTabService = {
 			let pref;
 			if (selectableItemsRegExp.test(key)) {
 				key  = RegExp.$1
-				pref = this.getPref('extensions.multipletab.show.'+key) &&
+				pref = this.prefs.getPref('extensions.multipletab.show.'+key) &&
 						(Boolean(RegExp.$3) == selectType[RegExp.$2]);
 			}
 			else {
-				pref = this.getPref('extensions.multipletab.show.'+key);
+				pref = this.prefs.getPref('extensions.multipletab.show.'+key);
 			}
 
 			let available = node.getAttribute(this.kAVAILABLE);
@@ -2288,12 +2288,12 @@ var MultipleTabService = {
 			return;
 
 		aTabs = this.sortTabs(aTabs);
-		if (this.getPref('extensions.multipletab.close.direction') == this.CLOSE_DIRECTION_LAST_TO_START)
+		if (this.prefs.getPref('extensions.multipletab.close.direction') == this.CLOSE_DIRECTION_LAST_TO_START)
 			aTabs.reverse();
 
 		var w = aTabs[0].ownerDocument.defaultView;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		var closeSelectedLast = this.getPref('extensions.multipletab.close.selectedTab.last');
+		var closeSelectedLast = this.prefs.getPref('extensions.multipletab.close.selectedTab.last');
 
 		var self = this;
 		var operation = function() {
@@ -2401,7 +2401,7 @@ var MultipleTabService = {
 		aTabs = this.filterBlankTabs(aTabs);
 
 		if (aSaveType === void(0)) {
-			aSaveType = this.getPref('extensions.multipletab.saveTabs.saveType');
+			aSaveType = this.prefs.getPref('extensions.multipletab.saveTabs.saveType');
 		}
 		if (aSaveType < 0) {
 			aSaveType = this.kSAVE_TYPE_FILE;
@@ -2498,7 +2498,7 @@ var MultipleTabService = {
 		var picker = Cc['@mozilla.org/filepicker;1']
 						.createInstance(Ci.nsIFilePicker);
 		picker.init(window, aTitle, picker.modeGetFolder);
-		var downloadDir = this.getPref('browser.download.dir', Ci.nsILocalFile);
+		var downloadDir = this.prefs.getPref('browser.download.dir', Ci.nsILocalFile);
 		if (downloadDir) picker.displayDirectory = downloadDir;
 		picker.appendFilters(picker.filterAll);
 
@@ -2593,7 +2593,7 @@ var MultipleTabService = {
 
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		var w = b.ownerDocument.defaultView;
-		var shouldSelectAfter = this.getPref('extensions.multipletab.selectAfter.duplicate');
+		var shouldSelectAfter = this.prefs.getPref('extensions.multipletab.selectAfter.duplicate');
 		var duplicatedTabs;
 
 		var self = this;
@@ -2710,7 +2710,7 @@ var MultipleTabService = {
 		var ourService    = ourWindow.MultipleTabService;
 		var remoteService = aRemoteWindow.MultipleTabService;
 
-		var selectAfter = this.getPref('extensions.multipletab.selectAfter.move');
+		var selectAfter = this.prefs.getPref('extensions.multipletab.selectAfter.move');
 
 		var operation = function(aOurParams, aRemoteParams, aData) {
 				var allSelected = true;
@@ -3190,7 +3190,7 @@ var MultipleTabService = {
 	getClopboardFormatForType : function MTS_getClopboardFormatForType(aFormatType) 
 	{
 		if (aFormatType === void(0))
-			aFormatType = this.getPref('extensions.multipletab.clipboard.formatType');
+			aFormatType = this.prefs.getPref('extensions.multipletab.clipboard.formatType');
 
 		switch (aFormatType)
 		{
@@ -3203,7 +3203,7 @@ var MultipleTabService = {
 			case this.kFORMAT_TYPE_DEFAULT:
 			case this.kFORMAT_TYPE_MOZ_URL:
 			case this.kFORMAT_TYPE_LINK:
-				return this.getPref('extensions.multipletab.clipboard.format.'+aFormatType);
+				return this.prefs.getPref('extensions.multipletab.clipboard.format.'+aFormatType);
 		}
 	},
   
@@ -3410,7 +3410,7 @@ var MultipleTabService = {
 
 		var title;
 		if (!aGroupId) {
-			switch (this.getPref('extensions.multipletab.moveTabsToNewGroup.defaultTitle'))
+			switch (this.prefs.getPref('extensions.multipletab.moveTabsToNewGroup.defaultTitle'))
 			{
 				default:
 					break;
@@ -3558,7 +3558,7 @@ var MultipleTabService = {
 		if (sourceTabs.length <= 1)
 			return;
 
-		var shouldSelectAfter = this.getPref('extensions.multipletab.selectAfter.move');
+		var shouldSelectAfter = this.prefs.getPref('extensions.multipletab.selectAfter.move');
 
 		var operation = function(aCollectData) {
 			var result = {};
@@ -3701,7 +3701,7 @@ var MultipleTabService = {
 				targetWindow != sourceWindow &&
 				sourceService.getTabs(sourceBrowser).snapshotLength == sourceTabs.length
 			);
-		var shouldSelectAfter = this.getPref(isMove ?
+		var shouldSelectAfter = this.prefs.getPref(isMove ?
 				'extensions.multipletab.selectAfter.move' :
 				'extensions.multipletab.selectAfter.duplicate'
 			);
@@ -4054,7 +4054,7 @@ var MultipleTabService = {
 	{
 		if (aTopic != 'nsPref:changed') return;
 
-		var value = this.getPref(aPrefName);
+		var value = this.prefs.getPref(aPrefName);
 		switch (aPrefName)
 		{
 			case 'extensions.multipletab.tabdrag.mode':
@@ -4121,7 +4121,7 @@ var MultipleTabService = {
 	Components.utils.import('resource://multipletab-modules/namespace.jsm', namespace);
 	Components.utils.import('resource://multipletab-modules/autoScroll.js', namespace);
 
-	MultipleTabService.__proto__ = namespace.prefs;
+	MultipleTabService.prefs = namespace.prefs;
 	MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];
 
 	var JSDeferredNS = {};
