@@ -1017,7 +1017,7 @@ var MultipleTabService = {
 		{
 			let originalKey = originalKeys[i];
 			let key = originalKey.replace('platform.'+OS+'.', '');
-			this.prefs.setDefaultPref(key, this.getPref(originalKey));
+			this.prefs.setDefaultPref(key, this.prefs.getPref(originalKey));
 			processed[key] = true;
 		}
 		originalKeys = this.prefs.getDescendant('extensions.multipletab.platform.default');
@@ -1026,7 +1026,7 @@ var MultipleTabService = {
 			let originalKey = originalKeys[i];
 			let key = originalKey.replace('platform.default.', '');
 			if (!(key in processed))
-				this.prefs.setDefaultPref(key, this.getPref(originalKey));
+				this.prefs.setDefaultPref(key, this.prefs.getPref(originalKey));
 		}
 	},
  
