@@ -21,6 +21,9 @@ Contributor(s): YUKI "Piro" Hiroshi <piro.outsider.reflex@gmail.com>
                 Mikes Kaszmán István <cashman@inmail.sk>
                 Yue Hu <imellon@gmail.com> (rich text HTML support)
                 Tetsuharu OHZEKI <https://github.com/saneyuki>
+                Gomita <gomita@xuldev.org> (fix for Firefox 29 and later)
+                Rikk <https://github.com/Rikk>
+                  (backported a fix for Firefox 29 and later from FireGestures)
 
 Alternatively, the contents of these files may be used under the terms of
 either the GNU General Public License Version 2 or later (the "GPL"), or
