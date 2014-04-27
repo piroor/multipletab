@@ -119,11 +119,11 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 
 	// Tab Mix Plus
 	var TMPWarnPref = 'extensions.multipletab.compatibility.TMP.warnForClickActions';
-	if (this.getPref(TMPWarnPref)) {
+	if (MultipleTabService.prefs.getPref(TMPWarnPref)) {
 		let checked = { value : false };
 		this.ensureWorkWithTMP(checked);
 		if (checked.value)
-			this.setPref(TMPWarnPref, false);
+			MultipleTabService.prefs.setPref(TMPWarnPref, false);
 	}
 };
 
