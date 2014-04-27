@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.7.2014042701
    * Works on Firefox 31.0a1.
    * Drop support for Firefox 23 and olders.
    * Improved: Pending tabs are not loaded if it is not needed when you choose "copy URI of tabs" menu item.
