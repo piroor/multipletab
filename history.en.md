@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.7.2014043001
    * Better compatibility with Tab Mix Plus. (regression)
  - 0.7.2014042701
    * Works on Firefox 31.0a1.
