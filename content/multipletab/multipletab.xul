@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 
-<?xml-stylesheet href="chrome://multipletab/skin/multipletab.css" type="text/css"?>
-
 <!DOCTYPE overlay SYSTEM "chrome://multipletab/locale/multipletab.dtd">
 
 <overlay id="multipletab-overlay"

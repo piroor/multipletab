@@ -22,4 +22,7 @@ locale	multipletab	fr	locale/fr/multipletab/
 
 skin	multipletab	classic/1.0	skin/classic/multipletab/
 
+style	chrome://browser/content/browser.xul	chrome://multipletab/skin/multipletab.css
+style	chrome://browser/content/browser.xul	chrome://multipletab/skin/close-button.css	os=Linux appversion>=29.0a1
+
 resource multipletab-modules modules/
