@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.7.2014050101
    * Fix too small feedback square for ready-to-close tabs with Australis on Linux.
  - 0.7.2014043001
    * Better compatibility with Tab Mix Plus. (regression)
