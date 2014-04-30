@@ -119,11 +119,11 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 
 	// Tab Mix Plus
 	var TMPWarnPref = 'extensions.multipletab.compatibility.TMP.warnForClickActions';
-	if (this.getPref(TMPWarnPref)) {
+	if (this.prefs.getPref(TMPWarnPref)) {
 		let checked = { value : false };
 		this.ensureWorkWithTMP(checked);
 		if (checked.value)
-			this.setPref(TMPWarnPref, false);
+			this.prefs.setPref(TMPWarnPref, false);
 	}
 };
 
@@ -143,12 +143,12 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 			) &&
 			(
 				(
-					this.getPref(TMPAccelClick) != 0 &&
-					this.getPref(SelfAccelClick) != 0
+					this.prefs.getPref(TMPAccelClick) != 0 &&
+					this.prefs.getPref(SelfAccelClick) != 0
 				) ||
 				(
-					this.getPref(TMPShiftClick) != 0 &&
-					this.getPref(SelfShiftClick) != 0
+					this.prefs.getPref(TMPShiftClick) != 0 &&
+					this.prefs.getPref(SelfShiftClick) != 0
 				)
 			)
 			) {
@@ -168,21 +168,21 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 				))
 			{
 				case 0:
-					this.setPref(BACKUP+TMPAccelClick, this.getPref(TMPAccelClick));
-					this.setPref(BACKUP+TMPShiftClick, this.getPref(TMPShiftClick));
-					this.setPref(TMPAccelClick, 0);
-					this.setPref(TMPShiftClick, 0);
-					this.setPref(CHOICE, 0);
+					this.prefs.setPref(BACKUP+TMPAccelClick, this.prefs.getPref(TMPAccelClick));
+					this.prefs.setPref(BACKUP+TMPShiftClick, this.prefs.getPref(TMPShiftClick));
+					this.prefs.setPref(TMPAccelClick, 0);
+					this.prefs.setPref(TMPShiftClick, 0);
+					this.prefs.setPref(CHOICE, 0);
 					break;
 				case 1:
-					this.setPref(BACKUP+SelfAccelClick, this.getPref(SelfAccelClick));
-					this.setPref(BACKUP+SelfShiftClick, this.getPref(SelfShiftClick));
-					this.setPref(SelfAccelClick, 0);
-					this.setPref(SelfShiftClick, 0);
-					this.setPref(CHOICE, 1);
+					this.prefs.setPref(BACKUP+SelfAccelClick, this.prefs.getPref(SelfAccelClick));
+					this.prefs.setPref(BACKUP+SelfShiftClick, this.prefs.getPref(SelfShiftClick));
+					this.prefs.setPref(SelfAccelClick, 0);
+					this.prefs.setPref(SelfShiftClick, 0);
+					this.prefs.setPref(CHOICE, 1);
 					break;
 				default:
-					this.setPref(CHOICE, 2);
+					this.prefs.setPref(CHOICE, 2);
 					break;
 			}
 		}

@@ -1,8 +1,12 @@
 # History
 
  - master/HEAD
-   * Improved: Pending tabs are not loaded if it is not needed when you choose "copy URI of tabs" menu item.
+ - 0.7.2014043001
+   * Better compatibility with Tab Mix Plus. (regression)
+ - 0.7.2014042701
+   * Works on Firefox 31.0a1.
    * Drop support for Firefox 23 and olders.
+   * Improved: Pending tabs are not loaded if it is not needed when you choose "copy URI of tabs" menu item.
  - 0.7.2013100801
    * Support "Close Tabs to Right" feature on Firefox 24 and later. Multiple Tab Handler's own feature is disabled if it is provided by Firefox itself.
    * Works on Firefox 25 and later.
