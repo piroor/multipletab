@@ -51,6 +51,7 @@
 <!ENTITY config.tabdrag.autopopup     "Automatisch Popup-Men&#252; &#246;ffnen">
 <!ENTITY config.tabdrag.autoclear     "Tab-Auswahl nach dem Schlie&#223;en des Popup-Men&#252;s aufheben">
 <!ENTITY config.tabdrag.moveMultipleTabs "Ausgew&#228;hlte Tabs gemeinsam verschieben">
+<!ENTITY config.tabdrag.close         "Close tabs if closeboxes in tabs are selected by dragging">
 
 <!ENTITY config.tabclickmode.accel.caption "Verhalten bei Ctrl/⌘-Klick auf Tabs">
 <!ENTITY config.tabclickmode.accel.default "Firefox default">

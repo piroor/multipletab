@@ -1648,7 +1648,8 @@ var MultipleTabService = {
 				tab.mOverCloseButton ||
 				tab.tmp_mOverCloseButton // Tab Mix Plus
 			) &&
-			this.isOnElement(this.lastMouseDownX, this.lastMouseDownY, this.getCloseboxFromTab(tab))
+			this.isOnElement(this.lastMouseDownX, this.lastMouseDownY, this.getCloseboxFromTab(tab)) &&
+			this.prefs.getPref('extensions.multipletab.tabdrag.close')
 			) {
 			let delay = this.prefs.getPref('extensions.multipletab.tabdrag.close.delay');
 			if (

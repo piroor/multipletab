@@ -51,6 +51,7 @@
 <!ENTITY config.tabdrag.autopopup     "Apri automaticamente il menu contestuale">
 <!ENTITY config.tabdrag.autoclear     "Annulla la selezione delle schede alla chiusura del menu contestuale">
 <!ENTITY config.tabdrag.moveMultipleTabs "Raggruppa e sposta le schede selezionate">
+<!ENTITY config.tabdrag.close         "Close tabs if closeboxes in tabs are selected by dragging">
 
 <!ENTITY config.tabclickmode.accel.caption "Azione per Ctrl+clic sulle schede">
 <!ENTITY config.tabclickmode.accel.default "comportamento predefinito">

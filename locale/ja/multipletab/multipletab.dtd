@@ -52,6 +52,7 @@
 <!ENTITY config.tabdrag.autopopup     "自動的にメニューを開く">
 <!ENTITY config.tabdrag.autoclear     "メニューを閉じたらタブの選択を解除する">
 <!ENTITY config.tabdrag.moveMultipleTabs "選択されたタブをまとめて移動する">
+<!ENTITY config.tabdrag.close         "タブのクローズボックスをドラッグして選択した場合、タブをまとめて閉じる">
 
 <!ENTITY config.tabclickmode.accel.caption "タブをCtrl/⌘-クリックした時">
 <!ENTITY config.tabclickmode.accel.default "Firefox既定の動作">

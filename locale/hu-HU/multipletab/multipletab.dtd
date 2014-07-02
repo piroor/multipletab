@@ -51,6 +51,7 @@
 <!ENTITY config.tabdrag.autopopup    "Helyi menü automatikus megjelenítése">
 <!ENTITY config.tabdrag.autoclear    "Lapok kijelölésének törlése a helyi menü bezárásakor">
 <!ENTITY config.tabdrag.moveMultipleTabs "Kiválasztott lapok egyidejű áthelyezése">
+<!ENTITY config.tabdrag.close         "Close tabs if closeboxes in tabs are selected by dragging">
 
 <!ENTITY config.tabclickmode.caption "Ctrl+kattintás a lap fülén:">
 <!ENTITY config.tabclickmode.default "Lap bezárása">

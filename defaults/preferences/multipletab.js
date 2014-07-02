@@ -1,6 +1,7 @@
 // 0 = default, 1 = select tab, 2 = switch tab
 pref("extensions.multipletab.tabdrag.mode",      1);
 pref("extensions.multipletab.tabdrag.delay",     400);
+pref("extensions.multipletab.tabdrag.close",       true);
 pref("extensions.multipletab.tabdrag.close.delay", 0);
 pref("extensions.multipletab.tabdrag.autopopup", true);
 pref("extensions.multipletab.tabdrag.autoclear", true);

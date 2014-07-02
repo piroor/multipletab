@@ -51,6 +51,7 @@
 <!ENTITY config.tabdrag.autopopup     "Automatycznie otwórz menu kontekstowe">
 <!ENTITY config.tabdrag.autoclear     "Wyczyść zaznaczenie kart po zamknięciu menu kontekstowego">
 <!ENTITY config.tabdrag.moveMultipleTabs "Przesuwaj razem zaznaczone karty">
+<!ENTITY config.tabdrag.close         "Close tabs if closeboxes in tabs are selected by dragging">
 
 <!ENTITY config.tabclickmode.accel.caption "Akcja dla Ctrl/⌘-Klik w kartę">
 <!ENTITY config.tabclickmode.accel.default "Firefox default">

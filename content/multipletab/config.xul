@@ -21,15 +21,15 @@
 		<preference id="extensions.multipletab.tabdrag.mode"
 			name="extensions.multipletab.tabdrag.mode"
 			type="int"/>
+		<preference id="extensions.multipletab.tabdrag.close"
+			name="extensions.multipletab.tabdrag.close"
+			type="bool"/>
 		<preference id="extensions.multipletab.tabdrag.autopopup"
 			name="extensions.multipletab.tabdrag.autopopup"
 			type="bool"/>
 		<preference id="extensions.multipletab.tabdrag.autoclear"
 			name="extensions.multipletab.tabdrag.autoclear"
 			type="bool"/>
-		<preference id="extensions.multipletab.tabdrag.delay"
-			name="extensions.multipletab.tabdrag.delay"
-			type="int"/>
 		<preference id="extensions.multipletab.tabclick.accel.mode"
 			name="extensions.multipletab.tabclick.accel.mode"
 			type="int"/>
@@ -76,6 +76,10 @@
 			<checkbox id="extensions.multipletab.tabdrag.moveMultipleTabs-check"
 				preference="extensions.multipletab.tabdrag.moveMultipleTabs"
 				label="&config.tabdrag.moveMultipleTabs;"/>
+			<checkbox id="extensions.multipletab.tabdrag.close-check"
+				preference="extensions.multipletab.tabdrag.close"
+				label="&config.tabdrag.close;"
+				flex="1"/>
 		</vbox>
 	</groupbox>
 	<groupbox>

@@ -51,6 +51,7 @@
 <!ENTITY config.tabdrag.autopopup     "Ouvrir le menu contextuel automatiquement">
 <!ENTITY config.tabdrag.autoclear     "Effacer la sélection après la fermeture du menu contextuel">
 <!ENTITY config.tabdrag.moveMultipleTabs "Déplacer simultanément les onglets sélectionnés">
+<!ENTITY config.tabdrag.close         "Close tabs if closeboxes in tabs are selected by dragging">
 
 <!ENTITY config.tabclickmode.accel.caption "Action lors d'un Ctrl/⌘-clic des onglets">
 <!ENTITY config.tabclickmode.accel.default "action par défaut de Firefox">

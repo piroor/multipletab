@@ -51,6 +51,7 @@
 <!ENTITY config.tabdrag.autopopup     "自動開啟右鍵選單">
 <!ENTITY config.tabdrag.autoclear     "右鍵選單關閉後自動清除分頁選取">
 <!ENTITY config.tabdrag.moveMultipleTabs "所選分頁移聚同一處">
+<!ENTITY config.tabdrag.close         "Close tabs if closeboxes in tabs are selected by dragging">
 
 <!ENTITY config.tabclickmode.accel.caption "Ctrl-左鍵選取分頁時執行動作">
 <!ENTITY config.tabclickmode.accel.default "Firefox 預設 (忽略)">

@@ -51,6 +51,7 @@
 <!ENTITY config.tabdrag.autopopup     "自动弹出上下文菜单">
 <!ENTITY config.tabdrag.autoclear     "关闭上下文菜单时自动取消选中状态">
 <!ENTITY config.tabdrag.moveMultipleTabs "紧邻排列移动后的选中标签">
+<!ENTITY config.tabdrag.close         "Close tabs if closeboxes in tabs are selected by dragging">
 
 <!ENTITY config.tabclickmode.accel.caption "Ctrl/⌘-左键点击标签时的动作">
 <!ENTITY config.tabclickmode.accel.default "Firefox 默认">
