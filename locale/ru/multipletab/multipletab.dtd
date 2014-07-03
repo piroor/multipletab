@@ -51,7 +51,7 @@
 <!ENTITY config.tabdrag.autopopup     "Открывать всплывающее меню автоматически">
 <!ENTITY config.tabdrag.autoclear     "Сбрасывать выбор вкладок после закрытия всплывающего меню">
 <!ENTITY config.tabdrag.moveMultipleTabs "Переносить выбранные вкладки вместе">
-<!ENTITY config.tabdrag.close         "Close tabs if closeboxes in tabs are selected by dragging">
+<!ENTITY config.tabdrag.close         "Закрывать вкладки при выделении кнопок закрытия с помощью перетаскивания">
 
 <!ENTITY config.tabclickmode.accel.caption "Действие при Ctrl/⌘-клике по вкладкам">
 <!ENTITY config.tabclickmode.accel.default "По умолчанию для Firefox">
