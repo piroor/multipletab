@@ -130,7 +130,7 @@ function test_getTabBrowserFromChild()
 function test_getTabs()
 {
 	var result = sv.getTabs(gBrowser);
-	assert.isTrue(result instanceof Ci.nsIDOMXPathResult);
+	assert.isTrue(result instanceof XPathResult);
 	assert.equals(4, result.snapshotLength);
 	assert.equals(tabs[0], result.snapshotItem(0));
 }

@@ -100,7 +100,7 @@ var MultipleTabService = {
 	
 	getArrayFromXPathResult : function MTS_getArrayFromXPathResult(aXPathResult, ...aExtraArgs) 
 	{
-		if (!(aXPathResult instanceof (window.XPathResult || Ci.nsIDOMXPathResult))) {
+		if (!(aXPathResult instanceof XPathResult)) {
 			let allArgs = [aXPathResult].concat(aExtraArgs);
 			aXPathResult = this.evaluateXPath.apply(this, allArgs);
 		}
@@ -149,9 +149,9 @@ var MultipleTabService = {
 			}
 			else if (typeof arg == 'string')
 				type = arg;
-			else if (arg instanceof Ci.nsIDOMDocument)
+			else if (arg instanceof Document)
 				document = arg;
-			else if (arg instanceof Ci.nsIDOMEventTarget)
+			else if (arg instanceof EventTarget)
 				target = arg;
 			else
 				data = arg;
@@ -273,7 +273,7 @@ var MultipleTabService = {
 		var dt;
 		if (
 			!aSource ||
-			!(aSource instanceof Ci.nsIDOMEvent) ||
+			!(aSource instanceof Event) ||
 			!(dt = aSource.dataTransfer)
 			)
 			return this.getArrayFromXPathResult(
@@ -656,7 +656,7 @@ var MultipleTabService = {
 			tabs;
 		for (let arg of aArgs)
 		{
-			if (arg instanceof Ci.nsIDOMNode)
+			if (arg instanceof Node)
 				baseTab = arg;
 			else if (typeof arg == 'number')
 				oldBasePosition = arg;
@@ -2968,7 +2968,7 @@ var MultipleTabService = {
 			else if (!arg) {
 				continue;
 			}
-			else if (arg instanceof Ci.nsIDOMNode) {
+			else if (arg instanceof Node) {
 				if (arg.localName == 'tabbrowser')
 					aTabBrowser = arg;
 				else if (arg.localName == 'tab')
@@ -3063,7 +3063,7 @@ var MultipleTabService = {
 	{
 		if (!aTabs) return '';
 
-		if (aTabs instanceof Ci.nsIDOMNode) aTabs = [aTabs];
+		if (aTabs instanceof Node) aTabs = [aTabs];
 
 		var format = aFormat || this.getClopboardFormatForType(aFormatType);
 		if (!format) format = '%URL%';
