@@ -24,7 +24,7 @@
    http://github.com/piroor/fxaddonlib-arrowscrollbox-scroll-helper
 */
 (function() {
-	const currentRevision = 2;
+	const currentRevision = 3;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -122,7 +122,7 @@
 					base = this._base;
 				else if (this._base instanceof Ci.nsIBoxObject)
 					baseBox = this._base;
-				else if (this._base instanceof Ci.nsIDOMElement)
+				else if (this._base instanceof Element)
 					baseBox = this._base.boxObject;
 
 				if (baseBox)
