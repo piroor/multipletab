@@ -100,7 +100,7 @@ var MultipleTabService = {
 	
 	getArrayFromXPathResult : function MTS_getArrayFromXPathResult(aXPathResult, ...aExtraArgs) 
 	{
-		if (!(aXPathResult instanceof Ci.nsIDOMXPathResult)) {
+		if (!(aXPathResult instanceof (window.XPathResult || Ci.nsIDOMXPathResult))) {
 			let allArgs = [aXPathResult].concat(aExtraArgs);
 			aXPathResult = this.evaluateXPath.apply(this, allArgs);
 		}
