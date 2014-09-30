@@ -3968,7 +3968,7 @@ var MultipleTabService = {
 
 		try {
 			this.checkCachedSessionDataExpiration(aTab);
-			SessionStore.setTabValue(aTab, aKey, aValue);
+			SessionStore.setTabValue(aTab, aKey, String(aValue));
 		}
 		catch(e) {
 		}
