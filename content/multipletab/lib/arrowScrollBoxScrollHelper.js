@@ -16,16 +16,15 @@
      var box = document.getElementById('scrollbox');
      var base = box.getElementsByTagName('checkbox')[0];
      new window['piro.sakura.ne.jp'].arrowScrollBoxScrollHelper(box, base);
-     // 1st argument: DOMNode or ID of an element
-     // 2nd argument: DOMNode, ID of an element, or local name of a child element
+     // 1st argument: DOM Element or ID of an element
+     // 2nd argument: DOM Element, ID of an element, or local name of a child element
 
- license: The MIT License, Copyright (c) 2009 YUKI "Piro" Hiroshi
-   http://github.com/piroor/fxaddonlibs/blob/master/license.txt
+ license: The MIT License, Copyright (c) 2009-2014 YUKI "Piro" Hiroshi
  original:
-   http://github.com/piroor/fxaddonlibs/blob/master/arrowScrollBoxScrollHelper.js
+   http://github.com/piroor/fxaddonlib-arrowscrollbox-scroll-helper
 */
 (function() {
-	const currentRevision = 1;
+	const currentRevision = 2;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
@@ -61,7 +60,7 @@
 
 			if (
 				!this._box ||
-				!(this._box instanceof Ci.nsIDOMElement) ||
+				!(this._box instanceof Element) ||
 				this._box.localName != 'arrowscrollbox'
 				)
 				throw new Error('arrowscrollbox is required!');
