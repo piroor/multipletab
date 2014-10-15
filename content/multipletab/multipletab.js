@@ -1,4 +1,4 @@
-(function() {
+(function(aGlobal) {
 var { SessionStore } = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm', {});
 var { inherit } = Components.utils.import('resource:///multipletab-modules/inherit.jsm', {});
 
@@ -9,7 +9,7 @@ Components.utils.import('resource://multipletab-modules/prefs.js', namespace);
 Components.utils.import('resource://multipletab-modules/namespace.jsm', namespace);
 Components.utils.import('resource://multipletab-modules/autoScroll.js', namespace);
 
-var MultipleTabService = inherit(MultipleTabHandlerConstants, { 
+var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandlerConstants, { 
 
 	tabDragMode : -1,
 
@@ -4087,5 +4087,5 @@ MultipleTabService.Deferred = JSDeferredNS.Deferred;
 
 window.addEventListener('load', MultipleTabService, false);
 window.addEventListener('DOMContentLoaded', MultipleTabService, false);
-})();
+})(window);
   
