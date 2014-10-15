@@ -1,8 +1,8 @@
 (function(aGlobal) {
 var { SessionStore } = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm', {});
-var { inherit } = Components.utils.import('resource:///multipletab-modules/inherit.jsm', {});
+var { inherit } = Components.utils.import('resource://multipletab-modules/inherit.jsm', {});
 
-var { MultipleTabHandlerConstants } = Components.utils.import('resource:///multipletab-modules/constants.js', {});
+var { MultipleTabHandlerConstants } = Components.utils.import('resource://multipletab-modules/constants.js', {});
 
 var namespace = {};
 Components.utils.import('resource://multipletab-modules/prefs.js', namespace);
