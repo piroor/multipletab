@@ -3,6 +3,7 @@ var { SessionStore } = Components.utils.import('resource:///modules/sessionstore
 var { inherit } = Components.utils.import('resource://multipletab-modules/inherit.jsm', {});
 
 var { MultipleTabHandlerConstants } = Components.utils.import('resource://multipletab-modules/constants.js', {});
+var { evaluateXPath, getArrayFromXPathResult } = Components.utils.import('resource://multipletab-modules/xpath.js', {});
 
 var namespace = {};
 Components.utils.import('resource://multipletab-modules/prefs.js', namespace);
@@ -36,48 +37,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	
 /* Utilities */ 
 	
-	evaluateXPath : function MTS_evaluateXPath(aExpression, aContext, aType)
-	{
-		if (!aType) aType = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
-		try {
-			var doc = aContext.ownerDocument || aContext || document;
-			var xpathResult = doc.evaluate(
-					aExpression,
-					aContext || document,
-					this.NSResolver,
-					aType,
-					null
-				);
-		}
-		catch(e) {
-			return {
-				singleNodeValue : null,
-				snapshotLength  : 0,
-				snapshotItem    : function MTS_snapshotItem() {
-					return null
-				}
-			};
-		}
-		return xpathResult;
-	},
 	
-	getArrayFromXPathResult : function MTS_getArrayFromXPathResult(aXPathResult, ...aExtraArgs) 
-	{
-		if (!(aXPathResult instanceof XPathResult)) {
-			let allArgs = [aXPathResult].concat(aExtraArgs);
-			aXPathResult = this.evaluateXPath.apply(this, allArgs);
-		}
-		var max = aXPathResult.snapshotLength;
-		var array = new Array(max);
-		if (!max) return array;
-
-		for (var i = 0; i < max; i++)
-		{
-			array[i] = aXPathResult.snapshotItem(i);
-		}
-
-		return array;
-	},
   
 	evalInSandbox : function MTS_evalInSandbox(aCode, aOwner) 
 	{
@@ -239,7 +199,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			!(aSource instanceof Event) ||
 			!(dt = aSource.dataTransfer)
 			)
-			return this.getArrayFromXPathResult(
+			return getArrayFromXPathResult(
 					'descendant::xul:tab[@'+this.kSELECTED+'="true" and not(@hidden="true")]',
 					(aSource || this.browser).mTabContainer
 				);
@@ -259,7 +219,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	getReadyToCloseTabs : function MTS_getReadyToCloseTabs(aTabBrowser) 
 	{
-		return this.getArrayFromXPathResult(
+		return getArrayFromXPathResult(
 				'descendant::xul:tab[@'+this.kREADY_TO_CLOSE+'="true" and not(@hidden="true")]',
 				(aTabBrowser || this.browser).mTabContainer
 			);
@@ -272,7 +232,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			];
 		if (aExcludePinnedTabs)
 			conditions.push('not(@pinned="true")');
-		return this.getArrayFromXPathResult(
+		return getArrayFromXPathResult(
 				'preceding-sibling::xul:tab['+conditions.join(' and ')+']',
 				aTab
 			);
@@ -285,7 +245,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			];
 		if (aExcludePinnedTabs)
 			conditions.push('not(@pinned="true")');
-		return this.getArrayFromXPathResult(
+		return getArrayFromXPathResult(
 				'following-sibling::xul:tab['+conditions.join(' and ')+']',
 				aTab
 			);
@@ -363,7 +323,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	getTabFromEvent : function MTS_getTabFromEvent(aEvent, aReallyOnTab) 
 	{
-		var tab = this.evaluateXPath(
+		var tab = evaluateXPath(
 				'ancestor-or-self::xul:tab',
 				aEvent.originalTarget || aEvent.target,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
@@ -381,7 +341,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	getTabFromChild : function MTS_getTabFromChild(aNode) 
 	{
-		return this.evaluateXPath(
+		return evaluateXPath(
 				'ancestor-or-self::xul:tab',
 				aNode,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
@@ -403,7 +363,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			return aTabBrowserChild.getElementsByTagName('tabs')[0].tabbrowser;
 
 		// tab context menu on Firefox 4.0
-		var popup = this.evaluateXPath(
+		var popup = evaluateXPath(
 				'ancestor-or-self::xul:menupopup[@id="tabContextMenu"]',
 				aTabBrowserChild,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
@@ -411,7 +371,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (popup && 'TabContextMenu' in window)
 			return this.getTabBrowserFromChild(TabContextMenu.contextTab);
 
-		var b = this.evaluateXPath(
+		var b = evaluateXPath(
 				'ancestor-or-self::xul:tabbrowser | '+
 				'ancestor-or-self::xul:tabs[@tabbrowser]',
 				aTabBrowserChild,
@@ -422,7 +382,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	getTabs : function MTS_getTabs(aTabBrowser) 
 	{
-		return this.evaluateXPath(
+		return evaluateXPath(
 				'descendant::xul:tab[not(@hidden="true")]',
 				aTabBrowser.mTabContainer
 			);
@@ -430,13 +390,13 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	getTabsArray : function MTS_getTabsArray(aTabBrowser) 
 	{
-		return this.getArrayFromXPathResult(this.getTabs(aTabBrowser));
+		return getArrayFromXPathResult(this.getTabs(aTabBrowser));
 	},
  
 	getTabAt : function MTS_getTabAt(aIndex, aTabBrowser) 
 	{
 		if (aIndex < 0) return null;
-		return this.evaluateXPath(
+		return evaluateXPath(
 				'descendant::xul:tab['+(aIndex+1)+']',
 				aTabBrowser.mTabContainer,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
@@ -445,7 +405,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	getNextTab : function MTS_getNextTab(aTab) 
 	{
-		return this.evaluateXPath(
+		return evaluateXPath(
 				'following-sibling::xul:tab[not(@hidden="true")][1]',
 				aTab,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
@@ -454,7 +414,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	getPreviousTab : function MTS_getPreviousTab(aTab) 
 	{
-		return this.evaluateXPath(
+		return evaluateXPath(
 				'preceding-sibling::xul:tab[not(@hidden="true")][1]',
 				aTab,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
@@ -750,7 +710,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	
 	isEventFiredOnTabIcon : function MTS_isEventFiredOnTabIcon(aEvent) 
 	{
-		return this.evaluateXPath(
+		return evaluateXPath(
 				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-icon ")]',
 				aEvent.originalTarget || aEvent.target,
 				XPathResult.BOOLEAN_TYPE
@@ -759,7 +719,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	isEventFiredOnClickable : function MTS_isEventFiredOnClickable(aEvent) 
 	{
-		return this.evaluateXPath(
+		return evaluateXPath(
 				'ancestor-or-self::*[contains(" button toolbarbutton scrollbar popup menupopup tooltip ", concat(" ", local-name(), " "))]',
 				aEvent.originalTarget || aEvent.target,
 				XPathResult.BOOLEAN_TYPE
@@ -795,7 +755,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	getCloseboxFromEvent : function MTS_getCloseboxFromEvent(aEvent) 
 	{
-		return this.evaluateXPath(
+		return evaluateXPath(
 				'ancestor-or-self::*[contains(concat(" ",@class," "), " tab-close-button ")]',
 				aEvent.originalTarget || aEvent.target,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
@@ -1084,8 +1044,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var tabContextMenu = aTabBrowser.tabContextMenu ||
 							document.getAnonymousElementByAttribute(aTabBrowser, 'anonid', 'tabContextMenu');
 		var template = document.getElementById(this.kCONTEXT_MENU_TEMPLATE);
-		var items = this.getArrayFromXPathResult('child::*[starts-with(@id, "multipletab-context-")]', template)
-					.concat(this.getArrayFromXPathResult('child::*[not(@id) or not(starts-with(@id, "multipletab-context-"))]', template))
+		var items = getArrayFromXPathResult('child::*[starts-with(@id, "multipletab-context-")]', template)
+					.concat(getArrayFromXPathResult('child::*[not(@id) or not(starts-with(@id, "multipletab-context-"))]', template))
 		for (let i = 0, maxi = items.length; i < maxi; i++)
 		{
 			let item = items[i].cloneNode(true);
@@ -1098,7 +1058,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			if (insertAfter) {
 				try {
 					if (/^\s*xpath:/i.test(insertAfter)) {
-						refNode = this.evaluateXPath(
+						refNode = evaluateXPath(
 								insertAfter.replace(/^\s*xpath:\s*/i, ''),
 								tabContextMenu,
 								XPathResult.FIRST_ORDERED_NODE_TYPE
@@ -1117,7 +1077,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			if (refNode === void(0) && insertBefore) {
 				try {
 					if (/^\s*xpath:/i.test(insertBefore)) {
-						refNode = this.evaluateXPath(
+						refNode = evaluateXPath(
 								insertBefore.replace(/^\s*xpath:\s*/i, ''),
 								tabContextMenu,
 								XPathResult.FIRST_ORDERED_NODE_TYPE
@@ -3990,7 +3950,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	getTabsInUndeterminedRange : function MTS_getTabsInUndeterminedRange(aSource) 
 	{
 		var b = this.getTabBrowserFromChild(aSource) || this.browser;
-		return this.getArrayFromXPathResult(
+		return getArrayFromXPathResult(
 				'descendant::xul:tab[@'+this.kIN_UNDETERMINED_RANGE+'="true" and not(@hidden="true")]',
 				b.mTabContainer
 			);
