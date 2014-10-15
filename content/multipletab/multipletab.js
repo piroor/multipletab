@@ -1,34 +1,21 @@
-Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm');
+(function() {
+var { SessionStore } = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm', {});
+var { inherit } = Components.utils.import('resource:///multipletab-modules/inherit.jsm', {});
 
-var MultipleTabService = { 
-	PREFROOT : 'extensions.multipletab@piro.sakura.ne.jp',
+var { MultipleTabHandlerConstants } = Components.utils.import('resource:///multipletab-modules/constants.js', {});
+
+var namespace = {};
+Components.utils.import('resource://multipletab-modules/prefs.js', namespace);
+Components.utils.import('resource://multipletab-modules/namespace.jsm', namespace);
+Components.utils.import('resource://multipletab-modules/autoScroll.js', namespace);
+
+var MultipleTabService = inherit(MultipleTabHandlerConstants, { 
 
 	tabDragMode : -1,
-	TAB_DRAG_MODE_DEFAULT : 0,
-	TAB_DRAG_MODE_SELECT  : 1,
-	TAB_DRAG_MODE_SWITCH  : 2,
 
 	tabAccelClickMode : -1,
 	tabShiftClickMode : -1,
-	TAB_CLICK_MODE_DEFAULT : 0,
-	TAB_CLICK_MODE_SELECT  : 1,
-	TAB_CLICK_MODE_CLOSE   : 2,
 
-	kSELECTION_STYLE : 'multipletab-selection-style',
-	kSELECTED        : 'multiselected',
-	kSELECTED_OLD    : 'multipletab-selected',
-	kSELECTED_DUPLICATING : 'multipletab-selected-duplicating',
-	kREADY_TO_CLOSE  : 'multipletab-ready-to-close',
-	kIN_UNDETERMINED_RANGE : 'multipletab-in-undefermined-range',
-	kINSERT_AFTER    : 'multipletab-insertafter',
-	kINSERT_BEFORE   : 'multipletab-insertbefore',
-	kAVAILABLE       : 'multipletab-available',
-	kENABLED         : 'multipletab-enabled',
-
-	kSELECTION_MENU        : 'multipletab-selection-menu',
-	kCONTEXT_MENU_TEMPLATE : 'multipletab-tabcontext-menu-template',
-
-	kCUSTOM_TYPE_OFFSET    : 1000,
 	formats          : [],
 	formatsTimeStamp : -1,
 
@@ -46,33 +33,9 @@ var MultipleTabService = {
 	implicitlySelect : true,
 	selectionModified : false,
 	selectionChanging : false,
-
-	/* event types */
-	kEVENT_TYPE_TAB_DUPLICATE   : 'nsDOMMultipleTabHandler:TabDuplicate',
-	kEVENT_TYPE_WINDOW_MOVE     : 'nsDOMMultipleTabHandler:TabWindowMove',
-	kEVENT_TYPE_TABS_CLOSING    : 'nsDOMMultipleTabHandlerTabsClosing',
-	kEVENT_TYPE_TABS_CLOSED     : 'nsDOMMultipleTabHandlerTabsClosed',
-	kEVENT_TYPE_TABS_DRAG_START : 'nsDOMMultipleTabHandler:TabsDragStart',
 	
 /* Utilities */ 
 	
-	NSResolver : { 
-		lookupNamespaceURI : function MTS_lookupNamespaceURI(aPrefix)
-		{
-			switch (aPrefix)
-			{
-				case 'xul':
-					return 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
-				case 'html':
-				case 'xhtml':
-					return 'http://www.w3.org/1999/xhtml';
-				case 'xlink':
-					return 'http://www.w3.org/1999/xlink';
-				default:
-					return '';
-			}
-		}
-	},
 	evaluateXPath : function MTS_evaluateXPath(aExpression, aContext, aType)
 	{
 		if (!aType) aType = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
@@ -1044,7 +1007,6 @@ var MultipleTabService = {
 		}
 	},
  
-	kPREF_VERSION : 1,
 	migratePrefs : function MTS_migratePrefs() 
 	{
 		switch (this.prefs.getPref('extensions.multipletab.prefsVersion') || 0)
@@ -2350,8 +2312,6 @@ var MultipleTabService = {
 
 		aTabs = null;
 	},
-	CLOSE_DIRECTION_START_TO_LAST : 0,
-	CLOSE_DIRECTION_LAST_TO_START : 1,
   
 	closeSimilarTabsOf : function MTS_closeSimilarTabsOf(aCurrentTab, aTabs, aIncludeCurrent) 
 	{
@@ -2496,10 +2456,6 @@ var MultipleTabService = {
 		return this.Deferred.parallel(deferreds);
 	},
 	
-	kSAVE_TYPE_FILE     : 0, 
-	kSAVE_TYPE_COMPLETE : 1,
-	kSAVE_TYPE_TEXT     : 2,
- 
 	shouldConvertTabToText : function MTS_shouldConvertTabToText(aTab, aSaveType) 
 	{
 		return(
@@ -3198,10 +3154,6 @@ var MultipleTabService = {
 		}
 	},
 	
-	kFORMAT_TYPE_DEFAULT : 0, 
-	kFORMAT_TYPE_MOZ_URL : 1,
-	kFORMAT_TYPE_LINK    : 2,
- 
 	getClopboardFormatForType : function MTS_getClopboardFormatForType(aFormatType) 
 	{
 		if (aFormatType === void(0))
@@ -3469,9 +3421,6 @@ var MultipleTabService = {
 			}
 		}
 	},
-	kNEW_GROUP_TITLE_BLANK : 0,
-	kNEW_GROUP_TITLE_FIRST : 1,
-	kNEW_GROUP_TITLE_ASK   : 2,
 	updateGroupsPopup : function MTS_updateGroupsPopup(aPopup)
 	{
 		if (!this.canMoveTabsToGroup)
@@ -4063,8 +4012,6 @@ var MultipleTabService = {
   
 /* Pref Listener */ 
 	
-	domain : 'extensions.multipletab', 
- 
 	observe : function MTS_observe(aSubject, aTopic, aPrefName) 
 	{
 		if (aTopic != 'nsPref:changed') return;
@@ -4129,21 +4076,16 @@ var MultipleTabService = {
 		}
 	}
   
-}; 
-(function() {
-	var namespace = {};
-	Components.utils.import('resource://multipletab-modules/prefs.js', namespace);
-	Components.utils.import('resource://multipletab-modules/namespace.jsm', namespace);
-	Components.utils.import('resource://multipletab-modules/autoScroll.js', namespace);
+}); 
 
-	MultipleTabService.prefs = namespace.prefs;
-	MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];
+MultipleTabService.prefs = namespace.prefs;
+MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];
 
-	var JSDeferredNS = {};
-	Components.utils.import('resource://multipletab-modules/jsdeferred.js', JSDeferredNS);
-	MultipleTabService.Deferred = JSDeferredNS.Deferred;
-})();
+var JSDeferredNS = {};
+Components.utils.import('resource://multipletab-modules/jsdeferred.js', JSDeferredNS);
+MultipleTabService.Deferred = JSDeferredNS.Deferred;
 
 window.addEventListener('load', MultipleTabService, false);
 window.addEventListener('DOMContentLoaded', MultipleTabService, false);
+})();
   
