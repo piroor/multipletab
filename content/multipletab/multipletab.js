@@ -4,7 +4,7 @@ var { inherit } = Components.utils.import('resource://multipletab-modules/inheri
 
 var { MultipleTabHandlerConstants } = Components.utils.import('resource://multipletab-modules/constants.js', {});
 var { documentToCopyText } = Components.utils.import('resource://multipletab-modules/documentToCopyText.js', {});
-var { saveDocument, saveDocumentIntoDirectory } = Components.utils.import('resource://multipletab-modules/saveDocument.js', {});
+var { saveDocumentAs, saveDocumentInto } = Components.utils.import('resource://multipletab-modules/saveDocument.js', {});
 var { evaluateXPath, getArrayFromXPathResult } = Components.utils.import('resource://multipletab-modules/xpath.js', {});
 
 var namespace = {};
