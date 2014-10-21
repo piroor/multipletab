@@ -2,6 +2,7 @@
 
  - master/HEAD
    * Drop support for Firefox 30 and older versions.
+   * Works correctly on the multi-process mode (E10S).
    * Add an option to enable/disable the feature: "Close tabs if closeboxes in tabs are selected by dragging."
    * Works on Nightly 33.0a1 with the preference `dom.compartment_per_addon`=`true`.
  - 0.7.2014050101
