@@ -60,5 +60,7 @@ var MultipleTabHandlerConstants = {
 	COMMAND_NOTIFY_CONFIG_UPDATED : 'notify-config-updated',
 	COMMAND_REQUEST_MAKE_BLANK    : 'request-make-blank',
 	COMMAND_REQUEST_SAVE_DOCUMENT_AS_FILE : 'request-save-document-as-file',
-	COMMAND_REQUEST_SAVE_DOCUMENT_INTO_DIRECTORY : 'request-save-document-into-directory'
+	COMMAND_REQUEST_SAVE_DOCUMENT_INTO_DIRECTORY : 'request-save-document-into-directory',
+	COMMAND_REQUEST_COPY_TEXT     : 'request-copy-text',
+	COMMAND_REPORT_COPY_TEXT      : 'report-copy-text'
 };

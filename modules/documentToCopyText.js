@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ['documentToCopyText'];
+var EXPORTED_SYMBOLS = ['documentToCopyText', 'isFormatRequiresLoaded'];
 
 var Ci = Components.interfaces;
 
@@ -14,7 +14,9 @@ function documentToCopyText(aDocument, aParams) {
 	var title = doc.title;
 	if (!title || uri == 'about:blank')
 		title = aParams.title;
+	var lineFeed = aParams.lineFeed;
 
+	var requireLoaded = isFormatRequiresLoaded(format);
 	var author = requireLoaded && getMetaInfo(doc, 'author') || '';
 	var description = requireLoaded && getMetaInfo(doc, 'description') || '';
 	var keywords = requireLoaded && getMetaInfo(doc, 'keywords') || '';
@@ -36,7 +38,7 @@ function documentToCopyText(aDocument, aParams) {
 			.replace(/%UTC_TIME%/gi, timeUTC)
 			.replace(/%LOCAL_TIME%/gi, timeLocal)
 			.replace(/%TAB%/gi, '\t')
-			.replace(/%EOL%/gi, self.lineFeed)
+			.replace(/%EOL%/gi, lineFeed)
 			.replace(/%RT%/gi, '');
 
 	var isRichText = /%RT%/i.test(format);
@@ -62,4 +64,8 @@ function escapeForHTML(aString) {
 			.replace(/"/g, '&quot;')
 			.replace(/</g, '&lt;')
 			.replace(/>/g, '&gt;');
+}
+
+function isFormatRequiresLoaded(aFormat) {
+	return /%AUTHOR%|%AUTHOR_HTML(?:IFIED)?%|%DESC(?:RIPTION)?%|%DESC(?:RIPTION)?_HTML(?:IFIED)?%|%KEYWORDS%%KEYWORDS_HTML(?:IFIED)?%/i.test(aFormat);
 }

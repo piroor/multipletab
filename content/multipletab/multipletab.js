@@ -3,8 +3,7 @@ var { SessionStore } = Components.utils.import('resource:///modules/sessionstore
 var { inherit } = Components.utils.import('resource://multipletab-modules/inherit.jsm', {});
 
 var { MultipleTabHandlerConstants } = Components.utils.import('resource://multipletab-modules/constants.js', {});
-var { documentToCopyText } = Components.utils.import('resource://multipletab-modules/documentToCopyText.js', {});
-var { saveDocumentAs, saveDocumentInto } = Components.utils.import('resource://multipletab-modules/saveDocument.js', {});
+var { isFormatRequiresLoaded } = Components.utils.import('resource://multipletab-modules/documentToCopyText.js', {});
 var { evaluateXPath, getArrayFromXPathResult } = Components.utils.import('resource://multipletab-modules/xpath.js', {});
 
 var namespace = {};
@@ -2911,40 +2910,37 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var format = aFormat || this.getClopboardFormatForType(aFormatType);
 		var now = new Date();
 
-		var requireLoaded = /%AUTHOR%|%AUTHOR_HTML(?:IFIED)?%|%DESC(?:RIPTION)?%|%DESC(?:RIPTION)?_HTML(?:IFIED)?%|%KEYWORDS%%KEYWORDS_HTML(?:IFIED)?%/i.test(format);
-
 		var self = this;
 		var start = this.Deferred;
-		if (requireLoaded)
+		if (isFormatRequiresLoaded(format))
 			start = this.Deferred.parallel(aTabs.map(this.ensureLoaded, this));
-		return start.next(function() {
-				var stringToCopy = Array.slice(aTabs).map(function(aTab) {
-						let uri = self.getCurrentURIOfTab(aTab).spec;
-						let doc = aTab.linkedBrowser.contentDocument;
-						let title = doc.title;
-						if (!title || uri == 'about:blank')
-							title = aTab.getAttribute('label');
-						return documentToCopyText(doc, {
-							format : format,
-							now    : now,
-							uri    : uri,
-							title  : title
-						});
-					}, self);
-				if (stringToCopy.length > 1)
-					stringToCopy.push('');
+		return start
+			.parallel(aTabs.map(function(aTab) {
+				return aTab.__multipletab__contentBridge.toCopyText({
+					format   : format,
+					now      : now,
+					lineFeed : self.lineFeed
+				});
+			}))
+			.next(function(aStringsToCopy) {
+				if (aStringsToCopy.length > 1)
+					aStringsToCopy.push('');
 
 				var isRichText = /%RT%/i.test(format);
-				var richText = isRichText ? stringToCopy.join('<br />') : null ;
-				stringToCopy = stringToCopy.join(self.lineFeed);
+				var richText = isRichText ? aStringsToCopy.join('<br />') : null ;
+				aStringsToCopy = aStringsToCopy.join(self.lineFeed);
 
 				return {
-					string: stringToCopy,
+					string: aStringsToCopy,
 					richText: richText,
 					toString: function() {
-						return stringToCopy;
+						return aStringsToCopy;
 					}
 				};
+			})
+			.error(function(aError) {
+				Components.utils.reportError(aError);
+				throw aError;
 			});
 	},
 	copyToClipboard : function MTS_copyToClipboard(aCopyData)
@@ -2979,7 +2975,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		else {
 			Cc['@mozilla.org/widget/clipboardhelper;1']
 				.getService(Ci.nsIClipboardHelper)
-				.copyString(aCopyData.string, aCopyData.sourceDocument);
+				.copyString(aCopyData.string, document);
 		}
 	},
 	
@@ -3917,6 +3913,7 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 		this.mTab = aTab;
 		this.mTabBrowser = aTabBrowser;
 		this.handleMessage = this.handleMessage.bind(this);
+		this.toCopyTextDeferreds = {};
 
 		var manager = this.mTab.linkedBrowser.messageManager;
 		manager.loadFrameScript(this.CONTENT_SCRIPT, true);
@@ -3928,8 +3925,13 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 		manager.removeMessageListener(this.MESSAGE_TYPE, this.handleMessage);
 		this.sendAsyncCommand(this.COMMAND_SHUTDOWN);
 
+		Object.keys(this.toCopyTextDeferreds).forEach(function(aId) {
+			this.toCopyTextDeferreds[aId].cancel();
+		}, this);
+
 		delete this.mTab;
 		delete this.mTabBrowser;
+		delete this.toCopyTextDeferreds;
 	},
 	sendAsyncCommand : function MTHCB_sendAsyncCommand(aCommandType, aCommandParams)
 	{
@@ -3962,13 +3964,34 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 			delay       : 200
 		});
 	},
+	toCopyText : function MTHCB_toCopyText(aParams)
+	{
+		var deferred = new MultipleTabService.Deferred();
+		var id = aParams.now.getTime() + '-' + Math.floor(Math.random() * 65000);
+		this.toCopyTextDeferreds[id] = deferred;
+		this.sendAsyncCommand(this.COMMAND_REQUEST_COPY_TEXT, {
+			id       : id,
+			format   : aParams.format,
+			now      : aParams.now.getTime(),
+			uri      : MultipleTabService.getCurrentURIOfTab(this.mTab).spec,
+			title    : this.mTab.getAttribute('label'),
+			lineFeed : aParams.lineFeed
+		});
+		return deferred;
+	},
 	handleMessage : function MTHCB_handleMessage(aMessage)
 	{
 		//dump(aMessage.json.command+'\n');
 		switch (aMessage.json.command)
 		{
-//			case this.COMMAND_REPORT_***:
-//				return this.***(aMessage.json.***);
+			case this.COMMAND_REPORT_COPY_TEXT:
+				var id = aMessage.json.id;
+				if (id in this.toCopyTextDeferreds) {
+					let deferred = this.toCopyTextDeferreds[id];
+					delete this.toCopyTextDeferreds[id];
+					deferred.call(aMessage.json.text);
+				}
+				return;
 		}
 	}
 });
