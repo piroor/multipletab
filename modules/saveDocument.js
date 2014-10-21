@@ -48,7 +48,7 @@ function saveDocumentInto(aDocument, aDestDir, aParams) {
 	}
 	var destFile = aDestDir.clone();
 	destFile.append(base + extension);
-	destFile.createUnique();
+	destFile.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0644);
 
 	if (saveType & MultipleTabHandlerConstants.kSAVE_TYPE_TEXT && !shouldConvertToText)
 		saveType = MultipleTabHandlerConstants.kSAVE_TYPE_COMPLETE;
