@@ -48,7 +48,10 @@ function saveDocumentInto(aDocument, aDestDir, aParams) {
 	}
 	var destFile = aDestDir.clone();
 	destFile.append(base + extension);
-	destFile.createUnique(Ci.nsIFile.NORMAL_FILE_TYPE, 0644);
+	// use CAUtils.uniqueFile instead of desfFile.createUnique()
+	// because it sggests more human readable file name.
+	destFile = CAUtils.uniqueFile(destFile);
+	destFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0644);
 
 	if (saveType & MultipleTabHandlerConstants.kSAVE_TYPE_TEXT && !shouldConvertToText)
 		saveType = MultipleTabHandlerConstants.kSAVE_TYPE_COMPLETE;
