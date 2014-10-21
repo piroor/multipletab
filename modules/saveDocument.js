@@ -7,11 +7,20 @@ Components.utils.import('resource://gre/modules/XPCOMUtils.jsm');
 
 XPCOMUtils.defineLazyModuleGetter(this, 'MultipleTabHandlerConstants', 'resource://multipletab-modules/constants.js');
 XPCOMUtils.defineLazyModuleGetter(this, 'setTimeout', 'resource://gre/modules/Timer.jsm');
+XPCOMUtils.defineLazyModuleGetter(this, 'Services', 'resource://gre/modules/Services.jsm');
 
 XPCOMUtils.defineLazyGetter(this, 'CAUtils', function() {
 	var loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
 					.getService(Ci.mozIJSSubScriptLoader);
-	var namespace = { window : null };
+	var httpProtocolhandler = Services.io.getProtocolHandler('http')
+								.QueryInterface(Ci.nsIHttpProtocolHandler);
+	var appVersion = httpProtocolhandler.appVersion + ' (' + httpProtocolhandler.platform + ')';
+	var namespace = {
+		window    : null,
+		navigator : {
+			appVersion : appVersion
+		}
+	};
 	loader.loadSubScript('chrome://global/content/contentAreaUtils.js', namespace);
 	return namespace;
 });
