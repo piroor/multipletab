@@ -3939,11 +3939,11 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 			params  : aCommandParams || {}
 		});
 	},
-	makeBlank : functiom MTHCB_makeBlank()
+	makeBlank : function MTHCB_makeBlank()
 	{
 		this.sendAsyncCommand(this.COMMAND_REQUEST_MAKE_BLANK);
 	},
-	saveAsFile : functiom MTHCB_saveAsFile(aSaveType)
+	saveAsFile : function MTHCB_saveAsFile(aSaveType)
 	{
 		var b = this.mTab.linkedBrowser;
 		this.sendAsyncCommand(this.COMMAND_REQUEST_SAVE_DOCUMENT_AS_FILE, {
