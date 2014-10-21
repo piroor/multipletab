@@ -4,6 +4,7 @@ var { inherit } = Components.utils.import('resource://multipletab-modules/inheri
 
 var { MultipleTabHandlerConstants } = Components.utils.import('resource://multipletab-modules/constants.js', {});
 var { documentToCopyText } = Components.utils.import('resource://multipletab-modules/documentToCopyText.js', {});
+var { saveDocument, saveDocumentIntoDirectory } = Components.utils.import('resource://multipletab-modules/saveDocument.js', {});
 var { evaluateXPath, getArrayFromXPathResult } = Components.utils.import('resource://multipletab-modules/xpath.js', {});
 
 var namespace = {};
@@ -2348,12 +2349,13 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (aTabs.length == 1) {
 			return this.ensureLoaded(aTabs[0])
 				.next(function(aLoaded) {
-					var saveType = aSaveType;
-					if (aSaveType & self.kSAVE_TYPE_TEXT &&
-						!self.shouldConvertTabToText(aTabs[0], aSaveType)) {
-						aSaveType = self.kSAVE_TYPE_COMPLETE;
-					}
-					self.saveOneTab(aTabs[0], null, aSaveType);
+					var b = aTabs[0].linkedBrowser;
+					documentSave(b.contentDocument, {
+						uri         : this.getCurrentURIOfTab(aTabs[0]),
+						referrerURI : b.referringURI && b.referringURI.spec,
+						destFile    : null,
+						saveType    : aSaveType
+					});
 				});
 		}
 
@@ -2370,43 +2372,14 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			return this.Deferred.next(function() {});
 		}
 
-		var fileExistence = {};
 		var processTab = function processTab(aTab) {
 			var b = aTab.linkedBrowser;
-			var destFile = aFolder.clone();
-			var uri = self.getCurrentURIOfTab(aTab);
-			var shouldConvertToText = self.shouldConvertTabToText(aTab, aSaveType);
-			var fileInfo = new FileInfo(aTab.label);
-			initFileInfo(
-				fileInfo,
-				uri.spec,
-				b.contentDocument.characterSet,
-				b.contentDocument,
-				(shouldConvertToText ? 'text/plain' : b.contentDocument.contentType ),
-				null
-			);
-			var base = fileInfo.fileName;
-			var extension = shouldConvertToText ? '.txt' : '.'+fileInfo.fileExt ;
-			if (base.indexOf(extension) == base.length - extension.length) {
-				base = base.substring(0, base.length - extension.length);
-			}
-			var fileName = '';
-			var count = 2;
-			var existingFile;
-			do {
-				fileName = fileName ? base+'('+(count++)+')'+extension : base+extension ;
-				destFile = aFolder.clone();
-				destFile.append(fileName);
-			}
-			while (destFile.exists() || destFile.path in fileExistence);
-			fileExistence[destFile.path] = true;
-			var saveType = aSaveType;
-			if (saveType & self.kSAVE_TYPE_TEXT && !shouldConvertToText) {
-				saveType = self.kSAVE_TYPE_COMPLETE;
-			}
-			window.setTimeout(function() {
-				self.saveOneTab(aTab, destFile, saveType);
-			}, 200);
+			saveDocumentIntoDirectory(b.contentDocument, aFolder, {
+				name        : aTab.label,
+				referrerURI : b.referringURI && b.referringURI.spec,
+				saveType    : aSaveType,
+				delay       : 200
+			});
 		};
 		var deferreds = aTabs.map(function(aTab) {
 				return this.ensureLoaded(aTab)
@@ -2417,13 +2390,6 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		return this.Deferred.parallel(deferreds);
 	},
 	
-	shouldConvertTabToText : function MTS_shouldConvertTabToText(aTab, aSaveType) 
-	{
-		return(
-			aSaveType == this.kSAVE_TYPE_TEXT &&
-			GetSaveModeForContentType(aTab.linkedBrowser.contentDocument.contentType, aTab.linkedBrowser.contentDocument) & SAVEMODE_COMPLETE_TEXT
-		);
-	},
  
 	selectFolder : function MTS_selectFolder(aTitle) 
 	{
@@ -2460,31 +2426,6 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		return deferred;
 	},
  
-	saveOneTab : function MTS_saveOneTab(aTab, aDestFile, aSaveType) 
-	{
-		var b = aTab.linkedBrowser;
-		var uri = this.getCurrentURIOfTab(aTab);
-
-		var autoChosen = aDestFile ? new AutoChosen(aDestFile, uri) : null ;
-		if (autoChosen && aSaveType == this.kSAVE_TYPE_TEXT) {
-			autoChosen.saveAsType = kSaveAsType_Text;
-		}
-
-		internalSave(
-			uri.spec,
-			(aSaveType != this.kSAVE_TYPE_FILE ? b.contentDocument : null ),
-			null, // default file name
-			null, // content disposition
-			b.contentDocument.contentType,
-			false, // should bypass cache?
-			null, // title of picker
-			autoChosen,
-			b.referringURI, // referrer
-			b.contentDocument, // initiating document
-			true, // skip prompt?
-			null // cache key
-		);
-	},
   
 	addBookmarkFor : function MTS_addBookmarkFor(aTabs, aFolderName) 
 	{
