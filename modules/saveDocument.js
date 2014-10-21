@@ -46,11 +46,16 @@ function saveDocumentIntoDirectory(aDocument, aDestDir, aParams) {
 
 	setTimeout(function() {
 		destFile.remove(true);
-		documentSave(aDocument, {
-			referrerURI : aParams.referrerURI,
-			destFile    : destFile,
-			saveType    : saveType
-		});
+		try {
+			documentSave(aDocument, {
+				referrerURI : aParams.referrerURI,
+				destFile    : destFile,
+				saveType    : saveType
+			});
+		}
+		catch(e) {
+			Components.utils.reportError(e);
+		}
 	}, delay);
 }
 
