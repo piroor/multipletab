@@ -1,4 +1,6 @@
 (function(aGlobal) {
+var { Promise } = Components.utils.import('resource://gre/modules/Promise.jsm', {});
+
 var { SessionStore } = Components.utils.import('resource:///modules/sessionstore/SessionStore.jsm', {});
 var { inherit } = Components.utils.import('resource://multipletab-modules/inherit.jsm', {});
 
@@ -521,26 +523,22 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			'loadTabContents' in BarTap
 			) {
 			BarTap.loadTabContents(aTab);
-			return this.Deferred.next(function() {
-				return true;
-			});
+			return Promise.resolve(true);
 		}
 
 		if (aTab.linkedBrowser.__SS_restoreState == 1 ||
 			aTab.getAttribute('pending') == 'true') {
-			let deferred = new this.Deferred();
-			let listener = function(aEvent) {
-					aTab.removeEventListener('SSTabRestored', listener, true);
-					deferred.call(true);
-				};
-			aTab.addEventListener('SSTabRestored', listener, true);
-			aTab.linkedBrowser.reload();
-			return deferred;
+			return new Promise((function(aResolve, aReject) {
+				let listener = function(aEvent) {
+						aTab.removeEventListener('SSTabRestored', listener, true);
+						aResolve(true);
+					};
+				aTab.addEventListener('SSTabRestored', listener, true);
+				aTab.linkedBrowser.reload();
+			}).bind(this));
 		}
 
-		return this.Deferred.next(function() {
-			return false;
-		});
+		return Promise.resolve(false);
 	},
  
  	getCurrentURIOfTab : function MTS_getCurrentURIOfTab(aTab) 
@@ -2312,7 +2310,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		{
 			let tab = aTabs[i];
 			this.ensureLoaded(tab)
-				.next(function(aLoaded) {
+				.then(function(aLoaded) {
 					if (!aLoaded)
 						tab.linkedBrowser.reload();
 				});
@@ -2322,7 +2320,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	saveTabs : function MTS_saveTabs(aTabs, aSaveType, aFolder) 
 	{
 		if (!aTabs)
-			return this.Deferred.next(function() {});
+			return Promise.resolve();
 
 		aTabs = this.filterBlankTabs(aTabs);
 
@@ -2337,10 +2335,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		if (aTabs.length == 1) {
 			return this.ensureLoaded(aTabs[0])
-				.next(function(aLoaded) {
+				.then(function(aLoaded) {
 					aTabs[0].__multipletab__contentBridge.saveAsFile(aSaveType);
 				})
-				.error(function(aError) {
+				.catch(function(aError) {
 					Components.utils.reportError(aError);
 					throw aError;
 				});
@@ -2348,11 +2346,11 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		if (!aFolder) {
 			return this.selectFolder(this.bundle.getString('saveTabs_chooseFolderTitle'))
-					.next(function(aFolder) {
+					.then(function(aFolder) {
 						if (aFolder)
 							return self.saveTabs(aTabs, aSaveType, aFolder);
 					})
-					.error(function(aError) {
+					.catch(function(aError) {
 						Components.utils.reportError(aError);
 						throw aError;
 					});
@@ -2360,16 +2358,15 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		if (!aFolder.exists()) {
 			window.alert('Unexpected error: selected folder "' + aFolder.path + '" does not exist!');
-			return this.Deferred.next(function() {});
+			return Promise.resolve();
 		}
 
-		var deferreds = aTabs.map(function(aTab) {
-				return this.ensureLoaded(aTab)
-						.next(function(aLoaded) {
-							aTab.__multipletab__contentBridge.saveIntoDirectory(aFolder, aSaveType);
-						});
-			}, this);
-		return this.Deferred.parallel(deferreds);
+		return Promise.all(aTabs.map(function(aTab) {
+			return this.ensureLoaded(aTab)
+					.then(function(aLoaded) {
+						aTab.__multipletab__contentBridge.saveIntoDirectory(aFolder, aSaveType);
+					});
+		}, this));
 	},
 	
  
@@ -2395,17 +2392,17 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			return aFile;
 		}
 
-		var deferred = new this.Deferred();
-		picker.open({ done: function(aResult) {
-			if (aResult == picker.returnOK) {
-				let folder = picker.file.QueryInterface(Ci.nsILocalFile);
-				deferred.call(findExistingFolder(folder));
-			}
-			else {
-				deferred.call(null);
-			}
-		}});
-		return deferred;
+		return new Promise((function(aResolve, aReject) {
+			picker.open({ done: function(aResult) {
+				if (aResult == picker.returnOK) {
+					let folder = picker.file.QueryInterface(Ci.nsILocalFile);
+					aResolve(findExistingFolder(folder));
+				}
+				else {
+					aResolve(null);
+				}
+			}});
+		}).bind(this));
 	},
  
   
@@ -2430,10 +2427,11 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	// for Print All Tabs https://addons.mozilla.org/firefox/addon/5142
 	printTabs : function MTS_printTabs(aTabs) 
 	{
-		if (!('PrintAllTabs' in window)) return;
+		if (!('PrintAllTabs' in window))
+			return Promise.resolve();
 
-		this.Deferred.parallel(aTabs.map(this.ensureLoaded, this))
-			.next(function() {
+		return Promise.all(aTabs.map(this.ensureLoaded, this))
+			.then(function() {
 				PrintAllTabs.__multipletab__printNodes = aTabs.map(function(aTab) {
 					return aTab._tPos;
 				});
@@ -2454,7 +2452,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var self = this;
 		var operation = function() {
 			self.duplicateTabsInternal(b, aTabs)
-				.next(function(aDuplicatedTabs) {
+				.then(function(aDuplicatedTabs) {
 					if (!shouldSelectAfter) return;
 					for (let i = 0, maxi = aDuplicatedTabs.length; i < maxi; i++)
 					{
@@ -2489,7 +2487,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	duplicateTabsInternal : function MTS_duplicateTabsInternal(aTabBrowser, aTabs) 
 	{
 		var max = aTabs.length;
-		if (!max) return Deferred.next(function() { return []; });
+		if (!max)
+			return Promise.resolve([]);
 
 		aTabs = this.sortTabs(aTabs);
 
@@ -2502,9 +2501,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		this.clearSelection(b);
 
 		var self = this;
-		return this.Deferred.parallel(aTabs.map(this.ensureLoaded, this))
-			.next(function() {
-
+		return Promise.all(aTabs.map(this.ensureLoaded, this))
+			.then(function() {
 				var duplicatedTabs = aTabs.map(function(aTab) {
 						var state = self.evalInSandbox('('+SessionStore.getTabState(aTab)+')');
 						for (let i = 0, maxi = self._clearTabValueKeys.length; i < maxi; i++)
@@ -2525,7 +2523,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 				return duplicatedTabs;
 			})
-			.next(function(aDuplicatedTabs) {
+			.then(function(aDuplicatedTabs) {
 				self.duplicatingTabs = false;
 				return aDuplicatedTabs;
 			});
@@ -2536,8 +2534,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (!aTabs || !aTabs.length) return null;
 
 		var self = this;
-		return this.Deferred.parallel(aTabs.map(this.ensureLoaded, this))
-			.next(function() {
+		return Promise.all(aTabs.map(this.ensureLoaded, this))
+			.then(function() {
 				var b = self.getTabBrowserFromChild(aTabs[0]);
 
 				if (!aRemoteWindow) {
@@ -2584,7 +2582,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 				aRemoteWindow.setTimeout(function() {
 					var remoteBrowser = aRemoteWindow.gBrowser;
-					remoteService.importTabsTo(aTabs, remoteBrowser).next(function(aImportedTabs) {
+					remoteService.importTabsTo(aTabs, remoteBrowser).then(function(aImportedTabs) {
 						remoteService.clearSelection(remoteBrowser);
 						var tabs = remoteService.getTabsArray(remoteBrowser);
 						for (let i = 0, maxi = tabs.length; i < maxi; i++)
@@ -2698,20 +2696,20 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		var tabs = our.tabs;
 		var self = this;
-		this.Deferred
-			.next(function() {
+		Promise.resolve()
+			.then(function() {
 				if (entry != data.remote.entry) return;
 
 				if (remote.tabs.length == data.remote.tabs.length)
 					return remote.window.MultipleTabService.importTabsTo(remote.tabs, our.browser)
-							.next(function(aImportedTabs) {
+							.then(function(aImportedTabs) {
 								tabs = aImportedTabs;
 								UndoTabService.fakeUndo(our.window, data.our.entry);
 							});
 				else
 					UndoTabService.fakeUndo(our.window, data.our.entry);
 			})
-			.next(function() {
+			.then(function() {
 				if (tabs.length == data.our.tabs.length) {
 					self.moveTabsByIndex(
 						our.browser,
@@ -2832,8 +2830,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var sourceBrowser = sourceService.getTabBrowserFromChild(aTabs[0]);
 
 		var self = this;
-		return this.Deferred.parallel(aTabs.map(this.ensureLoaded, this))
-			.next(function() {
+		return Promise.all(aTabs.map(this.ensureLoaded, this))
+			.then(function() {
 				if (targetBrowser.__multipletab__canDoWindowMove && !aClone) {// move tabs
 					for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 					{
@@ -2888,21 +2886,22 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	copyURIsToClipboard : function MTS_copyURIsToClipboard(aTabs, aFormatType, aFormat) 
 	{
-		if (!aTabs) return;
+		if (!aTabs)
+			return Promise.resolve();
 
 		var self = this
-		this.formatURIsForClipboard(aTabs, aFormatType, aFormat)
-			.next(function(aCopyData) {
+		return this.formatURIsForClipboard(aTabs, aFormatType, aFormat)
+			.then(function(aCopyData) {
 				self.copyToClipboard(aCopyData);
 			})
-			.error(function(error) {
+			.catch(function(error) {
 				Components.utils.reportError(error);
 			});
 	},
 	formatURIsForClipboard : function MTS_formatURIsForClipboard(aTabs, aFormatType, aFormat)
 	{
 		if (!aTabs)
-			return '';
+			return Promise.resolve('');
 
 		if (aTabs instanceof Node)
 			aTabs = [aTabs];
@@ -2911,18 +2910,23 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var now = new Date();
 
 		var self = this;
-		var start = this.Deferred;
+		var start;
 		if (isFormatRequiresLoaded(format))
-			start = this.Deferred.parallel(aTabs.map(this.ensureLoaded, this));
+			start = Promise.all(aTabs.map(this.ensureLoaded, this));
+		else
+			start = Promise.resolve();
+
 		return start
-			.parallel(aTabs.map(function(aTab) {
-				return aTab.__multipletab__contentBridge.toCopyText({
-					format   : format,
-					now      : now,
-					lineFeed : self.lineFeed
-				});
-			}))
-			.next(function(aStringsToCopy) {
+			.then(function() {
+				return Promise.all(aTabs.map(function(aTab) {
+					return aTab.__multipletab__contentBridge.toCopyText({
+						format   : format,
+						now      : now,
+						lineFeed : self.lineFeed
+					});
+				}));
+			})
+			.then(function(aStringsToCopy) {
 				if (aStringsToCopy.length > 1)
 					aStringsToCopy.push('');
 
@@ -2938,7 +2942,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 					}
 				};
 			})
-			.error(function(aError) {
+			.catch(function(aError) {
 				Components.utils.reportError(aError);
 				throw aError;
 			});
@@ -3379,7 +3383,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			sourceService.clearSelection(sourceBrowser);
 
 			return targetService.importTabsTo(otherSourceTabs, targetBrowser)
-				.next(function(importedTabs) {
+				.then(function(importedTabs) {
 					importedTabs.splice(sourceBaseIndex, 0, aNewTab);
 					targetService.rearrangeBundledTabsOf(aNewTab, importedTabs);
 					if (shouldSelectAfter)
@@ -3429,7 +3433,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 				function() {
 					UndoTabService.doOperation(
 						function() {
-							operation(true).next(function(result) {
+							operation(true).then(function(result) {
 								data.source = result.source;
 								data.target = result.target;
 							});
@@ -3524,7 +3528,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			targetBrowser.movingSelectedTabs = true;
 
 			return targetService.importTabsTo(otherTabs, targetBrowser, !isMove)
-				.next(function(duplicatedTabs) {
+				.then(function(duplicatedTabs) {
 					duplicatedTabs.splice(sourceBaseIndex, 0, aNewTab);
 					targetService.rearrangeBundledTabsOf(aNewTab, duplicatedTabs);
 
@@ -3590,7 +3594,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			if (sourceWindow == targetWindow) {
 				UndoTabService.doOperation(
 					function() {
-						operation(true).next(function(result) {
+						operation(true).then(function(result) {
 							data.source = result.source;
 							data.target = result.target;
 						});
@@ -3604,7 +3608,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 					function() {
 						UndoTabService.doOperation(
 							function() {
-								operation(true).next(function(result) {
+								operation(true).then(function(result) {
 									data.source = result.source;
 									data.target = result.target;
 								});
@@ -3913,7 +3917,7 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 		this.mTab = aTab;
 		this.mTabBrowser = aTabBrowser;
 		this.handleMessage = this.handleMessage.bind(this);
-		this.toCopyTextDeferreds = {};
+		this.toCopyTextResolvers = {};
 
 		var manager = this.mTab.linkedBrowser.messageManager;
 		manager.loadFrameScript(this.CONTENT_SCRIPT, true);
@@ -3925,13 +3929,9 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 		manager.removeMessageListener(this.MESSAGE_TYPE, this.handleMessage);
 		this.sendAsyncCommand(this.COMMAND_SHUTDOWN);
 
-		Object.keys(this.toCopyTextDeferreds).forEach(function(aId) {
-			this.toCopyTextDeferreds[aId].cancel();
-		}, this);
-
 		delete this.mTab;
 		delete this.mTabBrowser;
-		delete this.toCopyTextDeferreds;
+		delete this.toCopyTextResolvers;
 	},
 	sendAsyncCommand : function MTHCB_sendAsyncCommand(aCommandType, aCommandParams)
 	{
@@ -3966,18 +3966,18 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 	},
 	toCopyText : function MTHCB_toCopyText(aParams)
 	{
-		var deferred = new MultipleTabService.Deferred();
-		var id = aParams.now.getTime() + '-' + Math.floor(Math.random() * 65000);
-		this.toCopyTextDeferreds[id] = deferred;
-		this.sendAsyncCommand(this.COMMAND_REQUEST_COPY_TEXT, {
-			id       : id,
-			format   : aParams.format,
-			now      : aParams.now.getTime(),
-			uri      : MultipleTabService.getCurrentURIOfTab(this.mTab).spec,
-			title    : this.mTab.getAttribute('label'),
-			lineFeed : aParams.lineFeed
-		});
-		return deferred;
+		return new Promise((function(aResolve, aReject) {
+			var id = aParams.now.getTime() + '-' + Math.floor(Math.random() * 65000);
+			this.sendAsyncCommand(this.COMMAND_REQUEST_COPY_TEXT, {
+				id       : id,
+				format   : aParams.format,
+				now      : aParams.now.getTime(),
+				uri      : MultipleTabService.getCurrentURIOfTab(this.mTab).spec,
+				title    : this.mTab.getAttribute('label'),
+				lineFeed : aParams.lineFeed
+			});
+			return this.toCopyTextResolvers[id] = aResolve;
+		}).bind(this));
 	},
 	handleMessage : function MTHCB_handleMessage(aMessage)
 	{
@@ -3986,10 +3986,10 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 		{
 			case this.COMMAND_REPORT_COPY_TEXT:
 				var id = aMessage.json.id;
-				if (id in this.toCopyTextDeferreds) {
-					let deferred = this.toCopyTextDeferreds[id];
-					delete this.toCopyTextDeferreds[id];
-					deferred.call(aMessage.json.text);
+				if (id in this.toCopyTextResolvers) {
+					let resolver = this.toCopyTextResolvers[id];
+					delete this.toCopyTextResolvers[id];
+					resolver(aMessage.json.text);
 				}
 				return;
 		}
@@ -3999,10 +3999,6 @@ var MultipleTabHandlerContentBridge = aGlobal.MultipleTabHandlerContentBridge = 
 
 MultipleTabService.prefs = namespace.prefs;
 MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];
-
-var JSDeferredNS = {};
-Components.utils.import('resource://multipletab-modules/jsdeferred.js', JSDeferredNS);
-MultipleTabService.Deferred = JSDeferredNS.Deferred;
 
 window.addEventListener('load', MultipleTabService, false);
 window.addEventListener('DOMContentLoaded', MultipleTabService, false);
