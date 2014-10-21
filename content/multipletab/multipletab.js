@@ -3,6 +3,7 @@ var { SessionStore } = Components.utils.import('resource:///modules/sessionstore
 var { inherit } = Components.utils.import('resource://multipletab-modules/inherit.jsm', {});
 
 var { MultipleTabHandlerConstants } = Components.utils.import('resource://multipletab-modules/constants.js', {});
+var { documentToCopyText } = Components.utils.import('resource://multipletab-modules/documentToCopyText.js', {});
 var { evaluateXPath, getArrayFromXPathResult } = Components.utils.import('resource://multipletab-modules/xpath.js', {});
 
 var namespace = {};
@@ -2977,16 +2978,14 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	},
 	formatURIsForClipboard : function MTS_formatURIsForClipboard(aTabs, aFormatType, aFormat)
 	{
-		if (!aTabs) return '';
+		if (!aTabs)
+			return '';
 
-		if (aTabs instanceof Node) aTabs = [aTabs];
+		if (aTabs instanceof Node)
+			aTabs = [aTabs];
 
 		var format = aFormat || this.getClopboardFormatForType(aFormatType);
-		if (!format) format = '%URL%';
-
 		var now = new Date();
-		var timeUTC = now.toUTCString();
-		var timeLocal = now.toLocaleString();
 
 		var requireLoaded = /%AUTHOR%|%AUTHOR_HTML(?:IFIED)?%|%DESC(?:RIPTION)?%|%DESC(?:RIPTION)?_HTML(?:IFIED)?%|%KEYWORDS%%KEYWORDS_HTML(?:IFIED)?%/i.test(format);
 
@@ -2995,85 +2994,34 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (requireLoaded)
 			start = this.Deferred.parallel(aTabs.map(this.ensureLoaded, this));
 		return start.next(function() {
-				var sourceDoc, privateDoc;
-				var isRichText = /%RT%/i.test(format);
 				var stringToCopy = Array.slice(aTabs).map(function(aTab) {
 						let uri = self.getCurrentURIOfTab(aTab).spec;
-						let browser = aTab.linkedBrowser;
-						let doc = browser.contentDocument;
+						let doc = aTab.linkedBrowser.contentDocument;
 						let title = doc.title;
-						if (!title || uri == 'about:blank') title = aTab.getAttribute('label');
-						let author = requireLoaded && self._getMetaInfo(doc, 'author') || '';
-						let description = requireLoaded && self._getMetaInfo(doc, 'description') || '';
-						let keywords = requireLoaded && self._getMetaInfo(doc, 'keywords') || '';
-						if (
-							!privateDoc &&
-							PrivateBrowsingUtils.isWindowPrivate(browser.contentWindow)
-							) {
-							// Will use private document, if at least one tab are private
-							privateDoc = doc;
-						}
-						else if (!sourceDoc) {
-							sourceDoc = doc;
-						}
-						var formatted = format
-								.replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
-								.replace(/%URL%/gi, uri)
-								.replace(/%(?:TITLE|TEXT)%/gi, title)
-								.replace(/%URL_HTML(?:IFIED)?%/gi, self._escape(uri))
-								.replace(/%TITLE_HTML(?:IFIED)?%/gi, self._escape(title))
-								.replace(/%AUTHOR%/gi, author)
-								.replace(/%AUTHOR_HTML(?:IFIED)?%/gi, self._escape(author))
-								.replace(/%DESC(?:RIPTION)?%/gi, description)
-								.replace(/%DESC(?:RIPTION)?_HTML(?:IFIED)?%/gi, self._escape(description))
-								.replace(/%KEYWORDS%/gi, keywords)
-								.replace(/%KEYWORDS_HTML(?:IFIED)?%/gi, self._escape(keywords))
-								.replace(/%UTC_TIME%/gi, timeUTC)
-								.replace(/%LOCAL_TIME%/gi, timeLocal)
-								.replace(/%TAB%/gi, '\t')
-								.replace(/%EOL%/gi, self.lineFeed)
-								.replace(/%RT%/gi, '');
-
-						if (isRichText && !formatted.trim())
-							formatted = '<a href=\"' + self._escape(uri) + '\">' + self._escape(title) + '</a>';
-
-						return formatted;
+						if (!title || uri == 'about:blank')
+							title = aTab.getAttribute('label');
+						return documentToCopyText(doc, {
+							format : format,
+							now    : now,
+							uri    : uri,
+							title  : title
+						});
 					}, self);
 				if (stringToCopy.length > 1)
 					stringToCopy.push('');
 
+				var isRichText = /%RT%/i.test(format);
 				var richText = isRichText ? stringToCopy.join('<br />') : null ;
 				stringToCopy = stringToCopy.join(self.lineFeed);
 
 				return {
 					string: stringToCopy,
 					richText: richText,
-					sourceDocument: privateDoc || sourceDoc,
 					toString: function() {
 						return stringToCopy;
 					}
 				};
 			});
-	},
-	_escape : function MTS_escape(aString)
-	{
-		return aString
-				.replace(/&/g, '&amp;')
-				.replace(/"/g, '&quot;')
-				.replace(/</g, '&lt;')
-				.replace(/>/g, '&gt;');
-	},
-	_getMetaInfo : function MTS_getMetaInfo(aDocument, aName)
-	{
-		var upperCase = aName.toUpperCase();
-		var lowerCase = aName.toLowerCase();
-		return aDocument.evaluate(
-				'/descendant::*[translate(local-name(), "META", "meta")="meta"][translate(@name, "'+upperCase+'", "'+lowerCase+'")="'+lowerCase+'"]/attribute::content',
-				aDocument,
-				null,
-				XPathResult.STRING_TYPE,
-				null
-			).stringValue;
 	},
 	copyToClipboard : function MTS_copyToClipboard(aCopyData)
 	{
@@ -3084,10 +3032,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 			// Not sure if section below works as it originally created since I'm not 
 			// that familiar with MAF (Mozilla Application Framework)
-
-			var sourceWin = aCopyData.sourceDocument && aCopyData.sourceDocument.defaultView ||
-				document.commandDispatcher.focusedWindow;
-			var privacyContext = PrivateBrowsingUtils.privacyContextFromWindow(sourceWin);
+			var privacyContext = PrivateBrowsingUtils.privacyContextFromWindow(document.commandDispatcher.focusedWindow);
 			trans.init(privacyContext);
 
 			// Rich Text HTML Format
