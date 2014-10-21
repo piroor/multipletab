@@ -2370,7 +2370,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 					})
 					.error(function(aError) {
 						Components.utils.reportError(aError);
-						throw aError)
+						throw aError;
 					});
 		}
 
