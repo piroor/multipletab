@@ -47,7 +47,7 @@ function saveDocumentIntoDirectory(aDocument, aDestDir, aParams) {
 	setTimeout(function() {
 		destFile.remove(true);
 		try {
-			documentSave(aDocument, {
+			saveDocument(aDocument, {
 				referrerURI : aParams.referrerURI,
 				destFile    : destFile,
 				saveType    : saveType

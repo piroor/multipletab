@@ -2351,7 +2351,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 				.next(function(aLoaded) {
 					var b = aTabs[0].linkedBrowser;
 					var d = b.contentDocument || b.contentDocumentAsCPOW;
-					documentSave(d, {
+					saveDocument(d, {
 						uri         : this.getCurrentURIOfTab(aTabs[0]),
 						referrerURI : b.referringURI && b.referringURI.spec,
 						destFile    : null,
