@@ -473,7 +473,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			dump(e+'\n');
 		}
 
-		aTab.__multipletab__contentBridge.sendAsyncCommand(this.COMMAND_REQUEST_MAKE_BLANK);
+		aTab.__multipletab__contentBridge.makeBlank();
 
 		// XXX: This is forward compatibility.
 		// `RestoringTabData` doesn't exist in Firefox 23-27. This path doesn't work on them.
@@ -2339,11 +2339,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (aTabs.length == 1) {
 			return this.ensureLoaded(aTabs[0])
 				.next(function(aLoaded) {
-					var b = aTabs[0].linkedBrowser;
-					aTabs[0].__multipletab__contentBridge.sendAsyncCommand(self.COMMAND_REQUEST_SAVE_DOCUMENT_AS_FILE, {
-						referrerURI : b.referringURI && b.referringURI.spec,
-						saveType    : aSaveType
-					});
+					aTabs[0].__multipletab__contentBridge.saveAsFile(aSaveType);
 				})
 				.error(function(aError) {
 					Components.utils.reportError(aError);
@@ -2368,20 +2364,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			return this.Deferred.next(function() {});
 		}
 
-		var processTab = function processTab(aTab) {
-			var b = aTab.linkedBrowser;
-			aTab.__multipletab__contentBridge.sendAsyncCommand(self.COMMAND_REQUEST_SAVE_DOCUMENT_INTO_DIRECTORY, {
-				name        : aTab.label,
-				folder      : aFolder.path,
-				referrerURI : b.referringURI && b.referringURI.spec,
-				saveType    : aSaveType,
-				delay       : 200
-			});
-		};
 		var deferreds = aTabs.map(function(aTab) {
 				return this.ensureLoaded(aTab)
 						.next(function(aLoaded) {
-							processTab(aTab);
+							aTab.__multipletab__contentBridge.saveIntoDirectory(aFolder, aSaveType);
 						});
 			}, this);
 		return this.Deferred.parallel(deferreds);
@@ -3951,6 +3937,29 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 		manager.sendAsyncMessage(this.MESSAGE_TYPE, {
 			command : aCommandType,
 			params  : aCommandParams || {}
+		});
+	},
+	makeBlank : functiom MTHCB_makeBlank()
+	{
+		this.sendAsyncCommand(this.COMMAND_REQUEST_MAKE_BLANK);
+	},
+	saveAsFile : functiom MTHCB_saveAsFile(aSaveType)
+	{
+		var b = this.mTab.linkedBrowser;
+		this.sendAsyncCommand(this.COMMAND_REQUEST_SAVE_DOCUMENT_AS_FILE, {
+			referrerURI : b.referringURI && b.referringURI.spec,
+			saveType    : aSaveType
+		});
+	},
+	saveIntoDirectory : function MTHCB_saveIntoDirectory(aDirectory, aSaveType)
+	{
+		var b = this.mTab.linkedBrowser;
+		this.sendAsyncCommand(this.COMMAND_REQUEST_SAVE_DOCUMENT_INTO_DIRECTORY, {
+			name        : this.mTab.label,
+			folder      : aDirectory.path,
+			referrerURI : b.referringURI && b.referringURI.spec,
+			saveType    : aSaveType,
+			delay       : 200
 		});
 	},
 	handleMessage : function MTHCB_handleMessage(aMessage)
