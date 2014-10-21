@@ -11,7 +11,7 @@ XPCOMUtils.defineLazyModuleGetter(this, 'setTimeout', 'resource://gre/modules/Ti
 XPCOMUtils.defineLazyGetter(this, 'CAUtils', function() {
 	var loader = Cc['@mozilla.org/moz/jssubscript-loader;1']
 					.getService(Ci.mozIJSSubScriptLoader);
-	var namespace = { widow : null };
+	var namespace = { window : null };
 	loader.loadSubScript('chrome://global/content/contentAreaUtils.js', namespace);
 	return namespace;
 });
