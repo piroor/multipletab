@@ -2355,6 +2355,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 						referrerURI : b.referringURI && b.referringURI.spec,
 						saveType    : aSaveType
 					});
+				})
+				.error(function(aError) {
+					Components.utils.reportError(aError);
+					throw aError);
 				});
 		}
 
@@ -2363,6 +2367,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 					.next(function(aFolder) {
 						if (aFolder)
 							return self.saveTabs(aTabs, aSaveType, aFolder);
+					})
+					.error(function(aError) {
+						Components.utils.reportError(aError);
+						throw aError);
 					});
 		}
 
