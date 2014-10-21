@@ -472,8 +472,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		catch(e) {
 			dump(e+'\n');
 		}
-		if (b.contentWindow && b.contentWindow.location)
-			b.contentWindow.location.replace('about:blank');
+
+		aTab.__multipletab__contentBridge.sendAsyncCommand(this.COMMAND_REQUEST_MAKE_BLANK);
 
 		// XXX: This is forward compatibility.
 		// `RestoringTabData` doesn't exist in Firefox 23-27. This path doesn't work on them.
@@ -1019,7 +1019,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var tabs = this.getTabsArray(aTabBrowser);
 		for (let i = 0, maxi = tabs.length; i < maxi; i++)
 		{
-			this.initTab(tabs[i]);
+			this.initTab(tabs[i], aTabBrowser);
 		}
 	},
 	
@@ -1099,8 +1099,9 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		tabContextMenu.addEventListener('popupshowing', this, false);
 	},
   
-	initTab : function MTS_initTab(aTab) 
+	initTab : function MTS_initTab(aTab, aTabBrowser) 
 	{
+		aTab.__multipletab__contentBridge = new MultipleTabHandlerContentBridge(aTab, aTabBrowser);
 	},
  
 	startListenWhileDragging : function MTS_startListenWhileDragging(aTab) 
@@ -1174,6 +1175,11 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	destroyTab : function MTS_destroyTab(aTab) 
 	{
+		if (aTab.__multipletab__contentBridge) {
+			aTab.__multipletab__contentBridge.destroy();
+			delete aTab.__multipletab__contentBridge;
+		}
+
 		this.setSelection(aTab, false);
 		if (!this.hasSelection())
 			this.selectionModified = false;
@@ -1887,7 +1893,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	onTabAdded : function MTS_onTabAdded(aEvent) 
 	{
 		var tab = aEvent.originalTarget;
-		this.initTab(tab);
+		this.initTab(tab, gBrowser);
 
 		var session = Cc['@mozilla.org/widget/dragservice;1']
 						.getService(Ci.nsIDragService)
@@ -2334,8 +2340,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			return this.ensureLoaded(aTabs[0])
 				.next(function(aLoaded) {
 					var b = aTabs[0].linkedBrowser;
-					var d = b.contentDocument || b.contentDocumentAsCPOW;
-					saveDocumentAs(d, null, {
+					aTabs[0].__multipletab__contentBridge.sendAsyncCommand(self.COMMAND_REQUEST_SAVE_DOCUMENT_AS_FILE, {
 						referrerURI : b.referringURI && b.referringURI.spec,
 						saveType    : aSaveType
 					});
@@ -2365,9 +2370,9 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		var processTab = function processTab(aTab) {
 			var b = aTab.linkedBrowser;
-			var d = b.contentDocument || b.contentDocumentAsCPOW;
-			saveDocumentInto(d, aFolder, {
+			aTab.__multipletab__contentBridge.sendAsyncCommand(self.COMMAND_REQUEST_SAVE_DOCUMENT_INTO_DIRECTORY, {
 				name        : aTab.label,
+				folder      : aFolder.path,
 				referrerURI : b.referringURI && b.referringURI.spec,
 				saveType    : aSaveType,
 				delay       : 200
@@ -3913,6 +3918,52 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	}
   
 }); 
+
+function MultipleTabHandlerContentBridge(aTab, aTabBrowser) 
+{
+	this.init(aTab, aTabBrowser);
+}
+MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants, {
+	mTab : null,
+	mTabBrowser : null,
+	init : function MTHCB_init(aTab, aTabBrowser)
+	{
+		this.mTab = aTab;
+		this.mTabBrowser = aTabBrowser;
+		this.handleMessage = this.handleMessage.bind(this);
+
+		var manager = this.mTab.linkedBrowser.messageManager;
+		manager.loadFrameScript(this.CONTENT_SCRIPT, true);
+		manager.addMessageListener(this.MESSAGE_TYPE, this.handleMessage);
+	},
+	destroy : function MTHCB_destroy()
+	{
+		var manager = this.mTab.linkedBrowser.messageManager;
+		manager.removeMessageListener(this.MESSAGE_TYPE, this.handleMessage);
+		this.sendAsyncCommand(this.COMMAND_SHUTDOWN);
+
+		delete this.mTab;
+		delete this.mTabBrowser;
+	},
+	sendAsyncCommand : function MTHCB_sendAsyncCommand(aCommandType, aCommandParams)
+	{
+		var manager = this.mTab.linkedBrowser.messageManager;
+		manager.sendAsyncMessage(this.MESSAGE_TYPE, {
+			command : aCommandType,
+			params  : aCommandParams || {}
+		});
+	},
+	handleMessage : function MTHCB_handleMessage(aMessage)
+	{
+		//dump(aMessage.json.command+'\n');
+		switch (aMessage.json.command)
+		{
+//			case this.COMMAND_REPORT_***:
+//				return this.***(aMessage.json.***);
+		}
+	}
+});
+var MultipleTabHandlerContentBridge = aGlobal.MultipleTabHandlerContentBridge = MultipleTabHandlerContentBridge;
 
 MultipleTabService.prefs = namespace.prefs;
 MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];

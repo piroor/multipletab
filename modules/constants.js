@@ -53,21 +53,12 @@ var MultipleTabHandlerConstants = {
 	kEVENT_TYPE_TABS_CLOSED     : 'nsDOMMultipleTabHandlerTabsClosed',
 	kEVENT_TYPE_TABS_DRAG_START : 'nsDOMMultipleTabHandler:TabsDragStart',
 
-	NSResolver : { 
-		lookupNamespaceURI : function MTS_lookupNamespaceURI(aPrefix)
-		{
-			switch (aPrefix)
-			{
-				case 'xul':
-					return 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul';
-				case 'html':
-				case 'xhtml':
-					return 'http://www.w3.org/1999/xhtml';
-				case 'xlink':
-					return 'http://www.w3.org/1999/xlink';
-				default:
-					return '';
-			}
-		}
-	}
+	CONTENT_SCRIPT : 'chrome://multipletab/content/content-utils.js',
+	MESSAGE_TYPE : 'multipletab',
+
+	COMMAND_SHUTDOWN              : 'shutdown',
+	COMMAND_NOTIFY_CONFIG_UPDATED : 'notify-config-updated',
+	COMMAND_REQUEST_MAKE_BLANK    : 'request-make-blank',
+	COMMAND_REQUEST_SAVE_DOCUMENT_AS_FILE : 'request-save-document-as-file',
+	COMMAND_REQUEST_SAVE_DOCUMENT_INTO_DIRECTORY : 'request-save-document-into-directory'
 };
