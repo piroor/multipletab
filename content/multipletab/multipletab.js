@@ -2017,12 +2017,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var tab = this.browser.mContextTab || this.browser.selectedTab;
 
 		try {
-			var removeLeft = document.evaluate(
+			var removeLeft = evaluateXPath(
 					'descendant::xul:menuitem[starts-with(@id, "multipletab-context-removeLeftTabs")]',
 					aPopup,
-					this.NSResolver,
-					XPathResult.FIRST_ORDERED_NODE_TYPE,
-					null
+					XPathResult.FIRST_ORDERED_NODE_TYPE
 				).singleNodeValue;
 			if (removeLeft) {
 				if (this.getPreviousTab(tab))
@@ -2035,12 +2033,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		}
 
 		try {
-			var removeRight = document.evaluate(
+			var removeRight = evaluateXPath(
 					'descendant::xul:menuitem[starts-with(@id, "multipletab-context-removeRightTabs")]',
 					aPopup,
-					this.NSResolver,
-					XPathResult.FIRST_ORDERED_NODE_TYPE,
-					null
+					XPathResult.FIRST_ORDERED_NODE_TYPE
 				).singleNodeValue;
 			if (removeRight) {
 				if (this.getNextTab(tab))
@@ -2129,10 +2125,9 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		}
 
 		var separators = this.getSeparators(aPopup);
-		for (var i = separators.snapshotLength-1; i > -1; i--)
-		{
-			separators.snapshotItem(i).removeAttribute('hidden');
-		}
+		separators.reverse().forEach(function(aSeparator) {
+			aSeparator.removeAttribute('hidden');
+		});
 
 		var separator;
 		while (separator = this.getObsoleteSeparator(aPopup))
@@ -2143,36 +2138,25 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	
 	getSeparators : function MTS_getSeparators(aPopup) 
 	{
-		try {
-			var xpathResult = document.evaluate(
-					'descendant::xul:menuseparator',
-					aPopup,
-					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-					null
-				);
-		}
-		catch(e) {
-			return { snapshotLength : 0 };
-		}
-		return xpathResult;
+		return getArrayFromXPathResult(
+			'descendant::xul:menuseparator',
+			aPopup,
+			XPathResult.ORDERED_NODE_SNAPSHOT_TYPE
+		);
 	},
  
 	getObsoleteSeparator : function MTS_getObsoleteSeparator(aPopup) 
 	{
 		try {
-			var xpathResult = document.evaluate(
-					'descendant::xul:menuseparator[not(@hidden)][not(following-sibling::*[not(@hidden)]) or not(preceding-sibling::*[not(@hidden)]) or local-name(following-sibling::*[not(@hidden)]) = "menuseparator"]',
-					aPopup,
-					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.FIRST_ORDERED_NODE_TYPE,
-					null
-				);
+			return evaluateXPath(
+				'descendant::xul:menuseparator[not(@hidden)][not(following-sibling::*[not(@hidden)]) or not(preceding-sibling::*[not(@hidden)]) or local-name(following-sibling::*[not(@hidden)]) = "menuseparator"]',
+				aPopup,
+				XPathResult.FIRST_ORDERED_NODE_TYPE
+			).singleNodeValue;
 		}
 		catch(e) {
 			return null;
 		}
-		return xpathResult.singleNodeValue;
 	},
   
 	initCopyFormatItems : function MTS_initCopyFormatItems(aPopup) 
@@ -3684,12 +3668,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	hasSelection : function MTS_hasSelection(aTabBrowser) 
 	{
 		try {
-			var xpathResult = document.evaluate(
+			var xpathResult = evaluateXPath(
 					'descendant::xul:tab[@'+this.kSELECTED+' = "true"]',
 					(aTabBrowser || this.browser).mTabContainer,
-					this.NSResolver, // document.createNSResolver(document.documentElement),
-					XPathResult.FIRST_ORDERED_NODE_TYPE,
-					null
+					XPathResult.FIRST_ORDERED_NODE_TYPE
 				);
 			return xpathResult.singleNodeValue ? true : false ;
 		}
