@@ -2351,10 +2351,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 				.next(function(aLoaded) {
 					var b = aTabs[0].linkedBrowser;
 					var d = b.contentDocument || b.contentDocumentAsCPOW;
-					saveDocument(d, {
-						uri         : this.getCurrentURIOfTab(aTabs[0]),
+					saveDocumentAs(d, null, {
 						referrerURI : b.referringURI && b.referringURI.spec,
-						destFile    : null,
 						saveType    : aSaveType
 					});
 				});
@@ -2376,7 +2374,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var processTab = function processTab(aTab) {
 			var b = aTab.linkedBrowser;
 			var d = b.contentDocument || b.contentDocumentAsCPOW;
-			saveDocumentIntoDirectory(d, aFolder, {
+			saveDocumentInto(d, aFolder, {
 				name        : aTab.label,
 				referrerURI : b.referringURI && b.referringURI.spec,
 				saveType    : aSaveType,
