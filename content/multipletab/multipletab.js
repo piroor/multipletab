@@ -3062,7 +3062,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
 		{
 			let tab = aTabs[i];
-			if (aNewState == this._isTabLocked(aTab)) continue;
+			if (aNewState == this._isTabLocked(tab))
+				continue;
 
 			// Tab Mix Plus, Tab Utilities
 			if ('lockTab' in gBrowser)
