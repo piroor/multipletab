@@ -849,7 +849,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	
 	init : function MTS_init() 
 	{
-		if (!('gBrowser' in window)) return;
+		if (!('gBrowser' in window))
+			return;
 
 		this.applyPlatformDefaultPrefs();
 

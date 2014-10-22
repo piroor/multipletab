@@ -128,6 +128,9 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 };
 
 (function() {
+	if (!('gBrowser' in window))
+		return;
+
 	const BACKUP = 'extensions.multipletab.compatibility.TMP.backup.';
 	const CHOICE = 'extensions.multipletab.compatibility.TMP.choice';
 	const TMPAccelClick = 'extensions.tabmix.ctrlClickTab';
