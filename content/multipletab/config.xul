@@ -30,6 +30,9 @@
 		<preference id="extensions.multipletab.tabdrag.autoclear"
 			name="extensions.multipletab.tabdrag.autoclear"
 			type="bool"/>
+		<preference id="extensions.multipletab.tabdrag.delay"
+			name="extensions.multipletab.tabdrag.delay"
+			type="int"/>
 		<preference id="extensions.multipletab.tabclick.accel.mode"
 			name="extensions.multipletab.tabclick.accel.mode"
 			type="int"/>
