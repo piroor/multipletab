@@ -155,13 +155,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			return true;
 
 		var checked = { value: true };
-		var message;
-		try { // Firefox 28 and older
-			message = this.tabbrowserBundle.getFormattedString('tabs.closeWarningMultipleTabs', [aTabsCount]);
-		}
-		catch(e) { // Firefox 29 and later
-			message = PluralForm.get(aTabsCount, this.tabbrowserBundle.getString('tabs.closeWarningMultiple')).replace('#1', aTabsCount);
-		}
+		var message = PluralForm.get(aTabsCount, this.tabbrowserBundle.getString('tabs.closeWarningMultiple')).replace('#1', aTabsCount);
 		window.focus();
 		var shouldClose = Services.prompt.confirmEx(window,
 				this.tabbrowserBundle.getString('tabs.closeWarningTitle'),
@@ -367,13 +361,13 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (aTabBrowserChild.localName == 'tabbrowser') // itself
 			return aTabBrowserChild;
 
-		if (aTabBrowserChild.tabbrowser) // tabs, Firefox 4.0 or later
+		if (aTabBrowserChild.tabbrowser) // tabs
 			return aTabBrowserChild.tabbrowser;
 
-		if (aTabBrowserChild.id == 'TabsToolbar') // tabs toolbar, Firefox 4.0 or later
+		if (aTabBrowserChild.id == 'TabsToolbar') // tabs toolbar
 			return aTabBrowserChild.getElementsByTagName('tabs')[0].tabbrowser;
 
-		// tab context menu on Firefox 4.0
+		// tab context menu
 		var popup = evaluateXPath(
 				'ancestor-or-self::xul:menupopup[@id="tabContextMenu"]',
 				aTabBrowserChild,
@@ -1310,7 +1304,6 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			case 'tabviewshown':
 				return this.clearSelection();
 
-			// toolbar customizing on Firefox 4 or later
 			case 'beforecustomization':
 				this.toolbarCustomizing = true;
 				return this.destroyTabbar(gBrowser);

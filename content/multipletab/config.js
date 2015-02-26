@@ -259,7 +259,6 @@ function addNewFormat(aLabel, aFormat)
 	gFormatsBox.appendChild(newRow);
 
 	var radio = getRadioFromRow(newRow);
-	if (gFormatsRadio.mRadioChildren) gFormatsRadio.mRadioChildren = null; // for Firefox 2
 
 	if (aLabel) {
 		getLabelFieldFromRow(newRow).value = aLabel;
