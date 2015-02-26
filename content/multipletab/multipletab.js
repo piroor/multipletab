@@ -3558,7 +3558,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 					if (shouldSelectAfter) {
 						for (let i = 0, maxi = duplicatedTabs.length; i < maxi; i++)
 						{
-							targetService.setSelection(tabs[i], true);
+							targetService.setSelection(duplicatedTabs[i], true);
 						}
 					}
 
