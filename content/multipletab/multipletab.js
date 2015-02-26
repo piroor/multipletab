@@ -3900,7 +3900,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			case 'extensions.multipletab.clipboard.formats':
 				this.formats = [];
 				this.formatsTimeStamp = Date.now();
-				let (parts = value.split('|')) {
+				{
+					let parts = value.split('|');
 					for (let i = 0, maxi = parts.length; i < maxi; i++)
 					{
 						let part = parts[i];
