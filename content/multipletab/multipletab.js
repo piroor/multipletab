@@ -142,11 +142,11 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	
 	warnAboutClosingTabs : function MTS_warnAboutClosingTabs(aTabsCount) 
 	{
-		var warnPref = this.prefs.getPref('extensions.multipletab.warnOnCloseMultipleTabs');
+		var warnMode = this.prefs.getPref('extensions.multipletab.warnOnCloseMultipleTabs');
 		if (
-			aTabsCount <= 1 ||
-			warnPref == 0 ||
-			(warnPref == -1 && !this.prefs.getPref('browser.tabs.warnOnClose'))
+			aTabsCount <= this.WARN_ON_CLOSE_WARN ||
+			warnMode == this.WARN_ON_CLOSE_SILENT ||
+			(warnMode == this.WARN_ON_CLOSE_INHERIT && !this.prefs.getPref('browser.tabs.warnOnClose'))
 			)
 			return true;
 		var checked = { value: true };
@@ -169,13 +169,16 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 				checked
 			) == 0;
 		if (shouldClose && !checked.value) {
-			if (warnPref == -1)
+			if (warnMode == this.WARN_ON_CLOSE_INHERIT)
 				this.prefs.setPref('browser.tabs.warnOnClose', false);
 			else
 				this.prefs.setPref('extensions.multipletab.warnOnCloseMultipleTabs', 0);
 		}
 		return shouldClose;
 	},
+	WARN_ON_CLOSE_INHERIT: -1,
+	WARN_ON_CLOSE_SILENT:  0,
+	WARN_ON_CLOSE_WARN:    1,
  
 	getIndexesFromTabs : function MTS_getIndexesFromTabs(aTabs) 
 	{
