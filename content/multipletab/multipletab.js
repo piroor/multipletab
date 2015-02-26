@@ -2455,7 +2455,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	duplicateTabs : function MTS_duplicateTabs(aTabs) 
 	{
-		if (!aTabs || !aTabs.length) return [];
+		if (!aTabs || !aTabs.length)
+			return [];
 
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		var w = b.ownerDocument.defaultView;
