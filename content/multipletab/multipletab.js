@@ -540,6 +540,18 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		return Promise.resolve(false);
 	},
+
+	prepareTabForSwap : function MTS_prepareTabForSwap(aTab) 
+	{
+		// We can skip restoring of the pending tab for now.
+		// However, because it will be restored by Firefox itself,
+		// we cannot stay swapped tabs pending.
+		// See also: https://github.com/piroor/multipletab/issues/83
+		if ('_swapRegisteredOpenURIs' in this.browser)
+			return Promise.resolve(true);
+
+		return this.ensureLoaded(aTab);
+	},
  
  	getCurrentURIOfTab : function MTS_getCurrentURIOfTab(aTab) 
 	{
@@ -2502,7 +2514,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		this.clearSelection(b);
 
 		var self = this;
-		return Promise.all(aTabs.map(this.ensureLoaded, this))
+		return Promise.all(aTabs.map(this.prepareTabForSwap, this))
 			.then(function() {
 				var duplicatedTabs = aTabs.map(function(aTab) {
 						var state = self.evalInSandbox('('+SessionStore.getTabState(aTab)+')');
@@ -2535,7 +2547,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (!aTabs || !aTabs.length) return null;
 
 		var self = this;
-		return Promise.all(aTabs.map(this.ensureLoaded, this))
+		return Promise.all(aTabs.map(this.prepareTabForSwap, this))
 			.then(function() {
 				var b = self.getTabBrowserFromChild(aTabs[0]);
 
@@ -2831,7 +2843,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var sourceBrowser = sourceService.getTabBrowserFromChild(aTabs[0]);
 
 		var self = this;
-		return Promise.all(aTabs.map(this.ensureLoaded, this))
+		return Promise.all(aTabs.map(this.prepareTabForSwap, this))
 			.then(function() {
 				if (targetBrowser.__multipletab__canDoWindowMove && !aClone) {// move tabs
 					for (let i = 0, maxi = aTabs.length; i < maxi; i++)
