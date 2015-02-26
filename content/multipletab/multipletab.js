@@ -2458,7 +2458,13 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (!aTabs || !aTabs.length)
 			return [];
 
-		var b = this.getTabBrowserFromChild(aTabs[0]);
+		aTabs.sort(function(aA, aB) {
+			return aA._tPos - aB._tPos;
+		});
+		var first = aTabs[0];
+		var last  = aTabs[aTabs.length - 1];
+
+		var b = this.getTabBrowserFromChild(first);
 		var w = b.ownerDocument.defaultView;
 		var shouldSelectAfter = this.prefs.getPref('extensions.multipletab.selectAfter.duplicate');
 		var duplicatedTabs;
@@ -2467,11 +2473,13 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var operation = function() {
 			self.duplicateTabsInternal(b, aTabs)
 				.then(function(aDuplicatedTabs) {
-					if (!shouldSelectAfter) return;
 					for (let i = 0, maxi = aDuplicatedTabs.length; i < maxi; i++)
 					{
 						let tab = aDuplicatedTabs[i];
-						self.setSelection(tab, true);
+						if (last.ownerDocument == tab.ownerDocument)
+							b.moveTabTo(tab, last._tPos + 1 + i);
+						if (shouldSelectAfter)
+							self.setSelection(tab, true);
 					}
 				});
 		};
