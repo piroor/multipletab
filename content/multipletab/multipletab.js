@@ -144,11 +144,16 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	{
 		var warnMode = this.prefs.getPref('extensions.multipletab.warnOnCloseMultipleTabs');
 		if (
-			aTabsCount <= this.WARN_ON_CLOSE_WARN ||
 			warnMode == this.WARN_ON_CLOSE_SILENT ||
 			(warnMode == this.WARN_ON_CLOSE_INHERIT && !this.prefs.getPref('browser.tabs.warnOnClose'))
 			)
 			return true;
+
+		var maxUndoCount = this.prefs.getPref('browser.sessionstore.max_tabs_undo') || -1;
+		var smallerThanWarnCount = aTabsCount <= Math.max(1, maxUndoCount);
+		if (smallerThanWarnCount)
+			return true;
+
 		var checked = { value: true };
 		var message;
 		try { // Firefox 28 and older
