@@ -1,6 +1,12 @@
 # History
 
  - master/HEAD
+   * Works again on Firefox 36 and later.
+   * Place duplicated tabs next to the source tabs.
+   * Duplicate selected tabs by ctrl-drag-and-drop in same window correctly.
+   * Duplicate ctrl-drag-and-dropped tabs from another window correctly.
+   * Never show warning for closing multiple tabs if the number of closing tabs are less than the maximum number of restorable tabs.
+   * Fix UI for `extensions.multipletab.tabdrag.delay` preference. ([By Infocatcher](https://github.com/piroor/multipletab/pull/84). Thanks!)
  - 0.8.2014102201
    * Drop support for Firefox 30 and older versions.
    * Works correctly on the multi-process mode (E10S).
