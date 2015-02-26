@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.8.2015022701
    * Works again on Firefox 36 and later.
    * Place duplicated tabs next to the source tabs.
    * Duplicate selected tabs by ctrl-drag-and-drop in same window correctly.
