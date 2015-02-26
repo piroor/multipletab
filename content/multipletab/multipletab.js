@@ -1911,7 +1911,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var draggedTab = session && session.sourceNode ?
 							this.getTabFromChild(session.sourceNode) :
 							null ;
+		var ownerBrowser = this.getTabBrowserFromChild(draggedTab);
 		if (draggedTab &&
+			!draggedTab.__multipletab__duplicating &&
+			!draggedTab.duplicatingSelectedTabs &&
 			this.getTabBrowserFromChild(draggedTab) != this.getTabBrowserFromChild(tab)) {
 			// this maybe a moving of tab from another window
 			this.fireWindowMoveEvent(tab, draggedTab);
@@ -1921,39 +1924,48 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	// for drag and drop of selected tabs
 	onDuplicateTab : function MTS_onDuplicateTab(aTask, aTabBrowser, aTab, aSourceEvent) 
 	{
+		// This flag is required to block unexpected "window move" event,
+		// because a TabOpen event is fired while tabs are duplicated and
+		// the TabOpen event unexpectedly triggers "window move" event.
+		aTab.__multipletab__duplicating = true;
+
+		var newTab = null;
+
 		if (
-			!this.isSelected(aTab) ||
-			!this.allowMoveMultipleTabs &&
-			('UndoTabService' in window && UndoTabService.isUndoable())
+			this.isSelected(aTab) &&
+			(
+				this.allowMoveMultipleTabs ||
+				!('UndoTabService' in window && UndoTabService.isUndoable())
 			)
-			return aTask.call(aTabBrowser);
-
-		var b = this.getTabBrowserFromChild(aTab);
-		if (b.duplicatingSelectedTabs)
-			return aTask.call(aTabBrowser);
-
-		var tabs = this.getBundledTabsOf(aTab);
-		if (tabs.length <= 1)
-			return aTask.call(aTabBrowser);
-
-		var newTab;
-		if ('UndoTabService' in window && UndoTabService.isUndoable()) {
-			var self = this;
-			UndoTabService.doOperation(
-				function(aInfo) {
-					newTab = aTask.call(aTabBrowser);
-					self.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
-				},
-				{
-					name  : 'multipletab-duplicateTab',
-					label : this.bundle.getFormattedString('undo_duplicateTabs_label', [tabs.length])
+			) {
+			let b = this.getTabBrowserFromChild(aTab);
+			if (!b.duplicatingSelectedTabs) {
+				let tabs = this.getBundledTabsOf(aTab);
+				if (tabs.length > 0) {
+					let process = (function() {
+						newTab = aTask.call(aTabBrowser);
+						this.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
+					}).bind(this);
+					if ('UndoTabService' in window && UndoTabService.isUndoable()) {
+						UndoTabService.doOperation(
+							process,
+							{
+								name  : 'multipletab-duplicateTab',
+								label : this.bundle.getFormattedString('undo_duplicateTabs_label', [tabs.length])
+							}
+						);
+					}
+					else {
+						process();
+					}
 				}
-			);
+			}
 		}
-		else {
+
+		if (!newTab)
 			newTab = aTask.call(aTabBrowser);
-			this.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
-		}
+
+		aTab.__multipletab__duplicating = false;
 		return newTab;
 	},
  
