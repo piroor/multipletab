@@ -3740,6 +3740,9 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	setBooleanAttributeToTab : function MTS_setBooleanAttributeToTab(aTab, aAttr, aState, aShouldSaveToSession, aPropertyName) 
 	{
+		if (!aTab)
+			return;
+
 		if (!aState) {
 			aTab.removeAttribute(aAttr);
 			if (aShouldSaveToSession)
