@@ -1605,7 +1605,6 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			this.lastMouseOverTarget = this.getCloseboxFromEvent(aEvent);
 			this.lastMouseOverTab = tab;
 			this.clearSelectionSub(this.getSelectedTabs(this.getTabBrowserFromChild(tab)), this.kSELECTED);
-			this.setReadyToClose(tab, true);
 			this.addTabInUndeterminedRange(tab);
 			this.startListenWhileDragging(tab);
 		}
@@ -1659,10 +1658,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		this._lastMouseOverTab = aTarget;
 		if (aTarget) {
 			if (!this.firstMouseOverTab)
-				this.firstMouseOverTab = aTarget;
+				this.pendingFirstMouseOverTab = this.firstMouseOverTab = aTarget;
 		}
 		else {
-			this.firstMouseOverTab = null;
+			this.pendingFirstMouseOverTab = this.firstMouseOverTab = null;
 		}
 		return aTarget;
 	},
@@ -1796,6 +1795,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 			if (this.getCloseboxFromEvent(aEvent)) {
 				let tab = this.getTabFromEvent(aEvent, true);
+				if (this.pendingFirstMouseOverTab) {
+					this.setReadyToClose(this.pendingFirstMouseOverTab, true);
+					this.pendingFirstMouseOverTab = null;
+				}
 				this.toggleReadyToCloseBetween({
 					current : tab,
 					last    : this.lastMouseOverTab
