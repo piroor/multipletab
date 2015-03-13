@@ -881,6 +881,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		window.addEventListener('UIOperationHistoryRedo:TabbarOperations', this, false);
 		window.addEventListener('UIOperationHistoryPostRedo:TabbarOperations', this, false);
 
+		window.messageManager.loadFrameScript(this.CONTENT_SCRIPT, true);
+
 		this.migratePrefs();
 		this.prefs.addPrefListener(this);
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.tabdrag.mode');
@@ -1146,6 +1148,11 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		window.removeEventListener('UIOperationHistoryUndo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryRedo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryPostRedo:TabbarOperations', this, false);
+
+		window.messageManager.sendAsyncMessage(this.MESSAGE_TYPE, {
+			command : this.COMMAND_SHUTDOWN,
+			params  : {}
+		});
 
 		this.endListenWhileDragging();
 
@@ -3962,15 +3969,13 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 		this.handleMessage = this.handleMessage.bind(this);
 		this.toCopyTextResolvers = {};
 
-		var manager = this.mTab.linkedBrowser.messageManager;
-		manager.loadFrameScript(this.CONTENT_SCRIPT, true);
+		var manager = window.messageManager;
 		manager.addMessageListener(this.MESSAGE_TYPE, this.handleMessage);
 	},
 	destroy : function MTHCB_destroy()
 	{
-		var manager = this.mTab.linkedBrowser.messageManager;
+		var manager = window.messageManager;
 		manager.removeMessageListener(this.MESSAGE_TYPE, this.handleMessage);
-		this.sendAsyncCommand(this.COMMAND_SHUTDOWN);
 
 		delete this.mTab;
 		delete this.mTabBrowser;
@@ -4024,7 +4029,13 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 	},
 	handleMessage : function MTHCB_handleMessage(aMessage)
 	{
-		//dump(aMessage.json.command+'\n');
+//		dump('*********************handleMessage*******************\n');
+//		dump('TARGET IS: '+aMessage.target.localName+'\n');
+//		dump(JSON.stringify(aMessage.json)+'\n');
+
+		if (aMessage.target != this.mTab.linkedBrowser)
+		  return;
+
 		switch (aMessage.json.command)
 		{
 			case this.COMMAND_REPORT_COPY_TEXT:
