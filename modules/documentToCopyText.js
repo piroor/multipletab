@@ -72,12 +72,12 @@ function isFormatRequiresLoaded(aFormat) {
 }
 
 function mayDecodeURI(aURI) {
-	if (Services.prefs.getBoolPref('network.standard-url.escape-utf8'))
+	if (!aURI || Services.prefs.getBoolPref('network.standard-url.escape-utf8'))
 		return aURI;
 	// See chrome://browser/content/browser.js
 	var window = Services.wm.getMostRecentWindow('navigator:browser');
 	if (window && 'losslessDecodeURI' in window) try {
-		return window.losslessDecodeURI({ spec: aURI });
+		return window.losslessDecodeURI(window.makeURI(aURI));
 	}
 	catch(e) {
 		Components.utils.reportError(e);
