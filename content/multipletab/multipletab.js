@@ -1149,7 +1149,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		window.removeEventListener('UIOperationHistoryRedo:TabbarOperations', this, false);
 		window.removeEventListener('UIOperationHistoryPostRedo:TabbarOperations', this, false);
 
-		window.messageManager.sendAsyncMessage(this.MESSAGE_TYPE, {
+		window.messageManager.broadcastAsyncMessage(this.MESSAGE_TYPE, {
 			command : this.COMMAND_SHUTDOWN,
 			params  : {}
 		});
