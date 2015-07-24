@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Message from content area are correctly handled even if tabs' remoteness is dynamically changed.
  - 0.8.2015030601
    * Clicking operation on a closebox of a tab is now cancelable by releasing after dragout, like other generic buttons. ([Selection of ready-to-close tabs is started after the mouse pointer lands on the second tab's closebox.](https://github.com/piroor/multipletab/issues/22#issuecomment-77101283))
  - 0.8.2015022701
