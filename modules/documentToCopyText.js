@@ -2,6 +2,7 @@ var EXPORTED_SYMBOLS = ['documentToCopyText', 'isFormatRequiresLoaded'];
 
 var Ci = Components.interfaces;
 
+Components.utils.import('resource://gre/modules/Services.jsm');
 Components.utils.import('resource://gre/modules/XPCOMUtils.jsm');
 
 XPCOMUtils.defineLazyModuleGetter(this, 'evaluateXPath', 'resource://multipletab-modules/xpath.js');
@@ -10,7 +11,7 @@ function documentToCopyText(aDocument, aParams) {
 	var format = aParams.format || '%URL%';
 	var now = aParams.now || new Date();
 	var doc = aDocument;
-	var uri = aParams.uri || doc.defaultView.location.href;
+	var uri = mayDecodeURI(aParams.uri || doc.defaultView.location.href);
 	var title = doc.title;
 	if (!title || uri == 'about:blank')
 		title = aParams.title;
@@ -68,4 +69,18 @@ function escapeForHTML(aString) {
 
 function isFormatRequiresLoaded(aFormat) {
 	return /%AUTHOR%|%AUTHOR_HTML(?:IFIED)?%|%DESC(?:RIPTION)?%|%DESC(?:RIPTION)?_HTML(?:IFIED)?%|%KEYWORDS%%KEYWORDS_HTML(?:IFIED)?%/i.test(aFormat);
+}
+
+function mayDecodeURI(aURI) {
+	if (!aURI || Services.prefs.getBoolPref('network.standard-url.escape-utf8'))
+		return aURI;
+	// See chrome://browser/content/browser.js
+	var window = Services.wm.getMostRecentWindow('navigator:browser');
+	if (window && 'losslessDecodeURI' in window) try {
+		return window.losslessDecodeURI(window.makeURI(aURI));
+	}
+	catch(e) {
+		Components.utils.reportError(e);
+	}
+	return aURI;
 }
