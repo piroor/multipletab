@@ -17,7 +17,6 @@
 
 :root[multipletab-selection-style="border"]  .tabbrowser-tab[multiselected="true"] {
 	font-weight: bold !important;
-	appearance: none !important;
 	-moz-appearance: none !important;
 	border: 2px solid -moz-dialogtext !important;
 	-moz-border-top-colors: -moz-dialogtext -moz-dialogtext !important;
