@@ -936,25 +936,23 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		var b = document.getElementById('content');
 		if (b && 'swapBrowsersAndCloseOther' in b) {
-			let source = gBrowserInit._delayedStartup.toSource();
-			let target = 'gBrowserInit._delayedStartup';
-			if (source.indexOf('gBrowser.swapBrowsersAndCloseOther') > -1) {
-				eval(target+' = '+source.replace(
-					'gBrowser.swapBrowsersAndCloseOther(gBrowser.selectedTab, uriToLoad);',
-					'if (!MultipleTabService.tearOffSelectedTabsFromRemote()) { $& }'
-				).replace(
-					// Workaround for https://github.com/piroor/multipletab/issues/73
-					// After the function is updated by TST, reassignment of a global variable raises an error like:
-					// > System JS : ERROR chrome://treestyletab/content/windowHelper.js line 30 > eval:130 - TypeError: can't redefine non-configurable property 'gBidiUI'
-					// If I access it as a property of the global object, the error doesn't appear.
-					/([^\.])\bgBidiUI =/,
-					'$1window.gBidiUI ='
-				));
-			}
+			// Replacing of gBrowserInit._delayedStartup() with eval()
+			// breaks the variable scope of the function and break its
+			// functionality completely.
+			// Instead, I use a flag to detect a method is called at the
+			// startup process or not.
+			gBrowserInit.__multipletab___delayedStartup = gBrowserInit._delayedStartup;
+			gBrowserInit._delayedStartup = function(...args) {
+				MultipleTabService.runningDelayedStartup = true;
+				var retVal = this.__multipletab___delayedStartup.apply(this, args);
+				MultipleTabService.runningDelayedStartup = false;
+				return retVal;
+			};
 		}
 
 		this.overrideExtensionsOnPreInit(); // hacks.js
 	},
+	runningDelayedStartup : false,
  
 	delayedInit : function MTS_delayedInit() 
 	{
@@ -1021,6 +1019,13 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		if ('swapBrowsersAndCloseOther' in aTabBrowser) {
 			aTabBrowser.__multipletab__canDoWindowMove = true;
+			aTabBrowser.__multipletab__swapBrowsersAndCloseOther = aTabBrowser.swapBrowsersAndCloseOther;
+			aTabBrowser.swapBrowsersAndCloseOther = function(...args) {
+				if (MultipleTabService.runningDelayedStartup &&
+					MultipleTabService.tearOffSelectedTabsFromRemote())
+					return;
+				return this.__multipletab__swapBrowsersAndCloseOther.apply(this, args);
+			};
 		}
 		else {
 			aTabBrowser.__multipletab__canDoWindowMove = false;
