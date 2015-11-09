@@ -2,6 +2,7 @@
 
  - master/HEAD
    * Works on Firefox 40 and later.
+   * Add "Select Similar Tabs" to the tab context menu and "Invert Selection" to the selection menu,
    * The feature "Bookmark selected tabs" and the property dialog of bookmark folders now work correctly.
    * Message from content area are correctly handled even if tabs' remoteness is dynamically changed.
  - 0.8.2015030601
