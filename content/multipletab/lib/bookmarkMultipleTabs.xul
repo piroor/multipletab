@@ -14,7 +14,7 @@
    in JS files:
      window['piro.sakura.ne.jp'].bookmarkMultipleTabs.addBookmarkFor(tabsArray, folderName);
 
- license: The MIT License, Copyright (c) 2009-2014 YUKI "Piro" Hiroshi
+ license: The MIT License, Copyright (c) 2009-2015 YUKI "Piro" Hiroshi
  original:
    http://github.com/piroor/fxaddonlib-bookmark-multiple-tabs
 -->
@@ -24,7 +24,7 @@
 window.addEventListener('DOMContentLoaded', function() {
 	window.removeEventListener('DOMContentLoaded', arguments.callee, true);
 
-	const currentRevision = 7;
+	const currentRevision = 8;
 
 	if (!('piro.sakura.ne.jp' in window)) window['piro.sakura.ne.jp'] = {};
 
