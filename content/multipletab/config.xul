@@ -300,6 +300,9 @@
 		<preference id="extensions.multipletab.show.multipletab-selection-resumeTabs"
 			name="extensions.multipletab.show.multipletab-selection-resumeTabs"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-invertSelection"
+			name="extensions.multipletab.show.multipletab-selection-invertSelection"
+			type="bool"/>
 	</preferences>
 	<groupbox>
 		<caption label="&config.selectionMenu.caption;"/>
@@ -363,6 +366,10 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-resumeTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-resumeTabs"
 				label="&popup.selection.resumeTabs;"/>
+			<separator id="multipletab-selection-separator-invertSelection"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-invertSelection-check"
+				preference="extensions.multipletab.show.multipletab-selection-invertSelection"
+				label="&popup.selection.invertSelection;"/>
 		</vbox>
 		</arrowscrollbox>
 	</groupbox>
@@ -410,6 +417,9 @@
 		<preference id="extensions.multipletab.show.multipletab-context-saveTabs"
 			name="extensions.multipletab.show.multipletab-context-saveTabs"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-context-selectSimilar"
+			name="extensions.multipletab.show.multipletab-context-selectSimilar"
+			type="bool"/>
 	</preferences>
 	<groupbox>
 		<caption label="&config.contextMenu.caption;"/>
@@ -445,6 +455,10 @@
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeAll-check"
 				preference="extensions.multipletab.show.multipletab-context-removeAll"
 				label="&popup.context.removeAll;"/>
+			<separator id="multipletab-context-separator-selectSimilar"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-selectSimilar-check"
+				preference="extensions.multipletab.show.multipletab-context-selectSimilar"
+				label="&popup.context.selectSimilar;"/>
 		</vbox>
 		</arrowscrollbox>
 	</groupbox>
