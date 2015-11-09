@@ -17,6 +17,7 @@
 <!ENTITY popup.selection.unpinTabs       "Unpin Tab">
 <!ENTITY popup.selection.moveToGroup     "Move to Group">
 <!ENTITY popup.selection.moveToGroup.new "New Group">
+<!ENTITY popup.selection.invertSelection "Invert Selection">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Close Tabs to the Left">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Close Tabs to the Top">
@@ -35,6 +36,7 @@
 <!ENTITY popup.context.saveTabs.type.file      "Exclude embedded resources">
 <!ENTITY popup.context.saveTabs.type.complete     "Include embedded resources">
 <!ENTITY popup.context.saveTabs.type.text         "Convert to Plain Text Files">
+<!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
 
 
 

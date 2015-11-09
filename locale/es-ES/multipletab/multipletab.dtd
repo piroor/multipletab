@@ -17,6 +17,7 @@
 <!ENTITY popup.selection.unpinTabs       "Eliminar pestaña fija">
 <!ENTITY popup.selection.moveToGroup     "Mover al grupo">
 <!ENTITY popup.selection.moveToGroup.new "Nuevo grupo">
+<!ENTITY popup.selection.invertSelection "Invert Selection">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Cerrar pestañas de la izquierda">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Cerrar pestañas que están encima">
@@ -35,6 +36,7 @@
 <!ENTITY popup.context.saveTabs.type.file      "Excluir recursos embebidos">
 <!ENTITY popup.context.saveTabs.type.complete     "Incluir recursos embebidos">
 <!ENTITY popup.context.saveTabs.type.text         "Convertir a archivos de texto plano">
+<!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
 
 
 

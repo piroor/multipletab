@@ -17,6 +17,7 @@
 <!ENTITY popup.selection.unpinTabs       "Odepnij kartę">
 <!ENTITY popup.selection.moveToGroup     "Przenieś do grupy">
 <!ENTITY popup.selection.moveToGroup.new "Nowa grupa">
+<!ENTITY popup.selection.invertSelection "Invert Selection">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Zamknij karty po lewej">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Zamknij karty powyżej">
@@ -35,6 +36,7 @@
 <!ENTITY popup.context.saveTabs.type.file      "Nie zapisuj zasobów">
 <!ENTITY popup.context.saveTabs.type.complete     "Zapisz razem z zasobami">
 <!ENTITY popup.context.saveTabs.type.text         "Zamień na pliki tekstowe">
+<!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
 
 
 

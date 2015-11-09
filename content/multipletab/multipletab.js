@@ -3726,6 +3726,14 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	{
 		return aTab && aTab.getAttribute(this.kSELECTED) == 'true';
 	},
+	isAllSelected : function MTS_isAllSelected(aTabs)
+	{
+		if (!aTabs)
+			aTabs = this.getTabsArray(this.browser);
+		return aTabs.every(function(aTab) {
+			return this.isSelected(aTab);
+		}, this);
+	},
  
 	isReadyToClose : function MTS_isReadyToClose(aTab) 
 	{
@@ -3866,6 +3874,26 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			catch(e) {
 			}
 		}
+	},
+ 
+	invertAllSelection : function MTS_invertAllSelection(aSource) 
+	{
+		var b = this.getTabBrowserFromChild(aSource) || this.browser;
+		var tabs = this.getTabsArray(b);
+		tabs.forEach(this.toggleSelection.bind(this));
+	},
+  
+	selectSimilarTabsOf : function MTS_selectSimilarTabsOf(aCurrentTab, aTabs) 
+	{
+		if (!aCurrentTab) return;
+
+		var tabs = this.getSimilarTabsOf(aCurrentTab, aTabs);
+		if (tabs.indexOf(aCurrentTab) < 0)
+			tabs.push(aCurrentTab);
+		var b = this.getTabBrowserFromChild(aCurrentTab);
+		tabs.forEach((function(aTab) {
+			this.setSelection(aTab, true);
+		}).bind(this));
 	},
  
 	getTabsInUndeterminedRange : function MTS_getTabsInUndeterminedRange(aSource) 

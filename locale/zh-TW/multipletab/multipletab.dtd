@@ -17,6 +17,7 @@
 <!ENTITY popup.selection.unpinTabs       "還原所選分頁">
 <!ENTITY popup.selection.moveToGroup     "移動到群組">
 <!ENTITY popup.selection.moveToGroup.new "新群組">
+<!ENTITY popup.selection.invertSelection "Invert Selection">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "關閉左側所有分頁">
 <!ENTITY popup.context.removeLeftTabs.vertical    "關閉上方所有分頁">
@@ -35,6 +36,7 @@
 <!ENTITY popup.context.saveTabs.type.file      "不包括內嵌來源項目">
 <!ENTITY popup.context.saveTabs.type.complete     "包括內嵌來源項目">
 <!ENTITY popup.context.saveTabs.type.text         "轉換成一般文字檔">
+<!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
 
 
 

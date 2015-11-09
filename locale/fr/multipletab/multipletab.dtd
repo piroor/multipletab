@@ -17,6 +17,7 @@
 <!ENTITY popup.selection.unpinTabs       "Relâcher l'onglet">
 <!ENTITY popup.selection.moveToGroup     "Déplacer vers le groupe">
 <!ENTITY popup.selection.moveToGroup.new "Nouveau groupe">
+<!ENTITY popup.selection.invertSelection "Invert Selection">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Fermer les onglets de gauche">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Fermer les onglets de dessus">
@@ -35,6 +36,7 @@
 <!ENTITY popup.context.saveTabs.type.file      "Pages Web, HTML uniquement">
 <!ENTITY popup.context.saveTabs.type.complete     "Pages Web complètes">
 <!ENTITY popup.context.saveTabs.type.text         "Fichiers texte">
+<!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
 
 
 

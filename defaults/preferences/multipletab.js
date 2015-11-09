@@ -42,6 +42,7 @@ pref("extensions.multipletab.show.multipletab-selection-protectTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-lockTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-suspendTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-resumeTabs", true);
+pref("extensions.multipletab.show.multipletab-selection-invertSelection", true);
 
 pref("extensions.multipletab.show.multipletab-context-removeLeftTabs",  true);
 pref("extensions.multipletab.show.multipletab-context-removeRightTabs", true);
@@ -52,6 +53,7 @@ pref("extensions.multipletab.show.multipletab-context-duplicate",       true);
 pref("extensions.multipletab.show.multipletab-context-clipboard",       true);
 pref("extensions.multipletab.show.multipletab-context-clipboardAll",    true);
 pref("extensions.multipletab.show.multipletab-context-saveTabs",        true);
+pref("extensions.multipletab.show.multipletab-context-selectSimilar", true);
 
 // 0 = URI, 1 = title+URI, 2 = HTML Link, -1 = select
 pref("extensions.multipletab.clipboard.formatType", -1);

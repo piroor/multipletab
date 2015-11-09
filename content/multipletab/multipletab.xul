@@ -143,6 +143,11 @@
 				this.getAttribute('checked') != 'true');"
 			multipletab-enabled="!MultipleTabService.isNoTabSuspended(MultipleTabService.getSelectedTabs())"
 			multipletab-available="MultipleTabService.canSuspendTab"/>
+		<menuseparator id="multipletab-selection-invertSelection-separator"/>
+		<menuitem id="multipletab-selection-invertSelection"
+			label="&popup.selection.invertSelection;"
+			oncommand="MultipleTabService.invertAllSelection();"
+			multipletab-enabled="!MultipleTabService.isAllSelected()"/>
 	</menupopup>
 
 	<menupopup id="multipletab-tabcontext-menu-template">
@@ -241,8 +246,13 @@
 					save-type="2"/>
 			</menupopup>
 		</menu>
+		<menuitem id="multipletab-context-selectSimilar"
+			label="&popup.context.selectSimilar;"
+			tbattr="tabbrowser-multiple"
+			oncommand="MultipleTabService.selectSimilarTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab);"
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-saveTabs:select')][1]"/>
 		<menuseparator id="multipletab-context-separator-clipboard"
-			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-saveTabs:select')][1]"
+			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-selectSimilar')][1]"
 			tbattr="tabbrowser-multiple"/>
 
 	</menupopup>

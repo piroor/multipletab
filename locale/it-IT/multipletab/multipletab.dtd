@@ -17,6 +17,7 @@
 <!ENTITY popup.selection.unpinTabs       "Sblocca scheda">
 <!ENTITY popup.selection.moveToGroup     "Sposta nel gruppo">
 <!ENTITY popup.selection.moveToGroup.new "Nuovo gruppo">
+<!ENTITY popup.selection.invertSelection "Invert Selection">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Chiudi le schede a sinistra">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Chiudi le schede sopra ">
@@ -35,6 +36,7 @@
 <!ENTITY popup.context.saveTabs.type.file      "Escludi risorse incorporate">
 <!ENTITY popup.context.saveTabs.type.complete     "Includi risorse incorporate">
 <!ENTITY popup.context.saveTabs.type.text         "Converti in file di testo">
+<!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
 
 
 

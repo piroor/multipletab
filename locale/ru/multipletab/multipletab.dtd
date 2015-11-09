@@ -17,6 +17,7 @@
 <!ENTITY popup.selection.unpinTabs       "Открепить вкладки">
 <!ENTITY popup.selection.moveToGroup     "Переместить в группу">
 <!ENTITY popup.selection.moveToGroup.new "Новая группа">
+<!ENTITY popup.selection.invertSelection "Invert Selection">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Закрыть вкладки слева">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Закрыть вкладки выше">
@@ -35,6 +36,7 @@
 <!ENTITY popup.context.saveTabs.type.file      "Исключать встроенные ресурсы">
 <!ENTITY popup.context.saveTabs.type.complete     "Включать встроенные ресурсы">
 <!ENTITY popup.context.saveTabs.type.text         "Преобразовывать в текстовые файлы">
+<!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
 
 
 

@@ -17,6 +17,7 @@
 <!ENTITY popup.selection.unpinTabs       "Lap feloldása">
 <!ENTITY popup.selection.moveToGroup     "Áthelyezés csoportba">
 <!ENTITY popup.selection.moveToGroup.new "Új csoport">
+<!ENTITY popup.selection.invertSelection "Invert Selection">
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Balra levő lapok bezárása">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Felette levő lapok bezárása">
@@ -35,6 +36,7 @@
 <!ENTITY popup.context.saveTabs.type.file       "Beágyazott források kizárása">
 <!ENTITY popup.context.saveTabs.type.complete   "Beágyazott forrásokkal">
 <!ENTITY popup.context.saveTabs.type.text       "Konvertálás nem formázott fájlokká">
+<!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
 
 
 
