@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+   * "Invert Selection" works correctly when the selection menu is closed automatically.
+   * [`ru` locale is updated by Infocatcher. Thanks!](https://github.com/piroor/multipletab/pull/102)
  - 0.8.2015111001
    * Works on Firefox 40 and later.
    * Add "Select Similar Tabs" to the tab context menu and "Invert Selection" to the selection menu,

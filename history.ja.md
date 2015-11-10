@@ -1,6 +1,8 @@
 # 更新履歴
 
  - master/HEAD
+   * タブ選択時のメニューが自動的に閉じられた場合でも「選択を反転」が正しく動作するようにした
+   * [`ru`ロケール更新（by Infocatcher, thanks!）](https://github.com/piroor/multipletab/pull/102)
  - 0.8.2015111001
    * Firefox 40以降に対応
    * タブのコンテキストメニューに「似たタブを全て選択」、選択時のメニューに「選択を反転」を追加した
