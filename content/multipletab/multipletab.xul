@@ -146,7 +146,10 @@
 		<menuseparator id="multipletab-selection-invertSelection-separator"/>
 		<menuitem id="multipletab-selection-invertSelection"
 			label="&popup.selection.invertSelection;"
-			oncommand="MultipleTabService.invertAllSelection();"
+			oncommand="
+				MultipleTabService.invertAllSelection();
+				MultipleTabService.tabSelectionPopup.autoClearSelection = false;
+			"
 			multipletab-enabled="!MultipleTabService.isAllSelected()"/>
 	</menupopup>
 
