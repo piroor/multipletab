@@ -44,7 +44,7 @@
 		catch(e) {
 		}
 		var retVal = this.__treestyletab__determineItemInfo.apply(this, aArgs);
-		if (false && folderNameOverride &&
+		if (folderNameOverride &&
 			this._action == ACTION_ADD) {
 			let dialogInfo = window.arguments[0];
 			if (dialogInfo.type === 'folder' &&
