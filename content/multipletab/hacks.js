@@ -125,6 +125,17 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 		if (checked.value)
 			this.prefs.setPref(TMPWarnPref, false);
 	}
+
+	// Tab Utilities Fixed
+	{
+		let moveToWindow = document.getElementById('context_moveToWindow');
+		if (moveToWindow) {
+			let splitItem = document.getElementById('multipletab-selection-splitWindow');
+			moveToWindow = moveToWindow.cloneNode(true);
+			moveToWindow.id += '__multipletab__selection';
+			splitItem.parentNode.insertBefore(moveToWindow, splitItem)
+		}
+	}
 };
 
 (function() {
