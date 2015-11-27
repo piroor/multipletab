@@ -133,6 +133,7 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 			let splitItem = document.getElementById('multipletab-selection-splitWindow');
 			moveToWindow = moveToWindow.cloneNode(true);
 			moveToWindow.id += '__multipletab__selection';
+			moveToWindow.setAttribute('multipletab-available', 'MultipleTabService.prefs.getPref("extensions.tabutils.menu.context_moveToWindow")');
 			splitItem.parentNode.insertBefore(moveToWindow, splitItem)
 		}
 	}
