@@ -15,6 +15,8 @@
 <!-- from http://mxr.mozilla.org/l10n-central/source/zh-CN/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "固定为应用程序标签页">
 <!ENTITY popup.selection.unpinTabs       "取消固定标签页">
+<!ENTITY popup.selection.muteAudio       "Mute Tabs">
+<!ENTITY popup.selection.unmuteAudio     "Unmute Tabs">
 <!ENTITY popup.selection.moveToGroup     "移至组">
 <!ENTITY popup.selection.moveToGroup.new "新建组">
 <!ENTITY popup.selection.invertSelection "Invert Selection">
@@ -37,6 +39,8 @@
 <!ENTITY popup.context.saveTabs.type.complete     "包括内嵌来源项目">
 <!ENTITY popup.context.saveTabs.type.text         "保存为纯文本">
 <!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
+<!ENTITY popup.context.muteAudioAll               "Mute All Tabs">
+<!ENTITY popup.context.unmuteAudioAll             "Unmute All Tabs">
 
 
 

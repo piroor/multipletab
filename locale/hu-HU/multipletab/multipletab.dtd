@@ -15,6 +15,8 @@
 <!-- from http://mxr.mozilla.org/l10n-central/source/hu/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "Rögzítés alkalmazáslapként">
 <!ENTITY popup.selection.unpinTabs       "Lap feloldása">
+<!ENTITY popup.selection.muteAudio       "Mute Tabs">
+<!ENTITY popup.selection.unmuteAudio     "Unmute Tabs">
 <!ENTITY popup.selection.moveToGroup     "Áthelyezés csoportba">
 <!ENTITY popup.selection.moveToGroup.new "Új csoport">
 <!ENTITY popup.selection.invertSelection "Invert Selection">
@@ -37,6 +39,8 @@
 <!ENTITY popup.context.saveTabs.type.complete   "Beágyazott forrásokkal">
 <!ENTITY popup.context.saveTabs.type.text       "Konvertálás nem formázott fájlokká">
 <!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
+<!ENTITY popup.context.muteAudioAll               "Mute All Tabs">
+<!ENTITY popup.context.unmuteAudioAll             "Unmute All Tabs">
 
 
 

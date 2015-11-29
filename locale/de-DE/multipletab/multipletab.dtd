@@ -15,6 +15,8 @@
 <!-- from http://mxr.mozilla.org/l10n-central/source/de/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "Als App-tab anpinnen">
 <!ENTITY popup.selection.unpinTabs       "Tab nicht mehr anpinnen">
+<!ENTITY popup.selection.muteAudio       "Mute Tabs">
+<!ENTITY popup.selection.unmuteAudio     "Unmute Tabs">
 <!ENTITY popup.selection.moveToGroup     "Verschieben in Gruppe">
 <!ENTITY popup.selection.moveToGroup.new "Neue Gruppe">
 <!ENTITY popup.selection.invertSelection "Invert Selection">
@@ -37,6 +39,8 @@
 <!ENTITY popup.context.saveTabs.type.complete     "Eingebette Elemente einbinden">
 <!ENTITY popup.context.saveTabs.type.text         "In Plain Text Files konvertieren">
 <!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
+<!ENTITY popup.context.muteAudioAll               "Mute All Tabs">
+<!ENTITY popup.context.unmuteAudioAll             "Unmute All Tabs">
 
 
 

@@ -15,6 +15,8 @@
 <!-- from http://mxr.mozilla.org/l10n-central/source/pl/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "Przypnij jako kartę aplikacji">
 <!ENTITY popup.selection.unpinTabs       "Odepnij kartę">
+<!ENTITY popup.selection.muteAudio       "Mute Tabs">
+<!ENTITY popup.selection.unmuteAudio     "Unmute Tabs">
 <!ENTITY popup.selection.moveToGroup     "Przenieś do grupy">
 <!ENTITY popup.selection.moveToGroup.new "Nowa grupa">
 <!ENTITY popup.selection.invertSelection "Invert Selection">
@@ -37,6 +39,8 @@
 <!ENTITY popup.context.saveTabs.type.complete     "Zapisz razem z zasobami">
 <!ENTITY popup.context.saveTabs.type.text         "Zamień na pliki tekstowe">
 <!ENTITY popup.context.selectSimilar              "Select Similar Tabs">
+<!ENTITY popup.context.muteAudioAll               "Mute All Tabs">
+<!ENTITY popup.context.unmuteAudioAll             "Unmute All Tabs">
 
 
 
