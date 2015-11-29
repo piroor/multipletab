@@ -3249,6 +3249,47 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		return 'pinTab' in gBrowser && 'unpinTab' in gBrowser;
 	},
  
+	muteAudio : function MTS_muteAudio(aTabs) 
+	{
+		if (!aTabs) return;
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			if (aTabs[i].getAttribute('soundplaying') == 'true' &&
+				aTabs[i].getAttribute('muted') != 'true')
+				aTabs[i].toggleMuteAudio();
+		}
+	},
+	unmuteAudio : function MTS_unmuteAudio(aTabs)
+	{
+		if (!aTabs) return;
+		var b = this.getTabBrowserFromChild(aTabs[0]);
+		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		{
+			if (aTabs[i].getAttribute('soundplaying') == 'true' &&
+				aTabs[i].getAttribute('muted') == 'true')
+				aTabs[i].toggleMuteAudio();
+		}
+	},
+	isAllTabsMuted : function MTS_isAllTabsMuted(aTabs)
+	{
+		return aTabs.every(function(aTab) {
+			return aTab.getAttribute('soundplaying') != 'true' ||
+					aTab.getAttribute('muted') == 'true';
+		});
+	},
+	isNoTabMuted : function MTS_isNoTabMuted(aTabs)
+	{
+		return aTabs.every(function(aTab) {
+			return aTab.getAttribute('soundplaying') != 'true' ||
+					aTab.getAttribute('muted') != 'true';
+		});
+	},
+	get canMuteTab()
+	{
+		return 'toggleMuteAudio' in gBrowser.selectedTab;
+	},
+ 
 	// experimental command 
 	moveTabsToGroup : function MTS_moveTabsToGroup(aTabs, aGroupId)
 	{
