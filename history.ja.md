@@ -1,6 +1,9 @@
 # 更新履歴
 
  - master/HEAD
+   * Tab Ulitities Fixedとの併用時に、選択されたタブを任意のウィンドウに移動する機能を利用できるようにした
+   * 選択されたタブをブックマークフォルダとして保存する機能およびブックマークフォルダのプロパティ編集が動作しなくなっていたのを修正
+   * [`ru`ロケール更新（by Netanyahu, thanks!）](https://github.com/piroor/multipletab/pull/104)
  - 0.8.2015111101
    * タブ選択時のメニューが自動的に閉じられた場合でも「選択を反転」が正しく動作するようにした
    * [`ru`ロケール更新（by Infocatcher, thanks!）](https://github.com/piroor/multipletab/pull/102)

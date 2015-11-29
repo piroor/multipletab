@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+   * Support Tab Utilities Fixed's "Move to Window" menu for selected tabs.
+   * The feature "Bookmark selected tabs" and the property dialog of bookmark folders now work correctly.
+   * [`ru` locale is updated by Netanyahu. Thanks!](https://github.com/piroor/multipletab/pull/104)
  - 0.8.2015111101
    * "Invert Selection" works correctly when the selection menu is closed automatically.
    * [`ru` locale is updated by Infocatcher. Thanks!](https://github.com/piroor/multipletab/pull/102)
