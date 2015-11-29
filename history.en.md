@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.8.2015113001
    * Add "Mute/Unmute Tabs" features for all/selected tabs.
    * Support Tab Utilities Fixed's "Move to Window" menu for selected tabs.
    * The feature "Bookmark selected tabs" and the property dialog of bookmark folders now work correctly.
