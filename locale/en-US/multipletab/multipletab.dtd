@@ -13,8 +13,8 @@
 <!ENTITY popup.selection.suspendTabs   "Suspend Tabs">
 <!ENTITY popup.selection.resumeTabs    "Resume Tabs">
 <!-- from http://mxr.mozilla.org/mozilla-central/source/browser/locales/en-US/chrome/browser/browser.dtd -->
-<!ENTITY popup.selection.pinTabs         "Pin as App Tab">
-<!ENTITY popup.selection.unpinTabs       "Unpin Tab">
+<!ENTITY popup.selection.pinTabs         "Pin as App Tabs">
+<!ENTITY popup.selection.unpinTabs       "Unpin Tabs">
 <!ENTITY popup.selection.moveToGroup     "Move to Group">
 <!ENTITY popup.selection.moveToGroup.new "New Group">
 <!ENTITY popup.selection.invertSelection "Invert Selection">
