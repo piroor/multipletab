@@ -55,7 +55,7 @@
 			multipletab-available="MultipleTabService.canMuteTab &amp;&amp; !MultipleTabService.isAllTabsMuted(MultipleTabService.getSelectedTabs())"/>
 		<menuitem id="multipletab-selection-unmuteAudio"
 			label="&popup.selection.unmuteAudio;"
-			oncommand="MultipleTabService.muteAudio(MultipleTabService.getSelectedTabs());"
+			oncommand="MultipleTabService.unmuteAudio(MultipleTabService.getSelectedTabs());"
 			multipletab-available="MultipleTabService.canMuteTab &amp;&amp; !MultipleTabService.isNoTabMuted(MultipleTabService.getSelectedTabs())"/>
 		<menu id="multipletab-selection-moveToGroup"
 			label="&popup.selection.moveToGroup;"
@@ -272,7 +272,7 @@
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-separator-clipboard')][1]"/>
 		<menuitem id="multipletab-context-unmuteAudioAll"
 			label="&popup.context.unmuteAudioAll;"
-			oncommand="MultipleTabService.muteAudio(MultipleTabService.getTabsArray(gBrowser));"
+			oncommand="MultipleTabService.unmuteAudio(MultipleTabService.getTabsArray(gBrowser));"
 			multipletab-available="MultipleTabService.canMuteTab &amp;&amp; !MultipleTabService.isNoTabMuted(MultipleTabService.getTabsArray(gBrowser))"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-muteAudioAll')][1]"/>
 		<menuseparator id="multipletab-context-separator-muteAudio"
