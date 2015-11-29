@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Add "Mute/Unmute Tabs" features for all/selected tabs.
    * Support Tab Utilities Fixed's "Move to Window" menu for selected tabs.
    * The feature "Bookmark selected tabs" and the property dialog of bookmark folders now work correctly.
    * [`ru` locale is updated by Netanyahu. Thanks!](https://github.com/piroor/multipletab/pull/104)
