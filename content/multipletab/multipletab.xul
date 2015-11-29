@@ -165,18 +165,18 @@
 
 		<menuitem id="multipletab-context-duplicate"
 			label="&popup.context.duplicate;"
-			oncommand="MultipleTabService.duplicateTabs([MultipleTabService.getTabBrowserFromChild(this).mContextTab]);"
+			oncommand="MultipleTabService.duplicateTabs([gBrowser.mContextTab]);"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'context_newTab')][1] | child::xul:menuitem[1]"/>
 
 		<menuitem id="multipletab-context-removeSimilar"
 			label="&popup.context.removeSimilar;"
 			tbattr="tabbrowser-multiple"
-			oncommand="MultipleTabService.closeSimilarTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab, null, true);"
+			oncommand="MultipleTabService.closeSimilarTabsOf(gBrowser.mContextTab, null, true);"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'context_closeOtherTabs')][1]"/>
 		<menuitem id="multipletab-context-removeOtherSimilar"
 			label="&popup.context.removeOtherSimilar;"
 			tbattr="tabbrowser-multiple"
-			oncommand="MultipleTabService.closeSimilarTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab);"
+			oncommand="MultipleTabService.closeSimilarTabsOf(gBrowser.mContextTab);"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-removeSimilar')][1]"/>
 
 		<menuseparator id="multipletab-context-separator-removeTabs"
@@ -186,27 +186,27 @@
 		<menuitem id="multipletab-context-removeRightTabs"
 			label-horizontal="&popup.context.removeRightTabs.horizontal;"
 			label-vertical="&popup.context.removeRightTabs.vertical;"
-			oncommand="MultipleTabService.closeTabs(MultipleTabService.getRightTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab, true));"
+			oncommand="MultipleTabService.closeTabs(MultipleTabService.getRightTabsOf(gBrowser.mContextTab, true));"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-separator-removeTabs')][1]"
 			multipletab-available="!document.getElementById('context_closeTabsToTheEnd')"/>
 		<menuitem id="multipletab-context-removeLeftTabs"
 			label-horizontal="&popup.context.removeLeftTabs.horizontal;"
 			label-vertical="&popup.context.removeLeftTabs.vertical;"
-			oncommand="MultipleTabService.closeTabs(MultipleTabService.getLeftTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab, true));"
+			oncommand="MultipleTabService.closeTabs(MultipleTabService.getLeftTabsOf(gBrowser.mContextTab, true));"
 			multipletab-insertbefore="XPath: descendant::*[starts-with(@id, 'context_closeTabsToTheEnd') or starts-with(@id, 'multipletab-context-removeRightTabs')][1]"/>
 		<menuitem id="multipletab-context-removeAll"
 			label="&popup.context.removeAll;"
 			tbattr="tabbrowser-multiple"
-			oncommand="MultipleTabService.closeTabs(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)));"
+			oncommand="MultipleTabService.closeTabs(MultipleTabService.getTabsArray(gBrowser));"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-removeRightTabs')][1]"/>
 
 		<menuitem id="multipletab-context-clipboard"
 			label="&popup.context.clipboard;"
-			oncommand="MultipleTabService.copyURIsToClipboard([MultipleTabService.getTabBrowserFromChild(this).mContextTab]);"
+			oncommand="MultipleTabService.copyURIsToClipboard([gBrowser.mContextTab]);"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'context_bookmarkAllTabs')][1]"/>
 		<menu id="multipletab-context-clipboard:select"
 			label="&popup.context.clipboard;"
-			oncommand="MultipleTabService.copyURIsToClipboard([MultipleTabService.getTabBrowserFromChild(this).mContextTab], Number(event.target.getAttribute('format-type')), event.target.getAttribute('value'));"
+			oncommand="MultipleTabService.copyURIsToClipboard([gBrowser.mContextTab], Number(event.target.getAttribute('format-type')), event.target.getAttribute('value'));"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-clipboard')][1]">
 			<menupopup onpopupshowing="MultipleTabService.initCopyFormatItems(this);">
 				<menuitem label="&popup.context.clipboard.format.default;"
@@ -220,12 +220,12 @@
 		</menu>
 		<menuitem id="multipletab-context-clipboardAll"
 			label="&popup.context.clipboardAll;"
-			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)));"
+			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(gBrowser));"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-clipboard:select')][1]"
 			tbattr="tabbrowser-multiple"/>
 		<menu id="multipletab-context-clipboardAll:select"
 			label="&popup.context.clipboardAll;"
-			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)), Number(event.target.getAttribute('format-type')), event.target.getAttribute('value'));"
+			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(gBrowser), Number(event.target.getAttribute('format-type')), event.target.getAttribute('value'));"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-clipboardAll')][1]"
 			tbattr="tabbrowser-multiple">
 			<menupopup onpopupshowing="MultipleTabService.initCopyFormatItems(this);">
@@ -240,7 +240,7 @@
 		</menu>
 		<menuitem id="multipletab-context-saveTabs"
 			label="&popup.context.saveTabs;"
-			oncommand="MultipleTabService.saveTabs([MultipleTabService.getTabBrowserFromChild(this).mContextTab]);"
+			oncommand="MultipleTabService.saveTabs([gBrowser.mContextTab]);"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-clipboardAll:select')][1]"
 			tbattr="tabbrowser-multiple"/>
 		<menu id="multipletab-context-saveTabs:select"
@@ -260,20 +260,20 @@
 		<menuitem id="multipletab-context-selectSimilar"
 			label="&popup.context.selectSimilar;"
 			tbattr="tabbrowser-multiple"
-			oncommand="MultipleTabService.selectSimilarTabsOf(MultipleTabService.getTabBrowserFromChild(this).mContextTab);"
+			oncommand="MultipleTabService.selectSimilarTabsOf(gBrowser.mContextTab);"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-saveTabs:select')][1]"/>
 		<menuseparator id="multipletab-context-separator-clipboard"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-selectSimilar')][1]"
 			tbattr="tabbrowser-multiple"/>
 		<menuitem id="multipletab-context-muteAudioAll"
 			label="&popup.context.muteAudioAll;"
-			oncommand="MultipleTabService.muteAudio(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)));"
-			multipletab-available="MultipleTabService.canMuteTab &amp;&amp; !MultipleTabService.isAllTabsMuted(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)))"
+			oncommand="MultipleTabService.muteAudio(MultipleTabService.getTabsArray(gBrowser));"
+			multipletab-available="MultipleTabService.canMuteTab &amp;&amp; !MultipleTabService.isAllTabsMuted(MultipleTabService.getTabsArray(gBrowser))"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-separator-clipboard')][1]"/>
 		<menuitem id="multipletab-context-unmuteAudioAll"
 			label="&popup.context.unmuteAudioAll;"
-			oncommand="MultipleTabService.muteAudio(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)));"
-			multipletab-available="MultipleTabService.canMuteTab &amp;&amp; !MultipleTabService.isNoTabMuted(MultipleTabService.getTabsArray(MultipleTabService.getTabBrowserFromChild(this)))"
+			oncommand="MultipleTabService.muteAudio(MultipleTabService.getTabsArray(gBrowser));"
+			multipletab-available="MultipleTabService.canMuteTab &amp;&amp; !MultipleTabService.isNoTabMuted(MultipleTabService.getTabsArray(gBrowser))"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-muteAudioAll')][1]"/>
 		<menuseparator id="multipletab-context-separator-muteAudio"
 			multipletab-insertafter="XPath: descendant::*[starts-with(@id, 'multipletab-context-unmuteAudioAll')][1]"/>
