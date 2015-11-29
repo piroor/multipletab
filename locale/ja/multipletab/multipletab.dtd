@@ -15,6 +15,8 @@
 <!-- from http://mxr.mozilla.org/l10n-central/source/ja/browser/chrome/browser/browser.dtd -->
 <!ENTITY popup.selection.pinTabs         "タブをピン留め">
 <!ENTITY popup.selection.unpinTabs       "タブのピン留めを外す">
+<!ENTITY popup.selection.muteAudio       "タブを消音">
+<!ENTITY popup.selection.unmuteAudio     "タブの消音を解除">
 <!ENTITY popup.selection.moveToGroup     "グループへ移動">
 <!ENTITY popup.selection.moveToGroup.new "新しいタブグループ">
 <!ENTITY popup.selection.invertSelection "選択の反転">
@@ -37,6 +39,8 @@
 <!ENTITY popup.context.saveTabs.type.complete     "埋め込まれた外部リソースも含める">
 <!ENTITY popup.context.saveTabs.type.text         "テキストファイルに変換する">
 <!ENTITY popup.context.selectSimilar              "似たタブをすべて選択">
+<!ENTITY popup.context.muteAudioAll               "すべてのタブを消音">
+<!ENTITY popup.context.unmuteAudioAll             "すべてのタブの消音を解除">
 
 
 

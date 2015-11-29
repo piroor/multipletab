@@ -34,6 +34,8 @@ pref("extensions.multipletab.show.multipletab-selection-saveTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-duplicateTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-pinTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-unpinTabs", true);
+pref("extensions.multipletab.show.multipletab-selection-muteAudio", true);
+pref("extensions.multipletab.show.multipletab-selection-unmuteAudio", true);
 pref("extensions.multipletab.show.multipletab-selection-moveToGroup", true);
 pref("extensions.multipletab.show.multipletab-selection-splitWindow", true);
 pref("extensions.multipletab.show.multipletab-selection-printTabs", true);
@@ -54,6 +56,8 @@ pref("extensions.multipletab.show.multipletab-context-clipboard",       true);
 pref("extensions.multipletab.show.multipletab-context-clipboardAll",    true);
 pref("extensions.multipletab.show.multipletab-context-saveTabs",        true);
 pref("extensions.multipletab.show.multipletab-context-selectSimilar", true);
+pref("extensions.multipletab.show.multipletab-context-muteAudioAll", true);
+pref("extensions.multipletab.show.multipletab-context-unmuteAudioAll", true);
 
 // 0 = URI, 1 = title+URI, 2 = HTML Link, -1 = select
 pref("extensions.multipletab.clipboard.formatType", -1);

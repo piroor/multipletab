@@ -264,6 +264,12 @@
 		<preference id="extensions.multipletab.show.multipletab-selection-unpinTabs"
 			name="extensions.multipletab.show.multipletab-selection-unpinTabs"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-muteAudio"
+			name="extensions.multipletab.show.multipletab-selection-muteAudio"
+			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-unmuteAudio"
+			name="extensions.multipletab.show.multipletab-selection-unmuteAudio"
+			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-selection-moveToGroup"
 			name="extensions.multipletab.show.multipletab-selection-moveToGroup"
 			type="bool"/>
@@ -322,6 +328,12 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-unpinTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-unpinTabs"
 				label="&popup.selection.unpinTabs;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-muteAudio-check"
+				preference="extensions.multipletab.show.multipletab-selection-muteAudio"
+				label="&popup.selection.muteAudio;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-unmuteAudio-check"
+				preference="extensions.multipletab.show.multipletab-selection-unmuteAudio"
+				label="&popup.selection.unmuteAudio;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-moveToGroup-check"
 				preference="extensions.multipletab.show.multipletab-selection-moveToGroup"
 				label="&popup.selection.moveToGroup;"/>
@@ -420,6 +432,12 @@
 		<preference id="extensions.multipletab.show.multipletab-context-selectSimilar"
 			name="extensions.multipletab.show.multipletab-context-selectSimilar"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-context-muteAudioAll"
+			name="extensions.multipletab.show.multipletab-context-muteAudioAll"
+			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-context-unmuteAudioAll"
+			name="extensions.multipletab.show.multipletab-context-unmuteAudioAll"
+			type="bool"/>
 	</preferences>
 	<groupbox>
 		<caption label="&config.contextMenu.caption;"/>
@@ -459,6 +477,13 @@
 			<checkbox id="extensions.multipletab.show.multipletab-context-selectSimilar-check"
 				preference="extensions.multipletab.show.multipletab-context-selectSimilar"
 				label="&popup.context.selectSimilar;"/>
+			<separator id="multipletab-context-separator-muteAudio"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-muteAudioAll-check"
+				preference="extensions.multipletab.show.multipletab-context-muteAudioAll"
+				label="&popup.context.muteAudioAll;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-context-unmuteAudioAll-check"
+				preference="extensions.multipletab.show.multipletab-context-unmuteAudioAll"
+				label="&popup.context.unmuteAudioAll;"/>
 		</vbox>
 		</arrowscrollbox>
 	</groupbox>
