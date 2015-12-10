@@ -1,6 +1,6 @@
 PACKAGE_NAME = multipletab
 
-.PHONY: all xpi clean
+.PHONY: all xpi signed clean
 
 all: xpi
 
