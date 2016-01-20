@@ -1469,8 +1469,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 					for (let i = 0, maxi = tabs.length; i < maxi; i++)
 					{
 						let tab = tabs[i];
-						if (tab.getAttribute('hidden') == 'true' ||
-							tab.getAttribute('collapsed') == 'true')
+						if (!this.isVisible(tab))
 							continue;
 
 						if (tab == lastManuallySelectedTab ||
@@ -3794,6 +3793,27 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 				TreeStyleTabService.isCollapsed(aTab) :
 				aTab.getAttribute(TreeStyleTabService.kCOLLAPSED) == 'true')
 		);
+	},
+ 
+	isVisible : function MTS_isVisible(aTab) 
+	{
+		if (aTab.getAttribute('hidden') == 'true' ||
+			aTab.getAttribute('collapsed') == 'true' ||
+			this.isCollapsed(aTab))
+			return false;
+
+		var style = window.getComputedStyle(aTab, '');
+
+		var visibility = style.getPropertyValue('visibility');
+		if (visibility == 'collapse' ||
+			visibility == 'hidden')
+			return false;
+
+		var display = style.getPropertyValue('display');
+		if (display == 'none')
+			return false;
+
+		return true;
 	},
  
 	setSelection : function MTS_setSelection(aTab, aState) 
