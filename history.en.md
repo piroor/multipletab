@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Set selection of tabs more correctly by Shift-Click, when there is any invisible tab hidden by Tree Style Tab addon or others.
  - 0.8.2015113001
    * Add "Mute/Unmute Tabs" features for all/selected tabs.
    * Support Tab Utilities Fixed's "Move to Window" menu for selected tabs.
