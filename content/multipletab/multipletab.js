@@ -1846,7 +1846,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			for (let i = 0, maxi = tabs.length; i < maxi; i++)
 			{
 				let tab = tabs[i];
-				if (!this.isCollapsed(tab))
+				if (this.isVisible(tab))
 					aTargets.task(tab);
 			}
 			this.clearUndeterminedRange();
@@ -1859,7 +1859,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			for (let i = 0, maxi = undeterminedRangeTabs.length; i < maxi; i++)
 			{
 				let tab = undeterminedRangeTabs[i];
-				if (!this.isCollapsed(tab))
+				if (this.isVisible(tab))
 					aTargets.task(tab);
 				this.addTabInUndeterminedRange(tab);
 			}
