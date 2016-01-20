@@ -82,5 +82,7 @@ pref("extensions.multipletab.compatibility.TMP.warnForClickActions", true);
 pref("extensions.multipletab.compatibility.TMP.choice", -1); // -1 = unknown, 0 = MTH, 1 = TMP, 2 = both
 
 
+pref("extensions.multipletab.debug", false);
+
 pref("extensions.multipletab@piro.sakura.ne.jp.name", "chrome://multipletab/locale/multipletab.properties");
 pref("extensions.multipletab@piro.sakura.ne.jp.description", "chrome://multipletab/locale/multipletab.properties");

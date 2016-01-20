@@ -105,6 +105,11 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	},
 	_SessionStoreNS : null,
 
+	get debug() 
+	{
+		return this.prefs.getPref('extensions.multipletab.debug');
+	},
+
 	get allowMoveMultipleTabs() 
 	{
 		return this.prefs.getPref('extensions.multipletab.tabdrag.moveMultipleTabs');
@@ -3807,6 +3812,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (!aTab)
 			return;
 
+		if (this.debug)
+			dump('MTS_setBooleanAttributeToTab '+[aAttr, aState, aShouldSaveToSession, aPropertyName]+'\n'+
+					'  '+aTab._tPos+': '+aTab.linkedBrowser.currentURI.spec+'\n');
+
 		if (!aState) {
 			aTab.removeAttribute(aAttr);
 			if (aShouldSaveToSession)
@@ -3831,6 +3840,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 				aTab.getAttribute(TreeStyleTabService.kSUBTREE_COLLAPSED) == 'true'
 			)
 			) {
+			if (this.debug)
+				dump(' => handle collapsed children also.\n');
 			var tabs = TreeStyleTabService.getDescendantTabs(aTab);
 			for (var i = 0, maxi = tabs.length; i < maxi; i++)
 			{
