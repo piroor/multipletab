@@ -3,7 +3,7 @@
 
  Usage:
    new window['piro.sakura.ne.jp'].UninstallationListener({
-     id : 'test@exmaple.com',
+     id : 'test@example.com',
      onuninstalled : function() { ... },
      ondisabled : function() { ... }
    });
