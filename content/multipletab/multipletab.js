@@ -1102,11 +1102,11 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			let insertBefore = item.getAttribute(this.kINSERT_BEFORE);
 			if (refNode === void(0) && insertBefore) {
 				try {
-						refNode = evaluateXPath(
-								insertBefore.replace(/^\s*xpath:\s*/i, ''),
-								tabContextMenu,
-								XPathResult.FIRST_ORDERED_NODE_TYPE
-							).singleNodeValue;
+					refNode = evaluateXPath(
+							insertBefore.replace(/^\s*xpath:\s*/i, ''),
+							tabContextMenu,
+							XPathResult.FIRST_ORDERED_NODE_TYPE
+						).singleNodeValue;
 				}
 				catch(e) {
 				}
