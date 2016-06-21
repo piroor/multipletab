@@ -2069,22 +2069,6 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		}
 		catch(e) {
 		}
-
-		try {
-			var removeRight = evaluateXPath(
-					'descendant::xul:menuitem[starts-with(@id, "multipletab-context-removeRightTabs")]',
-					aPopup,
-					XPathResult.FIRST_ORDERED_NODE_TYPE
-				).singleNodeValue;
-			if (removeRight) {
-				if (this.getNextTab(tab))
-					removeRight.removeAttribute('disabled');
-				else
-					removeRight.setAttribute('disabled', true);
-			}
-		}
-		catch(e) {
-		}
 	},
  
 	showHideMenuItems : function MTS_showHideMenuItems(aPopup) 

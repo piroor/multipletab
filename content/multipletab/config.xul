@@ -417,9 +417,6 @@
 		<preference id="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 			name="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 			type="bool"/>
-		<preference id="extensions.multipletab.show.multipletab-context-removeRightTabs"
-			name="extensions.multipletab.show.multipletab-context-removeRightTabs"
-			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-context-clipboard"
 			name="extensions.multipletab.show.multipletab-context-clipboard"
 			type="bool"/>
@@ -467,9 +464,6 @@
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeLeftTabs-check"
 				preference="extensions.multipletab.show.multipletab-context-removeLeftTabs"
 				label="&config.contextMenu.removeLeftTabs;"/>
-			<checkbox id="extensions.multipletab.show.multipletab-context-removeRightTabs-check"
-				preference="extensions.multipletab.show.multipletab-context-removeRightTabs"
-				label="&config.contextMenu.removeRightTabs;"/>
 			<checkbox id="extensions.multipletab.show.multipletab-context-removeAll-check"
 				preference="extensions.multipletab.show.multipletab-context-removeAll"
 				label="&popup.context.removeAll;"/>

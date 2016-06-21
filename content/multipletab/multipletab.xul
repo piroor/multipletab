@@ -182,13 +182,6 @@
 		<menuseparator id="multipletab-context-separator-removeTabs"
 			tbattr="tabbrowser-multiple-visible"
 			multipletab-insertbefore="descendant::*[starts-with(@id, 'context_closeTab')][1] | child::xul:menuitem[last()])/preceding-sibling::xul:menuseparator[1]"/>
-		<!-- This feature is implemented by Firefox itself by https://bugzilla.mozilla.org/show_bug.cgi?id=866880 so disalbe for Firefox 24 and later. -->
-		<menuitem id="multipletab-context-removeRightTabs"
-			label-horizontal="&popup.context.removeRightTabs.horizontal;"
-			label-vertical="&popup.context.removeRightTabs.vertical;"
-			oncommand="MultipleTabService.closeTabs(MultipleTabService.getRightTabsOf(gBrowser.mContextTab, true));"
-			multipletab-insertafter="descendant::*[starts-with(@id, 'multipletab-context-separator-removeTabs')][1]"
-			multipletab-available="!document.getElementById('context_closeTabsToTheEnd')"/>
 		<menuitem id="multipletab-context-removeLeftTabs"
 			label-horizontal="&popup.context.removeLeftTabs.horizontal;"
 			label-vertical="&popup.context.removeLeftTabs.vertical;"

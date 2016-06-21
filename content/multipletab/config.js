@@ -83,12 +83,6 @@ function init()
 	new window['piro.sakura.ne.jp'].arrowScrollBoxScrollHelper('selectionMenuItemsBox', 'checkbox');
 	new window['piro.sakura.ne.jp'].arrowScrollBoxScrollHelper('contextMenuItemsBox', 'checkbox');
 
-	if (Services.vc.compare(Services.appinfo. platformVersion, '24.0a') > 0) {
-		let removeRight = document.getElementById('extensions.multipletab.show.multipletab-context-removeRightTabs-check');
-		removeRight.setAttribute('checked', true);
-		removeRight.setAttribute('disabled', true);
-	}
-
 //	sizeToContent();
 }
 
