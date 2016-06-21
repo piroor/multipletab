@@ -23,8 +23,6 @@
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Linke Tabs schlie&#223;en">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Obere Tabs schlie&#223;en">
-<!ENTITY popup.context.removeRightTabs.horizontal "Rechte Tabs schlie&#223;en">
-<!ENTITY popup.context.removeRightTabs.vertical   "Untere Tabs schlie&#223;en">
 <!ENTITY popup.context.removeAll                  "Alle Tabs schlie&#223;en">
 <!ENTITY popup.context.removeSimilar              "&#196;hnliche Tabs schlie&#223;en">
 <!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
@@ -107,7 +105,6 @@
 <!ENTITY config.tabs.contextMenu    "Tab Kontext-Men&#252;">
 <!ENTITY config.contextMenu.caption "Verf&#252;gbare Eintr&#228;ge im Tab Kontext-Men&#252;">
 <!ENTITY config.contextMenu.removeLeftTabs  "Schlie&#223;e Tabs auf der linken Seite (oben)">
-<!ENTITY config.contextMenu.removeRightTabs "Schlie&#223;e Tabs auf der rechten Seite (unten)">
 
 <!ENTITY config.menuEditor.description "Sie k&#246;nnen dieses Men&#252; mit dem Men&#252;-Editor anpassen.">
 <!ENTITY config.menuEditor.link        "Men&#252;-Editor herunterladen">

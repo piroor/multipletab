@@ -23,8 +23,6 @@
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Balra levő lapok bezárása">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Felette levő lapok bezárása">
-<!ENTITY popup.context.removeRightTabs.horizontal "Jobbra levő lapok bezárása">
-<!ENTITY popup.context.removeRightTabs.vertical   "Alatta levő lapok bezárása">
 <!ENTITY popup.context.removeAll                  "Összes lap bezárása">
 <!ENTITY popup.context.removeSimilar              "Hasonló lapok bezárása">
 <!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
@@ -111,7 +109,6 @@
 <!ENTITY config.tabs.contextMenu    "Fül helyi menü">
 <!ENTITY config.contextMenu.caption "A fülek helyi menüjének kibővítése az alábbiakkal:">
 <!ENTITY config.contextMenu.removeLeftTabs  "Balra (felette) levő lapok bezárása">
-<!ENTITY config.contextMenu.removeRightTabs "Jobbra (alatta) levő lapok bezárása">
 
 <!ENTITY config.menuEditor.description "A menü a Menu Editor segítségével testreszabható.">
 <!ENTITY config.menuEditor.link        "Menu Editor letöltése">

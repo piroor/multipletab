@@ -23,8 +23,6 @@
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Закрыть вкладки слева">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Закрыть вкладки выше">
-<!ENTITY popup.context.removeRightTabs.horizontal "Закрыть вкладки справа">
-<!ENTITY popup.context.removeRightTabs.vertical   "Закрыть вкладки ниже">
 <!ENTITY popup.context.removeAll                  "Закрыть все вкладки">
 <!ENTITY popup.context.removeSimilar              "Закрыть схожие вкладки">
 <!ENTITY popup.context.removeOtherSimilar         "Закрыть другие схожие вкладки">
@@ -107,7 +105,6 @@
 <!ENTITY config.tabs.contextMenu    "Контекстное меню вкладки">
 <!ENTITY config.contextMenu.caption "Доступные элементы контекстного меню у вкладок">
 <!ENTITY config.contextMenu.removeLeftTabs  "Закрыть вкладки слева (выше)">
-<!ENTITY config.contextMenu.removeRightTabs "Закрыть вкладки справа (ниже)">
 
 <!ENTITY config.menuEditor.description "Вы можете настроить это меню с помощью Menu Editor.">
 <!ENTITY config.menuEditor.link        "Скачать Menu Editor">

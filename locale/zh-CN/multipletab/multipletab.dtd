@@ -23,8 +23,6 @@
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "关闭左侧全部标签">
 <!ENTITY popup.context.removeLeftTabs.vertical    "关闭上方全部标签">
-<!ENTITY popup.context.removeRightTabs.horizontal "关闭右侧全部标签">
-<!ENTITY popup.context.removeRightTabs.vertical   "关闭下方全部标签">
 <!ENTITY popup.context.removeAll                  "关闭所有标签">
 <!ENTITY popup.context.removeSimilar              "关闭相同网站的标签">
 <!ENTITY popup.context.removeOtherSimilar         "关闭相同网站的其他标签">
@@ -107,7 +105,6 @@
 <!ENTITY config.tabs.contextMenu    "标签右键菜单">
 <!ENTITY config.contextMenu.caption "在标签的上下文菜单中显示：">
 <!ENTITY config.contextMenu.removeLeftTabs  "关闭左侧（上方）标签">
-<!ENTITY config.contextMenu.removeRightTabs "关闭右侧（下方）标签">
 
 <!ENTITY config.menuEditor.description "您可以使用 Menu Editor 自定义此菜单。">
 <!ENTITY config.menuEditor.link        "下载 Menu Editor">

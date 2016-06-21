@@ -23,8 +23,6 @@
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Close Tabs to the Left">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Close Tabs to the Top">
-<!ENTITY popup.context.removeRightTabs.horizontal "Close Tabs to the Right">
-<!ENTITY popup.context.removeRightTabs.vertical   "Close Tabs to the Bottom">
 <!ENTITY popup.context.removeAll                  "Close All Tabs">
 <!ENTITY popup.context.removeSimilar              "Close Similar Tabs">
 <!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
@@ -107,7 +105,6 @@
 <!ENTITY config.tabs.contextMenu    "Tab Context Menu">
 <!ENTITY config.contextMenu.caption "Available items of the context menu on tabs">
 <!ENTITY config.contextMenu.removeLeftTabs  "Close Tabs to the Left (Top)">
-<!ENTITY config.contextMenu.removeRightTabs "Close Tabs to the Right (Bottom)">
 
 <!ENTITY config.menuEditor.description "You can customize this menu by Menu Editor.">
 <!ENTITY config.menuEditor.link        "Download Menu Editor">

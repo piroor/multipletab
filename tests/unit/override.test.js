@@ -16,7 +16,6 @@ function test_contextMenuOverride()
 	assertItemInserted('multipletab-context-removeAll');
 	assertItemInserted('multipletab-context-removeSimilar');
 	assertItemInserted('multipletab-context-removeLeftTabs');
-	assertItemInserted('multipletab-context-removeRightTabs');
 	assertItemInserted('multipletab-context-clipboard');
 	assertItemInserted('multipletab-context-clipboard:select');
 	assertItemInserted('multipletab-context-clipboardAll');

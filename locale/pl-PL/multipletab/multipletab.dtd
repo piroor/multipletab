@@ -23,8 +23,6 @@
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Zamknij karty po lewej">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Zamknij karty powyżej">
-<!ENTITY popup.context.removeRightTabs.horizontal "Zamknij karty po prawej">
-<!ENTITY popup.context.removeRightTabs.vertical   "Zamknij karty poniżej">
 <!ENTITY popup.context.removeAll                  "Zamknij wszystkie karty">
 <!ENTITY popup.context.removeSimilar              "Zamknij podobne karty">
 <!ENTITY popup.context.removeOtherSimilar         "Close Other Similar Tabs">
@@ -107,7 +105,6 @@
 <!ENTITY config.tabs.contextMenu    "Menu kontekstowe kart">
 <!ENTITY config.contextMenu.caption "Dostępne elementy menu kontekstowego kart">
 <!ENTITY config.contextMenu.removeLeftTabs  "Zamknij karty po lewej (powyżej)">
-<!ENTITY config.contextMenu.removeRightTabs "Zamknij karty po prawej (poniżej)">
 
 <!ENTITY config.menuEditor.description "Możesz dostosować to menu za pomocą programu Menu Editor.">
 <!ENTITY config.menuEditor.link        "Pobierz Menu Editor">

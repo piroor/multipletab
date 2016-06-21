@@ -186,12 +186,12 @@
 			label-horizontal="&popup.context.removeLeftTabs.horizontal;"
 			label-vertical="&popup.context.removeLeftTabs.vertical;"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getLeftTabsOf(gBrowser.mContextTab, true));"
-			multipletab-insertbefore="descendant::*[starts-with(@id, 'context_closeTabsToTheEnd') or starts-with(@id, 'multipletab-context-removeRightTabs')][1]"/>
+			multipletab-insertbefore="descendant::*[starts-with(@id, 'context_closeTabsToTheEnd')][1]"/>
 		<menuitem id="multipletab-context-removeAll"
 			label="&popup.context.removeAll;"
 			tbattr="tabbrowser-multiple-visible"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getTabsArray(gBrowser));"
-			multipletab-insertafter="descendant::*[starts-with(@id, 'multipletab-context-removeRightTabs')][1]"/>
+			multipletab-insertafter="descendant::*[starts-with(@id, 'context_closeTabsToTheEnd')][1]"/>
 
 		<menuitem id="multipletab-context-clipboard"
 			label="&popup.context.clipboard;"

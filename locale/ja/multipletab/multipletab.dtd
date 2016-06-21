@@ -23,8 +23,6 @@
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "左のタブをすべて閉じる">
 <!ENTITY popup.context.removeLeftTabs.vertical    "上のタブをすべて閉じる">
-<!ENTITY popup.context.removeRightTabs.horizontal "右のタブをすべて閉じる">
-<!ENTITY popup.context.removeRightTabs.vertical   "下のタブをすべて閉じる">
 <!ENTITY popup.context.removeAll                  "すべてのタブを閉じる">
 <!ENTITY popup.context.removeSimilar              "似たタブをすべて閉じる">
 <!ENTITY popup.context.removeOtherSimilar         "他の似たタブをすべて閉じる">
@@ -108,7 +106,6 @@
 <!ENTITY config.tabs.contextMenu    "タブのコンテキストメニュー">
 <!ENTITY config.contextMenu.caption "タブのコンテキストメニューに追加する項目">
 <!ENTITY config.contextMenu.removeLeftTabs  "左（上）のタブをすべて閉じる">
-<!ENTITY config.contextMenu.removeRightTabs "右（下）のタブをすべて閉じる">
 
 <!ENTITY config.menuEditor.description "Menu Editorを使ってメニューの内容をカスタマイズできます。">
 <!ENTITY config.menuEditor.link        "Menu Editorをダウンロードする">

@@ -23,8 +23,6 @@
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Cerrar pestañas de la izquierda">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Cerrar pestañas que están encima">
-<!ENTITY popup.context.removeRightTabs.horizontal "Cerrar pestañas de la derecha">
-<!ENTITY popup.context.removeRightTabs.vertical   "Cerrar pestañas que están debajo">
 <!ENTITY popup.context.removeAll                  "Cerrar todas las pestañas">
 <!ENTITY popup.context.removeSimilar              "Cerrar pestañas similares">
 <!ENTITY popup.context.removeOtherSimilar         "Cerrar las otras pestañas similares">
@@ -107,7 +105,6 @@
 <!ENTITY config.tabs.contextMenu    "Menú contextual en pestañas">
 <!ENTITY config.contextMenu.caption "Items disponibles en el menú contextual de las pestañas">
 <!ENTITY config.contextMenu.removeLeftTabs  "Cerrar pestañas a la izquierda (Encima)">
-<!ENTITY config.contextMenu.removeRightTabs "Cerrar pestañas a la derecha (Debajo)">
 
 <!ENTITY config.menuEditor.description "Puedes configurar este menú mediante &quot;Menu Editor&quot;">
 <!ENTITY config.menuEditor.link        "Descargar &quot;Menu Editor&quot;">

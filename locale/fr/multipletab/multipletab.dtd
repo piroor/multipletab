@@ -23,8 +23,6 @@
 
 <!ENTITY popup.context.removeLeftTabs.horizontal  "Fermer les onglets de gauche">
 <!ENTITY popup.context.removeLeftTabs.vertical    "Fermer les onglets de dessus">
-<!ENTITY popup.context.removeRightTabs.horizontal "Fermer les onglets de droite">
-<!ENTITY popup.context.removeRightTabs.vertical   "Fermer les onglets de dessous">
 <!ENTITY popup.context.removeAll                  "Fermer tous les onglets">
 <!ENTITY popup.context.removeSimilar              "Fermer les onglets similaires">
 <!ENTITY popup.context.removeOtherSimilar         "Fermer les autres onglets similaires">
@@ -107,7 +105,6 @@
 <!ENTITY config.tabs.contextMenu    "Menu contextuel des onglets">
 <!ENTITY config.contextMenu.caption "Éléments de menu disponibles dans le menu contextuel des onglets">
 <!ENTITY config.contextMenu.removeLeftTabs  "Fermer les onglets de gauche (ou de dessus)">
-<!ENTITY config.contextMenu.removeRightTabs "Fermer les onglets de droite (ou de dessous)">
 
 <!ENTITY config.menuEditor.description "Il est possible de personnaliser ce menu avec Menu Editor.">
 <!ENTITY config.menuEditor.link        "Télécharger Menu Editor">
