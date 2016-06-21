@@ -2077,23 +2077,24 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var selectedTabs = this.getSelectedTabs(b);
 		var tabs         = this.getTabsArray(b);
 		var conditions = {
-			'partially-selected'         : selectedTabs.length < tabs.length,
-			'not-all-selected'           : !this.isAllSelected(aContextTabs),
-			'not-all-selected-suspended' : !this.isAllTabsSuspended(aContextTabs),
-			'any-selected-suspended'     : !this.isNoTabSuspended(aContextTabs),
-			'can-print-tabs'             : 'PrintAllTabs' in window,
-			'can-freeze-tabs'            : this.canFreezeTab,
-			'can-protect-tabs'           : this.canProtectTab,
-			'can-lock-tabs'              : this.canLockTab,
-			'can-suspend-tabs'           : this.canSuspendTab,
-			'not-all-muted'              : !this.isAllTabsMuted(aContextTabs),
-			'any-muted'                  : !this.isNoTabMuted(aContextTabs),
-			'not-all-pinned'             : !this.isAllTabsPinned(aContextTabs),
-			'any-pinned'                 : !this.isNoTabPinned(aContextTabs),
-			'can-move-across-groups'     : this.canMoveTabsToGroup
+			'any-selected'           : selectedTabs.length > 0,
+			'partially-selected'     : selectedTabs.length < tabs.length,
+			'not-all-selected'       : !this.isAllSelected(aContextTabs),
+			'can-print-tabs'         : 'PrintAllTabs' in window,
+			'can-freeze-tabs'        : this.canFreezeTab,
+			'can-protect-tabs'       : this.canProtectTab,
+			'can-lock-tabs'          : this.canLockTab,
+			'can-move-across-groups' : this.canMoveTabsToGroup
 		};
+		this.showHideMenuItemsConditionsProviders.forEach(function(aProvider) {
+			var extraConditions = aProvider(aContextTabs);
+			Object.keys(extraConditions).forEach(function(aKey) {
+				conditions[aKey] = extraConditions[aKey];
+			});
+		});
 		return conditions;
 	},
+	showHideMenuItemsConditionsProviders : [],
 	showHideMenuItems : function MTS_showHideMenuItems(aPopup) 
 	{
 		var b          = this.getTabBrowserFromChild(aPopup) || this.browser;
@@ -4154,6 +4155,32 @@ var MultipleTabHandlerContentBridge = aGlobal.MultipleTabHandlerContentBridge = 
 
 MultipleTabService.prefs = namespace.prefs;
 MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];
+
+MultipleTabService.showHideMenuItemsConditionsProviders.push(
+	(function pinnedProvider(aContextTabs) {
+		return {
+			'not-all-pinned' : !this.isAllTabsPinned(aContextTabs),
+			'any-pinned'     : !this.isNoTabPinned(aContextTabs),
+		};
+	}).bind(MultipleTabService)
+);
+MultipleTabService.showHideMenuItemsConditionsProviders.push(
+	(function mutedProvider(aContextTabs) {
+		return {
+			'not-all-muted' : !this.isAllTabsMuted(aContextTabs),
+			'any-muted'     : !this.isNoTabMuted(aContextTabs)
+		};
+	}).bind(MultipleTabService)
+);
+MultipleTabService.showHideMenuItemsConditionsProviders.push(
+	(function suspendedProvider(aContextTabs) {
+		return {
+			'can-suspend-tabs'  : this.canSuspendTab,
+			'not-all-suspended' : !this.isAllTabsSuspended(aContextTabs),
+			'any-suspended'     : !this.isNoTabSuspended(aContextTabs)
+		};
+	}).bind(MultipleTabService)
+);
 
 window.addEventListener('load', MultipleTabService, false);
 window.addEventListener('DOMContentLoaded', MultipleTabService, false);
