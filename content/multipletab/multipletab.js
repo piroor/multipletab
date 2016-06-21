@@ -2118,7 +2118,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var selectedTabs = this.getSelectedTabs(b);
 		var tabbrowser = b;
 		var tabs = this.getTabsArray(b);
-		var contextTabs = aEvent.target.id == this.kSELECTION_MENU ? selectedTabs : tabs ;
+		var contextTabs = aPopup.id == this.kSELECTION_MENU ? selectedTabs : tabs ;
 		var conditions = this.getShowHideMenuItemsConditions(aPopup, contextTabs);
 
 		var nodes = aPopup.childNodes;
