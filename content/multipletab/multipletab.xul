@@ -170,17 +170,17 @@
 
 		<menuitem id="multipletab-context-removeSimilar"
 			label="&popup.context.removeSimilar;"
-			tbattr="tabbrowser-multiple"
+			tbattr="tabbrowser-multiple-visible"
 			oncommand="MultipleTabService.closeSimilarTabsOf(gBrowser.mContextTab, null, true);"
 			multipletab-insertafter="descendant::*[starts-with(@id, 'context_closeOtherTabs')][1]"/>
 		<menuitem id="multipletab-context-removeOtherSimilar"
 			label="&popup.context.removeOtherSimilar;"
-			tbattr="tabbrowser-multiple"
+			tbattr="tabbrowser-multiple-visible"
 			oncommand="MultipleTabService.closeSimilarTabsOf(gBrowser.mContextTab);"
 			multipletab-insertafter="descendant::*[starts-with(@id, 'multipletab-context-removeSimilar')][1]"/>
 
 		<menuseparator id="multipletab-context-separator-removeTabs"
-			tbattr="tabbrowser-multiple"
+			tbattr="tabbrowser-multiple-visible"
 			multipletab-insertbefore="descendant::*[starts-with(@id, 'context_closeTab')][1] | child::xul:menuitem[last()])/preceding-sibling::xul:menuseparator[1]"/>
 		<!-- This feature is implemented by Firefox itself by https://bugzilla.mozilla.org/show_bug.cgi?id=866880 so disalbe for Firefox 24 and later. -->
 		<menuitem id="multipletab-context-removeRightTabs"
@@ -196,7 +196,7 @@
 			multipletab-insertbefore="descendant::*[starts-with(@id, 'context_closeTabsToTheEnd') or starts-with(@id, 'multipletab-context-removeRightTabs')][1]"/>
 		<menuitem id="multipletab-context-removeAll"
 			label="&popup.context.removeAll;"
-			tbattr="tabbrowser-multiple"
+			tbattr="tabbrowser-multiple-visible"
 			oncommand="MultipleTabService.closeTabs(MultipleTabService.getTabsArray(gBrowser));"
 			multipletab-insertafter="descendant::*[starts-with(@id, 'multipletab-context-removeRightTabs')][1]"/>
 
@@ -222,12 +222,12 @@
 			label="&popup.context.clipboardAll;"
 			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(gBrowser));"
 			multipletab-insertafter="descendant::*[starts-with(@id, 'multipletab-context-clipboard:select')][1]"
-			tbattr="tabbrowser-multiple"/>
+			tbattr="tabbrowser-multiple-visible"/>
 		<menu id="multipletab-context-clipboardAll:select"
 			label="&popup.context.clipboardAll;"
 			oncommand="MultipleTabService.copyURIsToClipboard(MultipleTabService.getTabsArray(gBrowser), Number(event.target.getAttribute('format-type')), event.target.getAttribute('value'));"
 			multipletab-insertafter="descendant::*[starts-with(@id, 'multipletab-context-clipboardAll')][1]"
-			tbattr="tabbrowser-multiple">
+			tbattr="tabbrowser-multiple-visible">
 			<menupopup onpopupshowing="MultipleTabService.initCopyFormatItems(this);">
 				<menuitem label="&popup.context.clipboard.format.default;"
 					format-type="0"/>
@@ -242,12 +242,12 @@
 			label="&popup.context.saveTabs;"
 			oncommand="MultipleTabService.saveTabs([gBrowser.mContextTab]);"
 			multipletab-insertafter="descendant::*[starts-with(@id, 'multipletab-context-clipboardAll:select')][1]"
-			tbattr="tabbrowser-multiple"/>
+			tbattr="tabbrowser-multiple-visible"/>
 		<menu id="multipletab-context-saveTabs:select"
 			label="&popup.context.saveTabs;"
 			oncommand="MultipleTabService.saveTabs(MultipleTabService.getSelectedTabs(), Number(event.target.getAttribute('save-type')));"
 			multipletab-insertafter="descendant::*[starts-with(@id, 'multipletab-context-saveTabs')][1]"
-			tbattr="tabbrowser-multiple">
+			tbattr="tabbrowser-multiple-visible">
 			<menupopup>
 				<menuitem label="&popup.context.saveTabs.type.file;"
 					save-type="0"/>
@@ -259,12 +259,12 @@
 		</menu>
 		<menuitem id="multipletab-context-selectSimilar"
 			label="&popup.context.selectSimilar;"
-			tbattr="tabbrowser-multiple"
+			tbattr="tabbrowser-multiple-visible"
 			oncommand="MultipleTabService.selectSimilarTabsOf(gBrowser.mContextTab);"
 			multipletab-insertafter="descendant::*[starts-with(@id, 'multipletab-context-saveTabs:select')][1]"/>
 		<menuseparator id="multipletab-context-separator-clipboard"
 			multipletab-insertafter="descendant::*[starts-with(@id, 'multipletab-context-selectSimilar')][1]"
-			tbattr="tabbrowser-multiple"/>
+			tbattr="tabbrowser-multiple-visible"/>
 		<menuitem id="multipletab-context-muteAudioAll"
 			label="&popup.context.muteAudioAll;"
 			oncommand="MultipleTabService.muteAudio(MultipleTabService.getTabsArray(gBrowser));"
