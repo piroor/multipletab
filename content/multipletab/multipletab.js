@@ -1083,17 +1083,12 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			let insertAfter = item.getAttribute(this.kINSERT_AFTER);
 			if (insertAfter) {
 				try {
-					if (/^\s*xpath:/i.test(insertAfter)) {
 						refNode = evaluateXPath(
 								insertAfter.replace(/^\s*xpath:\s*/i, ''),
 								tabContextMenu,
 								XPathResult.FIRST_ORDERED_NODE_TYPE
 							).singleNodeValue;
 						if (refNode) refNode = refNode.nextSibling;
-					}
-					else {
-						eval('refNode = ('+insertAfter+').nextSibling');
-					}
 				}
 				catch(e) {
 				}
