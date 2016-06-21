@@ -2151,7 +2151,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 					if (available.indexOf(aKey) > -1)
 						itemVisible = itemVisible && conditions[aKey];
 				});
-				if (pref) pref = !!available;
+				if (pref) pref = !!itemVisible;
 			}
 
 			if (pref === null) continue;
