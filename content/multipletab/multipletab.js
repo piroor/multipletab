@@ -2071,6 +2071,29 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		}
 	},
  
+	getShowHideMenuItemsConditions : function MTS_getShowHideMenuItemsConditions(aPopup, aContextTabs)
+	{
+		var b            = this.getTabBrowserFromChild(aPopup) || this.browser;
+		var selectedTabs = this.getSelectedTabs(b);
+		var tabs         = this.getTabsArray(b);
+		var conditions = {
+			'partially-selected'         : selectedTabs.length < tabs.length,
+			'not-all-selected'           : !this.isAllSelected(aContextTabs),
+			'not-all-selected-suspended' : !this.isAllTabsSuspended(aContextTabs),
+			'any-selected-suspended'     : !this.isNoTabSuspended(aContextTabs),
+			'can-print-tabs'             : 'PrintAllTabs' in window,
+			'can-freeze-tabs'            : this.canFreezeTab,
+			'can-protect-tabs'           : this.canProtectTab,
+			'can-lock-tabs'              : this.canLockTab,
+			'can-suspend-tabs'           : this.canSuspendTab,
+			'not-all-muted'              : !this.isAllTabsMuted(aContextTabs),
+			'any-muted'                  : !this.isNoTabMuted(aContextTabs),
+			'not-all-pinned'             : !this.isAllTabsPinned(aContextTabs),
+			'any-pinned'                 : !this.isNoTabPinned(aContextTabs),
+			'can-move-across-groups'     : this.canMoveTabsToGroup
+		};
+		return conditions;
+	},
 	showHideMenuItems : function MTS_showHideMenuItems(aPopup) 
 	{
 		var b          = this.getTabBrowserFromChild(aPopup) || this.browser;
@@ -2094,6 +2117,9 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var selectedTabs = this.getSelectedTabs(b);
 		var tabbrowser = b;
 		var tabs = this.getTabsArray(b);
+		var contextTabs = aEvent.target.id == this.kSELECTION_MENU ? selectedTabs : tabs ;
+		var conditions = this.getShowHideMenuItemsConditions(aPopup, contextTabs);
+
 		var nodes = aPopup.childNodes;
 		for (let i = 0, maxi = nodes.length; i < maxi; i++)
 		{
@@ -2118,10 +2144,12 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 			let available = node.getAttribute(this.kAVAILABLE);
 			if (available) {
-				/* tabbrowser
-				   tabs
-				   selectedTabs */
-				eval('available = ('+available+')');
+				available = available.split(/[,\|\s]+/);
+				let itemVisible = true;
+				Object.keys(conditions).forEach(function(aKey) {
+					if (available.indexOf(aKey) > -1)
+						itemVisible = itemVisible && conditions[aKey];
+				});
 				if (pref) pref = !!available;
 			}
 
@@ -2131,11 +2159,13 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 				node.removeAttribute('hidden');
 				let enabled = node.getAttribute(this.kENABLED);
 				if (enabled) {
-					/* tabbrowser
-					   tabs
-					   selectedTabs */
-					eval('enabled = ('+enabled+')');
-					if (enabled)
+					enabled = enabled.split(/[,\|\s]+/);
+					let itemEnabled = true;
+					Object.keys(conditions).forEach(function(aKey) {
+						if (enabled.indexOf(aKey) > -1)
+							itemEnabled = itemEnabled && conditions[aKey];
+					});
+					if (itemEnabled)
 						node.removeAttribute('disabled');
 					else
 						node.setAttribute('disabled', true);
@@ -3222,10 +3252,6 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			return !aTab.hasAttribute('pinned');
 		});
 	},
-	get canPinTab()
-	{
-		return 'pinTab' in gBrowser && 'unpinTab' in gBrowser;
-	},
  
 	muteAudio : function MTS_muteAudio(aTabs) 
 	{
@@ -3262,10 +3288,6 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			return aTab.getAttribute('soundplaying') != 'true' ||
 					aTab.getAttribute('muted') != 'true';
 		});
-	},
-	get canMuteTab()
-	{
-		return 'toggleMuteAudio' in gBrowser.selectedTab;
 	},
  
 	// experimental command 
