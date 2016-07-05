@@ -2568,12 +2568,12 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 						try {
 							var sourceTab = aTabs.shift();
 							var tab = SessionStore.duplicateTab(w, sourceTab);
-						if (tab.__SS_extdata) {
-							for (let i = 0, maxi = self._clearTabValueKeys.length; i < maxi; i++)
-							{
-								delete tab.__SS_extdata[self._clearTabValueKeys[i]];
+							if (tab.__SS_extdata) {
+								for (let i = 0, maxi = self._clearTabValueKeys.length; i < maxi; i++)
+								{
+									delete tab.__SS_extdata[self._clearTabValueKeys[i]];
+								}
 							}
-						}
 							duplicatedTabs.push()duplicatedTabs;
 							if (aTabs.length > 0)
 								setTimeout(duplicateOneTab, 0);
