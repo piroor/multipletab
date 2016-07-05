@@ -2,6 +2,7 @@
 <!ENTITY popup.selection.removeOther "Fermer les autres onglets">
 <!ENTITY popup.selection.reloadTabs  "Actualiser les onglets sélectionnés">
 <!ENTITY popup.selection.addBookmark "Marquer les onglets sélectionnés dans un nouveau dossier">
+<!ENTITY popup.selection.removeBookmark "Remove Bookmarks from Selected Tabs">
 <!ENTITY popup.selection.duplicateTabs "Dupliquer les onglets sélectionnés">
 <!ENTITY popup.selection.splitWindow "Déplacer vers une nouvelle fenêtre">
 <!ENTITY popup.selection.clipboard   "Copier l'adresse de chaque onglet sélectionné">

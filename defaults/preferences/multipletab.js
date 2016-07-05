@@ -30,6 +30,7 @@ pref("extensions.multipletab.show.multipletab-selection-reloadTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-removeTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-removeOther", true);
 pref("extensions.multipletab.show.multipletab-selection-addBookmark", true);
+pref("extensions.multipletab.show.multipletab-selection-removeBookmark", true);
 pref("extensions.multipletab.show.multipletab-selection-saveTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-duplicateTabs", true);
 pref("extensions.multipletab.show.multipletab-selection-pinTabs", true);

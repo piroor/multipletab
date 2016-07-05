@@ -2,6 +2,7 @@
 <!ENTITY popup.selection.removeOther "关闭其他标签">
 <!ENTITY popup.selection.reloadTabs  "刷新所选标签">
 <!ENTITY popup.selection.addBookmark "将所选标签以新文件夹加入书签">
+<!ENTITY popup.selection.removeBookmark "Remove Bookmarks from Selected Tabs">
 <!ENTITY popup.selection.duplicateTabs "克隆所选标签">
 <!ENTITY popup.selection.splitWindow "移动标签到新窗口">
 <!ENTITY popup.selection.clipboard   "复制所选标签的URI">

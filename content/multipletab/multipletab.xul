@@ -36,6 +36,9 @@
 		<menuitem id="multipletab-selection-addBookmark"
 			label="&popup.selection.addBookmark;"
 			oncommand="MultipleTabService.addBookmarkFor(MultipleTabService.getSelectedTabs());"/>
+		<menuitem id="multipletab-selection-removeBookmark"
+			label="&popup.selection.removeBookmark;"
+			oncommand="MultipleTabService.removeBookmarkFor(MultipleTabService.getSelectedTabs());"/>
 		<menuseparator id="multipletab-selection-duplicate-separator"/>
 		<menuitem id="multipletab-selection-duplicateTabs"
 			label="&popup.selection.duplicateTabs;"

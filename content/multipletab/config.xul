@@ -255,6 +255,9 @@
 		<preference id="extensions.multipletab.show.multipletab-selection-addBookmark"
 			name="extensions.multipletab.show.multipletab-selection-addBookmark"
 			type="bool"/>
+		<preference id="extensions.multipletab.show.multipletab-selection-removeBookmark"
+			name="extensions.multipletab.show.multipletab-selection-removeBookmark"
+			type="bool"/>
 		<preference id="extensions.multipletab.show.multipletab-selection-duplicateTabs"
 			name="extensions.multipletab.show.multipletab-selection-duplicateTabs"
 			type="bool"/>
@@ -357,6 +360,9 @@
 			<checkbox id="extensions.multipletab.show.multipletab-selection-addBookmark-check"
 				preference="extensions.multipletab.show.multipletab-selection-addBookmark"
 				label="&popup.selection.addBookmark;"/>
+			<checkbox id="extensions.multipletab.show.multipletab-selection-removeBookmark-check"
+				preference="extensions.multipletab.show.multipletab-selection-removeBookmark"
+				label="&popup.selection.removeBookmark;"/>
 			<separator id="multipletab-selection-separator-printTabs"/>
 			<checkbox id="extensions.multipletab.show.multipletab-selection-printTabs-check"
 				preference="extensions.multipletab.show.multipletab-selection-printTabs"

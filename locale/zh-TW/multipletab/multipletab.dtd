@@ -2,6 +2,7 @@
 <!ENTITY popup.selection.removeOther "關閉其他分頁">
 <!ENTITY popup.selection.reloadTabs  "重新載入所選分頁">
 <!ENTITY popup.selection.addBookmark "所選分頁以新資料夾加入書籤">
+<!ENTITY popup.selection.removeBookmark "Remove Bookmarks from Selected Tabs">
 <!ENTITY popup.selection.duplicateTabs "複製所選分頁">
 <!ENTITY popup.selection.splitWindow "移動到新視窗">
 <!ENTITY popup.selection.clipboard   "複製所選分頁URL">

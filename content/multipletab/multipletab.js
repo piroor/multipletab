@@ -2473,6 +2473,31 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (isTSTBookmarksTreeStructureAvailable)
 			TreeStyleTabBookmarksService.endAddBookmarksFromTabs();
 	},
+  
+	removeBookmarkFor : function MTS_removeBookmarkFor(aTabs) 
+	{
+		var BookmarksService = Cc['@mozilla.org/browser/nav-bookmarks-service;1']
+								.getService(Ci.nsINavBookmarksService);
+		var bookmarks = this.getBookmarksFromTabs(aTabs);
+		for (let bookmark of bookmarks)
+		{
+			BookmarksService.removeItem(bookmark);
+		}
+	},
+	getBookmarksFromTabs : function MTS_getBookmarksFromTabs(aTabs) 
+	{
+		var allBookmarks = [];
+		aTabs.forEach(function(aTab) {
+			allBookmarks = allBookmarks.concat(this.getBookmarksFromTab(aTab));
+		}, this);
+		return allBookmarks;
+	},
+	getBookmarksFromTab : function MTS_removeBookmarkFor(aTab) 
+	{
+		var BookmarksService = Cc['@mozilla.org/browser/nav-bookmarks-service;1']
+								.getService(Ci.nsINavBookmarksService);
+		return BookmarksService.getBookmarkIdsForURI(aTab.linkedBrowser.currentURI, {});
+	},
  
 	// for Print All Tabs https://addons.mozilla.org/firefox/addon/5142
 	printTabs : function MTS_printTabs(aTabs) 
