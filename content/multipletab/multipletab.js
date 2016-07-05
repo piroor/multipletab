@@ -2577,10 +2577,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 							duplicatedTabs.push(tab);
 							tab.addEventListener('SSTabRestoring', function onSSTabRestoring(aEvent) {
 								tab.removeEventListener(aEvent.type, onSSTabRestoring, false)
-							if (aTabs.length > 0)
-								duplicateOneTab();
-							else
-								aResolve();
+								if (aTabs.length > 0)
+									duplicateOneTab();
+								else
+									aResolve();
 							}, false);
 						}
 						catch(e) {
