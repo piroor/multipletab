@@ -29,16 +29,16 @@ function tearDown()
 }
 
 
-function getChildByClass(aClassName, aParent)
+function getChildByClass(aClassName, apparent)
 {
-	return win.document.getAnonymousElementByAttribute(aParent, 'class', aClassName);
+	return win.document.getAnonymousElementByAttribute(apparent, 'class', aClassName);
 }
 
-function createEventStubByClass(aClassName, aParent)
+function createEventStubByClass(aClassName, apparent)
 {
-	var node = getChildByClass(aClassName, aParent);
+	var node = getChildByClass(aClassName, apparent);
 	assert.isNotNull(node, aClassName);
-	var stub = createEventStubFor(aParent);
+	var stub = createEventStubFor(apparent);
 	stub.originalTarget = node;
 	return stub;
 }

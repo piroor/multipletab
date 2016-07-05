@@ -106,7 +106,7 @@
 <!ENTITY config.contextMenu.caption "Aggiungi le seguenti voci al menu contestuale della barra delle schede">
 <!ENTITY config.contextMenu.removeLeftTabs  "Chiudi schede a sinistra (sopra)">
 
-<!ENTITY config.menuEditor.description "È possibile personalizzare questo menu utilizzando Menu Editor.">
+<!ENTITY config.menuEditor.description "È possible personalizzare questo menu utilizzando Menu Editor.">
 <!ENTITY config.menuEditor.link        "Scarica Menu Editor">
 <!ENTITY config.menuEditor.config      "Opzioni di Menu Editor...">
 

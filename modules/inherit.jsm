@@ -21,23 +21,23 @@ function toPropertyDescriptors(aProperties) {
 	return descriptors;
 }
 
-function inherit(aParent, aExtraProperties) {
+function inherit(apparent, aExtraProperties) {
 	var global;
 	if (Components.utils.getGlobalForObject)
-		global = Components.utils.getGlobalForObject(aParent);
+		global = Components.utils.getGlobalForObject(apparent);
 	else
-		global = aParent.valueOf.call();
+		global = apparent.valueOf.call();
 	global = global || this;
 
 	var ObjectClass = global.Object || Object;
 
 	if (!ObjectClass.create) {
 		aExtraProperties = aExtraProperties || new ObjectClass;
-		aExtraProperties.__proto__ = aParent;
+		aExtraProperties.__proto__ = apparent;
 		return aExtraProperties;
 	}
 	if (aExtraProperties)
-		return ObjectClass.create(aParent, toPropertyDescriptors(aExtraProperties));
+		return ObjectClass.create(apparent, toPropertyDescriptors(aExtraProperties));
 	else
-		return ObjectClass.create(aParent);
+		return ObjectClass.create(apparent);
 }

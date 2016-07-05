@@ -57,7 +57,7 @@
 <!ENTITY config.tabdrag.moveMultipleTabs "Mover juntas las pestañas seleccionadas">
 <!ENTITY config.tabdrag.close         "Close tabs if closeboxes in tabs are selected by dragging">
 
-<!ENTITY config.tabclickmode.accel.caption "Acción para Ctrl(Comando)-Click en las pestañas">
+<!ENTITY config.tabclickmode.accel.caption "Acción para Ctrl(Commando)-Click en las pestañas">
 <!ENTITY config.tabclickmode.accel.default "Firefox predeterminado">
 <!ENTITY config.tabclickmode.accel.select  "Cambiar selección de pestañas">
 <!ENTITY config.tabclickmode.accel.close   "Cerrar pestaña">
