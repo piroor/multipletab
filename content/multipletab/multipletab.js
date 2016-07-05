@@ -2559,31 +2559,41 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		this.clearSelection(b);
 
+		var duplicatedTabs = [];
 		var self = this;
 		return Promise.all(aTabs.map(this.prepareTabForSwap, this))
 			.then(function() {
-				var duplicatedTabs = aTabs.map(function(aTab) {
-						var tab = SessionStore.duplicateTab(w, aTab);
+				return new Promise(function(aResolve, aReject) {
+					setTimeout(function duplicateOneTab() {
+						try {
+							var sourceTab = aTabs.shift();
+							var tab = SessionStore.duplicateTab(w, sourceTab);
 						if (tab.__SS_extdata) {
 							for (let i = 0, maxi = self._clearTabValueKeys.length; i < maxi; i++)
 							{
 								delete tab.__SS_extdata[self._clearTabValueKeys[i]];
 							}
 						}
-						return tab;
-					});
-
+							duplicatedTabs.push()duplicatedTabs;
+							if (aTabs.length > 0)
+								setTimeout(duplicateOneTab, 0);
+							else
+								aResolve();
+						}
+						catch(e) {
+							aReject(e);
+						}
+					}, 0);
+				});
+			})
+			.then(function() {
 				self.clearSelection(b);
-
 				if (selectedIndex > -1)
 					b.selectedTab = duplicatedTabs[selectedIndex];
-
-
-				return duplicatedTabs;
 			})
 			.then(function(aDuplicatedTabs) {
 				self.duplicatingTabs = false;
-				return aDuplicatedTabs;
+				return duplicatedTabs;
 			});
 	},
   
