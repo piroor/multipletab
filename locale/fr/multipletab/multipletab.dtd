@@ -72,8 +72,8 @@
 <!ENTITY config.saveType.select  "Sélectionner à partir du menu">
 
 <!ENTITY config.useEffectiveTLD.caption  "Méthode de détection des «onglets similaires»">
-<!ENTITY config.useEffectiveTLD.enabled  "selon le domaine («aaa.exemple.com» et «bbb.exemple.com» sont des onglets similaires)">
-<!ENTITY config.useEffectiveTLD.disabled "selon l'hôte («aaa.exemple.com» et «bbb.exemple.com» ne sont pas des onglets similaires)">
+<!ENTITY config.useEffectiveTLD.enabled  "selon le domaine («aaa.example.com» et «bbb.example.com» sont des onglets similaires)">
+<!ENTITY config.useEffectiveTLD.disabled "selon l'hôte («aaa.example.com» et «bbb.example.com» ne sont pas des onglets similaires)">
 
 <!ENTITY config.tabs.clipboard "Copie">
 
