@@ -4194,6 +4194,13 @@ MultipleTabService.prefs = namespace.prefs;
 MultipleTabService.namespace = namespace.getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'];
 
 MultipleTabService.showHideMenuItemsConditionsProviders.push(
+	(function bookmarkedProvider(aContextTabs) {
+		return {
+			'any-bookmarked' : this.getBookmarksFromTabs(aContextTabs).length > 0,
+		};
+	}).bind(MultipleTabService)
+);
+MultipleTabService.showHideMenuItemsConditionsProviders.push(
 	(function pinnedProvider(aContextTabs) {
 		return {
 			'not-all-pinned' : !this.isAllTabsPinned(aContextTabs),
