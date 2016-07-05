@@ -2563,14 +2563,13 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		return Promise.all(aTabs.map(this.prepareTabForSwap, this))
 			.then(function() {
 				var duplicatedTabs = aTabs.map(function(aTab) {
-						var state = self.evalInSandbox('('+SessionStore.getTabState(aTab)+')');
-						for (let i = 0, maxi = self._clearTabValueKeys.length; i < maxi; i++)
-						{
-							delete state.extData[self._clearTabValueKeys[i]];
+						var tab = SessionStore.duplicateTab(w, aTab);
+						if (tab.__SS_extdata) {
+							for (let i = 0, maxi = self._clearTabValueKeys.length; i < maxi; i++)
+							{
+								delete tab.__SS_extdata[self._clearTabValueKeys[i]];
+							}
 						}
-						state = 'JSON' in window ? JSON.stringify(state) : state.toSource() ;
-						var tab = b.addTab();
-						SessionStore.setTabState(tab, state);
 						return tab;
 					});
 
