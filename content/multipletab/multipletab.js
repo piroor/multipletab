@@ -2560,12 +2560,11 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		this.clearSelection(b);
 
 		var duplicatedTabs = [];
-		var interval = 100; // this is required - why?
 		var self = this;
 		return Promise.all(aTabs.map(this.prepareTabForSwap, this))
 			.then(function() {
 				return new Promise(function(aResolve, aReject) {
-					setTimeout(function duplicateOneTab() {
+					(function duplicateOneTab() {
 						try {
 							var sourceTab = aTabs.shift();
 							var tab = SessionStore.duplicateTab(w, sourceTab);
@@ -2576,15 +2575,18 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 								}
 							}
 							duplicatedTabs.push(tab);
+							tab.addEventListener('SSTabRestoring', function onSSTabRestoring(aEvent) {
+								tab.removeEventListener(aEvent.type, onSSTabRestoring, false)
 							if (aTabs.length > 0)
-								setTimeout(duplicateOneTab, interval);
+								duplicateOneTab();
 							else
 								aResolve();
+							}, false);
 						}
 						catch(e) {
 							aReject(e);
 						}
-					}, 0);
+					})();
 				});
 			})
 			.then(function() {
