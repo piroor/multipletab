@@ -4197,7 +4197,7 @@ MultipleTabService.showHideMenuItemsConditionsProviders.push(
 	(function pinnedProvider(aContextTabs) {
 		return {
 			'not-all-pinned' : !this.isAllTabsPinned(aContextTabs),
-			'any-pinned'     : !this.isNoTabPinned(aContextTabs),
+			'any-pinned'     : !this.isNoTabPinned(aContextTabs)
 		};
 	}).bind(MultipleTabService)
 );
