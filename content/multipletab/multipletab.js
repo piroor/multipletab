@@ -2574,7 +2574,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 									delete tab.__SS_extdata[self._clearTabValueKeys[i]];
 								}
 							}
-							duplicatedTabs.push()duplicatedTabs;
+							duplicatedTabs.push(tab);
 							if (aTabs.length > 0)
 								setTimeout(duplicateOneTab, 0);
 							else
