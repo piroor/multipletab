@@ -2,7 +2,7 @@
 <!ENTITY popup.selection.removeOther "Cerrar las otras pestañas">
 <!ENTITY popup.selection.reloadTabs  "Refrescar pestañas seleccionadas">
 <!ENTITY popup.selection.addBookmark "Añadirlas a marcadores en una nueva carpeta">
-<!ENTITY popup.selection.removeBookmark "Remove Bookmarks from Selected Tabs">
+<!ENTITY popup.selection.removeBookmark "Remove Selected Tabs from Bookmarks">
 <!ENTITY popup.selection.duplicateTabs "Duplicar pestañas seleccionadas">
 <!ENTITY popup.selection.splitWindow "Moverlas a una nueva ventana">
 <!ENTITY popup.selection.clipboard   "Copiar URIs de las pestañas seleccionadas">

@@ -2,7 +2,7 @@
 <!ENTITY popup.selection.removeOther "Chiudi le altre schede">
 <!ENTITY popup.selection.reloadTabs  "Ricarica le schede selezionate">
 <!ENTITY popup.selection.addBookmark "Aggiungi le schede selezionate a una nuova cartella nei segnalibri">
-<!ENTITY popup.selection.removeBookmark "Remove Bookmarks from Selected Tabs">
+<!ENTITY popup.selection.removeBookmark "Remove Selected Tabs from Bookmarks">
 <!ENTITY popup.selection.duplicateTabs "Duplica le schede selezionate">
 <!ENTITY popup.selection.splitWindow "Apri in una nuova finestra">
 <!ENTITY popup.selection.clipboard   "Copia l&apos;indirizzo delle schede selezionate">

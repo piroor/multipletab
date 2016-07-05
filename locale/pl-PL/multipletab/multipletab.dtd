@@ -2,7 +2,7 @@
 <!ENTITY popup.selection.removeOther "Zamknij inne karty">
 <!ENTITY popup.selection.reloadTabs  "Odśwież zaznaczone karty">
 <!ENTITY popup.selection.addBookmark "Dodaj zakładki do zaznaczonych kart...">
-<!ENTITY popup.selection.removeBookmark "Remove Bookmarks from Selected Tabs">
+<!ENTITY popup.selection.removeBookmark "Remove Selected Tabs from Bookmarks">
 <!ENTITY popup.selection.duplicateTabs "Duplikuj zaznaczone karty">
 <!ENTITY popup.selection.splitWindow "Przenieś do nowego okna">
 <!ENTITY popup.selection.clipboard   "Kopiuj URI zaznaczonych kart">

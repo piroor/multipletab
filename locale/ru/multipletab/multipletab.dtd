@@ -2,7 +2,7 @@
 <!ENTITY popup.selection.removeOther "Закрыть другие вкладки">
 <!ENTITY popup.selection.reloadTabs  "Обновить выбранные вкладки">
 <!ENTITY popup.selection.addBookmark "Добавить выбранные вкладки в новую папку закладок">
-<!ENTITY popup.selection.removeBookmark "Remove Bookmarks from Selected Tabs">
+<!ENTITY popup.selection.removeBookmark "Remove Selected Tabs from Bookmarks">
 <!ENTITY popup.selection.duplicateTabs "Клонировать выбранные вкладки">
 <!ENTITY popup.selection.splitWindow "Переместить в новое окно">
 <!ENTITY popup.selection.clipboard   "Копировать адреса выбранных вкладок">

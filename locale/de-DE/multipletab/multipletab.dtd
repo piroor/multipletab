@@ -2,7 +2,7 @@
 <!ENTITY popup.selection.removeOther "Andere Tabs schlie&#223;en">
 <!ENTITY popup.selection.reloadTabs  "Ausgew&#228;hlte Tabs neuladen">
 <!ENTITY popup.selection.addBookmark "Ausgew&#228;hlte Tabs als Lesezeichen hinzuf&#252;gen">
-<!ENTITY popup.selection.removeBookmark "Remove Bookmarks from Selected Tabs">
+<!ENTITY popup.selection.removeBookmark "Remove Selected Tabs from Bookmarks">
 <!ENTITY popup.selection.duplicateTabs "Ausgew&#228;hlte Tabs duplizieren">
 <!ENTITY popup.selection.splitWindow "In neuem Fenster &#246;ffnen">
 <!ENTITY popup.selection.clipboard   "URIs ausgew&#228;hlter Tabs kopieren">
