@@ -2560,6 +2560,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		this.clearSelection(b);
 
 		var duplicatedTabs = [];
+		var interval = 100; // this is required - why?
 		var self = this;
 		return Promise.all(aTabs.map(this.prepareTabForSwap, this))
 			.then(function() {
@@ -2576,7 +2577,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 							}
 							duplicatedTabs.push(tab);
 							if (aTabs.length > 0)
-								setTimeout(duplicateOneTab, 0);
+								setTimeout(duplicateOneTab, interval);
 							else
 								aResolve();
 						}
