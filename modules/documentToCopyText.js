@@ -77,7 +77,8 @@ function mayDecodeURI(aURI) {
 	// See chrome://browser/content/browser.js
 	var window = Services.wm.getMostRecentWindow('navigator:browser');
 	if (window && 'losslessDecodeURI' in window) try {
-		return window.losslessDecodeURI(window.makeURI(aURI));
+		return window.losslessDecodeURI(window.makeURI(aURI))
+			.replace(/ /g, '%20');
 	}
 	catch(e) {
 		Components.utils.reportError(e);
