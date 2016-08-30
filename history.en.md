@@ -4,6 +4,8 @@
    * Add a new command for selected tabs: Remove Selected Tabs from Bookmarks.
    * Better compatibility around "duplicate selected tabs" feature, with other addons.
    * Set selection of tabs more correctly by Shift-Click, when there is any invisible tab hidden by Tree Style Tab addon or others.
+   * Re-encode spaces into `%20` to not break URIs copied from tabs (by Infocatcher. Thanks!)
+   * `ru` locale is updated (by Infocatcher. Thanks!)
  - 0.8.2015113001
    * Add "Mute/Unmute Tabs" features for all/selected tabs.
    * Support Tab Utilities Fixed's "Move to Window" menu for selected tabs.
