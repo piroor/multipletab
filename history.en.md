@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.8.2016083001
    * Add a new command for selected tabs: Remove Selected Tabs from Bookmarks.
    * Better compatibility around "duplicate selected tabs" feature, with other addons.
    * Set selection of tabs more correctly by Shift-Click, when there is any invisible tab hidden by Tree Style Tab addon or others.
