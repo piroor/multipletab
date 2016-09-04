@@ -86,16 +86,6 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 		}
 	}
 
-	// Print All Tabs
-	if ('PrintAllTabs' in window) {
-		eval('PrintAllTabs.onMenuItemCommand = '+
-			PrintAllTabs.onMenuItemCommand.toSource().replace(
-				'this.getTabsToPrint(printAll)',
-				'this.__multipletab__printNodes || $&'
-			)
-		);
-	}
-
 	// Tab Mix Plus
 	var TMPWarnPref = 'extensions.multipletab.compatibility.TMP.warnForClickActions';
 	if (this.prefs.getPref(TMPWarnPref)) {
