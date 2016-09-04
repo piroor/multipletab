@@ -94,11 +94,11 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 				var info = {};
 				var tabs = MultipleTabService.getBundledTabsOf(arguments[2].sourceNode, info);
 				if (tabs.length) {
-				  var wadid = aArgs[0].target.getAttribute('wad_id');
-				  tabs.forEach(function(aTab) {
-				    addURLtoSession(aTab.linkedBrowser.currentURI.spec, wadid);
-				  });
-				  return;
+					var wadid = aArgs[0].target.getAttribute('wad_id');
+					tabs.forEach(function(aTab) {
+						addURLtoSession(aTab.linkedBrowser.currentURI.spec, wadid);
+					});
+					return;
 				}
 				return sessionObserver.onDrop(...aArgs);
 			};
