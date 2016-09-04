@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Drop support for obsolete (already unpublished) addons: "Print All Tabs" and old "Tab Groups".
    * "Save selected tabs into a folder" feature works correctly again on Firefox 51 and later.
  - 0.8.2016083001
    * Add a new command for selected tabs: Remove Selected Tabs from Bookmarks.
