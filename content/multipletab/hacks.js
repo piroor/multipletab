@@ -90,7 +90,7 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 	if (document.getElementById('linkwad_toolbar')) {
 		if ('sessionObserver' in window) {
 			sessionObserver.__multipletab__onDrop = sessionObserver.onDrop;
-			sessionObserver.onDrop = function(..aArgs) {
+			sessionObserver.onDrop = function(...aArgs) {
 				var info = {};
 				var tabs = MultipleTabService.getBundledTabsOf(aArgs[2].sourceNode, info);
 				if (tabs.length) {
