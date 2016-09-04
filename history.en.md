@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 0.8.2016090501
+   * Fix regression around drag and drop of non-tab objects onto the tab bar.
  - 0.8.2016090401
    * Drop support for obsolete (already unpublished) addons: "Print All Tabs" and old "Tab Groups".
    * "Save selected tabs into a folder" feature works correctly again on Firefox 51 and later.
