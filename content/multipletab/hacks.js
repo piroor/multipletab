@@ -67,27 +67,6 @@ MultipleTabService.overrideExtensionsOnPreInit = function MTS_overrideExtensions
 
 MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnInit() {
 
-	// Tab Groups
-	if ('TG_Group_DnD_Observer' in window) {
-		eval('TG_Group_DnD_Observer.onDrop = '+
-			TG_Group_DnD_Observer.onDrop.toSource().replace(
-				/(TG_Move_To_Group\([^\)]+\))/,
-				'var info = {};' +
-				'var tabs = MultipleTabService.getBundledTabsOf(tab, info);' +
-				'if (tabs.length) {' +
-				'  tabs.forEach(function(tab) {' +
-				'    $1;' +
-				'  });' +
-				'  return;' +
-				'}'
-			)
-		);
-		this.registerClearTabValueKey('tg_gname');
-		this.registerClearTabValueKey('tg_gid');
-		this.registerClearTabValueKey('tg_gselected');
-		this.registerClearTabValueKey('tg_tselected');
-	}
-
 	// Linkwad
 	if (document.getElementById('linkwad_toolbar')) {
 		if ('sessionObserver' in window) {
