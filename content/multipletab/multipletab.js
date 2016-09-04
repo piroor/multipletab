@@ -897,57 +897,8 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.linefeed');
 		this.observe(null, 'nsPref:changed', 'extensions.multipletab.clipboard.formats');
 
-		if ('internalSave' in window &&
-			'promiseTargetFile' in window &&
-			'GetSaveModeForContentType' in window &&
-			'internalPersist' in window) {
-			window.__multipletab__internalSave = window.internalSave;
-			window.internalSave = function(...aArgs) {
-				delete window.promiseTargetFile.__multipletab__saveAsType;
-				delete window.GetSaveModeForContentType.__multipletab__nextSaveMode;
-				delete window.internalPersist.__multipletab__clearNextSourceDocument;
-				for (let arg of aArgs)
-				{
-					if (arg &&
-						'file' in arg &&
-						'uri' in arg &&
-						'saveType' in arg) { // aChosenData
-						window.promiseTargetFile.__multipletab__saveAsType = arg.saveAsType;
-						window.GetSaveModeForContentType.__multipletab__nextSaveMode = SAVEMODE_FILEONLY | SAVEMODE_COMPLETE_TEXT;
-						window.internalPersist.__multipletab__clearNextSourceDocument = !!arg.saveAsType;
-						break;
-					}
-				}
-				return __multipletab__internalSave(...aArgs);
-			};
-			window.__multipletab__promiseTargetFile = window.promiseTargetFile;
-			window.promiseTargetFile = function(aFilePickerParameters, ...aArgs) {
-				return window.__multipletab__promiseTargetFile(aFilePickerParameters, ...aArgs)
-					.then(function(aDialogAccepted) {
-						var saveAsType = window.promiseTargetFile.__multipletab__saveAsType;
-						delete window.promiseTargetFile.__multipletab__saveAsType;
-						if (saveAsType)
-							aFilePickerParameters.saveAsType = saveAsType;
-						return aDialogAccepted;
-					});
-			};
-			window.__multipletab__GetSaveModeForContentType = window.GetSaveModeForContentType;
-			window.GetSaveModeForContentType = function(...aArgs) {
-				var nextSaveMode = window.GetSaveModeForContentType.__multipletab__nextSaveMode;
-				delete window.GetSaveModeForContentType.__multipletab__nextSaveMode;
-				if (nextSaveMode)
-					return nextSaveMode;
-				return window.__multipletab__GetSaveModeForContentType(...aArgs);
-			};
-			window.__multipletab__internalPersist = window.internalPersist;
-			window.internalPersist = function(aPersistArgs, ...aArgs) {
-				var clearNextSourceDocument = window.internalPersist.__multipletab__clearNextSourceDocument;
-				delete window.internalPersist.__multipletab__clearNextSourceDocument;
-				if (clearNextSourceDocument)
-					aPersistArgs.sourceDocument = null;
-				return window.__multipletab__internalPersist(aPersistArgs, ...aArgs);
-			};
-		}
+		let { updateInternalSave } = Components.utils.import('resource://multipletab-modules/updateInternalSave.js', {});
+		updateInternalSave(window);
 
 		let ids = [
 				'tm-freezeTab\tmultipletab-selection-freezeTabs',

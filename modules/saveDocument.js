@@ -4,6 +4,7 @@ var Ci = Components.interfaces;
 var Cc = Components.classes;
 
 Components.utils.import('resource://gre/modules/XPCOMUtils.jsm');
+Components.utils.import('resource://multipletab-modules/updateInternalSave.js');
 
 XPCOMUtils.defineLazyModuleGetter(this, 'MultipleTabHandlerConstants', 'resource://multipletab-modules/constants.js');
 XPCOMUtils.defineLazyModuleGetter(this, 'setTimeout', 'resource://gre/modules/Timer.jsm');
@@ -22,6 +23,7 @@ XPCOMUtils.defineLazyGetter(this, 'CAUtils', function() {
 		}
 	};
 	loader.loadSubScript('chrome://global/content/contentAreaUtils.js', namespace);
+	updateInternalSave(namespace);
 	return namespace;
 });
 
@@ -89,7 +91,7 @@ function saveDocumentAs(aDocument, aDestFile, aParams) {
 	CAUtils.internalSave(
 		uri.spec,
 		(saveType != MultipleTabHandlerConstants.kSAVE_TYPE_FILE ? aDocument : null ),
-		null, // default file name
+		aDestFile.leafName, // default file name
 		null, // content disposition
 		aDocument.contentType,
 		false, // should bypass cache?
