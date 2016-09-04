@@ -16,14 +16,16 @@ MultipleTabService.overrideExtensionsOnPreInit = function MTS_overrideExtensions
 	}
 
 	// Menu Editor
+	// https://addons.mozilla.org/firefox/addon/menu-editor-ii/
 	if ('MenuEdit' in window &&
-		'getEditableMenus' in MenuEdit) {
-		eval('MenuEdit.getEditableMenus = '+
-			MenuEdit.getEditableMenus.toSource().replace(
-				/return menus;/g,
-				'menus["multipletab-selection-menu"] = MultipleTabService.tabSelectionPopup.getAttribute("label"); $&'
-			)
-		);
+		'getEditableMenus' in MenuEdit &&
+		!MenuEdit.__multipletab__getEditableMenus) {
+		MenuEdit.__multipletab__getEditableMenus = MenuEdit.getEditableMenus;
+		MenuEdit.getEditableMenus = function(...aArgs) {
+			var menus = MenuEdit.__multipletab__getEditableMenus(...aArgs);
+			menus['multipletab-selection-menu'] = MultipleTabService.tabSelectionPopup.getAttribute('label');
+			return menus;
+		};
 	}
 
 	// DragNDrop Toolbars
