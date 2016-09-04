@@ -2,13 +2,12 @@ MultipleTabService.overrideExtensionsOnPreInit = function MTS_overrideExtensions
 
 	// Tab Groups
 	if ('TG_Tab_SSTabRestoring_Event' in window) {
-		eval('window.TG_Tab_SSTabRestoring_Event = '+
-			window.TG_Tab_SSTabRestoring_Event.toSource().replace(
-				'{',
-				'{' +
-				'  if (MultipleTabService.duplicatingTabs) return;'
-			)
-		);
+		window.__multipletab__TG_Tab_SSTabRestoring_Event = window.TG_Tab_SSTabRestoring_Event;
+		window.TG_Tab_SSTabRestoring_Event = function(...aArgs) {
+			if (MultipleTabService.duplicatingTabs)
+				return;
+			return window.__multipletab__TG_Tab_SSTabRestoring_Event(...aArgs);
+		};
 		this.registerDuplicatedTabPostProcess(function(aTab, aIndex) {
 			var groups = document.getElementById('TG-GroupList');
 			TG_Add_To_Group(aTab, groups.selectedItem);
@@ -89,22 +88,21 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 
 	// Linkwad
 	if (document.getElementById('linkwad_toolbar')) {
-		if ('sessionObserver' in window)
-			eval('sessionObserver.onDrop = '+
-				sessionObserver.onDrop.toSource().replace(
-					'{',
-					'{' +
-					'  var info = {};' +
-					'  var tabs = MultipleTabService.getBundledTabsOf(arguments[2].sourceNode, info);' +
-					'  if (tabs.length) {' +
-					'    var wadid = arguments[0].target.getAttribute("wad_id");' +
-					'    tabs.forEach(function(aTab) {' +
-					'      addURLtoSession(aTab.linkedBrowser.currentURI.spec, wadid);' +
-					'    });' +
-					'    return;' +
-					'  }'
-				)
-			);
+		if ('sessionObserver' in window) {
+			sessionObserver.__multipletab__onDrop = sessionObserver.onDrop;
+			sessionObserver.onDrop = function(..aArgs) {
+				var info = {};
+				var tabs = MultipleTabService.getBundledTabsOf(arguments[2].sourceNode, info);
+				if (tabs.length) {
+				  var wadid = aArgs[0].target.getAttribute('wad_id');
+				  tabs.forEach(function(aTab) {
+				    addURLtoSession(aTab.linkedBrowser.currentURI.spec, wadid);
+				  });
+				  return;
+				}
+				return sessionObserver.onDrop(...aArgs);
+			};
+		}
 	}
 
 	// Print All Tabs
