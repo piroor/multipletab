@@ -808,11 +808,10 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
   
 // fire custom events 
 	
-	fireDuplicatedEvent : function MTS_fireDuplicatedEvent(aNewTab, aSourceTab, aSourceEvent) 
+	fireDuplicatedEvent : function MTS_fireDuplicatedEvent(aNewTab, aSourceTab) 
 	{
 		var data = {
-				sourceTab : aSourceTab,
-				mayBeMove : aSourceEvent && !this.isAccelKeyPressed(aSourceEvent)
+				sourceTab : aSourceTab
 			};
 		this.fireCustomEvent(this.kEVENT_TYPE_TAB_DUPLICATE, aNewTab, true, false, data);
 		// for backward compatibility
@@ -1269,7 +1268,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 					!b.duplicatingSelectedTabs &&
 					(!('UndoTabService' in window) || UndoTabService.isUndoable())
 					)
-					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.detail.sourceTab, aEvent.detail.mayBeMove);
+					this.duplicateBundledTabsOf(aEvent.originalTarget, aEvent.detail.sourceTab, false);
 				break;
 
 			case this.kEVENT_TYPE_WINDOW_MOVE:
@@ -1916,7 +1915,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	},
  
 	// for drag and drop of selected tabs
-	onDuplicateTab : function MTS_onDuplicateTab(aTask, aTabBrowser, aTab, aSourceEvent) 
+	onDuplicateTab : function MTS_onDuplicateTab(aTask, aTabBrowser, aTab) 
 	{
 		// This flag is required to block unexpected "window move" event,
 		// because a TabOpen event is fired while tabs are duplicated and
@@ -1938,7 +1937,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 				if (tabs.length > 0) {
 					let process = (function() {
 						newTab = aTask.call(aTabBrowser);
-						this.fireDuplicatedEvent(newTab, aTab, aSourceEvent);
+						this.fireDuplicatedEvent(newTab, aTab);
 					}).bind(this);
 					if ('UndoTabService' in window && UndoTabService.isUndoable()) {
 						UndoTabService.doOperation(
