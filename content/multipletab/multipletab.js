@@ -1006,22 +1006,6 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	{
 		this.initTabbar(aTabBrowser);
 
-		eval('aTabBrowser.duplicateTab = '+aTabBrowser.duplicateTab.toSource().replace(
-			')',
-			', aSourceEvent)'
-		).replace(
-			'{',
-			'{ return MultipleTabService.onDuplicateTab(function() {'
-		).replace(
-			/(\}\)?)$/,
-			'  },\n' +
-			'  this,\n' +
-			'  aTab,\n' +
-			'  aSourceEvent\n' +
-			');\n' +
-			'$1'
-		));
-
 		if ('swapBrowsersAndCloseOther' in aTabBrowser) {
 			aTabBrowser.__multipletab__canDoWindowMove = true;
 			aTabBrowser.__multipletab__swapBrowsersAndCloseOther = aTabBrowser.swapBrowsersAndCloseOther;
