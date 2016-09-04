@@ -6,6 +6,7 @@ var { inherit } = Components.utils.import('resource://multipletab-modules/inheri
 
 var { MultipleTabHandlerConstants } = Components.utils.import('resource://multipletab-modules/constants.js', {});
 var { isFormatRequiresLoaded } = Components.utils.import('resource://multipletab-modules/documentToCopyText.js', {});
+var { saveBrowserAs, saveBrowserInto } = Components.utils.import('resource://multipletab-modules/saveDocument.js', {});
 var { evaluateXPath, getArrayFromXPathResult } = Components.utils.import('resource://multipletab-modules/xpath.js', {});
 
 var namespace = {};
@@ -2358,7 +2359,11 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (aTabs.length == 1) {
 			return this.ensureLoaded(aTabs[0])
 				.then(function(aLoaded) {
-					aTabs[0].__multipletab__contentBridge.saveAsFile(aSaveType);
+					var b = aTabs[0].linkedBrowser;
+					saveBrowserAs(b, {
+						referrerURI : b.referringURI && b.referringURI.spec,
+						saveType    : aSaveType
+					});
 				})
 				.catch(function(aError) {
 					Components.utils.reportError(aError);
@@ -2386,7 +2391,13 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		return Promise.all(aTabs.map(function(aTab) {
 			return this.ensureLoaded(aTab)
 					.then(function(aLoaded) {
-						aTab.__multipletab__contentBridge.saveIntoDirectory(aFolder, aSaveType);
+						var b = aTab.linkedBrowser;
+						saveBrowserInto(b, aFolder.path, {
+							name        : aTab.label,
+							referrerURI : b.referringURI && b.referringURI.spec,
+							saveType    : aSaveType,
+							delay       : 200
+						});
 					});
 		}, this));
 	},
@@ -4103,25 +4114,6 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 	makeBlank : function MTHCB_makeBlank()
 	{
 		this.sendAsyncCommand(this.COMMAND_REQUEST_MAKE_BLANK);
-	},
-	saveAsFile : function MTHCB_saveAsFile(aSaveType)
-	{
-		var b = this.mTab.linkedBrowser;
-		this.sendAsyncCommand(this.COMMAND_REQUEST_SAVE_DOCUMENT_AS_FILE, {
-			referrerURI : b.referringURI && b.referringURI.spec,
-			saveType    : aSaveType
-		});
-	},
-	saveIntoDirectory : function MTHCB_saveIntoDirectory(aDirectory, aSaveType)
-	{
-		var b = this.mTab.linkedBrowser;
-		this.sendAsyncCommand(this.COMMAND_REQUEST_SAVE_DOCUMENT_INTO_DIRECTORY, {
-			name        : this.mTab.label,
-			folder      : aDirectory.path,
-			referrerURI : b.referringURI && b.referringURI.spec,
-			saveType    : aSaveType,
-			delay       : 200
-		});
 	},
 	toCopyText : function MTHCB_toCopyText(aParams)
 	{

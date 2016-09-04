@@ -12,7 +12,6 @@
 	var Cr = Components.results;
 
 	var { MultipleTabHandlerConstants } = Cu.import('resource://multipletab-modules/constants.js', {});
-	var { saveDocumentAs, saveDocumentInto } = Components.utils.import('resource://multipletab-modules/saveDocument.js', {});
 	var { documentToCopyText } = Components.utils.import('resource://multipletab-modules/documentToCopyText.js', {});
 
 	function free() {
@@ -37,22 +36,6 @@
 			case MultipleTabHandlerConstants.COMMAND_REQUEST_MAKE_BLANK:
 				if (content.location)
 					content.location.replace('about:blank');
-				return;
-
-			case MultipleTabHandlerConstants.COMMAND_REQUEST_SAVE_DOCUMENT_AS_FILE:
-				saveDocumentAs(content.document, null, {
-					referrerURI : aMessage.json.params.referrerURI,
-					saveType    : aMessage.json.params.saveType
-				});
-				return;
-
-			case MultipleTabHandlerConstants.COMMAND_REQUEST_SAVE_DOCUMENT_INTO_DIRECTORY:
-				saveDocumentInto(content.document, aMessage.json.params.folder, {
-					name        : aMessage.json.params.name,
-					referrerURI : aMessage.json.params.referrerURI,
-					saveType    : aMessage.json.params.saveType,
-					delay       : aMessage.json.params.delay
-				});
 				return;
 
 			case MultipleTabHandlerConstants.COMMAND_REQUEST_COPY_TEXT:

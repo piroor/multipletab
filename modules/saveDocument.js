@@ -1,4 +1,4 @@
-var EXPORTED_SYMBOLS = ['saveDocumentAs', 'saveDocumentInto'];
+var EXPORTED_SYMBOLS = ['saveBrowserAs', 'saveDocumentAs', 'saveBrowserInto', 'saveDocumentInto'];
 
 var Ci = Components.interfaces;
 var Cc = Components.classes;
@@ -27,9 +27,36 @@ XPCOMUtils.defineLazyGetter(this, 'CAUtils', function() {
 	return namespace;
 });
 
+function saveBrowserAndDo(aCallback, aBrowser, aOuterWindowID = 0) {
+	var persistable = aBrowser.QueryInterface(Ci.nsIFrameLoaderOwner)
+						.frameLoader
+						.QueryInterface(Ci.nsIWebBrowserPersistable);
+	var stack = Components.stack.caller;
+	persistable.startPersistence(aOuterWindowID, {
+		onDocumentReady : function(aDocument) {
+			aCallback(aDocument);
+		},
+		onError : function(aStatus) {
+			throw new Components.Exception(
+				'saveBrowserAndDo failed asynchronously in startPersistence',
+				aStatus,
+				stack
+			);
+		}
+	});
+}
+
+function saveBrowserInto(aBrowser, aDestDir, aParams) {
+	saveBrowserAndDo(function(aDocument) {
+		aParams = aParams || {};
+		aParams.uri = aBrowser.currentURI.spec;
+		saveDocumentInto(aDocument, aDestDir, aParams);
+	}, aBrowser);
+}
+
 function saveDocumentInto(aDocument, aDestDir, aParams) {
 	aDestDir = ensureLocalFile(aDestDir);
-	var uri = CAUtils.makeURI(aDocument.defaultView.location.href, null, null);
+	var uri = CAUtils.makeURI(aParams.uri || aDocument.defaultView.location.href, null, null);
 	var saveType = aParams.saveType;
 	var delay = aParams.delay || 200;
 
@@ -53,15 +80,16 @@ function saveDocumentInto(aDocument, aDestDir, aParams) {
 	// use CAUtils.uniqueFile instead of desfFile.createUnique()
 	// because it sggests more human readable file name.
 	destFile = CAUtils.uniqueFile(destFile);
-	destFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0644);
+//	destFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0644);
 
 	if (saveType & MultipleTabHandlerConstants.kSAVE_TYPE_TEXT && !shouldConvertToText)
 		saveType = MultipleTabHandlerConstants.kSAVE_TYPE_COMPLETE;
 
 	setTimeout(function() {
-		destFile.remove(true);
+//		destFile.remove(true);
 		try {
 			saveDocumentAs(aDocument, destFile, {
+				uri         : uri.spec,
 				referrerURI : aParams.referrerURI,
 				saveType    : saveType
 			});
@@ -72,8 +100,16 @@ function saveDocumentInto(aDocument, aDestDir, aParams) {
 	}, delay);
 }
 
+function saveBrowserAs(aBrowser, aDestDir, aParams) {
+	saveBrowserAndDo(function(aDocument) {
+		aParams = aParams || {};
+		aParams.uri = aBrowser.currentURI.spec;
+		saveDocumentAs(aDocument, aDestDir, aParams);
+	}, aBrowser);
+}
+
 function saveDocumentAs(aDocument, aDestFile, aParams) {
-	var uri = CAUtils.makeURI(aDocument.defaultView.location.href, null, null);
+	var uri = CAUtils.makeURI(aParams.uri || aDocument.defaultView.location.href, null, null);
 	var saveType = aParams.saveType;
 
 	if (saveType & MultipleTabHandlerConstants.kSAVE_TYPE_TEXT &&
