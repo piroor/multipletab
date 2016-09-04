@@ -92,7 +92,7 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 			sessionObserver.__multipletab__onDrop = sessionObserver.onDrop;
 			sessionObserver.onDrop = function(..aArgs) {
 				var info = {};
-				var tabs = MultipleTabService.getBundledTabsOf(arguments[2].sourceNode, info);
+				var tabs = MultipleTabService.getBundledTabsOf(aArgs[2].sourceNode, info);
 				if (tabs.length) {
 					var wadid = aArgs[0].target.getAttribute('wad_id');
 					tabs.forEach(function(aTab) {
