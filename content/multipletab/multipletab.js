@@ -930,11 +930,6 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		var b = document.getElementById('content');
 		if (b && 'swapBrowsersAndCloseOther' in b) {
-			// Replacing of gBrowserInit._delayedStartup() with eval()
-			// breaks the variable scope of the function and break its
-			// functionality completely.
-			// Instead, I use a flag to detect a method is called at the
-			// startup process or not.
 			gBrowserInit.__multipletab___delayedStartup = gBrowserInit._delayedStartup;
 			gBrowserInit._delayedStartup = function(...args) {
 				MultipleTabService.runningDelayedStartup = true;
