@@ -43,17 +43,6 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	
 	
   
-	evalInSandbox : function MTS_evalInSandbox(aCode, aOwner) 
-	{
-		try {
-			var sandbox = new Components.utils.Sandbox(aOwner || 'about:blank');
-			return Components.utils.evalInSandbox(aCode, sandbox);
-		}
-		catch(e) {
-		}
-		return void(0);
-	},
- 
 	get autoScroll() { return this.namespace.autoScroll; }, 
  
 	get isToolbarCustomizing() 
