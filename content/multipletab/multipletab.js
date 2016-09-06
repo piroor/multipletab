@@ -993,11 +993,11 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if ('swapBrowsersAndCloseOther' in aTabBrowser) {
 			aTabBrowser.__multipletab__canDoWindowMove = true;
 			aTabBrowser.__multipletab__swapBrowsersAndCloseOther = aTabBrowser.swapBrowsersAndCloseOther;
-			aTabBrowser.swapBrowsersAndCloseOther = function(...args) {
+			aTabBrowser.swapBrowsersAndCloseOther = function(aOurTab, aRemoteTab, ...args) {
 				if (MultipleTabService.runningDelayedStartup &&
-					MultipleTabService.tearOffSelectedTabsFromRemote())
+					MultipleTabService.tearOffSelectedTabsFromRemote(aRemoteTab))
 					return;
-				return this.__multipletab__swapBrowsersAndCloseOther(...args);
+				return this.__multipletab__swapBrowsersAndCloseOther(aOurTab, aRemoteTab, ...args);
 			};
 		}
 		else {
@@ -3736,13 +3736,12 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		}
 	},
  
-	tearOffSelectedTabsFromRemote : function MTS_tearOffSelectedTabsFromRemote() 
+	tearOffSelectedTabsFromRemote : function MTS_tearOffSelectedTabsFromRemote(aRemoteTab) 
 	{
-		var remoteTab = window.arguments[0];
 		var info = {};
-		var tabs = this.getBundledTabsOf(remoteTab, info);
+		var tabs = this.getBundledTabsOf(aRemoteTab, info);
 		if (tabs.length > 1) {
-			if (this.isDraggingAllTabs(remoteTab)) {
+			if (this.isDraggingAllTabs(aRemoteTab)) {
 				window.close();
 			}
 			else {
