@@ -997,7 +997,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 				if (MultipleTabService.runningDelayedStartup &&
 					MultipleTabService.tearOffSelectedTabsFromRemote())
 					return;
-				return this.__multipletab__swapBrowsersAndCloseOther.apply(this, args);
+				return this.__multipletab__swapBrowsersAndCloseOther(...args);
 			};
 		}
 		else {
