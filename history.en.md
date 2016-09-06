@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Fix regression around animation of non-dragged tabs.
  - 0.8.2016090501
    * Fix regression around drag and drop of non-tab objects onto the tab bar.
  - 0.8.2016090401
