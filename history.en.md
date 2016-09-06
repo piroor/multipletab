@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 0.8.2016090602
+   * Remove needless codes
  - 0.8.2016090601
    * Tear off dragged selected tabs on Firefox 47 and later correctly.
    * Fix regression around animation of non-dragged tabs.
