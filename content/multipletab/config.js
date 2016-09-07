@@ -1,6 +1,4 @@
-Components.utils.import('resource://multipletab-modules/extensions.js', {});
-Components.utils.import('resource://multipletab-modules/namespace.jsm');
-var extensions = getNamespaceFor('piro.sakura.ne.jp')['piro.sakura.ne.jp'].extensions;
+var { extensions } = Components.utils.import('resource://multipletab-modules/extensions.js', {});
 
 Components.utils.import('resource://gre/modules/Services.jsm');
 
