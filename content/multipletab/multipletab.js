@@ -4058,7 +4058,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		}
 	}
   
-}); 
+}, Object); 
 
 function MultipleTabHandlerContentBridge(aTab, aTabBrowser) 
 {
@@ -4134,7 +4134,7 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 				return;
 		}
 	}
-});
+}, Object);
 var MultipleTabHandlerContentBridge = aGlobal.MultipleTabHandlerContentBridge = MultipleTabHandlerContentBridge;
 
 MultipleTabService.prefs = namespace.prefs;
