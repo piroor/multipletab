@@ -203,12 +203,14 @@ MultipleTabService.overrideExtensionsOnInit = function MTS_overrideExtensionsOnI
 				if (backupShiftPref !== null) prefs.setPref(SelfShiftClick, backupShiftPref);
 			}
 		};
-	new window['piro.sakura.ne.jp'].UninstallationListener({
+
+	let { UninstallationListener } = Components.utils.import('resource://multipletab-modules/UninstallationListener.js', {});
+	new UninstallationListener({
 		id : 'multipletab@piro.sakura.ne.jp',
 		onuninstalled : restoreTMPPrefs,
 		ondisabled : restoreTMPPrefs
 	});
-	new window['piro.sakura.ne.jp'].UninstallationListener({
+	new UninstallationListener({
 		id : '{dc572301-7619-498c-a57d-39143191b318}', // Tab Mix Plus
 		onuninstalled : restoreMTHPrefs,
 		ondisabled : restoreMTHPrefs
