@@ -8,6 +8,7 @@
 
 <script src="lib/tabsDragUtils.js" type="application/javascript"/>
 <script src="lib/UninstallationListener.js" type="application/javascript"/>
+<script src="lib/bookmarkMultipleTabs.js" type="application/javascript"/>
 <script src="multipletab.js" type="application/javascript"/>
 <script src="bookmarksOverlay.js" type="application/javascript"/>
 <script src="hacks.js" type="application/javascript"/>
