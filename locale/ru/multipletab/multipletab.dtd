@@ -107,9 +107,6 @@
 <!ENTITY config.contextMenu.caption "Доступные элементы контекстного меню у вкладок">
 <!ENTITY config.contextMenu.removeLeftTabs  "Закрыть вкладки слева (выше)">
 
-<!ENTITY config.menuEditor.description "Вы можете настроить это меню с помощью Menu Editor.">
-<!ENTITY config.menuEditor.link        "Скачать Menu Editor">
-<!ENTITY config.menuEditor.config      "Открыть настройки Menu Editor">
 
 <!ENTITY config.tabs.advanced "Дополнительные">
 

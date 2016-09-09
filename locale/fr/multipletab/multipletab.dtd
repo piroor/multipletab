@@ -107,9 +107,6 @@
 <!ENTITY config.contextMenu.caption "Éléments de menu disponibles dans le menu contextuel des onglets">
 <!ENTITY config.contextMenu.removeLeftTabs  "Fermer les onglets de gauche (ou de dessus)">
 
-<!ENTITY config.menuEditor.description "Il est possible de personnaliser ce menu avec Menu Editor.">
-<!ENTITY config.menuEditor.link        "Télécharger Menu Editor">
-<!ENTITY config.menuEditor.config      "Aller à la configuration de Menu Editor">
 
 <!ENTITY config.tabs.advanced "Avancé">
 

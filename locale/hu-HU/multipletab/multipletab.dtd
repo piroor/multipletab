@@ -111,9 +111,6 @@
 <!ENTITY config.contextMenu.caption "A fülek helyi menüjének kibővítése az alábbiakkal:">
 <!ENTITY config.contextMenu.removeLeftTabs  "Balra (felette) levő lapok bezárása">
 
-<!ENTITY config.menuEditor.description "A menü a Menu Editor segítségével testreszabható.">
-<!ENTITY config.menuEditor.link        "Menu Editor letöltése">
-<!ENTITY config.menuEditor.config      "Menu Editor beállítások">
 
 <!ENTITY config.tabs.advanced "Haladó">
 

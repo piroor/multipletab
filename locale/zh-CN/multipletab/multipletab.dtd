@@ -107,9 +107,6 @@
 <!ENTITY config.contextMenu.caption "在标签的上下文菜单中显示：">
 <!ENTITY config.contextMenu.removeLeftTabs  "关闭左侧（上方）标签">
 
-<!ENTITY config.menuEditor.description "您可以使用 Menu Editor 自定义此菜单。">
-<!ENTITY config.menuEditor.link        "下载 Menu Editor">
-<!ENTITY config.menuEditor.config      "打开 Menu Editor 配置">
 
 <!ENTITY config.tabs.advanced "高级">
 

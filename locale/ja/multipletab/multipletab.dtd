@@ -108,9 +108,6 @@
 <!ENTITY config.contextMenu.caption "タブのコンテキストメニューに追加する項目">
 <!ENTITY config.contextMenu.removeLeftTabs  "左（上）のタブをすべて閉じる">
 
-<!ENTITY config.menuEditor.description "Menu Editorを使ってメニューの内容をカスタマイズできます。">
-<!ENTITY config.menuEditor.link        "Menu Editorをダウンロードする">
-<!ENTITY config.menuEditor.config      "Menu Editorの設定を開く">
 
 <!ENTITY config.tabs.advanced "詳細">
 

@@ -107,9 +107,6 @@
 <!ENTITY config.contextMenu.caption "Verf&#252;gbare Eintr&#228;ge im Tab Kontext-Men&#252;">
 <!ENTITY config.contextMenu.removeLeftTabs  "Schlie&#223;e Tabs auf der linken Seite (oben)">
 
-<!ENTITY config.menuEditor.description "Sie k&#246;nnen dieses Men&#252; mit dem Men&#252;-Editor anpassen.">
-<!ENTITY config.menuEditor.link        "Men&#252;-Editor herunterladen">
-<!ENTITY config.menuEditor.config      "Men&#252;-Editor Konfiguration aufrufen">
 
 <!ENTITY config.tabs.advanced "Advanced">
 

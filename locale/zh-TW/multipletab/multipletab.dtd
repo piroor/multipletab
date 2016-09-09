@@ -107,9 +107,6 @@
 <!ENTITY config.contextMenu.caption "分頁右鍵選單可選項目">
 <!ENTITY config.contextMenu.removeLeftTabs  "關閉左側(上方)分頁">
 
-<!ENTITY config.menuEditor.description "您可以使用 Menu Editor 自訂此選單。">
-<!ENTITY config.menuEditor.link        "下載 Menu Editor">
-<!ENTITY config.menuEditor.config      "進入 Menu Editor 設定">
 
 <!ENTITY config.tabs.advanced "進階">
 

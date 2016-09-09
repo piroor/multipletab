@@ -8,48 +8,21 @@ function init()
 {
 	var { AddonManager } = Components.utils.import('resource://gre/modules/AddonManager.jsm', {});
 
-	const MENU_EDITOR_ID = '{EDA7B1D7-F793-4e03-B074-E6F303317FB0}';
 	const TAB_MIX_PLUS_ID = '{dc572301-7619-498c-a57d-39143191b318}';
 	const TAB_UTILITIES_ID = 'tabutils@ithinc.cn';
 	const SUPER_TAB_MODE_ID = '{752a85d4-68d6-48ae-ab7d-6640f5f75d85}';
 	const PRINT_ALL_TABS_ID = 'printalltabs@peculier.com';
 
 	AddonManager.getAddonsByIDs([
-		MENU_EDITOR_ID,
 		TAB_MIX_PLUS_ID,
 		TAB_UTILITIES_ID,
 		SUPER_TAB_MODE_ID,
 		PRINT_ALL_TABS_ID
 	], function(aAddons) {
-		var menuEditor = aAddons[0];
-		var tabMixPlus = aAddons[1];
-		var tabUtilities = aAddons[2];
-		var superTabMode = aAddons[3];
-		var printAllTabs = aAddons[4];
-
-		[
-			'menuEditorLink-selection',
-			'menuEditorLink-context'
-		].forEach(function(aItem) {
-			aItem = document.getElementById(aItem);
-			aItem.setAttribute('collapsed', true);
-			if (!menuEditor)
-				aItem.removeAttribute('collapsed');
-		});
-
-		[
-			'menuEditorConfig-selection',
-			'menuEditorConfig-context'
-		].forEach(function(aItem) {
-			aItem = document.getElementById(aItem);
-			aItem.setAttribute('collapsed', true);
-			aItem.setAttribute('disabled', true);
-			if (menuEditor) {
-				aItem.removeAttribute('collapsed');
-				if (menuEditor.isActive)
-					aItem.removeAttribute('disabled');
-			}
-		});
+		var tabMixPlus = aAddons[0];
+		var tabUtilities = aAddons[1];
+		var superTabMode = aAddons[2];
+		var printAllTabs = aAddons[3];
 
 		{
 			let printAllTabsCheck = document.getElementById('extensions.multipletab.show.multipletab-selection-printTabs-check');

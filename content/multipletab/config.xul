@@ -391,16 +391,6 @@
 		</vbox>
 		</arrowscrollbox>
 	</groupbox>
-	<vbox>
-		<description flex="1">&config.menuEditor.description;</description>
-		<hbox>
-			<label id="menuEditorLink-selection"
-				class="text-link"
-				value="&config.menuEditor.link;"
-				uri="https://addons.mozilla.org/firefox/addon/710"
-				onclick="openURL(this.getAttribute('uri'))"/>
-		</hbox>
-	</vbox>
 </prefpane>
 
 <prefpane id="prefpane-context-menu" label="&config.tabs.contextMenu;">
@@ -484,16 +474,6 @@
 		</vbox>
 		</arrowscrollbox>
 	</groupbox>
-	<vbox>
-		<description flex="1">&config.menuEditor.description;</description>
-		<hbox>
-			<label id="menuEditorLink-context"
-				class="text-link"
-				value="&config.menuEditor.link;"
-				uri="https://addons.mozilla.org/firefox/addon/710"
-				onclick="openURL(this.getAttribute('uri'))"/>
-		</hbox>
-	</vbox>
 </prefpane>
 
 <prefpane id="prefpane-advanced" label="&config.tabs.advanced;">

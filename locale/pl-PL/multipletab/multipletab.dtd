@@ -107,9 +107,6 @@
 <!ENTITY config.contextMenu.caption "Dostępne elementy menu kontekstowego kart">
 <!ENTITY config.contextMenu.removeLeftTabs  "Zamknij karty po lewej (powyżej)">
 
-<!ENTITY config.menuEditor.description "Możesz dostosować to menu za pomocą programu Menu Editor.">
-<!ENTITY config.menuEditor.link        "Pobierz Menu Editor">
-<!ENTITY config.menuEditor.config      "Idź do konfiguracji programu Menu Editor">
 
 <!ENTITY config.tabs.advanced "Zaawansowane">
 

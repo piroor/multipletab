@@ -107,9 +107,6 @@
 <!ENTITY config.contextMenu.caption "Items disponibles en el menú contextual de las pestañas">
 <!ENTITY config.contextMenu.removeLeftTabs  "Cerrar pestañas a la izquierda (Encima)">
 
-<!ENTITY config.menuEditor.description "Puedes configurar este menú mediante &quot;Menu Editor&quot;">
-<!ENTITY config.menuEditor.link        "Descargar &quot;Menu Editor&quot;">
-<!ENTITY config.menuEditor.config      "Ir a las preferencias de &quot;Menu Editor&quot;">
 
 <!ENTITY config.tabs.advanced "Avanzado">
 
