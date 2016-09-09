@@ -1,8 +1,4 @@
-var { extensions } = Components.utils.import('resource://multipletab-modules/extensions.js', {});
-
 Components.utils.import('resource://gre/modules/Services.jsm');
-
-const MENU_EDITOR_ID = '{EDA7B1D7-F793-4e03-B074-E6F303317FB0}';
 
 var gAutoPopupItems = [];
 var gDelayItems = [];
@@ -10,71 +6,77 @@ var gDragModeRadio;
 
 function init()
 {
-	[
-		'menuEditorLink-selection',
-		'menuEditorLink-context'
-	].forEach(function(aItem) {
-		aItem = document.getElementById(aItem);
-		aItem.setAttribute('collapsed', true);
-		extensions.isInstalled(MENU_EDITOR_ID, { ng : function() {
-			aItem.removeAttribute('collapsed');
-		}});
-	});
+	var { AddonManager } = Components.utils.import('resource://gre/modules/AddonManager.jsm', {});
 
-	[
-		'menuEditorConfig-selection',
-		'menuEditorConfig-context'
-	].forEach(function(aItem) {
-		aItem = document.getElementById(aItem);
-		aItem.setAttribute('collapsed', true);
-		aItem.setAttribute('disabled', true);
-		extensions.isInstalled(MENU_EDITOR_ID, { ok : function() {
-			aItem.removeAttribute('collapsed');
-		}});
-		extensions.isEnabled(MENU_EDITOR_ID, { ok : function() {
-			aItem.removeAttribute('disabled');
-		}});
-	});
+	const MENU_EDITOR_ID = '{EDA7B1D7-F793-4e03-B074-E6F303317FB0}';
+	const TAB_MIX_PLUS_ID = '{dc572301-7619-498c-a57d-39143191b318}';
+	const TAB_UTILITIES_ID = 'tabutils@ithinc.cn';
+	const SUPER_TAB_MODE_ID = '{752a85d4-68d6-48ae-ab7d-6640f5f75d85}';
+	const PRINT_ALL_TABS_ID = 'printalltabs@peculier.com';
 
-	[
-		{
-			ids   : ['printalltabs@peculier.com'],
-			items : ['extensions.multipletab.show.multipletab-selection-printTabs-check']
-		},
-		{
-			ids   : [
-				'{dc572301-7619-498c-a57d-39143191b318}', // Tab Mix Plus
-				'tabutils@ithinc.cn' // Tab Utilities
-			],
-			items : [
-				'extensions.multipletab.show.multipletab-selection-freezeTabs-check',
-				'extensions.multipletab.show.multipletab-selection-protectTabs-check'
-			]
-		},
-		{
-			ids   : [
-				'{dc572301-7619-498c-a57d-39143191b318}', // Tab Mix Plus
-				'tabutils@ithinc.cn', // Tab Utilities
+	AddonManager.getAddonsByIDs([
+		MENU_EDITOR_ID,
+		TAB_MIX_PLUS_ID,
+		TAB_UTILITIES_ID,
+		SUPER_TAB_MODE_ID,
+		PRINT_ALL_TABS_ID
+	], function(aAddons) {
+		var menuEditor = aAddons[0];
+		var tabMixPlus = aAddons[1];
+		var tabUtilities = aAddons[2];
+		var superTabMode = aAddons[3];
+		var printAllTabs = aAddons[4];
 
-				'{752a85d4-68d6-48ae-ab7d-6640f5f75d85}' // Super Tab Mode
-			],
-			items : [
-				'extensions.multipletab.show.multipletab-selection-lockTabs-check'
-			]
-		}
-	].forEach(function(aDefinition) {
-		if (!aDefinition)
-			return;
-		var items = aDefinition.items.map(document.getElementById, document);
-		for (let i = 0, maxi = items.length; i < maxi; i++)
-		{
-			items[i].setAttribute('disabled', true);
-		}
-		aDefinition.ids.forEach(function(aId) {
-			extensions.isAvailable(aId, { ok : function() {
-				aItem.removeAttribute('disabled');
-			}});
+		[
+			'menuEditorLink-selection',
+			'menuEditorLink-context'
+		].forEach(function(aItem) {
+			aItem = document.getElementById(aItem);
+			aItem.setAttribute('collapsed', true);
+			if (!menuEditor)
+				aItem.removeAttribute('collapsed');
 		});
+
+		[
+			'menuEditorConfig-selection',
+			'menuEditorConfig-context'
+		].forEach(function(aItem) {
+			aItem = document.getElementById(aItem);
+			aItem.setAttribute('collapsed', true);
+			aItem.setAttribute('disabled', true);
+			if (menuEditor) {
+				aItem.removeAttribute('collapsed');
+				if (menuEditor.isActive)
+					aItem.removeAttribute('disabled');
+			}
+		});
+
+		{
+			let printAllTabsCheck = document.getElementById('extensions.multipletab.show.multipletab-selection-printTabs-check');
+			if (printAllTabs)
+				printAllTabsCheck.removeAttribute('disabled');
+			else
+				printAllTabsCheck.setAttribute('disabled', true);
+		}
+
+		{
+			let protectItems = [
+					'extensions.multipletab.show.multipletab-selection-freezeTabs-check',
+					'extensions.multipletab.show.multipletab-selection-protectTabs-check'
+				].map(document.getElementById, document);
+			if (tabMixPlus || tabUtilities)
+				protectItems.forEach((aItem) => aItem.removeAttribute('disabled'));
+			else
+				protectItems.forEach((aItem) => aItem.setAttribute('disabled', true));
+		}
+
+		{
+			let lockItem = document.getElementById('extensions.multipletab.show.multipletab-selection-lockTabs-check');
+			if (tabMixPlus || tabUtilities || superTabMode)
+				lockItem.removeAttribute('disabled');
+			else
+				lockItem.setAttribute('disabled', true);
+		}
 	});
 
 	new window['piro.sakura.ne.jp'].arrowScrollBoxScrollHelper('formatTypeBox', 'radio');
@@ -116,11 +118,6 @@ function onDragModeChange()
 		else
 			item.setAttribute('disabled', true);
 	}
-}
-
-function openMenuEditorConfig()
-{
-	extensions.goToOptions(MENU_EDITOR_ID, window);
 }
 
 

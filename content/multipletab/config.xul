@@ -399,9 +399,6 @@
 				value="&config.menuEditor.link;"
 				uri="https://addons.mozilla.org/firefox/addon/710"
 				onclick="openURL(this.getAttribute('uri'))"/>
-			<button id="menuEditorConfig-selection"
-				label="&config.menuEditor.config;"
-				oncommand="openMenuEditorConfig()"/>
 		</hbox>
 	</vbox>
 </prefpane>
@@ -495,9 +492,6 @@
 				value="&config.menuEditor.link;"
 				uri="https://addons.mozilla.org/firefox/addon/710"
 				onclick="openURL(this.getAttribute('uri'))"/>
-			<button id="menuEditorConfig-context"
-				label="&config.menuEditor.config;"
-				oncommand="openMenuEditorConfig()"/>
 		</hbox>
 	</vbox>
 </prefpane>
