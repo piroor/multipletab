@@ -3388,21 +3388,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	// see http://mxr.mozilla.org/mozilla-central/ident?i=TabView__createGroupMenuItem
 	_createMoveToGroupItem : function MTS_createMoveToGroupItem(aGroupItem)
 	{
-		let title = aGroupItem.getTitle().trim();
-		if (!title) {
-			let topChildLabel = aGroupItem.getTopChild().tab.label;
-			let childNum = aGroupItem.getChildren().length;
-			title = gNavigatorBundle.getString('tabview.moveToUnnamedGroup.label');
-			if (childNum > 1 && title) {
-				let num = childNum - 1;
-				title = PluralForm.get(num, title)
-							.replace('#1', topChildLabel)
-							.replace('#2', num);
-			}
-			else {
-				title = topChildLabel;
-			}
-		}
+		let title = aGroupItem.getTitle(true).trim();
 		let item = document.createElement('menuitem');
 		item.setAttribute('label', title);
 		item.setAttribute('group-id', aGroupItem.id);
