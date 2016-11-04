@@ -44,7 +44,7 @@
 		<menuitem id="multipletab-selection-duplicateTabs"
 			label="&popup.selection.duplicateTabs;"
 			oncommand="MultipleTabService.duplicateTabs(MultipleTabService.getSelectedTabs(), event.sourceEvent.shiftKey);"
-			onclick="if (event.button == 1) { MultipleTabService.duplicateTabs(MultipleTabService.getSelectedTabs(), true); this.parentNode.closePopup(); }"/>
+			onclick="if (event.button == 1) { MultipleTabService.duplicateTabs(MultipleTabService.getSelectedTabs(), true); this.parentNode.hidePopup(); }"/>
 		<menuseparator id="multipletab-selection-pin-separator"/>
 		<menuitem id="multipletab-selection-pinTabs"
 			label="&popup.selection.pinTabs;"
@@ -171,7 +171,7 @@
 		<menuitem id="multipletab-context-duplicate"
 			label="&popup.context.duplicate;"
 			oncommand="MultipleTabService.duplicateTabs([gBrowser.mContextTab], event.sourceEvent.shiftKey);"
-			onclick="if (event.button == 1) { MultipleTabService.duplicateTabs([gBrowser.mContextTab], true); this.parentNode.closePopup(); }"
+			onclick="if (event.button == 1) { MultipleTabService.duplicateTabs([gBrowser.mContextTab], true); this.parentNode.hidePopup(); }"
 			multipletab-insertafter="descendant::*[starts-with(@id, 'context_newTab')][1] | child::xul:menuitem[1]"/>
 
 		<menuitem id="multipletab-context-removeSimilar"
