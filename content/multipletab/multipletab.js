@@ -2495,7 +2495,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		var b = this.getTabBrowserFromChild(first);
 		var w = b.ownerDocument.defaultView;
-		var shouldSelectAfter = this.prefs.getPref('extensions.multipletab.selectAfter.duplicate');
+		var shouldSelectAfter = this.prefs.getPref('extensions.multipletab.selectAfter.duplicate') && aTabs.length > 1;
 		var duplicatedTabs;
 
 		var self = this;
