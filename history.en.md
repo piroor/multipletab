@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Unpin selected tabs more safely.
  - 0.8.2016090602
    * Remove needless codes
  - 0.8.2016090601
