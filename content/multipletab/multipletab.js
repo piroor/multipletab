@@ -3240,7 +3240,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	{
 		if (!aTabs) return;
 		var b = this.getTabBrowserFromChild(aTabs[0]);
-		for (let i = 0, maxi = aTabs.length; i < maxi; i++)
+		for (let i = aTabs.length - 1; i > -1; i--)
 		{
 			b.unpinTab(aTabs[i]);
 		}
