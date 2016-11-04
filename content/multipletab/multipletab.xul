@@ -169,7 +169,7 @@
 
 		<menuitem id="multipletab-context-duplicate"
 			label="&popup.context.duplicate;"
-			oncommand="MultipleTabService.duplicateTabs([gBrowser.mContextTab]);"
+			oncommand="MultipleTabService.duplicateTabs([gBrowser.mContextTab], aEvent.button == 1 || aEvent.shiftKey);"
 			multipletab-insertafter="descendant::*[starts-with(@id, 'context_newTab')][1] | child::xul:menuitem[1]"/>
 
 		<menuitem id="multipletab-context-removeSimilar"

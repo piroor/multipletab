@@ -2482,7 +2482,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			});
 	},
  
-	duplicateTabs : function MTS_duplicateTabs(aTabs) 
+	duplicateTabs : function MTS_duplicateTabs(aTabs, aOpenInBackground) 
 	{
 		if (!aTabs || !aTabs.length)
 			return [];
@@ -2500,7 +2500,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 
 		var self = this;
 		var operation = function() {
-			self.duplicateTabsInternal(b, aTabs)
+			self.duplicateTabsInternal(b, aTabs, aOpenInBackground)
 				.then(function(aDuplicatedTabs) {
 					for (let i = 0, maxi = aDuplicatedTabs.length; i < maxi; i++)
 					{
@@ -2535,7 +2535,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		return duplicatedTabs;
 	},
 	
-	duplicateTabsInternal : function MTS_duplicateTabsInternal(aTabBrowser, aTabs) 
+	duplicateTabsInternal : function MTS_duplicateTabsInternal(aTabBrowser, aTabs, aOpenInBackground) 
 	{
 		var max = aTabs.length;
 		if (!max)
@@ -2583,7 +2583,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			})
 			.then(function() {
 				self.clearSelection(b);
-				if (selectedIndex > -1)
+				if (selectedIndex > -1 && !aOpenInBackground)
 					b.selectedTab = duplicatedTabs[selectedIndex];
 			})
 			.then(function(aDuplicatedTabs) {
