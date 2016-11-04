@@ -2,6 +2,7 @@
 
  - master/HEAD
    * Unpin selected tabs more safely.
+   * Now you can duplicate the current tab by Shift-Click or Middle-Click on the menu item.
  - 0.8.2016090602
    * Remove needless codes
  - 0.8.2016090601
