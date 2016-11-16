@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 0.8.2016111701
    * Unpin selected tabs more safely.
    * Now you can duplicate the current tab by Shift-Click or Middle-Click on the menu item.
  - 0.8.2016090602
