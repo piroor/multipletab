@@ -176,7 +176,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	getIndexesFromTabs : function MTS_getIndexesFromTabs(aTabs) 
 	{
-		return Array.slice(aTabs)
+		return [...aTabs]
 				.map(function(aTab) {
 					return aTab._tPos;
 				})
@@ -185,7 +185,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	sortTabs : function MTS_sortTabs(aTabs) 
 	{
-		return Array.slice(aTabs)
+		return [...aTabs]
 				.sort(function(aA, aB) {
 					return aA._tPos - aB._tPos;
 				});
@@ -2287,7 +2287,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	{
 		if (!aTabs || !aTabs.length) return;
 
-		aTabs = Array.slice(aTabs);
+		aTabs = [...aTabs];
 		var b = this.getTabBrowserFromChild(aTabs[0]);
 		var allTabs = this.getTabsArray(b);
 

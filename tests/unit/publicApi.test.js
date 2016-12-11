@@ -52,7 +52,7 @@ test_getSimilarTabsOf.setUp = function() {
 	yield Do(utils.addTab('http://test.example.com/test1'));
 	yield Do(utils.addTab('http://test.example.com/test2'));
 	yield Do(utils.addTab('http://www.example.jp'));
-	tabs = Array.slice(gBrowser.mTabs);
+	tabs = [...gBrowser.mTabs];
 	assert.equals(8, tabs.length);
 };
 function test_getSimilarTabsOf()
@@ -73,7 +73,7 @@ function test_closeTabs()
 	var closedTabs = [tabs[0], tabs[1]];
 	var restTabs = [tabs[2], tabs[3]];
 	sv.closeTabs(closedTabs);
-	assert.equals(restTabs, Array.slice(gBrowser.mTabs));
+	assert.equals(restTabs, [...gBrowser.mTabs]);
 }
 
 test_closeSimilarTabsOf_useEffectiveTLD.setUp = function() {
@@ -81,7 +81,7 @@ test_closeSimilarTabsOf_useEffectiveTLD.setUp = function() {
 	yield Do(utils.addTab('http://test.example.com/test1'));
 	yield Do(utils.addTab('http://test.example.com/test2'));
 	yield Do(utils.addTab('http://www.example.jp'));
-	tabs = Array.slice(gBrowser.mTabs);
+	tabs = [...gBrowser.mTabs];
 	assert.equals(8, tabs.length);
 	this.setPref('extensions.multipletab.useEffectiveTLD', true);
 };
@@ -89,7 +89,7 @@ function test_closeSimilarTabsOf_useEffectiveTLD()
 {
 	var restTabs = [tabs[0], tabs[1], tabs[2], tabs[3], tabs[4], tabs[7]];
 	sv.closeSimilarTabsOf(tabs[4]);
-	assert.equals(restTabs, Array.slice(gBrowser.mTabs));
+	assert.equals(restTabs, [...gBrowser.mTabs]);
 }
 
 test_closeSimilarTabsOf_nouseEffectiveTLD.setUp = function() {
@@ -97,7 +97,7 @@ test_closeSimilarTabsOf_nouseEffectiveTLD.setUp = function() {
 	yield Do(utils.addTab('http://test.example.com/test1'));
 	yield Do(utils.addTab('http://test.example.com/test2'));
 	yield Do(utils.addTab('http://www.example.jp'));
-	tabs = Array.slice(gBrowser.mTabs);
+	tabs = [...gBrowser.mTabs];
 	assert.equals(8, tabs.length);
 	this.setPref('extensions.multipletab.useEffectiveTLD', false);
 };
@@ -105,7 +105,7 @@ function test_closeSimilarTabsOf_nouseEffectiveTLD()
 {
 	var restTabs = [tabs[0], tabs[1], tabs[2], tabs[3], tabs[4], tabs[5], tabs[7]];
 	sv.closeSimilarTabsOf(tabs[5]);
-	assert.equals(restTabs, Array.slice(gBrowser.mTabs));
+	assert.equals(restTabs, [...gBrowser.mTabs]);
 }
 
 function test_closeOtherTabs()
@@ -113,7 +113,7 @@ function test_closeOtherTabs()
 	var closedTabs = [tabs[0], tabs[1]];
 	var restTabs = [tabs[2], tabs[3]];
 	sv.closeOtherTabs(restTabs);
-	assert.equals(restTabs, Array.slice(gBrowser.mTabs));
+	assert.equals(restTabs, [...gBrowser.mTabs]);
 }
 
 function test_reloadTabs()
@@ -209,7 +209,7 @@ function test_duplicateTabs()
 
 	yield 500;
 
-	var resultTabs = Array.slice(gBrowser.mTabs);
+	var resultTabs = [...gBrowser.mTabs];
 	assert.equals(7, resultTabs.length);
 	assert.equals(
 		resultTabs[0].linkedBrowser.currentURI.spec,
@@ -242,7 +242,7 @@ test_splitWindowFromTabs.setUp = function() {
 test_splitWindowFromTabs.tearDown = function() {
 	if (newWin) {
 		if (newWin.gBrowser) {
-			Array.slice(newWin.gBrowser.mTabs).forEach(function(aTab, aIndex) {
+			[...newWin.gBrowser.mTabs].forEach(function(aTab, aIndex) {
 				if (aIndex) newWin.gBrowser.removeTab(aTab);
 			});
 		}
@@ -265,9 +265,9 @@ function test_splitWindowFromTabs()
 	yield 2000;
 	assert.equals(oldCount+1, utils.getChromeWindows({ type : 'navigator:browser' }).length);
 
-	assert.equals(restTabs, Array.slice(tabs[0].ownerDocument.defaultView.gBrowser.mTabs));
+	assert.equals(restTabs, [...tabs[0].ownerDocument.defaultView.gBrowser.mTabs]);
 
-	var newTabs = Array.slice(newWin.gBrowser.mTabs);
+	var newTabs = [...newWin.gBrowser.mTabs];
 	assert.equals(
 		movedTabs,
 		newTabs.map(function(aTab) {

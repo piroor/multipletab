@@ -163,7 +163,7 @@ function test_filterBlankTabs()
 
 test_formatURIsForClipboard.setUp = function() {
 	yield Do(utils.addTab('data:text/html,<title>$1</title>hello'));
-	tabs = Array.slice(gBrowser.mTabs);
+	tabs = [...gBrowser.mTabs];
 	assert.equals(5, tabs.length);
 };
 function test_formatURIsForClipboard()
@@ -247,7 +247,7 @@ test_calculateDeltaForNewPosition.setUp = function() {
 	yield Do(utils.addTab('about:blank'));
 	yield Do(utils.addTab('about:blank'));
 	yield Do(utils.addTab('about:blank'));
-	tabs = Array.slice(gBrowser.mTabs);
+	tabs = [...gBrowser.mTabs];
 	assert.equals(8, tabs.length);
 };
 function test_calculateDeltaForNewPosition()
@@ -265,7 +265,7 @@ function test_calculateDeltaForNewPosition()
 	// 0, 1, 2, [3], [4], [*5*], [6], [7]
 	// => [*5*], 0, 1, 2, [3], [4], [6], [7]
 	// => [3], [4], [*5*], [6], [7], 0, 1, 2
-	tabs = Array.slice(gBrowser.mTabs);
+	tabs = [...gBrowser.mTabs];
 	gBrowser.moveTabTo(tabs[5], 0);
 	assert.equals(0, tabs[5]._tPos);
 	assert.equals(
@@ -276,7 +276,7 @@ function test_calculateDeltaForNewPosition()
 	// [0], 1, [*2*], 3, [4], 5, [6], 7
 	// => [0], 1, 3, [4], 5, [*2*], [6], 7
 	// => 1, 3, 5, [0], [*2*], [4], [6], 7
-	tabs = Array.slice(gBrowser.mTabs);
+	tabs = [...gBrowser.mTabs];
 	gBrowser.moveTabTo(tabs[2], 5);
 	assert.equals(5, tabs[2]._tPos);
 	assert.equals(
@@ -287,7 +287,7 @@ function test_calculateDeltaForNewPosition()
 	// [0], 1, [2], 3, [*4*], 5, [6], 7
 	// => [0], 1, [*4*], [2], 3, 5, [6], 7
 	// => 1, [0], [2], [*4*], [6], 3, 5, 7
-	tabs = Array.slice(gBrowser.mTabs);
+	tabs = [...gBrowser.mTabs];
 	gBrowser.moveTabTo(tabs[4], 2);
 	assert.equals(2, tabs[4]._tPos);
 	assert.equals(

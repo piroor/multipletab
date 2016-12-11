@@ -17,7 +17,7 @@ function setUp()
 	yield Do(utils.addTab('about:config'));
 	yield Do(utils.addTab('../fixtures/test.html?query1=value1&query2=value2'));
 	gBrowser.removeTab(gBrowser.selectedTab);
-	tabs = Array.slice(gBrowser.mTabs);
+	tabs = [...gBrowser.mTabs];
 	assert.equals(4, tabs.length);
 }
 
