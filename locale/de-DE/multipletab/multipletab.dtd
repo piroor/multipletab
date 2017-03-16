@@ -73,7 +73,7 @@
 <!ENTITY config.saveType.select  "Aus dem Men&#252; w&#228;hlen">
 
 <!ENTITY config.useEffectiveTLD.caption  "Auffinden von &quot;&#228;hnlichen Tabs&quot;">
-<!ENTITY config.useEffectiveTLD.enabled  "nach Domain (&quot;aaa.example.com&quot; und &quot;bbb.example.com&quot; sind keine &#228;hnlichen Tabs)">
+<!ENTITY config.useEffectiveTLD.enabled  "nach Domain (&quot;aaa.example.com&quot; und &quot;bbb.example.com&quot; sind &#228;hnliche Tabs)">
 <!ENTITY config.useEffectiveTLD.disabled "nach Host (&quot;aaa.example.com&quot; und &quot;bbb.example.com&quot; sind keine &#228;hnlichen Tabs)">
 
 <!ENTITY config.tabs.clipboard "Kopieren">
