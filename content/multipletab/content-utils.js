@@ -48,6 +48,7 @@
 						title    : aMessage.json.params.title,
 						lineFeed : aMessage.json.params.lineFeed
 					});
+					mydump('text = '+text);
 					global.sendAsyncMessage(MultipleTabHandlerConstants.MESSAGE_TYPE, {
 						command : MultipleTabHandlerConstants.COMMAND_REPORT_COPY_TEXT,
 						id      : id,
@@ -55,10 +56,11 @@
 					});
 				}
 				catch(e) {
+					mydump('error = '+e);
 					global.sendAsyncMessage(MultipleTabHandlerConstants.MESSAGE_TYPE, {
 						command : MultipleTabHandlerConstants.COMMAND_REPORT_COPY_TEXT,
 						id      : id,
-						text    : ''
+						text    : (DEBUG ? String(e) : '' )
 					});
 				}
 				return;

@@ -72,8 +72,17 @@ function isFormatRequiresLoaded(aFormat) {
 }
 
 function mayDecodeURI(aURI) {
-	if (!aURI || Services.prefs.getBoolPref('network.standard-url.escape-utf8'))
+	if (!aURI)
 		return aURI;
+	var escapeUTF8 = false;
+	try {
+		escapeUTF8 = Services.prefs.getBoolPref('network.standard-url.escape-utf8')
+	}
+	catch(e) {
+	}
+	if (escapeUTF8)
+		return aURI;
+
 	// See chrome://browser/content/browser.js
 	var window = Services.wm.getMostRecentWindow('navigator:browser');
 	if (window && 'losslessDecodeURI' in window) try {
