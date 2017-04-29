@@ -4058,15 +4058,20 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 		this.mTab = aTab;
 		this.mTabBrowser = aTabBrowser;
 		this.handleMessage = this.handleMessage.bind(this);
+		this.commandQueue = [];
 		this.toCopyTextResolvers = {};
 
 		var manager = window.messageManager;
 		manager.addMessageListener(this.MESSAGE_TYPE, this.handleMessage);
+
+		this.mTab.addEventListener('TabBrowserInserted', this, false);
 	},
 	destroy : function MTHCB_destroy()
 	{
 		var manager = window.messageManager;
 		manager.removeMessageListener(this.MESSAGE_TYPE, this.handleMessage);
+
+		this.mTab.removeEventListener('TabBrowserInserted', this, false);
 
 		delete this.mTab;
 		delete this.mTabBrowser;
@@ -4074,11 +4079,24 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 	},
 	sendAsyncCommand : function MTHCB_sendAsyncCommand(aCommandType, aCommandParams)
 	{
-		var manager = this.mTab.linkedBrowser.messageManager;
-		manager.sendAsyncMessage(this.MESSAGE_TYPE, {
-			command : aCommandType,
-			params  : aCommandParams || {}
+		this.commandQueue.push({
+			type   : aCommandType,
+			params : aCommandParams
 		});
+		if (this.mTab.linkedPanel) // already  initialized
+			this.processQueuedAsyncCommands();
+	},
+	processQueuedAsyncCommands : function MTHCB_processQueuedAsyncCommands()
+	{
+		var manager = this.mTab.linkedBrowser.messageManager;
+		for (let command of this.commandQueue)
+		{
+			manager.sendAsyncMessage(this.MESSAGE_TYPE, {
+				command : command.type,
+				params  : command.params || {}
+			});
+		}
+		this.commandQueue = [];
 	},
 	makeBlank : function MTHCB_makeBlank()
 	{
@@ -4118,6 +4136,14 @@ MultipleTabHandlerContentBridge.prototype = inherit(MultipleTabHandlerConstants,
 					resolver(aMessage.json.text);
 				}
 				return;
+		}
+	},
+	handleEvent : function MTHCB_handleEvent(aEvent)
+	{
+		switch (aEvent.type)
+		{
+			case 'TabBrowserInserted':
+				return this.processQueuedAsyncCommands();
 		}
 	}
 }, Object);
