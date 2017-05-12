@@ -773,6 +773,9 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	getCloseboxFromTab : function MTS_getCloseboxFromTab(aTab) 
 	{
 		var finder = function findCloseBox(aNode) {
+				if (aNode.nodeType != aNode.ELEMENT_NODE)
+					return null;
+
 				if (aNode.localName == 'toolbarbutton' &&
 					aNode.className.indexOf('tab-close-button') > -1)
 					return aNode;
