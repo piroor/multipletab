@@ -1,6 +1,10 @@
 # History
 
  - master/HEAD
+   * Works on Nightly 56.0a1.
+   * Drop support for Firefox 51 and older versions.
+   * Allow to drop multiple local files to the tab bar, on Firefox 52 and later.
+   * Fix German label for `config.useEffectiveTLD.enabled` (thanks to Ulf Rompe!)
  - 0.8.2016111701
    * Unpin selected tabs more safely.
    * Now you can duplicate the current tab by Shift-Click or Middle-Click on the menu item.
