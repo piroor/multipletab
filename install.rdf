@@ -158,6 +158,7 @@
 		<em:contributor>Tetsuharu OHZEKI (code cleanup)</em:contributor>
 		<em:contributor>Rikk (Firefox 29 support)</em:contributor>
 		<em:translator>mpeters and saskia_br (de-DE locale)</em:translator>
+		<em:translator>Ulf Rompe (de-DE locale)</em:translator>
       </RDF:Description>
     </em:localized>
     <em:localized>
