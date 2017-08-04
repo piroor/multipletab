@@ -9,10 +9,10 @@ function test_isEventFiredOnTabIcon()
 	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubByClass('tab-text', node)));
 	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubByClass('tab-close-button', node)));
 	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubFor(node)));
-	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubFor(gBrowser.mTabContainer)));
+	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubFor(gBrowser.tabContainer)));
 	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubFor(gBrowser)));
-	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
-	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
+	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubByClass('tabs-alltabs-button', gBrowser.tabContainer)));
+	assert.isFalse(sv.isEventFiredOnTabIcon(createEventStubByClass('close-button tabs-closebutton', gBrowser.tabContainer)));
 }
 
 function test_isEventFiredOnClickable()
@@ -24,10 +24,10 @@ function test_isEventFiredOnClickable()
 	assert.isFalse(sv.isEventFiredOnClickable(createEventStubByClass('tab-text', node)));
 	assert.isTrue(sv.isEventFiredOnClickable(createEventStubByClass('tab-close-button', node)));
 	assert.isFalse(sv.isEventFiredOnClickable(createEventStubFor(node)));
-	assert.isFalse(sv.isEventFiredOnClickable(createEventStubFor(gBrowser.mTabContainer)));
+	assert.isFalse(sv.isEventFiredOnClickable(createEventStubFor(gBrowser.tabContainer)));
 	assert.isFalse(sv.isEventFiredOnClickable(createEventStubFor(gBrowser)));
-	assert.isTrue(sv.isEventFiredOnClickable(createEventStubByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
-	assert.isTrue(sv.isEventFiredOnClickable(createEventStubByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
+	assert.isTrue(sv.isEventFiredOnClickable(createEventStubByClass('tabs-alltabs-button', gBrowser.tabContainer)));
+	assert.isTrue(sv.isEventFiredOnClickable(createEventStubByClass('close-button tabs-closebutton', gBrowser.tabContainer)));
 }
 
 function test_getCloseboxFromEvent()
@@ -39,10 +39,10 @@ function test_getCloseboxFromEvent()
 	assert.isNull(sv.getCloseboxFromEvent(createEventStubByClass('tab-text', node)));
 	assert.isNotNull(sv.getCloseboxFromEvent(createEventStubByClass('tab-close-button', node)));
 	assert.isNull(sv.getCloseboxFromEvent(createEventStubFor(node)));
-	assert.isNull(sv.getCloseboxFromEvent(createEventStubFor(gBrowser.mTabContainer)));
+	assert.isNull(sv.getCloseboxFromEvent(createEventStubFor(gBrowser.tabContainer)));
 	assert.isNull(sv.getCloseboxFromEvent(createEventStubFor(gBrowser)));
-	assert.isNull(sv.getCloseboxFromEvent(createEventStubByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
-	assert.isNull(sv.getCloseboxFromEvent(createEventStubByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
+	assert.isNull(sv.getCloseboxFromEvent(createEventStubByClass('tabs-alltabs-button', gBrowser.tabContainer)));
+	assert.isNull(sv.getCloseboxFromEvent(createEventStubByClass('close-button tabs-closebutton', gBrowser.tabContainer)));
 }
 
 function test_isAccelKeyPressed()
@@ -90,10 +90,10 @@ function test_getTabFromEvent()
 	assert.equals(node, sv.getTabFromEvent(createEventStubByClass('tab-text', node)));
 	assert.equals(node, sv.getTabFromEvent(createEventStubByClass('tab-close-button', node)));
 	assert.equals(node, sv.getTabFromEvent(createEventStubFor(node)));
-	assert.isNull(sv.getTabFromEvent(createEventStubFor(gBrowser.mTabContainer)));
+	assert.isNull(sv.getTabFromEvent(createEventStubFor(gBrowser.tabContainer)));
 	assert.isNull(sv.getTabFromEvent(createEventStubFor(gBrowser)));
-	assert.isNull(sv.getTabFromEvent(createEventStubByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
-	assert.isNull(sv.getTabFromEvent(createEventStubByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
+	assert.isNull(sv.getTabFromEvent(createEventStubByClass('tabs-alltabs-button', gBrowser.tabContainer)));
+	assert.isNull(sv.getTabFromEvent(createEventStubByClass('close-button tabs-closebutton', gBrowser.tabContainer)));
 }
 
 function test_getTabBrowserFromChild()
@@ -105,10 +105,10 @@ function test_getTabBrowserFromChild()
 	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tab-text', node)));
 	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tab-close-button', node)));
 	assert.equals(gBrowser, sv.getTabBrowserFromChild(node));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(gBrowser.mTabContainer));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(gBrowser.tabContainer));
 	assert.equals(gBrowser, sv.getTabBrowserFromChild(gBrowser));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('tabs-alltabs-button', gBrowser.tabContainer)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChild(getChildByClass('close-button tabs-closebutton', gBrowser.tabContainer)));
 	assert.isNull(sv.getTabBrowserFromChild(content.document.documentElement));
 	assert.isNull(sv.getTabBrowserFromChild(gBrowser.parentNode));
 
@@ -119,10 +119,10 @@ function test_getTabBrowserFromChild()
 	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tab-text', node)));
 	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tab-close-button', node)));
 	assert.equals(gBrowser, sv.getTabBrowserFromChildren(node));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(gBrowser.mTabContainer));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(gBrowser.tabContainer));
 	assert.equals(gBrowser, sv.getTabBrowserFromChildren(gBrowser));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tabs-alltabs-button', gBrowser.mTabContainer)));
-	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('close-button tabs-closebutton', gBrowser.mTabContainer)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('tabs-alltabs-button', gBrowser.tabContainer)));
+	assert.equals(gBrowser, sv.getTabBrowserFromChildren(getChildByClass('close-button tabs-closebutton', gBrowser.tabContainer)));
 	assert.isNull(sv.getTabBrowserFromChildren(content.document.documentElement));
 	assert.isNull(sv.getTabBrowserFromChildren(gBrowser.parentNode));
 }
@@ -145,7 +145,7 @@ function test_getNextTab()
 	assert.equals(tabs[1], sv.getNextTab(tabs[0]));
 	assert.equals(tabs[3], sv.getNextTab(tabs[2]));
 	assert.isNull(sv.getNextTab(tabs[3]));
-	assert.isNull(sv.getNextTab(gBrowser.mTabContainer));
+	assert.isNull(sv.getNextTab(gBrowser.tabContainer));
 }
 
 function test_getPreviousTab()
@@ -153,7 +153,7 @@ function test_getPreviousTab()
 	assert.equals(tabs[0], sv.getPreviousTab(tabs[1]));
 	assert.equals(tabs[2], sv.getPreviousTab(tabs[3]));
 	assert.isNull(sv.getPreviousTab(tabs[0]));
-	assert.isNull(sv.getPreviousTab(gBrowser.mTabContainer));
+	assert.isNull(sv.getPreviousTab(gBrowser.tabContainer));
 }
 
 function test_filterBlankTabs()

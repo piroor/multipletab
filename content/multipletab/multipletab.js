@@ -129,7 +129,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	isVerticalTabBar : function(aTabBrowser) 
 	{
 		aTabBrowser = this.getTabBrowserFromChild(aTabBrowser) || this.browser
-		var box = aTabBrowser.mTabContainer.mTabstrip || aTabBrowser.mTabContainer ;
+		var box = aTabBrowser.tabContainer.mTabstrip || aTabBrowser.tabContainer ;
 		return ((box.getAttribute('orient') || window.getComputedStyle(box, '').getPropertyValue('-moz-box-orient')) == 'vertical');
 	},
  
@@ -201,7 +201,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			)
 			return getArrayFromXPathResult(
 					'descendant::xul:tab[@'+this.kSELECTED+'="true" and not(@hidden="true")]',
-					(aSource || this.browser).mTabContainer
+					(aSource || this.browser).tabContainer
 				);
 
 		return window['piro.sakura.ne.jp'].tabsDragUtils.getDraggedTabs(aSource);
@@ -221,7 +221,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	{
 		return getArrayFromXPathResult(
 				'descendant::xul:tab[@'+this.kREADY_TO_CLOSE+'="true" and not(@hidden="true")]',
-				(aTabBrowser || this.browser).mTabContainer
+				(aTabBrowser || this.browser).tabContainer
 			);
 	},
  
@@ -384,7 +384,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	{
 		return evaluateXPath(
 				'descendant::xul:tab[not(@hidden="true")]',
-				aTabBrowser.mTabContainer
+				aTabBrowser.tabContainer
 			);
 	},
  
@@ -398,7 +398,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (aIndex < 0) return null;
 		return evaluateXPath(
 				'descendant::xul:tab['+(aIndex+1)+']',
-				aTabBrowser.mTabContainer,
+				aTabBrowser.tabContainer,
 				XPathResult.FIRST_ORDERED_NODE_TYPE
 			).singleNodeValue;
 	},
@@ -1009,7 +1009,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	
 	initTabbar : function MTS_initTabbar(aTabBrowser) 
 	{
-		var tabContainer = aTabBrowser.mTabContainer;
+		var tabContainer = aTabBrowser.tabContainer;
 		tabContainer.addEventListener('TabSelect', this, true);
 		tabContainer.addEventListener('TabOpen',   this, true);
 		tabContainer.addEventListener('TabClose',  this, true);
@@ -1084,7 +1084,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 			return;
 
 		var b = this.getTabBrowserFromChild(aTab);
-		var tabContainer = b.mTabContainer;
+		var tabContainer = b.tabContainer;
 		var strip = tabContainer.parentNode;
 		this._listeningTabbar = strip;
 
@@ -1138,7 +1138,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
  
 	destroyTabbar : function MTS_destroyTabbar(aTabBrowser) 
 	{
-		var tabContainer = aTabBrowser.mTabContainer;
+		var tabContainer = aTabBrowser.tabContainer;
 		tabContainer.removeEventListener('TabSelect', this, true);
 		tabContainer.removeEventListener('TabOpen',   this, true);
 		tabContainer.removeEventListener('TabClose',  this, true);
@@ -1372,7 +1372,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		if (!target.browser)
 			return;
 
-		var selected = UndoTabService.getTargetById(aSelected, target.browser.mTabContainer);
+		var selected = UndoTabService.getTargetById(aSelected, target.browser.tabContainer);
 		if (selected)
 			target.browser.selectedTab = selected;
 	},
@@ -1405,7 +1405,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 				if (this.tabShiftClickMode != this.TAB_CLICK_MODE_SELECT)
 					return;
 
-				let tabs = b.mTabContainer.childNodes;
+				let tabs = b.tabContainer.childNodes;
 				let lastManuallySelectedTab = this.getLastManuallySelectedTab(b);
 				if (lastManuallySelectedTab) {
 					/**
@@ -1777,7 +1777,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 	processAutoScroll : function MTS_processAutoScroll(aEvent)
 	{
 		var b = this.getTabBrowserFromChild(aEvent.originalTarget) || this.browser;
-		var arrowscrollbox = b.mTabContainer.mTabstrip;
+		var arrowscrollbox = b.tabContainer.mTabstrip;
 		if (aEvent.originalTarget == document.getAnonymousElementByAttribute(arrowscrollbox, 'class', 'scrollbutton-up')) {
 			arrowscrollbox._startScroll(-1);
 		}
@@ -2787,7 +2787,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 					);
 				}
 
-				var selected = UndoTabService.getTargetById(data.our.selected, data.our.browser.mTabContainer);
+				var selected = UndoTabService.getTargetById(data.our.selected, data.our.browser.tabContainer);
 				if (selected)
 					our.browser.selectedTab = selected;
 
@@ -3746,7 +3746,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		try {
 			var xpathResult = evaluateXPath(
 					'descendant::xul:tab[@'+this.kSELECTED+' = "true"]',
-					(aTabBrowser || this.browser).mTabContainer,
+					(aTabBrowser || this.browser).tabContainer,
 					XPathResult.FIRST_ORDERED_NODE_TYPE
 				);
 			return xpathResult.singleNodeValue ? true : false ;
@@ -3962,7 +3962,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var b = this.getTabBrowserFromChild(aSource) || this.browser;
 		return getArrayFromXPathResult(
 				'descendant::xul:tab[@'+this.kIN_UNDETERMINED_RANGE+'="true" and not(@hidden="true")]',
-				b.mTabContainer
+				b.tabContainer
 			);
 	},
  
