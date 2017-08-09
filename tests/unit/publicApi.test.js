@@ -176,7 +176,7 @@ function test_saveTabs(aParameter)
 	var count = 0;
 	while (files.hasMoreElements() && count < 100)
 	{
-		let file = files.getNext().QueryInterface(Ci.nsILocalFile);
+		let file = files.getNext().QueryInterface(Ci.nsIFile);
 		let matched = false;
 		for (let i in aParameter.files)
 		{

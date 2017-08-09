@@ -155,7 +155,7 @@ function ensureLocalFile(aFileOrPath) {
 		return aFileOrPath;
 
 	let file = Cc['@mozilla.org/file/local;1']
-	                .createInstance(Ci.nsILocalFile);
+	                .createInstance(Ci.nsIFile);
 	file.initWithPath(aFileOrPath);
 	return file;
 }
