@@ -2395,7 +2395,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		var picker = Cc['@mozilla.org/filepicker;1']
 						.createInstance(Ci.nsIFilePicker);
 		picker.init(window, aTitle, picker.modeGetFolder);
-		var downloadDir = this.prefs.getPref('browser.download.dir', Ci.nsILocalFile);
+		var downloadDir = this.prefs.getPref('browser.download.dir', Ci.nsIFile);
 		if (downloadDir) picker.displayDirectory = downloadDir;
 		picker.appendFilters(picker.filterAll);
 
@@ -2415,7 +2415,7 @@ var MultipleTabService = aGlobal.MultipleTabService = inherit(MultipleTabHandler
 		return new Promise((function(aResolve, aReject) {
 			picker.open({ done: function(aResult) {
 				if (aResult == picker.returnOK) {
-					let folder = picker.file.QueryInterface(Ci.nsILocalFile);
+					let folder = picker.file.QueryInterface(Ci.nsIFile);
 					aResolve(findExistingFolder(folder));
 				}
 				else {
