@@ -18,6 +18,26 @@ const kTSTAPI_GET_TAB_STATE        = 'get-tab-state';
 const kTSTAPI_ADD_TAB_STATE        = 'add-tab-state';
 const kTSTAPI_REMOVE_TAB_STATE     = 'remove-tab-state';
 
+function clearSelection(aWindowId) {
+  browser.runtime.sendMessage(kTST_ID, {
+    type:   kTSTAPI_REMOVE_TAB_STATE,
+    tabs:   '*',
+    window: aWindowId,
+    state:  'selected'
+  });
+}
+
+function setSelection(aTabIds, aSelected) {
+  if (!Array.isArray(aTabIds))
+    aTabIds = [aTabIds];
+
+  browser.runtime.sendMessage(kTST_ID, {
+    type:  aSelected ? kTSTAPI_ADD_TAB_STATE : kTSTAPI_REMOVE_TAB_STATE,
+    tabs:  aTabIds,
+    state: 'selected'
+  });
+}
+
 var gInSelectionSession = false;
 
 function onMessageExternal(aMessage, aSender) {
@@ -28,12 +48,7 @@ function onMessageExternal(aMessage, aSender) {
         return false;
 
       if (!aMessage.ctrlKey && !aMessage.shiftKey) {
-        // clear selection
-        browser.runtime.sendMessage(kTST_ID, {
-          type:  kTSTAPI_REMOVE_TAB_STATE,
-          tabs:  '*',
-          state: 'selected'
-        });
+        clearSelection(aMessage.window);
         gInSelectionSession = false;
         return;
       }
@@ -54,50 +69,29 @@ function onMessageExternal(aMessage, aSender) {
       if (aMessage.ctrlKey) {
         // toggle selection of the tab and all collapsed descendants
         if (aMessage.tab != activeTab.id &&
-            activeTab.states.indexOf('selected') < 0 &&
             !gInSelectionSession) {
-          browser.runtime.sendMessage(kTST_ID, {
-            type:  kTSTAPI_ADD_TAB_STATE,
-            tab:   activeTab.tab,
-            state: 'selected'
-          });
+          setSelection(activeTab.tab, true);
         }
-        browser.runtime.sendMessage(kTST_ID, {
-          type:  aMessage.states.indexOf('selected') < 0 ?
-                   kTSTAPI_ADD_TAB_STATE :
-                   kTSTAPI_REMOVE_TAB_STATE,
-          tabs:  tabIds,
-          state: 'selected'
-        });
+        setSelection(tabIds, aMessage.states.indexOf('selected') < 0);
         gInSelectionSession = true;
         return true;
       }
       else if (aMessage.shiftKey) {
         // select the clicked tab and tabs between last activated tab
-        browser.runtime.sendMessage(kTST_ID, {
-          type:  kTSTAPI_REMOVE_TAB_STATE,
-          tabs:  '*',
-          state: 'selected'
-        });
-        let tabs = await browser.runtime.sendMessage(kTST_ID, {
-          type:   kTSTAPI_GET_TABS,
-          window: aMessage.window
-        });
+        clearSelection(aMessage.window);
+        let window = await browser.windows.get(aMessage.window, { populate: true });
+        let allTabIds = window.tabs.map(aTab => aTab.id);
         let inSelection = false;
         let betweenTabIds = activeTab.id == aMessage.tab ?
                               [] :
-                              tabs.ids.filter(aTabId => {
+                              allTabIds.filter(aTabId => {
                                 let isBoundary = aTabId == activeTab.id ||
                                                  aTabId == aMessage.tab;
                                 if (isBoundary)
                                   inSelection = !inSelection;
                                 return isBoundary || inSelection;
                               });
-        browser.runtime.sendMessage(kTST_ID, {
-          type:  kTSTAPI_ADD_TAB_STATE,
-          tabs:  betweenTabIds.concat(tabIds),
-          state: 'selected'
-        });
+        setSelection(betweenTabIds.concat(tabIds), true);
         gInSelectionSession = true;
         return true;
       }
