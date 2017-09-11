@@ -22,7 +22,7 @@ browser.runtime.sendMessage(kTST_ID, {
 function onMessageExternal(aMessage, aSender) {
   console.log('onMessageExternal: ', aMessage, aSender);
   switch (aMessage.type) {
-    case kTSTAPI_TAB_CLICKED: {
+    case kTSTAPI_NOTIFY_TAB_CLICKED: {
     }; break;
   }
 }
