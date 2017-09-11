@@ -6,6 +6,7 @@
   "description": "Provides ability to manage multiple tabs at a time.",
   "permissions": [
     "activeTab",
+    "management",
     "tabs"
   ],
   "background": {

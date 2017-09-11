@@ -15,9 +15,6 @@ const kTSTAPI_IS_SUBTREE_COLLAPSED      = `${kTST_ID}:request:is-subtree-collaps
 const kTSTAPI_HAS_CHILD_TABS            = `${kTST_ID}:request:has-child-tabs`;
 const kTSTAPI_GET_DESCENDANT_TABS       = `${kTST_ID}:request:get-descendant-tabs`;
 
-browser.runtime.sendMessage(kTST_ID, {
-  type: kTSTAPI_REGISTER_LISTENER_ADDON
-});
 
 function onMessageExternal(aMessage, aSender) {
   console.log('onMessageExternal: ', aMessage, aSender);
@@ -28,4 +25,22 @@ function onMessageExternal(aMessage, aSender) {
 }
 
 browser.runtime.onMessageExternal.addListener(onMessageExternal);
+
+function registerSelf() {
+  browser.runtime.sendMessage(kTST_ID, {
+    type: kTSTAPI_REGISTER_LISTENER_ADDON
+  });
+}
+
+browser.management.get(kTST_ID).then(registerSelf);
+/*
+browser.management.onInstalled(aAddon => {
+  if (aAddon.id == kTST_ID)
+    registerSelf();
+});
+browser.management.onEnabled(aAddon => {
+  if (aAddon.id == kTST_ID)
+    registerSelf();
+});
+*/
 
