@@ -11,8 +11,6 @@ const kTSTAPI_UNREGISTER_SELF      = 'unregister-self';
 const kTSTAPI_NOTIFY_TAB_CLICKED   = 'tab-clicked';
 const kTSTAPI_IS_SUBTREE_COLLAPSED = 'is-subtree-collapsed';
 const kTSTAPI_HAS_CHILD_TABS       = 'has-child-tabs';
-const kTSTAPI_GET_ACTIVE_TAB       = 'get-active-tab';
-const kTSTAPI_GET_TABS             = 'get-tabs';
 const kTSTAPI_GET_DESCENDANT_TABS  = 'get-descendant-tabs';
 const kTSTAPI_GET_TAB_STATE        = 'get-tab-state';
 const kTSTAPI_ADD_TAB_STATE        = 'add-tab-state';
@@ -53,9 +51,11 @@ function onMessageExternal(aMessage, aSender) {
         return;
       }
 
-      let activeTab = await browser.runtime.sendMessage(kTST_ID, {
-        type: kTSTAPI_GET_ACTIVE_TAB
+      let activeTab = await browser.tabs.query({
+        active:   true,
+        windowId: aMessage.window
       });
+      activeTab = activeTab[0];
 
       let tabIds = [aMessage.tab];
       if (aMessage.states.indexOf('subtree-collapsed') > -1) {
@@ -70,7 +70,7 @@ function onMessageExternal(aMessage, aSender) {
         // toggle selection of the tab and all collapsed descendants
         if (aMessage.tab != activeTab.id &&
             !gInSelectionSession) {
-          setSelection(activeTab.tab, true);
+          setSelection(activeTab.id, true);
         }
         setSelection(tabIds, aMessage.states.indexOf('selected') < 0);
         gInSelectionSession = true;
