@@ -12,6 +12,7 @@ const kTSTAPI_NOTIFY_TAB_CLICKED   = 'tab-clicked';
 const kTSTAPI_IS_SUBTREE_COLLAPSED = 'is-subtree-collapsed';
 const kTSTAPI_HAS_CHILD_TABS       = 'has-child-tabs';
 const kTSTAPI_GET_ACTIVE_TAB       = 'get-active-tab';
+const kTSTAPI_GET_TABS             = 'get-tabs';
 const kTSTAPI_GET_DESCENDANT_TABS  = 'get-descendant-tabs';
 const kTSTAPI_GET_TAB_STATE        = 'get-tab-state';
 const kTSTAPI_ADD_TAB_STATE        = 'add-tab-state';
@@ -51,6 +52,7 @@ function onMessageExternal(aMessage, aSender) {
       }
 
       if (aMessage.ctrlKey) {
+        // toggle selection of the tab and all collapsed descendants
         if (aMessage.tab != activeTab.id &&
             activeTab.states.indexOf('selected') < 0 &&
             !gInSelectionSession) {
@@ -60,7 +62,6 @@ function onMessageExternal(aMessage, aSender) {
             state: 'selected'
           });
         }
-        // toggle selection of the tab and all collapsed descendants
         browser.runtime.sendMessage(kTST_ID, {
           type:  aMessage.states.indexOf('selected') < 0 ?
                    kTSTAPI_ADD_TAB_STATE :
@@ -73,6 +74,32 @@ function onMessageExternal(aMessage, aSender) {
       }
       else if (aMessage.shiftKey) {
         // select the clicked tab and tabs between last activated tab
+        browser.runtime.sendMessage(kTST_ID, {
+          type:  kTSTAPI_REMOVE_TAB_STATE,
+          tabs:  '*',
+          state: 'selected'
+        });
+        let tabs = await browser.runtime.sendMessage(kTST_ID, {
+          type:   kTSTAPI_GET_TABS,
+          window: aMessage.window
+        });
+        let inSelection = false;
+        let betweenTabIds = activeTab.id == aMessage.tab ?
+                              [] :
+                              tabs.ids.filter(aTabId => {
+                                let isBoundary = aTabId == activeTab.id ||
+                                                 aTabId == aMessage.tab;
+                                if (isBoundary)
+                                  inSelection = !inSelection;
+                                return isBoundary || inSelection;
+                              });
+        browser.runtime.sendMessage(kTST_ID, {
+          type:  kTSTAPI_ADD_TAB_STATE,
+          tabs:  betweenTabIds.concat(tabIds),
+          state: 'selected'
+        });
+        gInSelectionSession = true;
+        return true;
       }
       return false;
     })();
