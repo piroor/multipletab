@@ -20,6 +20,14 @@ function onMessageExternal(aMessage, aSender) {
   console.log('onMessageExternal: ', aMessage, aSender);
   switch (aMessage.type) {
     case kTSTAPI_NOTIFY_TAB_CLICKED: {
+      if (aMessage.button != 0)
+        return;
+      if (aMessage.ctrlKey) {
+        // toggle selection of the tab and all collapsed descendants
+      }
+      else if (aMessage.shiftKey) {
+        // select the clicked tab and tabs between last activated tab
+      }
     }; break;
   }
 }
