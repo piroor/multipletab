@@ -5,18 +5,16 @@
 */
 'use strict';
 
-const kID = 'multipletab@piro.sakura.ne.jp';
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';
-
-const kTSTAPI_REGISTER_LISTENER_ADDON   = `${kTST_ID}:register-listener-addon`;
-const kTSTAPI_UNREGISTER_LISTENER_ADDON = `${kTST_ID}:unregister-listener-addon`;
-const kTSTAPI_NOTIFY_TAB_CLICKED        = `${kTST_ID}:notify:tab-clicked`;
-const kTSTAPI_IS_SUBTREE_COLLAPSED      = `${kTST_ID}:request:is-subtree-collapsed`;
-const kTSTAPI_HAS_CHILD_TABS            = `${kTST_ID}:request:has-child-tabs`;
-const kTSTAPI_GET_DESCENDANT_TABS       = `${kTST_ID}:request:get-descendant-tabs`;
-const kTSTAPI_GET_TABS_STATE            = `${kTST_ID}:request:get-tabs-state`;
-const kTSTAPI_ADD_TABS_STATE            = `${kTST_ID}:notify:add-tabs-state`;
-const kTSTAPI_REMOVE_TABS_STATE         = `${kTST_ID}:notify:remove-tabs-state`;
+const kTSTAPI_REGISTER_LISTENER_ADDON   = 'register-self';
+const kTSTAPI_UNREGISTER_LISTENER_ADDON = 'unregister-self';
+const kTSTAPI_NOTIFY_TAB_CLICKED        = 'notify:tab-clicked';
+const kTSTAPI_IS_SUBTREE_COLLAPSED      = 'request:is-subtree-collapsed';
+const kTSTAPI_HAS_CHILD_TABS            = 'request:has-child-tabs';
+const kTSTAPI_GET_DESCENDANT_TABS       = 'request:get-descendant-tabs';
+const kTSTAPI_GET_TABS_STATE            = 'request:get-tabs-state';
+const kTSTAPI_ADD_TABS_STATE            = 'notify:add-tabs-state';
+const kTSTAPI_REMOVE_TABS_STATE         = 'notify:remove-tabs-state';
 
 
 function onMessageExternal(aMessage, aSender) {
