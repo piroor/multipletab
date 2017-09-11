@@ -6,15 +6,15 @@
 'use strict';
 
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';
-const kTSTAPI_REGISTER_LISTENER_ADDON   = 'register-self';
-const kTSTAPI_UNREGISTER_LISTENER_ADDON = 'unregister-self';
-const kTSTAPI_NOTIFY_TAB_CLICKED        = 'notify:tab-clicked';
-const kTSTAPI_IS_SUBTREE_COLLAPSED      = 'request:is-subtree-collapsed';
-const kTSTAPI_HAS_CHILD_TABS            = 'request:has-child-tabs';
-const kTSTAPI_GET_DESCENDANT_TABS       = 'request:get-descendant-tabs';
-const kTSTAPI_GET_TABS_STATE            = 'request:get-tabs-state';
-const kTSTAPI_ADD_TABS_STATE            = 'notify:add-tabs-state';
-const kTSTAPI_REMOVE_TABS_STATE         = 'notify:remove-tabs-state';
+const kTSTAPI_REGISTER_SELF        = 'register-self';
+const kTSTAPI_UNREGISTER_SELF      = 'unregister-self';
+const kTSTAPI_NOTIFY_TAB_CLICKED   = 'notify:tab-clicked';
+const kTSTAPI_IS_SUBTREE_COLLAPSED = 'request:is-subtree-collapsed';
+const kTSTAPI_HAS_CHILD_TABS       = 'request:has-child-tabs';
+const kTSTAPI_GET_DESCENDANT_TABS  = 'request:get-descendant-tabs';
+const kTSTAPI_GET_TABS_STATE       = 'request:get-tabs-state';
+const kTSTAPI_ADD_TABS_STATE       = 'notify:add-tabs-state';
+const kTSTAPI_REMOVE_TABS_STATE    = 'notify:remove-tabs-state';
 
 
 function onMessageExternal(aMessage, aSender) {
@@ -57,7 +57,7 @@ browser.runtime.onMessageExternal.addListener(onMessageExternal);
 
 function registerSelf() {
   browser.runtime.sendMessage(kTST_ID, {
-    type: kTSTAPI_REGISTER_LISTENER_ADDON
+    type: kTSTAPI_REGISTER_SELF
   });
 }
 
