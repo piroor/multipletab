@@ -11,11 +11,13 @@ const kTSTAPI_UNREGISTER_SELF      = 'unregister-self';
 const kTSTAPI_NOTIFY_TAB_CLICKED   = 'notify:tab-clicked';
 const kTSTAPI_IS_SUBTREE_COLLAPSED = 'request:is-subtree-collapsed';
 const kTSTAPI_HAS_CHILD_TABS       = 'request:has-child-tabs';
+const kTSTAPI_GET_ACTIVE_TAB       = 'request:get-active-tab';
 const kTSTAPI_GET_DESCENDANT_TABS  = 'request:get-descendant-tabs';
 const kTSTAPI_GET_TAB_STATE        = 'request:get-tab-state';
 const kTSTAPI_ADD_TAB_STATE        = 'notify:add-tab-state';
 const kTSTAPI_REMOVE_TAB_STATE     = 'notify:remove-tab-state';
 
+var gInSelectionSession = false;
 
 function onMessageExternal(aMessage, aSender) {
   console.log('onMessageExternal: ', aMessage, aSender);
@@ -23,6 +25,21 @@ function onMessageExternal(aMessage, aSender) {
     case kTSTAPI_NOTIFY_TAB_CLICKED: return (async () => {
       if (aMessage.button != 0)
         return false;
+
+      if (!aMessage.ctrlKey && !aMessage.shiftKey) {
+        // clear selection
+        browser.runtime.sendMessage(kTST_ID, {
+          type:  kTSTAPI_REMOVE_TAB_STATE,
+          tabs:  '*',
+          state: 'selected'
+        });
+        gInSelectionSession = false;
+        return;
+      }
+
+      let activeTab = await browser.runtime.sendMessage(kTST_ID, {
+        type: kTSTAPI_GET_ACTIVE_TAB
+      });
 
       let tabIds = [aMessage.tab];
       if (aMessage.states.indexOf('subtree-collapsed') > -1) {
@@ -32,7 +49,17 @@ function onMessageExternal(aMessage, aSender) {
         });
         tabIds = tabIds.concat(descendantIds);
       }
+
       if (aMessage.ctrlKey) {
+        if (aMessage.tab != activeTab.id &&
+            activeTab.states.indexOf('selected') < 0 &&
+            !gInSelectionSession) {
+          browser.runtime.sendMessage(kTST_ID, {
+            type:  kTSTAPI_ADD_TAB_STATE,
+            tab:   activeTab.tab,
+            state: 'selected'
+          });
+        }
         // toggle selection of the tab and all collapsed descendants
         browser.runtime.sendMessage(kTST_ID, {
           type:  aMessage.states.indexOf('selected') < 0 ?
@@ -41,18 +68,11 @@ function onMessageExternal(aMessage, aSender) {
           tabs:  tabIds,
           state: 'selected'
         });
+        gInSelectionSession = true;
         return true;
       }
       else if (aMessage.shiftKey) {
         // select the clicked tab and tabs between last activated tab
-      }
-      else {
-        // clear selection
-        browser.runtime.sendMessage(kTST_ID, {
-          type:  kTSTAPI_REMOVE_TAB_STATE,
-          tabs:  '*',
-          state: 'selected'
-        });
       }
       return false;
     })();
