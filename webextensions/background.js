@@ -8,14 +8,14 @@
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';
 const kTSTAPI_REGISTER_SELF        = 'register-self';
 const kTSTAPI_UNREGISTER_SELF      = 'unregister-self';
-const kTSTAPI_NOTIFY_TAB_CLICKED   = 'notify:tab-clicked';
-const kTSTAPI_IS_SUBTREE_COLLAPSED = 'request:is-subtree-collapsed';
-const kTSTAPI_HAS_CHILD_TABS       = 'request:has-child-tabs';
-const kTSTAPI_GET_ACTIVE_TAB       = 'request:get-active-tab';
-const kTSTAPI_GET_DESCENDANT_TABS  = 'request:get-descendant-tabs';
-const kTSTAPI_GET_TAB_STATE        = 'request:get-tab-state';
-const kTSTAPI_ADD_TAB_STATE        = 'notify:add-tab-state';
-const kTSTAPI_REMOVE_TAB_STATE     = 'notify:remove-tab-state';
+const kTSTAPI_NOTIFY_TAB_CLICKED   = 'tab-clicked';
+const kTSTAPI_IS_SUBTREE_COLLAPSED = 'is-subtree-collapsed';
+const kTSTAPI_HAS_CHILD_TABS       = 'has-child-tabs';
+const kTSTAPI_GET_ACTIVE_TAB       = 'get-active-tab';
+const kTSTAPI_GET_DESCENDANT_TABS  = 'get-descendant-tabs';
+const kTSTAPI_GET_TAB_STATE        = 'get-tab-state';
+const kTSTAPI_ADD_TAB_STATE        = 'add-tab-state';
+const kTSTAPI_REMOVE_TAB_STATE     = 'remove-tab-state';
 
 var gInSelectionSession = false;
 
@@ -81,7 +81,8 @@ function onMessageExternal(aMessage, aSender) {
 
 browser.runtime.onMessageExternal.addListener(onMessageExternal);
 
-function registerSelf() {
+
+function registerToTST() {
   browser.runtime.sendMessage(kTST_ID, {
     type:  kTSTAPI_REGISTER_SELF,
     style: `
@@ -103,15 +104,26 @@ function registerSelf() {
   });
 }
 
-browser.management.get(kTST_ID).then(registerSelf);
-/*
-browser.management.onInstalled(aAddon => {
-  if (aAddon.id == kTST_ID)
-    registerSelf();
-});
-browser.management.onEnabled(aAddon => {
-  if (aAddon.id == kTST_ID)
-    registerSelf();
-});
-*/
+function wait(aTimeout) {
+  return new Promise((aResolve, aReject) => {
+    setTimeout(aResolve, aTimeout || 0);
+  });
+}
 
+async function tryRegisterToTST() {
+  // retry until TST is initialized
+  var start = Date.now();
+  do {
+    try {
+      let TST = await browser.management.get(kTST_ID);
+      let success = await registerToTST();
+      if (success)
+        return;
+    }
+    catch(e) { // not installed or not enabled
+    }
+    await wait(500);
+  } while (Date.now() - start < 10 * 1000);
+}
+
+tryRegisterToTST();
