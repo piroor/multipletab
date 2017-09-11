@@ -27,5 +27,5 @@ function onMessageExternal(aMessage, aSender) {
   }
 }
 
-browser.runtime.onMessageExternal.addListener(onMessage);
+browser.runtime.onMessageExternal.addListener(onMessageExternal);
 
