@@ -30,10 +30,8 @@ function onMessageExternal(aMessage, aSender) {
           type: kTSTAPI_GET_DESCENDANT_TABS,
           tab:  aMessage.tab
         });
-        console.log('descendantIds ', descendantIds);
         tabIds = tabIds.concat(descendantIds);
       }
-      console.log('tabIds ', tabIds);
       if (aMessage.ctrlKey) {
         // toggle selection of the tab and all collapsed descendants
         browser.runtime.sendMessage(kTST_ID, {
