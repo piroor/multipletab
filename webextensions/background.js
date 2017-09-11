@@ -24,7 +24,7 @@ function onMessageExternal(aMessage, aSender) {
       if (aMessage.button != 0)
         return false;
 
-      let tabIds = [aMessage.id];
+      let tabIds = [aMessage.tab];
       if (aMessage.states.indexOf('subtree-collapsed') > -1) {
         let descendantIds = await browser.runtime.sendMessage(kTST_ID, {
           type: kTSTAPI_GET_DESCENDANT_TABS,
