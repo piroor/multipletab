@@ -46,6 +46,14 @@ function onMessageExternal(aMessage, aSender) {
       else if (aMessage.shiftKey) {
         // select the clicked tab and tabs between last activated tab
       }
+      else {
+        // clear selection
+        browser.runtime.sendMessage(kTST_ID, {
+          type:  kTSTAPI_REMOVE_TAB_STATE,
+          tabs:  '*',
+          state: 'selected'
+        });
+      }
       return false;
     })();
   }
