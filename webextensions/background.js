@@ -113,11 +113,10 @@ async function onTSTTabClick(aMessage) {
     return;
   }
 
-  let activeTab = await browser.tabs.query({
+  let activeTab = (await browser.tabs.query({
     active:   true,
     windowId: aMessage.window
-  });
-  activeTab = activeTab[0];
+  }))[0];
 
   let tabs = retrieveTargetTabs(aMessage.tab);
   if (aMessage.ctrlKey) {
