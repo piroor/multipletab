@@ -105,23 +105,9 @@ browser.runtime.onMessageExternal.addListener(onMessageExternal);
 
 function registerToTST() {
   browser.runtime.sendMessage(kTST_ID, {
-    type:  kTSTAPI_REGISTER_SELF,
+    type:  kTSTAPI_REGISTER_SELF /*,
     style: `
-      .tab.selected::after,
-      .tab.ready-to-close .closebox::after {
-        content: " ";
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: Highlight;
-        opacity: 0.5;
-        pointer-events: none;
-        z-index: 10;
-      }
-    `
+    `*/
   });
 }
 
