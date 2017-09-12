@@ -135,7 +135,9 @@ async function onTSTTabClick(aMessage) {
     clearSelection(aMessage.window);
     let window = await browser.windows.get(aMessage.window, { populate: true });
     let betweenTabs = getTabsBetween(activeTab, aMessage.tab, window.tabs);
-    setSelection(betweenTabs.concat(tabs), true);
+    tabs = tabs.concat(betweenTabs);
+    tabs.push(activeTab);
+    setSelection(tabs, true);
     gInSelectionSession = true;
     return true;
   }
