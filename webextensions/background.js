@@ -24,6 +24,7 @@ const kTSTAPI_REMOVE_TAB_STATE     = 'remove-tab-state';
 /* utilities */
 
 function clearSelection(aWindowId, aState) {
+  gSelectionState.clear();
   browser.runtime.sendMessage(kTST_ID, {
     type:   kTSTAPI_REMOVE_TAB_STATE,
     tabs:   '*',
@@ -36,7 +37,17 @@ function setSelection(aTabIds, aSelected, aState) {
   if (!Array.isArray(aTabIds))
     aTabIds = [aTabIds];
 
-  console.log('setSelection ', aTabIds, `${aState}=${aSelected}`);
+  //console.log('setSelection ', aTabIds, `${aState}=${aSelected}`);
+  if (aSelected) {
+    for (let id of aTabIds) {
+      gSelectionState.set(id, true);
+    }
+  }
+  else {
+    for (let id of aTabIds) {
+      gSelectionState.delete(id);
+    }
+  }
   browser.runtime.sendMessage(kTST_ID, {
     type:  aSelected ? kTSTAPI_ADD_TAB_STATE : kTSTAPI_REMOVE_TAB_STATE,
     tabs:  aTabIds,
@@ -54,6 +65,51 @@ async function getTargetTabs(aMessage) {
     ids = ids.concat(descendantIds);
   }
   return ids;
+}
+
+async function getTabsBetween(aBegin, aEnd) {
+  if (aBegin == aEnd)
+    return [];
+  var tab = await browser.tabs.get(aBegin);
+  var allTabs = await browser.tabs.query({ windowId: tab.windowId });
+  var inRange = false;
+  return allTabs.map(aTab => aTab.id).filter(aId => {
+    if (aId == aBegin || aId == aEnd) {
+      inRange = !inRange;
+      return false;
+    }
+    return inRange;
+  });
+}
+
+async function toggleStateBetween(aParams = {}) {
+  if (gFirstHoverTarget) {
+    // At first, toggle state to reset all existing items in the undetermined selection.
+    for (let id of gUndeterminedRange.keys()) {
+      setSelection(id, !gSelectionState.has(id), aParams.state);
+    }
+    gUndeterminedRange.clear();
+
+    let undeterminedRangeTabs = aParams.currentAndDescendants;
+    if (gFirstHoverTarget && undeterminedRangeTabs.indexOf(gFirstHoverTarget) < 0)
+      undeterminedRangeTabs.push(gFirstHoverTarget);
+
+    undeterminedRangeTabs = undeterminedRangeTabs.concat(await getTabsBetween(gFirstHoverTarget, aParams.current));
+    let cleanedTabs = new Map();
+    for (let tab of undeterminedRangeTabs) {
+      cleanedTabs.set(tab, true);
+    }
+    for (let tab of cleanedTabs.keys()) {
+      setSelection(tab, !gSelectionState.has(tab), aParams.state);
+      gUndeterminedRange.set(tab, true);
+    }
+  }
+  else {
+    for (let tab of aParams.currentAndDescendants) {
+      gUndeterminedRange.set(tab, true);
+    }
+    setSelection(aParams.currentAndDescendants, !gSelectionState.has(aParams.current), aParams.state);
+  }
 }
 
 
@@ -115,57 +171,109 @@ async function onTSTTabClick(aMessage) {
 
 var gCloseSelectedTabs = false;
 var gPendingTabs = null;
-var gSelectionStateMap = null;
+var gSelectionState = new Map();
+var gLastHoverTarget = null;
+var gFirstHoverTarget = null;
+var gUndeterminedRange = new Map();
+var gDragEnteredCount = 0;
 
 async function onTSTTabDragStart(aMessage) {
+  //console.log('onTSTTabDragStart', aMessage);
+  gUndeterminedRange.clear();
+  gSelectionState.clear();
+  gDragEnteredCount = 1;
   gCloseSelectedTabs = aMessage.startOnClosebox;
-  gPendingTabs = await getTargetTabs(aMessage);
-  gSelectionStateMap = new Map();
+  gPendingTabs = null;
+  gFirstHoverTarget = gLastHoverTarget = aMessage.tab;
+
+  clearSelection(aMessage.window, 'selected');
+  clearSelection(aMessage.window, 'ready-to-close');
+
+  var startTabs = await getTargetTabs(aMessage);
+  if (gCloseSelectedTabs)
+    gPendingTabs = startTabs;
+  else
+    setSelection(startTabs, true, 'selected');
+
+  gUndeterminedRange.set(aMessage.tab, true);
 }
 
 async function onTSTTabDragEnter(aMessage) {
+  //console.log('onTSTTabDragEnter', aMessage, aMessage.tab == gLastHoverTarget);
+  gDragEnteredCount++;
+  // processAutoScroll(aEvent);
+
+  if (aMessage.tab == gLastHoverTarget)
+    return;
+
   var state = gCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
   if (gPendingTabs) {
-    console.log('gPendingTabs ', gPendingTabs);
     setSelection(gPendingTabs, true, state);
-    for (let id of gPendingTabs) {
-      gSelectionStateMap.set(id, true);
-    }
     gPendingTabs = null;
   }
-  console.log('aMessage ', aMessage);
-  var tabs = await getTargetTabs(aMessage);
-  console.log('tabs ', tabs);
-  var toBeSelected = !gSelectionStateMap.has(tabs[0]);
-  if (toBeSelected) {
-    for (let id of tabs) {
-      gSelectionStateMap.set(id, true);
-    }
+/*
+  if (gCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
+*/
+    await toggleStateBetween({
+      current: aMessage.tab,
+      currentAndDescendants: await getTargetTabs(aMessage),
+      state: state
+    });
+/*
   }
-  else {
-    for (let id of tabs) {
-      gSelectionStateMap.delete(id);
-    }
+  else { // TAB_DRAG_MODE_SWITCH:
+    browser.tabs.update(aMessage.tab, { active: true });
   }
-  setSelection(tabs, toBeSelected, state);
+*/
+  gLastHoverTarget = aMessage.tab;
 }
 
 async function onTSTTabDragExit(aMessage) {
+  gDragEnteredCount--;
+  dragExitAllWithDelay.reserve();
 }
 
+function dragExitAllWithDelay() {
+  //console.log('dragExitAllWithDelay '+gDragEnteredCount);
+  dragExitAllWithDelay.cancel();
+  if (gDragEnteredCount <= 0) {
+    gFirstHoverTarget = gLastHoverTarget = null;
+    gUndeterminedRange.clear();
+  }
+}
+dragExitAllWithDelay.reserve = () => {
+  dragExitAllWithDelay.cancel();
+  dragExitAllWithDelay.timeout = setTimeout(() => {
+    dragExitAllWithDelay();
+  }, 10);
+};
+dragExitAllWithDelay.cancel = () => {
+  if (dragExitAllWithDelay.timeout) {
+    clearTimeout(dragExitAllWithDelay.timeout);
+    delete dragExitAllWithDelay.timeout;
+  }
+};
+
 async function onTSTTabDragEnd(aMessage) {
+  //console.log('onTSTTabDragEnd', aMessage);
+  gFirstHoverTarget = gLastHoverTarget = null;
+
   if (gCloseSelectedTabs) {
-    let selectedTabs = gSelectionStateMap.keys;
     let allTabs = await browser.tabs.query({ windowId: aMessage.window });
     allTabs.reverse();
     for (let tab of allTabs) {
-      if (selectedTabs.indexOf(tab.id) > -1)
+      if (gSelectionState.has(tab.id))
         await browser.tabs.remove(tab.id);
     }
   }
+  else {
+    // show selection popup
+  }
   clearSelection(aMessage.window);
-  gSelectionStateMap = null;
+  gUndeterminedRange.clear();
+  gSelectionState.clear();
   gCloseSelectedTabs = false;
+  gDragEnteredCount = 0;
 }
 
 
