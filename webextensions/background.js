@@ -67,7 +67,7 @@ function getTabsBetween(aBegin, aEnd, aAllTabs = []) {
   });
 }
 
-async function toggleStateBetween(aParams = {}) {
+function toggleStateOfDragOverTabs(aParams = {}) {
   if (gFirstHoverTarget) {
     // At first, toggle state to reset all existing items in the undetermined selection.
     for (let id of gUndeterminedRange.keys()) {
@@ -76,7 +76,7 @@ async function toggleStateBetween(aParams = {}) {
     gUndeterminedRange.clear();
 
     let undeterminedRangeTabs = aParams.allTargets.map(aTab => aTab.id);
-    if (gFirstHoverTarget && undeterminedRangeTabs.indexOf(gFirstHoverTarget.id) < 0)
+    if (undeterminedRangeTabs.indexOf(gFirstHoverTarget.id) < 0)
       undeterminedRangeTabs.push(gFirstHoverTarget.id);
 
     let betweenTabs = getTabsBetween(gFirstHoverTarget, aParams.target, gAllTabsOnDragReady);
@@ -197,7 +197,7 @@ async function onTSTTabDragEnter(aMessage) {
   if (gCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
 */
     let targetTabs = retrieveTargetTabs(aMessage.tab);
-    await toggleStateBetween({
+    toggleStateOfDragOverTabs({
       target:     aMessage.tab,
       allTargets: targetTabs,
       state:      state
