@@ -108,7 +108,8 @@ async function onTSTTabClick(aMessage) {
     return false;
 
   if (!aMessage.ctrlKey && !aMessage.shiftKey) {
-    clearSelection(aMessage.window);
+    clearSelection(aMessage.window, 'selected');
+    clearSelection(aMessage.window, 'ready-to-close');
     gInSelectionSession = false;
     return;
   }
