@@ -172,6 +172,7 @@ async function onTSTTabClick(aMessage) {
 var gCloseSelectedTabs = false;
 var gPendingTabs = null;
 var gSelectionState = new Map();
+var gDragStartTarget = null;
 var gLastHoverTarget = null;
 var gFirstHoverTarget = null;
 var gUndeterminedRange = new Map();
@@ -184,7 +185,7 @@ async function onTSTTabDragStart(aMessage) {
   gDragEnteredCount = 1;
   gCloseSelectedTabs = aMessage.startOnClosebox;
   gPendingTabs = null;
-  gFirstHoverTarget = gLastHoverTarget = aMessage.tab;
+  gDragStartTarget = gFirstHoverTarget = gLastHoverTarget = aMessage.tab;
 
   clearSelection(aMessage.window, 'selected');
   clearSelection(aMessage.window, 'ready-to-close');
@@ -195,7 +196,9 @@ async function onTSTTabDragStart(aMessage) {
   else
     setSelection(startTabs, true, 'selected');
 
-  gUndeterminedRange.set(aMessage.tab, true);
+  for (let tab of startTabs) {
+    gUndeterminedRange.set(tab, true);
+  }
 }
 
 async function onTSTTabDragEnter(aMessage) {
@@ -214,11 +217,21 @@ async function onTSTTabDragEnter(aMessage) {
 /*
   if (gCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
 */
+    let targetTabs = await getTargetTabs(aMessage);
     await toggleStateBetween({
       current: aMessage.tab,
-      currentAndDescendants: await getTargetTabs(aMessage),
+      currentAndDescendants: targetTabs,
       state: state
     });
+    if (gCloseSelectedTabs &&
+        aMessage.tab == gDragStartTarget &&
+        gSelectionState.size == targetTabs.length) {
+      setSelection(targetTabs, false, state);
+      for (let tab of targetTabs) {
+        gUndeterminedRange.set(tab, true);
+      }
+      gPendingTabs = targetTabs;
+    }
 /*
   }
   else { // TAB_DRAG_MODE_SWITCH:
@@ -256,7 +269,7 @@ dragExitAllWithDelay.cancel = () => {
 
 async function onTSTTabDragEnd(aMessage) {
   //console.log('onTSTTabDragEnd', aMessage);
-  gFirstHoverTarget = gLastHoverTarget = null;
+  gDragStartTarget = gFirstHoverTarget = gLastHoverTarget = null;
 
   if (gCloseSelectedTabs) {
     let allTabs = await browser.tabs.query({ windowId: aMessage.window });
