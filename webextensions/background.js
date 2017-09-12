@@ -186,7 +186,8 @@ async function onTSTTabDragEnter(aMessage) {
   gDragEnteredCount++;
   // processAutoScroll(aEvent);
 
-  if (aMessage.tab.id == gLastHoverTarget.id)
+  if (gLastHoverTarget &&
+      aMessage.tab.id == gLastHoverTarget.id)
     return;
 
   var state = gWillCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
