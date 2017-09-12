@@ -10,6 +10,7 @@ const kTSTAPI_REGISTER_SELF        = 'register-self';
 const kTSTAPI_UNREGISTER_SELF      = 'unregister-self';
 const kTSTAPI_NOTIFY_READY         = 'ready';
 const kTSTAPI_NOTIFY_TAB_CLICKED   = 'tab-clicked';
+const kTSTAPI_NOTIFY_TAB_DRAGREADY = 'tab-dragready';
 const kTSTAPI_NOTIFY_TAB_DRAGSTART = 'tab-dragstart';
 const kTSTAPI_NOTIFY_TAB_DRAGENTER = 'tab-dragenter';
 const kTSTAPI_NOTIFY_TAB_DRAGEXIT  = 'tab-dragexit';
@@ -178,8 +179,8 @@ var gFirstHoverTarget = null;
 var gUndeterminedRange = new Map();
 var gDragEnteredCount = 0;
 
-async function onTSTTabDragStart(aMessage) {
-  //console.log('onTSTTabDragStart', aMessage);
+async function onTSTTabDragReady(aMessage) {
+  //console.log('onTSTTabDragReady', aMessage);
   gUndeterminedRange.clear();
   gSelectionState.clear();
   gDragEnteredCount = 1;
@@ -199,6 +200,10 @@ async function onTSTTabDragStart(aMessage) {
   for (let tab of startTabs) {
     gUndeterminedRange.set(tab, true);
   }
+}
+
+async function onTSTTabDragStart(aMessage) {
+  //console.log('onTSTTabDragStart', aMessage);
 }
 
 async function onTSTTabDragEnter(aMessage) {
@@ -300,6 +305,9 @@ function onTSTAPIMessage(aMessage) {
 
     case kTSTAPI_NOTIFY_TAB_CLICKED:
       return onTSTTabClick(aMessage);
+
+    case kTSTAPI_NOTIFY_TAB_DRAGREADY:
+      return onTSTTabDragReady(aMessage);
 
     case kTSTAPI_NOTIFY_TAB_DRAGSTART:
       return onTSTTabDragStart(aMessage);
