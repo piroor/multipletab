@@ -10,7 +10,10 @@
     "tabs"
   ],
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "constants.js",
+      "background.js"
+    ]
   },
   "applications": {
     "gecko": {
