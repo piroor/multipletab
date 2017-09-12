@@ -220,6 +220,8 @@ async function onTSTTabDragEnter(aMessage) {
   }
 */
   gLastHoverTarget = aMessage.tab;
+  if (!gFirstHoverTarget)
+    gFirstHoverTarget = gLastHoverTarget;
 }
 
 async function onTSTTabDragExit(aMessage) {
