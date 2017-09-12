@@ -8,6 +8,7 @@
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';
 const kTSTAPI_REGISTER_SELF        = 'register-self';
 const kTSTAPI_UNREGISTER_SELF      = 'unregister-self';
+const kTSTAPI_NOTIFY_READY         = 'ready';
 const kTSTAPI_NOTIFY_TAB_CLICKED   = 'tab-clicked';
 const kTSTAPI_IS_SUBTREE_COLLAPSED = 'is-subtree-collapsed';
 const kTSTAPI_HAS_CHILD_TABS       = 'has-child-tabs';
@@ -38,9 +39,12 @@ function setSelection(aTabIds, aSelected) {
 
 var gInSelectionSession = false;
 
-function onMessageExternal(aMessage, aSender) {
-  console.log('onMessageExternal: ', aMessage, aSender);
+function onTSTAPIMessage(aMessage) {
   switch (aMessage.type) {
+    case kTSTAPI_NOTIFY_READY:
+      registerToTST();
+      break;
+
     case kTSTAPI_NOTIFY_TAB_CLICKED: return (async () => {
       if (aMessage.button != 0)
         return false;
@@ -100,6 +104,14 @@ function onMessageExternal(aMessage, aSender) {
   }
 }
 
+function onMessageExternal(aMessage, aSender) {
+  console.log('onMessageExternal: ', aMessage, aSender);
+  switch (aSender.id) {
+    case kTST_ID:
+      return onTSTAPIMessage(aMessage);
+  }
+}
+
 browser.runtime.onMessageExternal.addListener(onMessageExternal);
 
 
@@ -110,6 +122,7 @@ function registerToTST() {
     `*/
   });
 }
+browser.management.get(kTST_ID).then(registerToTST);
 
 function wait(aTimeout) {
   return new Promise((aResolve, aReject) => {
@@ -117,20 +130,3 @@ function wait(aTimeout) {
   });
 }
 
-async function tryRegisterToTST() {
-  // retry until TST is initialized
-  var start = Date.now();
-  do {
-    try {
-      let TST = await browser.management.get(kTST_ID);
-      let success = await registerToTST();
-      if (success)
-        return;
-    }
-    catch(e) { // not installed or not enabled
-    }
-    await wait(500);
-  } while (Date.now() - start < 10 * 1000);
-}
-
-tryRegisterToTST();
