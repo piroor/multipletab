@@ -145,7 +145,7 @@ async function onTSTTabClick(aMessage) {
 
 /* select tabs by dragging */
 
-var gCloseSelectedTabs = false;
+var gWillCloseSelectedTabs = false;
 var gAllTabsOnDragReady = [];
 var gPendingTabs = null;
 var gSelectionState = new Map();
@@ -160,7 +160,7 @@ async function onTSTTabDragReady(aMessage) {
   gUndeterminedRange.clear();
   gSelectionState.clear();
   gDragEnteredCount = 1;
-  gCloseSelectedTabs = aMessage.startOnClosebox;
+  gWillCloseSelectedTabs = aMessage.startOnClosebox;
   gPendingTabs = null;
   gDragStartTarget = gFirstHoverTarget = gLastHoverTarget = aMessage.tab;
   gAllTabsOnDragReady = await browser.tabs.query({ windowId: aMessage.window });
@@ -169,7 +169,7 @@ async function onTSTTabDragReady(aMessage) {
   clearSelection(aMessage.window, 'ready-to-close');
 
   var startTabs = retrieveTargetTabs(aMessage.tab);
-  var state = gCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
+  var state = gWillCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
   setSelection(startTabs, true, state);
 
   for (let tab of startTabs) {
@@ -189,13 +189,13 @@ async function onTSTTabDragEnter(aMessage) {
   if (aMessage.tab.id == gLastHoverTarget.id)
     return;
 
-  var state = gCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
+  var state = gWillCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
   if (gPendingTabs) {
     setSelection(gPendingTabs, true, state);
     gPendingTabs = null;
   }
 /*
-  if (gCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
+  if (gWillCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
 */
     let targetTabs = retrieveTargetTabs(aMessage.tab);
     toggleStateOfDragOverTabs({
@@ -203,7 +203,7 @@ async function onTSTTabDragEnter(aMessage) {
       allTargets: targetTabs,
       state:      state
     });
-    if (gCloseSelectedTabs &&
+    if (gWillCloseSelectedTabs &&
         aMessage.tab.id == gDragStartTarget.id &&
         gSelectionState.size == targetTabs.length) {
       setSelection(targetTabs, false, state);
@@ -251,7 +251,7 @@ async function onTSTTabDragEnd(aMessage) {
   //console.log('onTSTTabDragEnd', aMessage);
   gDragStartTarget = gFirstHoverTarget = gLastHoverTarget = null;
 
-  if (gCloseSelectedTabs) {
+  if (gWillCloseSelectedTabs) {
     let allTabs = gAllTabsOnDragReady.slice(0);
     allTabs.reverse();
     for (let tab of allTabs) {
@@ -265,7 +265,7 @@ async function onTSTTabDragEnd(aMessage) {
   clearSelection(aMessage.window);
   gUndeterminedRange.clear();
   gSelectionState.clear();
-  gCloseSelectedTabs = false;
+  gWillCloseSelectedTabs = false;
   gDragEnteredCount = 0;
   gAllTabsOnDragReady = [];
 }
