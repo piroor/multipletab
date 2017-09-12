@@ -111,7 +111,6 @@ function onMessageExternal(aMessage, aSender) {
       return onTSTAPIMessage(aMessage);
   }
 }
-
 browser.runtime.onMessageExternal.addListener(onMessageExternal);
 
 
