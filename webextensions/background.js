@@ -43,7 +43,7 @@ function onTSTAPIMessage(aMessage) {
   switch (aMessage.type) {
     case kTSTAPI_NOTIFY_READY:
       registerToTST();
-      break;
+      return Promise.resolve(true);
 
     case kTSTAPI_NOTIFY_TAB_CLICKED: return (async () => {
       if (aMessage.button != 0)
