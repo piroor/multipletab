@@ -168,10 +168,8 @@ async function onTSTTabDragReady(aMessage) {
   clearSelection(aMessage.window, 'ready-to-close');
 
   var startTabs = retrieveTargetTabs(aMessage.tab);
-  if (gCloseSelectedTabs)
-    gPendingTabs = startTabs;
-  else
-    setSelection(startTabs, true, 'selected');
+  var state = gCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
+  setSelection(startTabs, true, state);
 
   for (let tab of startTabs) {
     gUndeterminedRange.set(tab.id, true);
