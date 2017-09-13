@@ -11,8 +11,8 @@
   ],
   "background": {
     "scripts": [
-      "constants.js",
-      "background.js"
+      "background/constants.js",
+      "background/background.js"
     ]
   },
   "default_locale": "en",
