@@ -44,9 +44,10 @@ var gContextMenuItems = `
 
 var gLastSelectedTabs = '';
 
-async function refreshContextMenuItems(aContextTab) {
+async function refreshContextMenuItems(aContextTab, aForce) {
   var serialized = JSON.stringify(gSelectedTabs);
-  if (serialized == gLastSelectedTabs)
+  if (!aForce &&
+      serialized == gLastSelectedTabs)
     return;
 
   await browser.contextMenus.removeAll();

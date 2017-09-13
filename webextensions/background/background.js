@@ -325,7 +325,7 @@ async function registerToTST() {
       }
     `
   });
-  refreshContextMenuItems(); // force rebuild menu
+  refreshContextMenuItems(null, true); // force rebuild menu
 }
 registerToTST();
 
