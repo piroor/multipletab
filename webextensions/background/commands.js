@@ -74,60 +74,58 @@ async function getAllTabs() {
            (await browser.windows.getCurrent({ populate: true })).tabs ;
 }
 
-async function reloadSelectedTabs() {
-  for (let id of getSelectedTabIds()) {
-    browser.tabs.reload(id);
-  }
-}
-
 function getSelectedTabIds() {
   return Object.keys(gSelectedTabs).map(aId => parseInt(aId));
 }
 
-async function duplicateSelectedTabs() {
-  for (let id of getSelectedTabIds()) {
+async function reloadTabs(aIds) {
+  for (let id of aIds) {
+    browser.tabs.reload(id);
+  }
+}
+
+async function duplicateTabs(aIds) {
+  for (let id of aIds) {
     await browser.tabs.duplicate(id);
   }
 }
 
-async function pinSelectedTabs() {
-  for (let id of getSelectedTabIds()) {
+async function pinTabs(aIds) {
+  for (let id of aIds) {
     await browser.tabs.update(id, { pinned: true });
   }
 }
 
-async function unpinSelectedTabs() {
-  for (let id of getSelectedTabIds()) {
+async function unpinTabs(aIds) {
+  for (let id of aIds) {
     await browser.tabs.update(id, { pinned: false });
   }
 }
 
-async function muteSelectedTabs() {
-  for (let id of getSelectedTabIds()) {
+async function muteTabs(aIds) {
+  for (let id of aIds) {
     browser.tabs.update(id, { muted: true });
   }
 }
 
-async function unmuteSelectedTabs() {
-  for (let id of getSelectedTabIds()) {
+async function unmuteTabs(aIds) {
+  for (let id of aIds) {
     browser.tabs.update(id, { muted: false });
   }
 }
 
-async function removeSelectedTabs() {
+async function removeTabs(aIds) {
   var tabs = await getAllTabs();
-  var selectedIds = getSelectedTabIds();
   for (let tab of tabs.reverse()) {
-    if (selectedIds.indexOf(tab.id) > -1)
+    if (aIds.indexOf(tab.id) > -1)
       await browser.tabs.remove(tab.id);
   }
 }
 
-async function removeUnselectedTabs() {
+async function removeOtherTabs(aIds) {
   var tabs = await getAllTabs();
-  var selectedIds = getSelectedTabIds();
   for (let tab of tabs.reverse()) {
-    if (selectedIds.indexOf(tab.id) < 0)
+    if (aIds.indexOf(tab.id) < 0)
       await browser.tabs.remove(tab.id);
   }
 }

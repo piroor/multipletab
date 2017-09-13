@@ -174,30 +174,31 @@ configs.$addObserver(aKey => {
 
 var contextMenuClickListener = (aInfo, aTab) => {
   //log('context menu item clicked: ', aInfo, aTab);
+  var selectedTabIds = getSelectedTabIds();
   switch (aInfo.menuItemId) {
     case 'reloadTabs':
-      return reloadSelectedTabs();
+      return reloadTabs(selectedTabIds);
     case 'bookmarkTabs':
     case 'removeBookmarkFromTabs':
 
     case 'duplicateTabs':
-      return duplicateSelectedTabs();
+      return duplicateTabs(selectedTabIds);
 
     case 'pinTabs':
-      return pinSelectedTabs();
+      return pinTabs(selectedTabIds);
     case 'unpinTabs':
-      return unpinSelectedTabs();
+      return unpinTabs(selectedTabIds);
     case 'muteTabs':
-      return muteSelectedTabs();
+      return muteTabs(selectedTabIds);
     case 'unmuteTabs':
-      return unmuteSelectedTabs();
+      return unmuteTabs(selectedTabIds);
 
     case 'tearOffTabs':
 
     case 'removeTabs':
-      return removeSelectedTabs();
+      return removeTabs(selectedTabIds);
     case 'removeOther':
-      return removeUnselectedTabs();
+      return removeOtherTabs(selectedTabIds);
 
     case 'clipboard':
     case 'saveTabs':
