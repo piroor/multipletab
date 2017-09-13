@@ -334,6 +334,7 @@ browser.runtime.onMessageExternal.addListener(onMessageExternal);
 function registerToTST() {
   browser.runtime.sendMessage(kTST_ID, {
     type:  kTSTAPI_REGISTER_SELF,
+    name:  browser.i18n.getMessage('extensionName'),
     style: `
       .tab.selected::after {
         background: Highlight;
