@@ -8,7 +8,7 @@
 var gSelectedTabs = {};
 var gTargetWindow = null;
 
-function clearSelection(aWindowId, aState) {
+function clearSelection(aWindowId, aStates) {
   for (let id of Object.keys(gSelectedTabs)) {
     try {
       browser.tabs.executeScript(parseInt(id), {
@@ -25,7 +25,7 @@ function clearSelection(aWindowId, aState) {
     type:   kTSTAPI_REMOVE_TAB_STATE,
     tabs:   '*',
     window: aWindowId,
-    state:  aState || 'selected'
+    state:  aStates || 'selected'
   });
 }
 
