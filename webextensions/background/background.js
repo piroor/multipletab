@@ -79,8 +79,9 @@ async function onTSTTabClick(aMessage) {
     return false;
 
   if (!aMessage.ctrlKey && !aMessage.shiftKey) {
-    clearSelection(aMessage.window, 'selected');
-    clearSelection(aMessage.window, 'ready-to-close');
+    clearSelection({
+      states: ['selected', 'ready-to-close']
+    });
     gTargetWindow = null;
     gInSelectionSession = false;
     reserveRefreshContextMenuItems();
@@ -110,7 +111,7 @@ async function onTSTTabClick(aMessage) {
   }
   else if (aMessage.shiftKey) {
     // select the clicked tab and tabs between last activated tab
-    clearSelection(aMessage.window);
+    clearSelection();
     let window = await browser.windows.get(aMessage.window, { populate: true });
     let betweenTabs = getTabsBetween(activeTab, aMessage.tab, window.tabs);
     tabs = tabs.concat(betweenTabs);
@@ -128,7 +129,9 @@ async function onTSTTabClick(aMessage) {
 async function onTSTTabbarClick(aMessage) {
   if (aMessage.button != 0)
     return;
-  clearSelection(aMessage.window, ['selected', 'ready-to-close']);
+  clearSelection({
+    states: ['selected', 'ready-to-close']
+  });
   gTargetWindow = null;
   reserveRefreshContextMenuItems();
 }
@@ -155,7 +158,9 @@ async function onTSTTabDragReady(aMessage) {
   gDragStartTarget = gFirstHoverTarget = gLastHoverTarget = aMessage.tab;
   gAllTabsOnDragReady = await browser.tabs.query({ windowId: aMessage.window });
 
-  clearSelection(aMessage.window, ['selected', 'ready-to-close']);
+  clearSelection({
+    states: ['selected', 'ready-to-close']
+  });
 
   var startTabs = retrieveTargetTabs(aMessage.tab);
   setSelection(startTabs, true, {
@@ -257,7 +262,7 @@ async function onTSTTabDragEnd(aMessage) {
       if (tab.id in gSelectedTabs)
         await browser.tabs.remove(tab.id);
     }
-    clearSelection(aMessage.window);
+    clearSelection();
     gTargetWindow = null;
   }
   else if (Object.keys(gSelectedTabs).length > 0) {

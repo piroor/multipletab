@@ -8,7 +8,7 @@
 var gSelectedTabs = {};
 var gTargetWindow = null;
 
-function clearSelection(aWindowId, aOptions = {}) {
+function clearSelection(aOptions = {}) {
   var tabs = [];
   for (let id of Object.keys(gSelectedTabs)) {
     tabs.push(gSelectedTabs[id]);

@@ -172,33 +172,50 @@ configs.$addObserver(aKey => {
 });
 */
 
-var contextMenuClickListener = (aInfo, aTab) => {
+var contextMenuClickListener = async (aInfo, aTab) => {
   //log('context menu item clicked: ', aInfo, aTab);
   var selectedTabIds = getSelectedTabIds();
+  console.log('selectedTabIds ', selectedTabIds);
   switch (aInfo.menuItemId) {
     case 'reloadTabs':
-      return reloadTabs(selectedTabIds);
+      await reloadTabs(selectedTabIds);
+      clearSelection();
+      break;
     case 'bookmarkTabs':
     case 'removeBookmarkFromTabs':
 
     case 'duplicateTabs':
-      return duplicateTabs(selectedTabIds);
+      await duplicateTabs(selectedTabIds);
+      clearSelection();
+      break;
 
     case 'pinTabs':
-      return pinTabs(selectedTabIds);
+      await pinTabs(selectedTabIds);
+      clearSelection();
+      break;
     case 'unpinTabs':
-      return unpinTabs(selectedTabIds);
+      await unpinTabs(selectedTabIds);
+      clearSelection();
+      break;
     case 'muteTabs':
-      return muteTabs(selectedTabIds);
+      await muteTabs(selectedTabIds);
+      clearSelection();
+      break;
     case 'unmuteTabs':
-      return unmuteTabs(selectedTabIds);
+      await unmuteTabs(selectedTabIds);
+      clearSelection();
+      break;
 
     case 'tearOffTabs':
 
     case 'removeTabs':
-      return removeTabs(selectedTabIds);
+      await removeTabs(selectedTabIds);
+      clearSelection();
+      break;
     case 'removeOther':
-      return removeOtherTabs(selectedTabIds);
+      await removeOtherTabs(selectedTabIds);
+      clearSelection();
+      break;
 
     case 'clipboard':
     case 'saveTabs':
@@ -216,13 +233,17 @@ var contextMenuClickListener = (aInfo, aTab) => {
     case 'resumeTabs':
 
     case 'selectAll':
-      return selectAllTabs();
+      selectAllTabs();
+      break;
     case 'select':
-      return setSelection(aTab, true);
+      setSelection(aTab, true);
+      break;
     case 'unselect':
-      return setSelection(aTab, false);
+      setSelection(aTab, false);
+      break;
     case 'invertSelection':
-      return invertSelection();
+      invertSelection();
+      break;
 
     default:
       break;
