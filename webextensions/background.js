@@ -271,13 +271,19 @@ async function onTSTTabDragEnd(aMessage) {
       if (gSelectionState.has(tab.id))
         await browser.tabs.remove(tab.id);
     }
+    clearSelection(aMessage.window);
+    gSelectionState.clear();
   }
   else {
-    // show selection popup
+    browser.runtime.sendMessage(kTST_ID, {
+      type: kTSTAPI_OPEN_CONTEXT_MENU,
+      tab:  aMessage.tab && aMessage.tab.id,
+      left: aMessage.clientX,
+      top:  aMessage.clientY
+    });
+    // don't clear selection state until menu command is processed.
   }
-  clearSelection(aMessage.window);
   gUndeterminedRange.clear();
-  gSelectionState.clear();
   gWillCloseSelectedTabs = false;
   gDragEnteredCount = 0;
   gAllTabsOnDragReady = [];

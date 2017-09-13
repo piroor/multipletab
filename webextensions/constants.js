@@ -19,3 +19,4 @@ const kTSTAPI_NOTIFY_TAB_DRAGEXIT  = 'tab-dragexit';
 const kTSTAPI_NOTIFY_TAB_DRAGEND   = 'tab-dragend';
 const kTSTAPI_ADD_TAB_STATE        = 'add-tab-state';
 const kTSTAPI_REMOVE_TAB_STATE     = 'remove-tab-state';
+const kTSTAPI_OPEN_CONTEXT_MENU    = 'open-context-menu';
