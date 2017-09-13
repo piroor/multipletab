@@ -107,6 +107,7 @@ async function onTSTTabClick(aMessage) {
     clearSelection(aMessage.window, 'selected');
     clearSelection(aMessage.window, 'ready-to-close');
     gSelectedTabs = {};
+    gTargetWindow = null;
     gInSelectionSession = false;
     reserveRefreshContextMenuItems();
     return;
@@ -148,6 +149,7 @@ async function onTSTTabbarClick(aMessage) {
   if (aMessage.button != 0)
     return;
   gSelectedTabs = {};
+  gTargetWindow = null;
   clearSelection(aMessage.window, 'selected');
   clearSelection(aMessage.window, 'ready-to-close');
   reserveRefreshContextMenuItems();
@@ -169,6 +171,7 @@ async function onTSTTabDragReady(aMessage) {
   //console.log('onTSTTabDragReady', aMessage);
   gUndeterminedRange = {};
   gSelectedTabs = {};
+  gTargetWindow = aMessage.window;
   gDragEnteredCount = 1;
   gWillCloseSelectedTabs = aMessage.startOnClosebox;
   gPendingTabs = null;
@@ -273,6 +276,7 @@ async function onTSTTabDragEnd(aMessage) {
     }
     clearSelection(aMessage.window);
     gSelectedTabs = {};
+    gTargetWindow = null;
   }
   else {
     refreshContextMenuItems().then(() => {
