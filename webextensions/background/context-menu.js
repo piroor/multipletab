@@ -127,23 +127,28 @@ function getContextMenuItemVisibilities() {
       frozenCount++;
   }
   return {
-    pinTabs:       pinnedCount < tabIds.length,
-    unpinTabs:     pinnedCount > 0,
-    muteTabs:      mutedCount < tabIds.length,
-    unmuteTabs:    mutedCount > 0,
-    // not implemented yet
-    removeBookmarkFromTabs: false,
-    clipboard:     false,
-    saveTabs:      false,
-    printTabs:     false,
-    suspendTabs:   false && suspendedCount < tabIds.length,
-    resumeTabs:    false && suspendedCount > 0,
-    lockTabs:      false && lockedCount < tabIds.length,
-    unlockTabs:    false && lockedCount > 0,
-    protectTabs:   false && protectedCount < tabIds.length,
-    unprotectTabs: false && protectedCount > 0,
-    freezeTabs:    false && frozenCount < tabIds.length,
-    unfreezeTabs:  false && frozenCount > 0
+    reloadTabs:    tabIds.length > 0,
+    bookmarkTabs:  tabIds.length > 0,
+    removeBookmarkFromTabs: false && tabIds.length > 0,
+    duplicateTabs: tabIds.length > 0,
+    pinTabs:       tabIds.length > 0 && pinnedCount < tabIds.length,
+    unpinTabs:     tabIds.length > 0 && pinnedCount > 0,
+    muteTabs:      tabIds.length > 0 && mutedCount < tabIds.length,
+    unmuteTabs:    tabIds.length > 0 && mutedCount > 0,
+    tearOffTabs:   tabIds.length > 0,
+    removeTabs:    tabIds.length > 0,
+    removeOther:   tabIds.length > 0,
+    clipboard:     false && tabIds.length > 0,
+    saveTabs:      false && tabIds.length > 0,
+    printTabs:     false && tabIds.length > 0,
+    freezeTabs:    false && tabIds.length > 0 && frozenCount < tabIds.length,
+    unfreezeTabs:  false && tabIds.length > 0 && frozenCount > 0,
+    protectTabs:   false && tabIds.length > 0 && protectedCount < tabIds.length,
+    unprotectTabs: false && tabIds.length > 0 && protectedCount > 0,
+    lockTabs:      false && tabIds.length > 0 && lockedCount < tabIds.length,
+    unlockTabs:    false && tabIds.length > 0 && lockedCount > 0,
+    suspendTabs:   false && tabIds.length > 0 && suspendedCount < tabIds.length,
+    resumeTabs:    false && tabIds.length > 0 && suspendedCount > 0
   };
 }
 
