@@ -239,12 +239,12 @@ async function onTSTTabDragEnd(aMessage) {
   }
   else if (Object.keys(gSelectedTabs).length > 0) {
     refreshContextMenuItems().then(() => {
-    browser.runtime.sendMessage(kTST_ID, {
-      type: kTSTAPI_CONTEXT_MENU_OPEN,
-      tab:  aMessage.tab && aMessage.tab.id,
-      left: aMessage.clientX,
-      top:  aMessage.clientY
-    });
+      browser.runtime.sendMessage(kTST_ID, {
+        type: kTSTAPI_CONTEXT_MENU_OPEN,
+        tab:  aMessage.tab && aMessage.tab.id,
+        left: aMessage.clientX,
+        top:  aMessage.clientY
+      });
     });
     // don't clear selection state until menu command is processed.
   }
