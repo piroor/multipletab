@@ -205,6 +205,12 @@ var contextMenuClickListener = (aInfo, aTab) => {
     case 'suspendTabs':
     case 'resumeTabs':
 
+    case 'selectAll':
+      return selectAllTabs();
+    case 'select':
+      return setSelection(aTab, true);
+    case 'unselect':
+      return setSelection(aTab, false);
     case 'invertSelection':
       return invertSelection();
 

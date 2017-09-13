@@ -27,9 +27,16 @@
   "context.saveTabs.label": { "message": "saveTabs" },
   "context.printTabs.label": { "message": "printTabs" },
   "context.freezeTabs.label": { "message": "freezeTabs" },
+  "context.unfreezeTabs.label": { "message": "unfreezeTabs" },
   "context.protectTabs.label": { "message": "protectTabs" },
+  "context.unprotectTabs.label": { "message": "unprotectTabs" },
   "context.lockTabs.label": { "message": "lockTabs" },
+  "context.unlockTabs.label": { "message": "unlockTabs" },
   "context.suspendTabs.label": { "message": "suspendTabs" },
   "context.resumeTabs.label": { "message": "resumeTabs" },
+
+  "context.select.label": { "message": "select" },
+  "context.unselect.label": { "message": "unselect" },
+  "context.selectAll.label": { "message": "selectAll" },
   "context.invertSelection.label": { "message": "invertSelection" }
 }

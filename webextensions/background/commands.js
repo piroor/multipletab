@@ -135,6 +135,11 @@ async function removeUnselectedTabs() {
   }
 }
 
+async function selectAllTabs() {
+  var tabs = await getAllTabs();
+  setSelection(tabs, true);
+}
+
 async function invertSelection() {
   var tabs = await getAllTabs();
   var selectedIds = getSelectedTabIds();
