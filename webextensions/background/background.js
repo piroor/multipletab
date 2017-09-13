@@ -178,8 +178,7 @@ async function onTSTTabDragEnter(aMessage) {
       allTargets: targetTabs,
       state:      state
     });
-    if (gWillCloseSelectedTabs &&
-        aMessage.tab.id == gDragStartTarget.id &&
+    if (aMessage.tab.id == gDragStartTarget.id &&
         Object.keys(gSelectedTabs).length == targetTabs.length) {
       setSelection(targetTabs, false, state);
       for (let tab of targetTabs) {
