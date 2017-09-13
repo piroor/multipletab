@@ -144,6 +144,14 @@ async function onTSTTabClick(aMessage) {
   return false;
 }
 
+async function onTSTTabbarClick(aMessage) {
+  if (aMessage.button != 0)
+    return;
+  gSelectionState.clear();
+  clearSelection(aMessage.window, 'selected');
+  clearSelection(aMessage.window, 'ready-to-close');
+}
+
 
 /* select tabs by dragging */
 
@@ -286,6 +294,9 @@ function onTSTAPIMessage(aMessage) {
 
     case kTSTAPI_NOTIFY_TAB_CLICKED:
       return onTSTTabClick(aMessage);
+
+    case kTSTAPI_NOTIFY_TABBAR_CLICKED:
+      return onTSTTabbarClick(aMessage);
 
     case kTSTAPI_NOTIFY_TAB_DRAGREADY:
       return onTSTTabDragReady(aMessage);
