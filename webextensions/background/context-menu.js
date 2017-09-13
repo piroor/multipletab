@@ -44,7 +44,7 @@ var gContextMenuItems = `
 
 var gLastSelectedTabs = '';
 
-async function refreshContextMenuItems() {
+async function refreshContextMenuItems(aContextTab) {
   var serialized = JSON.stringify(gSelectedTabs);
   if (serialized == gLastSelectedTabs)
     return;
@@ -58,7 +58,7 @@ async function refreshContextMenuItems() {
   catch(e) {
   }
   gLastSelectedTabs = serialized;
-  var visibilities = getContextMenuItemVisibilities();
+  var visibilities = await getContextMenuItemVisibilities(aContextTab);
 
   let separatorsCount = 0;
   let normalItemAppeared = false;
@@ -106,14 +106,15 @@ function reserveRefreshContextMenuItems() {
   }, 150);
 }
 
-function getContextMenuItemVisibilities() {
+async function getContextMenuItemVisibilities(aContextTab) {
+  var allTabs = await getAllTabs();
   var pinnedCount = 0;
   var mutedCount = 0;
   var suspendedCount = 0;
   var lockedCount = 0;
   var protectedCount = 0;
   var frozenCount = 0;
-  var tabIds = Object.keys(gSelectedTabs);
+  var tabIds = getSelectedTabIds();
   for (let id of tabIds) {
     let tab = gSelectedTabs[id];
     if (tab.pinned)
@@ -140,7 +141,7 @@ function getContextMenuItemVisibilities() {
     unmuteTabs:    tabIds.length > 0 && mutedCount > 0,
     tearOffTabs:   tabIds.length > 0,
     removeTabs:    tabIds.length > 0,
-    removeOther:   tabIds.length > 0,
+    removeOther:   tabIds.length > 0 && tabIds.length < allTabs.length,
     clipboard:     false && tabIds.length > 0,
     saveTabs:      false && tabIds.length > 0,
     printTabs:     false && tabIds.length > 0,
@@ -151,7 +152,11 @@ function getContextMenuItemVisibilities() {
     lockTabs:      false && tabIds.length > 0 && lockedCount < tabIds.length,
     unlockTabs:    false && tabIds.length > 0 && lockedCount > 0,
     suspendTabs:   false && tabIds.length > 0 && suspendedCount < tabIds.length,
-    resumeTabs:    false && tabIds.length > 0 && suspendedCount > 0
+    resumeTabs:    false && tabIds.length > 0 && suspendedCount > 0,
+    selectAll:     tabIds.length < allTabs.length,
+    select:        !aContextTab || tabIds.indexOf(aContextTab.id) < 0,
+    unselect:      !aContextTab || tabIds.indexOf(aContextTab.id) > -1,
+    invertSelection: tabIds.length > 0
   };
 }
 
