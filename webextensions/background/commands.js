@@ -143,7 +143,6 @@ async function selectAllTabs() {
 async function invertSelection() {
   var tabs = await getAllTabs();
   var selectedIds = getSelectedTabIds();
-  gSelectedTabs = {};
   var newSelected = [];
   var oldSelected = [];
   for (let tab of tabs) {
