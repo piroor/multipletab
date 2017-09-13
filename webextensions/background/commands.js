@@ -113,13 +113,10 @@ async function invertSelection() {
   var oldSelected = [];
   for (let tab of tabs) {
     let toBeSelected = selectedIds.indexOf(tab.id) < 0;
-    if (toBeSelected) {
-      gSelectedTabs[tab.id] = tab;
+    if (toBeSelected)
       newSelected.push(tab);
-    }
-    else {
+    else
       oldSelected.push(tab);
-    }
   }
   setSelection(oldSelected, false);
   setSelection(newSelected, true);
