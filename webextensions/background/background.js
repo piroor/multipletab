@@ -318,6 +318,9 @@ function onTSTAPIMessage(aMessage) {
 
     case kTSTAPI_NOTIFY_TAB_DRAGEND:
       return onTSTTabDragEnd(aMessage);
+
+    case kTSTAPI_CONTEXT_MENU_CLICK:
+      return contextMenuClickListener(aMessage.info, aMessage.tab);
   }
 }
 
@@ -331,8 +334,8 @@ function onMessageExternal(aMessage, aSender) {
 browser.runtime.onMessageExternal.addListener(onMessageExternal);
 
 
-function registerToTST() {
-  browser.runtime.sendMessage(kTST_ID, {
+async function registerToTST() {
+  await browser.runtime.sendMessage(kTST_ID, {
     type:  kTSTAPI_REGISTER_SELF,
     name:  browser.i18n.getMessage('extensionName'),
     style: `
@@ -356,8 +359,9 @@ function registerToTST() {
       }
     `
   });
+  refreshContextMenuItems(); // force rebuild menu
 }
-browser.management.get(kTST_ID).then(registerToTST);
+registerToTST();
 
 function wait(aTimeout) {
   return new Promise((aResolve, aReject) => {

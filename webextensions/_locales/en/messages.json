@@ -8,5 +8,28 @@
       "title": { "content": "$1", "example": "Title" },
       "count": { "content": "$2", "example": "2" },
       "parent": { "content": "$3", "example": "Parent Folder" }
-    }}
+    }},
+
+
+
+  "context.reloadTabs.label": { "message": "reloadTabs" },
+  "context.bookmarkTabs.label": { "message": "bookmarkTabs" },
+  "context.removeBookmarkFromTabs.label": { "message": "removeBookmarkFromTabs" },
+  "context.duplicateTabs.label": { "message": "duplicateTabs" },
+  "context.pinTabs.label": { "message": "pinTabs" },
+  "context.unpinTabs.label": { "message": "unpinTabs" },
+  "context.muteTabs.label": { "message": "muteTabs" },
+  "context.unmuteTabs.label": { "message": "unmuteTabs" },
+  "context.tearOffTabs.label": { "message": "tearOffTabs" },
+  "context.removeTabs.label": { "message": "removeTabs" },
+  "context.removeOther.label": { "message": "removeOther" },
+  "context.clipboard.label": { "message": "clipboard" },
+  "context.saveTabs.label": { "message": "saveTabs" },
+  "context.printTabs.label": { "message": "printTabs" },
+  "context.freezeTabs.label": { "message": "freezeTabs" },
+  "context.protectTabs.label": { "message": "protectTabs" },
+  "context.lockTabs.label": { "message": "lockTabs" },
+  "context.suspendTabs.label": { "message": "suspendTabs" },
+  "context.resumeTabs.label": { "message": "resumeTabs" },
+  "context.invertSelection.label": { "message": "invertSelection" }
 }

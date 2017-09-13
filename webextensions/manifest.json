@@ -6,13 +6,14 @@
   "description": "__MSG_extensionDescription__",
   "permissions": [
     "activeTab",
-    "management",
-    "tabs"
+    "tabs",
+    "contextMenus"
   ],
   "background": {
     "scripts": [
       "background/constants.js",
-      "background/background.js"
+      "background/background.js",
+      "background/context-menu.js"
     ]
   },
   "default_locale": "en",
