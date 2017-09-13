@@ -34,9 +34,9 @@ function setSelection(aTabs, aSelected, aStates) {
       gSelectedTabs[tab.id] = tab;
       try {
         if (isPermittedTab(tab))
-        browser.tabs.executeScript(tab.id, {
-          code: `document.title = '✔' + document.title;`
-        });
+          browser.tabs.executeScript(tab.id, {
+            code: `document.title = '✔' + document.title;`
+          });
       }
       catch(e){
         console.log(e);
@@ -50,9 +50,9 @@ function setSelection(aTabs, aSelected, aStates) {
       delete gSelectedTabs[tab.id];
       try {
         if (isPermittedTab(tab))
-        browser.tabs.executeScript(tab.id, {
-          code: `document.title = document.title.replace(/^✔/, '');`
-        });
+          browser.tabs.executeScript(tab.id, {
+            code: `document.title = document.title.replace(/^✔/, '');`
+          });
       }
       catch(e){
         console.log(e);
