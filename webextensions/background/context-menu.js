@@ -197,6 +197,7 @@ var contextMenuClickListener = (aInfo, aTab) => {
     case 'resumeTabs':
 
     case 'invertSelection':
+      return invertSelection();
 
     default:
       break;

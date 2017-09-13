@@ -5,41 +5,7 @@
 */
 'use strict';
 
-var gSelectedTabs = {};
-
 /* utilities */
-
-function clearSelection(aWindowId, aState) {
-  gSelectedTabs = {};
-  browser.runtime.sendMessage(kTST_ID, {
-    type:   kTSTAPI_REMOVE_TAB_STATE,
-    tabs:   '*',
-    window: aWindowId,
-    state:  aState || 'selected'
-  });
-}
-
-function setSelection(aTabs, aSelected, aState) {
-  if (!Array.isArray(aTabs))
-    aTabs = [aTabs];
-
-  //console.log('setSelection ', ids, `${aState}=${aSelected}`);
-  if (aSelected) {
-    for (let tab of aTabs) {
-      gSelectedTabs[tab.id] = tab;
-    }
-  }
-  else {
-    for (let tab of aTabs) {
-      delete gSelectedTabs[tab.id];
-    }
-  }
-  browser.runtime.sendMessage(kTST_ID, {
-    type:  aSelected ? kTSTAPI_ADD_TAB_STATE : kTSTAPI_REMOVE_TAB_STATE,
-    tabs:  aTabs.map(aTab => aTab.id),
-    state: aState || 'selected'
-  });
-}
 
 function retrieveTargetTabs(aSerializedTab) {
   var tabs = [aSerializedTab];

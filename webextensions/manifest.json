@@ -12,6 +12,7 @@
   "background": {
     "scripts": [
       "background/constants.js",
+      "background/commands.js",
       "background/background.js",
       "background/context-menu.js"
     ]
