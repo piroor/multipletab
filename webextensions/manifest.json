@@ -5,6 +5,7 @@
   "author": "YUKI \"Piro\" Hiroshi",
   "description": "__MSG_extensionDescription__",
   "permissions": [
+    "<all_urls>",
     "activeTab",
     "tabs",
     "contextMenus"

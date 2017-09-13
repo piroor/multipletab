@@ -9,6 +9,16 @@ var gSelectedTabs = {};
 var gTargetWindow = null;
 
 function clearSelection(aWindowId, aState) {
+  for (let id of Object.keys(gSelectedTabs)) {
+    try {
+      browser.tabs.executeScript(parseInt(id), {
+        code: `document.title = document.title.replace(/^✔/, '');`
+      });
+    }
+    catch(e){
+      console.log(e);
+    }
+  }
   gSelectedTabs = {};
   gTargetWindow = null;
   browser.runtime.sendMessage(kTST_ID, {
@@ -27,11 +37,27 @@ function setSelection(aTabs, aSelected, aState) {
   if (aSelected) {
     for (let tab of aTabs) {
       gSelectedTabs[tab.id] = tab;
+      try {
+        browser.tabs.executeScript(tab.id, {
+          code: `document.title = '✔' + document.title;`
+        });
+      }
+      catch(e){
+        console.log(e);
+      }
     }
   }
   else {
     for (let tab of aTabs) {
       delete gSelectedTabs[tab.id];
+      try {
+        browser.tabs.executeScript(tab.id, {
+          code: `document.title = document.title.replace(/^✔/, '');`
+        });
+      }
+      catch(e){
+        console.log(e);
+      }
     }
   }
   browser.runtime.sendMessage(kTST_ID, {
