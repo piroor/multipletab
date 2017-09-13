@@ -9,27 +9,15 @@ var gSelectedTabs = {};
 var gTargetWindow = null;
 
 function clearSelection(aWindowId, aStates) {
+  var tabs = [];
   for (let id of Object.keys(gSelectedTabs)) {
-    try {
-      browser.tabs.executeScript(parseInt(id), {
-        code: `document.title = document.title.replace(/^✔/, '');`
-      });
-    }
-    catch(e){
-      console.log(e);
-    }
+    tabs.push(gSelectedTabs[id]);
   }
-  gSelectedTabs = {};
+  setSelection(tabs, false, aStates);
   gTargetWindow = null;
-  browser.runtime.sendMessage(kTST_ID, {
-    type:   kTSTAPI_REMOVE_TAB_STATE,
-    tabs:   '*',
-    window: aWindowId,
-    state:  aStates || 'selected'
-  });
 }
 
-function setSelection(aTabs, aSelected, aState) {
+function setSelection(aTabs, aSelected, aStates) {
   if (!Array.isArray(aTabs))
     aTabs = [aTabs];
 
@@ -67,7 +55,7 @@ function setSelection(aTabs, aSelected, aState) {
   browser.runtime.sendMessage(kTST_ID, {
     type:  aSelected ? kTSTAPI_ADD_TAB_STATE : kTSTAPI_REMOVE_TAB_STATE,
     tabs:  aTabs.map(aTab => aTab.id),
-    state: aState || 'selected'
+    state: aStates || 'selected'
   });
 }
 
