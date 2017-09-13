@@ -167,19 +167,28 @@ var contextMenuClickListener = (aInfo, aTab) => {
   //log('context menu item clicked: ', aInfo, aTab);
   switch (aInfo.menuItemId) {
     case 'reloadTabs':
+      return reloadSelectedTabs();
     case 'bookmarkTabs':
     case 'removeBookmarkFromTabs':
 
     case 'duplicateTabs':
+      return duplicateSelectedTabs();
 
     case 'pinTabs':
+      return pinSelectedTabs();
     case 'unpinTabs':
+      return unpinSelectedTabs();
     case 'muteTabs':
+      return muteSelectedTabs();
     case 'unmuteTabs':
+      return unmuteSelectedTabs();
+
     case 'tearOffTabs':
 
     case 'removeTabs':
+      return removeSelectedTabs();
     case 'removeOther':
+      return removeUnselectedTabs();
 
     case 'clipboard':
     case 'saveTabs':
