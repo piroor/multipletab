@@ -42,37 +42,41 @@ function setSelection(aTabs, aSelected, aState) {
 }
 
 async function reloadSelectedTabs() {
-  for (let id of Object.keys(gSelectedTabs)) {
+  for (let id of getSelectedTabIds()) {
     browser.tabs.reload(id);
   }
 }
 
+function getSelectedTabIds() {
+  return Object.keys(gSelectedTabs).map(aId => parseInt(aId));
+}
+
 async function duplicateSelectedTabs() {
-  for (let id of Object.keys(gSelectedTabs)) {
+  for (let id of getSelectedTabIds()) {
     await browser.tabs.duplicate(id);
   }
 }
 
 async function pinSelectedTabs() {
-  for (let id of Object.keys(gSelectedTabs)) {
+  for (let id of getSelectedTabIds()) {
     await browser.tabs.update(id, { pinned: true });
   }
 }
 
 async function unpinSelectedTabs() {
-  for (let id of Object.keys(gSelectedTabs)) {
+  for (let id of getSelectedTabIds()) {
     await browser.tabs.update(id, { pinned: false });
   }
 }
 
 async function muteSelectedTabs() {
-  for (let id of Object.keys(gSelectedTabs)) {
+  for (let id of getSelectedTabIds()) {
     browser.tabs.update(id, { muted: true });
   }
 }
 
 async function unmuteSelectedTabs() {
-  for (let id of Object.keys(gSelectedTabs)) {
+  for (let id of getSelectedTabIds()) {
     browser.tabs.update(id, { muted: false });
   }
 }
@@ -81,7 +85,7 @@ async function removeSelectedTabs() {
   var tabs = gTargetWindow ?
                await browser.tabs.query({ windowId: gTargetWindow }) :
                (await browser.windows.getCurrent({ populate: true })).tabs ;
-  var selectedIds = Object.keys(gSelectedTabs);
+  var selectedIds = getSelectedTabIds();
   for (let tab of tabs.reverse()) {
     if (selectedIds.indexOf(tab.id) > -1)
       await browser.tabs.remove(tab.id);
@@ -92,7 +96,7 @@ async function removeUnselectedTabs() {
   var tabs = gTargetWindow ?
                await browser.tabs.query({ windowId: gTargetWindow }) :
                (await browser.windows.getCurrent({ populate: true })).tabs ;
-  var selectedIds = Object.keys(gSelectedTabs);
+  var selectedIds = getSelectedTabIds();
   for (let tab of tabs.reverse()) {
     if (selectedIds.indexOf(tab.id) < 0)
       await browser.tabs.remove(tab.id);
@@ -103,7 +107,7 @@ async function invertSelection() {
   var tabs = gTargetWindow ?
                await browser.tabs.query({ windowId: gTargetWindow }) :
                (await browser.windows.getCurrent({ populate: true })).tabs ;
-  var selectedIds = Object.keys(gSelectedTabs);
+  var selectedIds = getSelectedTabIds();
   gSelectedTabs = {};
   var newSelected = [];
   var oldSelected = [];
