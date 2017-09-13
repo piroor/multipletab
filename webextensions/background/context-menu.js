@@ -42,6 +42,10 @@ var gContextMenuItems = `
 var gLastSelectedTabs = '';
 
 async function refreshContextMenuItems() {
+  var serialized = JSON.stringify(gSelectedTabs);
+  if (serialized == gLastSelectedTabs)
+    return;
+
   await browser.contextMenus.removeAll();
   try {
     await browser.runtime.sendMessage(kTST_ID, {
@@ -50,11 +54,6 @@ async function refreshContextMenuItems() {
   }
   catch(e) {
   }
-  let serialized = JSON.stringify(gSelectedTabs);
-  if (serialized == gLastSelectedTabs ||
-      Object.keys(gSelectedTabs).length == 0)
-    return;
-
   gLastSelectedTabs = serialized;
   var visibilities = getContextMenuItemVisibilities();
 
