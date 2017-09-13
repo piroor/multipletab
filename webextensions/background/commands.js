@@ -71,6 +71,12 @@ function setSelection(aTabs, aSelected, aState) {
   });
 }
 
+async function getAllTabs() {
+  return gTargetWindow ?
+           await browser.tabs.query({ windowId: gTargetWindow }) :
+           (await browser.windows.getCurrent({ populate: true })).tabs ;
+}
+
 async function reloadSelectedTabs() {
   for (let id of getSelectedTabIds()) {
     browser.tabs.reload(id);
@@ -112,9 +118,7 @@ async function unmuteSelectedTabs() {
 }
 
 async function removeSelectedTabs() {
-  var tabs = gTargetWindow ?
-               await browser.tabs.query({ windowId: gTargetWindow }) :
-               (await browser.windows.getCurrent({ populate: true })).tabs ;
+  var tabs = await getAllTabs();
   var selectedIds = getSelectedTabIds();
   for (let tab of tabs.reverse()) {
     if (selectedIds.indexOf(tab.id) > -1)
@@ -123,9 +127,7 @@ async function removeSelectedTabs() {
 }
 
 async function removeUnselectedTabs() {
-  var tabs = gTargetWindow ?
-               await browser.tabs.query({ windowId: gTargetWindow }) :
-               (await browser.windows.getCurrent({ populate: true })).tabs ;
+  var tabs = await getAllTabs();
   var selectedIds = getSelectedTabIds();
   for (let tab of tabs.reverse()) {
     if (selectedIds.indexOf(tab.id) < 0)
@@ -134,9 +136,7 @@ async function removeUnselectedTabs() {
 }
 
 async function invertSelection() {
-  var tabs = gTargetWindow ?
-               await browser.tabs.query({ windowId: gTargetWindow }) :
-               (await browser.windows.getCurrent({ populate: true })).tabs ;
+  var tabs = await getAllTabs();
   var selectedIds = getSelectedTabIds();
   gSelectedTabs = {};
   var newSelected = [];
