@@ -36,6 +36,8 @@ function setSelection(aTabs, aSelected, aState) {
   //console.log('setSelection ', ids, `${aState}=${aSelected}`);
   if (aSelected) {
     for (let tab of aTabs) {
+      if (tab.id in gSelectedTabs)
+        continue;
       gSelectedTabs[tab.id] = tab;
       try {
         browser.tabs.executeScript(tab.id, {
@@ -49,6 +51,8 @@ function setSelection(aTabs, aSelected, aState) {
   }
   else {
     for (let tab of aTabs) {
+      if (!(tab.id in gSelectedTabs))
+        continue;
       delete gSelectedTabs[tab.id];
       try {
         browser.tabs.executeScript(tab.id, {
