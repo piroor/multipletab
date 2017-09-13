@@ -276,7 +276,7 @@ async function onTSTTabDragEnd(aMessage) {
   }
   else {
     browser.runtime.sendMessage(kTST_ID, {
-      type: kTSTAPI_OPEN_CONTEXT_MENU,
+      type: kTSTAPI_CONTEXT_MENU_OPEN,
       tab:  aMessage.tab && aMessage.tab.id,
       left: aMessage.clientX,
       top:  aMessage.clientY
