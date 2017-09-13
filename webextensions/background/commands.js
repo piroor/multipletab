@@ -17,6 +17,11 @@ function clearSelection(aWindowId, aStates) {
   gTargetWindow = null;
 }
 
+function isPermittedTab(aTab) {
+  return /^about:blank($|\?|#)/.test(aTab.url) ||
+         !/^(about|resource|chrome|file):/.test(aTab.url);
+}
+
 function setSelection(aTabs, aSelected, aStates) {
   if (!Array.isArray(aTabs))
     aTabs = [aTabs];
@@ -28,6 +33,7 @@ function setSelection(aTabs, aSelected, aStates) {
         continue;
       gSelectedTabs[tab.id] = tab;
       try {
+        if (isPermittedTab(tab))
         browser.tabs.executeScript(tab.id, {
           code: `document.title = '✔' + document.title;`
         });
@@ -43,6 +49,7 @@ function setSelection(aTabs, aSelected, aStates) {
         continue;
       delete gSelectedTabs[tab.id];
       try {
+        if (isPermittedTab(tab))
         browser.tabs.executeScript(tab.id, {
           code: `document.title = document.title.replace(/^✔/, '');`
         });
