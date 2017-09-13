@@ -8,12 +8,12 @@
 var gSelectedTabs = {};
 var gTargetWindow = null;
 
-function clearSelection(aWindowId, aStates) {
+function clearSelection(aWindowId, aOptions = {}) {
   var tabs = [];
   for (let id of Object.keys(gSelectedTabs)) {
     tabs.push(gSelectedTabs[id]);
   }
-  setSelection(tabs, false, aStates);
+  setSelection(tabs, false, aOptions);
   gTargetWindow = null;
 }
 
@@ -22,9 +22,11 @@ function isPermittedTab(aTab) {
          !/^(about|resource|chrome|file):/.test(aTab.url);
 }
 
-function setSelection(aTabs, aSelected, aStates) {
+function setSelection(aTabs, aSelected, aOptions = {}) {
   if (!Array.isArray(aTabs))
     aTabs = [aTabs];
+
+  var shouldHighlight = aOptions.globalHighlight !== false;
 
   //console.log('setSelection ', ids, `${aState}=${aSelected}`);
   if (aSelected) {
@@ -33,7 +35,7 @@ function setSelection(aTabs, aSelected, aStates) {
         continue;
       gSelectedTabs[tab.id] = tab;
       try {
-        if (isPermittedTab(tab))
+        if (shouldHighlight && isPermittedTab(tab))
           browser.tabs.executeScript(tab.id, {
             code: `document.title = '✔' + document.title;`
           });
@@ -49,7 +51,7 @@ function setSelection(aTabs, aSelected, aStates) {
         continue;
       delete gSelectedTabs[tab.id];
       try {
-        if (isPermittedTab(tab))
+        if (shouldHighlight && isPermittedTab(tab))
           browser.tabs.executeScript(tab.id, {
             code: `document.title = document.title.replace(/^✔/, '');`
           });
@@ -62,7 +64,7 @@ function setSelection(aTabs, aSelected, aStates) {
   browser.runtime.sendMessage(kTST_ID, {
     type:  aSelected ? kTSTAPI_ADD_TAB_STATE : kTSTAPI_REMOVE_TAB_STATE,
     tabs:  aTabs.map(aTab => aTab.id),
-    state: aStates || 'selected'
+    state: aOptions.states || aOptions.state || 'selected'
   });
 }
 

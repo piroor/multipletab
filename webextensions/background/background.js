@@ -35,7 +35,10 @@ function toggleStateOfDragOverTabs(aParams = {}) {
   if (gFirstHoverTarget) {
     // At first, toggle state to reset all existing items in the undetermined selection.
     for (let id of Object.keys(gUndeterminedRange)) {
-      setSelection(gUndeterminedRange[id], !(id in gSelectedTabs), aParams.state);
+      setSelection(gUndeterminedRange[id], !(id in gSelectedTabs), {
+        globalHighlight: false,
+        state: aParams.state
+      });
     }
     gUndeterminedRange = {};
 
@@ -48,7 +51,10 @@ function toggleStateOfDragOverTabs(aParams = {}) {
     for (let tab of newUndeterminedRange) {
       if (tab.id in gUndeterminedRange)
         continue;
-      setSelection(tab, !(tab.id in gSelectedTabs), aParams.state);
+      setSelection(tab, !(tab.id in gSelectedTabs), {
+        globalHighlight: false,
+        state: aParams.state
+      });
       gUndeterminedRange[tab.id] = tab;
     }
   }
@@ -56,7 +62,10 @@ function toggleStateOfDragOverTabs(aParams = {}) {
     for (let tab of aParams.allTargets) {
       gUndeterminedRange[tab.id] = tab;
     }
-    setSelection(aParams.allTargets, !(aParams.target.id in gSelectedTabs), aParams.state);
+    setSelection(aParams.allTargets, !(aParams.target.id in gSelectedTabs), {
+      globalHighlight: false,
+      state: aParams.state
+    });
   }
 }
 
@@ -88,9 +97,13 @@ async function onTSTTabClick(aMessage) {
     // toggle selection of the tab and all collapsed descendants
     if (aMessage.tab.id != activeTab.id &&
         !gInSelectionSession) {
-      setSelection(activeTab, true);
+      setSelection(activeTab, true, {
+        globalHighlight: false
+      });
     }
-    setSelection(tabs, aMessage.tab.states.indexOf('selected') < 0);
+    setSelection(tabs, aMessage.tab.states.indexOf('selected') < 0, {
+      globalHighlight: false
+    });
     gInSelectionSession = true;
     reserveRefreshContextMenuItems();
     return true;
@@ -102,7 +115,9 @@ async function onTSTTabClick(aMessage) {
     let betweenTabs = getTabsBetween(activeTab, aMessage.tab, window.tabs);
     tabs = tabs.concat(betweenTabs);
     tabs.push(activeTab);
-    setSelection(tabs, true);
+    setSelection(tabs, true, {
+      globalHighlight: false
+    });
     gInSelectionSession = true;
     reserveRefreshContextMenuItems();
     return true;
@@ -143,8 +158,10 @@ async function onTSTTabDragReady(aMessage) {
   clearSelection(aMessage.window, ['selected', 'ready-to-close']);
 
   var startTabs = retrieveTargetTabs(aMessage.tab);
-  var state = gWillCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
-  setSelection(startTabs, true, state);
+  setSelection(startTabs, true, {
+    globalHighlight: false,
+    state: gWillCloseSelectedTabs ? 'ready-to-close' : 'selected'
+  });
 
   for (let tab of startTabs) {
     gUndeterminedRange[tab.id] = tab;
@@ -166,7 +183,10 @@ async function onTSTTabDragEnter(aMessage) {
 
   var state = gWillCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
   if (gPendingTabs) {
-    setSelection(gPendingTabs, true, state);
+    setSelection(gPendingTabs, true, {
+      globalHighlight: false,
+      state: state
+    });
     gPendingTabs = null;
   }
 /*
@@ -180,7 +200,10 @@ async function onTSTTabDragEnter(aMessage) {
     });
     if (aMessage.tab.id == gDragStartTarget.id &&
         Object.keys(gSelectedTabs).length == targetTabs.length) {
-      setSelection(targetTabs, false, state);
+      setSelection(targetTabs, false, {
+        globalHighlight: false,
+        state: state
+      });
       for (let tab of targetTabs) {
         gUndeterminedRange[tab.id] = tab;
       }
