@@ -48,7 +48,7 @@ function retrieveTargetTabs(aSerializedTab) {
   if (aSerializedTab.children &&
       aSerializedTab.states.indexOf('subtree-collapsed') > -1) {
     for (let tab of aSerializedTab.children) {
-      tabs = ids.concat(retrieveTargetTabs(tab))
+      tabs = tabs.concat(retrieveTargetTabs(tab))
     }
   }
   return tabs;
