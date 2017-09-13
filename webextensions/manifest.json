@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Multiple Tab Handler (WE)",
+  "name": "__MSG_extensionName__",
   "version": "2.0a",
   "author": "YUKI \"Piro\" Hiroshi",
-  "description": "Provides ability to manage multiple tabs at a time.",
+  "description": "__MSG_extensionDescription__",
   "permissions": [
     "activeTab",
     "management",
@@ -15,6 +15,7 @@
       "background.js"
     ]
   },
+  "default_locale": "en",
   "applications": {
     "gecko": {
       "id": "multipletab@piro.sakura.ne.jp",

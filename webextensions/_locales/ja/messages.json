@@ -1,0 +1,12 @@
+{
+  "extensionName": { "message": "マルチプルタブハンドラ(WE)" },
+  "extensionDescription": { "message": "複数のタブをまとめて操作する機能を提供します。" },
+
+  "bookmarkTabs.notification.title": { "message": "複数のタブをブックマークしました" },
+  "bookmarkTabs.notification.message": { "message": "「$TITLE$」を含む$COUNT$個のタブを「$PARENT$」内の新しいフォルダーにブックマークしました。",
+    "placeholders": {
+      "title": { "content": "$1", "example": "タイトル" },
+      "count": { "content": "$2", "example": "2" },
+      "parent": { "content": "$3", "example": "親フォルダー" }
+    }}
+}

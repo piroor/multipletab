@@ -1,0 +1,12 @@
+{
+  "extensionName": { "message": "Multiple Tab Handler (WE)" },
+  "extensionDescription": { "message": "Provides ability to manage multiple tabs at a time." },
+
+  "bookmarkTabs.notification.title": { "message": "Tabs are Successfully Bookmarked" },
+  "bookmarkTabs.notification.message": { "message": "$COUNT$ tabs including \"$TITLE$\" are bookmarked in a new folder under \"$PARENT$.",
+    "placeholders": {
+      "title": { "content": "$1", "example": "Title" },
+      "count": { "content": "$2", "example": "2" },
+      "parent": { "content": "$3", "example": "Parent Folder" }
+    }}
+}
