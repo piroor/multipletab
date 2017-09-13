@@ -237,7 +237,7 @@ async function onTSTTabDragEnd(aMessage) {
     clearSelection(aMessage.window);
     gTargetWindow = null;
   }
-  else {
+  else if (Object.keys(gSelectedTabs).length > 0) {
     refreshContextMenuItems().then(() => {
     browser.runtime.sendMessage(kTST_ID, {
       type: kTSTAPI_CONTEXT_MENU_OPEN,
