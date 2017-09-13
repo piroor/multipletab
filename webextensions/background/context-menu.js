@@ -164,7 +164,7 @@ configs.$addObserver(aKey => {
 */
 
 var contextMenuClickListener = (aInfo, aTab) => {
-  log('context menu item clicked: ', aInfo, aTab);
+  //log('context menu item clicked: ', aInfo, aTab);
   switch (aInfo.menuItemId) {
     case 'reloadTabs':
     case 'bookmarkTabs':
