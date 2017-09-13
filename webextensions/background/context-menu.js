@@ -36,6 +36,9 @@ var gContextMenuItems = `
   suspendTabs
   resumeTabs
   -----------------
+  selectAll
+  select
+  unselect
   invertSelection
 `.trim().split(/\s+/);
 
