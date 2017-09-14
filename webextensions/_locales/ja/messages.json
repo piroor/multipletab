@@ -8,5 +8,33 @@
       "title": { "content": "$1", "example": "タイトル" },
       "count": { "content": "$2", "example": "2" },
       "parent": { "content": "$3", "example": "親フォルダー" }
-    }}
+    }},
+
+  "context.reloadTabs.label":             { "message": "まとめて再読み込み" },
+  "context.bookmarkTabs.label":           { "message": "まとめてブックマーク" },
+  "context.removeBookmarkFromTabs.label": { "message": "まとめてブックマークを削除" },
+  "context.duplicateTabs.label":          { "message": "まとめて複製" },
+  "context.pinTabs.label":                { "message": "まとめてピン留め" },
+  "context.unpinTabs.label":              { "message": "まとめてピン留めを解除" },
+  "context.muteTabs.label":               { "message": "まとめてミュート" },
+  "context.unmuteTabs.label":             { "message": "まとめてミュートを解除" },
+  "context.tearOffTabs.label":            { "message": "まとめて新しいウィンドウに移動" },
+  "context.removeTabs.label":             { "message": "まとめて閉じる" },
+  "context.removeOther.label":            { "message": "選択されていないタブをまとめて閉じる" },
+  "context.clipboard.label":              { "message": "クリップボードにコピー" },
+  "context.saveTabs.label":               { "message": "まとめて保存" },
+  "context.printTabs.label":              { "message": "まとめて印刷" },
+  "context.freezeTabs.label":             { "message": "まとめて凍結" },
+  "context.unfreezeTabs.label":           { "message": "まとめて凍結を解除" },
+  "context.protectTabs.label":            { "message": "まとめて保護" },
+  "context.unprotectTabs.label":          { "message": "まとめて保護を解除" },
+  "context.lockTabs.label":               { "message": "まとめて固定" },
+  "context.unlockTabs.label":             { "message": "まとめて固定を解除" },
+  "context.suspendTabs.label":            { "message": "まとめてアンロード" },
+  "context.resumeTabs.label":             { "message": "まとめて読み込み" },
+
+  "context.select.label":                 { "message": "タブを選択" },
+  "context.unselect.label":               { "message": "タブの選択を解除" },
+  "context.selectAll.label":              { "message": "すべてを選択" },
+  "context.invertSelection.label":        { "message": "選択を反転" }
 }
