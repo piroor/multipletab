@@ -22,6 +22,9 @@ var gContextMenuItems = `
   removeOther
   -----------------
   clipboard
+  clipboard:copy-url
+  clipboard:copy-url-and-title
+  clipboard:copy-html-link
   saveTabs
   -----------------
   printTabs
@@ -63,7 +66,15 @@ async function refreshContextMenuItems(aContextTab, aForce) {
 
   let separatorsCount = 0;
   let normalItemAppeared = false;
+  let createdItems = {};
   for (let id of gContextMenuItems) {
+    let parts = id.split(':');
+    id = parts.pop();
+
+    let parentId = parts.pop();
+    if (parentId && !(parentId in createdItems))
+      continue;
+
     let isSeparator = id.charAt(0) == '-';
     if (isSeparator) {
       if (!normalItemAppeared)
@@ -78,17 +89,18 @@ async function refreshContextMenuItems(aContextTab, aForce) {
 //        continue;
       normalItemAppeared = true;
     }
+    createdItems[id] = true;
     let type = isSeparator ? 'separator' : 'normal';
     let title = isSeparator ? null : browser.i18n.getMessage(`context.${id}.label`);
     await browser.contextMenus.create({
-      id, type, title,
+      id, type, title, parentId,
       contexts: ['page', 'tab']
     });
     try {
       await browser.runtime.sendMessage(kTST_ID, {
         type: kTSTAPI_CONTEXT_MENU_CREATE,
         params: {
-          id, type, title,
+          id, type, title, parentId,
           contexts: ['page', 'tab']
         }
       });
