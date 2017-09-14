@@ -327,6 +327,10 @@ function onMessageExternal(aMessage, aSender) {
 }
 browser.runtime.onMessageExternal.addListener(onMessageExternal);
 
+browser.tabs.onActivated.addListener(() => clearSelection());
+browser.tabs.onCreated.addListener(() => clearSelection());
+browser.tabs.onRemoved.addListener(() => clearSelection());
+
 
 async function registerToTST() {
   await browser.runtime.sendMessage(kTST_ID, {
