@@ -253,8 +253,6 @@ dragExitAllWithDelay.cancel = () => {
 
 async function onTSTTabDragEnd(aMessage) {
   //console.log('onTSTTabDragEnd', aMessage);
-  gDragStartTarget = gFirstHoverTarget = gLastHoverTarget = null;
-
   if (gWillCloseSelectedTabs) {
     let allTabs = gAllTabsOnDragReady.slice(0);
     allTabs.reverse();
@@ -269,13 +267,14 @@ async function onTSTTabDragEnd(aMessage) {
     refreshContextMenuItems().then(() => {
       browser.runtime.sendMessage(kTST_ID, {
         type: kTSTAPI_CONTEXT_MENU_OPEN,
-        tab:  aMessage.tab && aMessage.tab.id,
+        tab:  gDragStartTarget.id,
         left: aMessage.clientX,
         top:  aMessage.clientY
       });
     });
     // don't clear selection state until menu command is processed.
   }
+  gDragStartTarget = gFirstHoverTarget = gLastHoverTarget = null;
   gUndeterminedRange = {};
   gWillCloseSelectedTabs = false;
   gDragEnteredCount = 0;
