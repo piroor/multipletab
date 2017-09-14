@@ -267,6 +267,7 @@ async function onTSTTabDragEnd(aMessage) {
     refreshContextMenuItems().then(() => {
       browser.runtime.sendMessage(kTST_ID, {
         type: kTSTAPI_CONTEXT_MENU_OPEN,
+        window: gTargetWindow,
         tab:  gDragStartTarget.id,
         left: aMessage.clientX,
         top:  aMessage.clientY
