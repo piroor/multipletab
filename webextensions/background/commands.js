@@ -19,7 +19,7 @@ function clearSelection(aOptions = {}) {
 
 function isPermittedTab(aTab) {
   return /^about:blank($|\?|#)/.test(aTab.url) ||
-         !/^(about|resource|chrome|file):/.test(aTab.url);
+         !/^(about|resource|chrome|file|view-source):/.test(aTab.url);
 }
 
 function setSelection(aTabs, aSelected, aOptions = {}) {
