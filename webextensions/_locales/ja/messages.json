@@ -36,5 +36,10 @@
   "context.select.label":                 { "message": "タブを選択" },
   "context.unselect.label":               { "message": "タブの選択を解除" },
   "context.selectAll.label":              { "message": "すべてを選択" },
-  "context.invertSelection.label":        { "message": "選択を反転" }
+  "context.invertSelection.label":        { "message": "選択を反転" },
+
+
+  "config.debug.caption": { "message": "開発用" },
+  "config.debug.label": { "message": "デバッグモード" },
+  "config.all.caption": { "message": "すべての設定" }
 }

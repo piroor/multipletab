@@ -38,5 +38,10 @@
   "context.select.label":                 { "message": "Select" },
   "context.unselect.label":               { "message": "Unselect" },
   "context.selectAll.label":              { "message": "Select All" },
-  "context.invertSelection.label":        { "message": "Invert Selection" }
+  "context.invertSelection.label":        { "message": "Invert Selection" },
+
+
+  "config.debug.caption": { "message": "Development" },
+  "config.debug.label": { "message": "Debug mode" },
+  "config.all.caption": { "message": "All Configs" }
 }

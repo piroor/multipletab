@@ -5,6 +5,8 @@
 */
 'use strict';
 
+gLogContext = 'BG';
+
 /* utilities */
 
 function retrieveTargetTabs(aSerializedTab) {

@@ -10,15 +10,22 @@
     "clipboardWrite",
     "contextMenus",
     "downloads",
+    "storage",
     "tabs"
   ],
   "background": {
     "scripts": [
-      "background/constants.js",
+      "common/constants.js",
+      "common/Configs.js",
+      "common/common.js",
       "background/commands.js",
       "background/background.js",
       "background/context-menu.js"
     ]
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "browser_style": true
   },
   "default_locale": "en",
   "applications": {
