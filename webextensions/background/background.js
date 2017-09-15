@@ -84,7 +84,6 @@ async function onTSTTabClick(aMessage) {
     });
     gTargetWindow = null;
     gInSelectionSession = false;
-    reserveRefreshContextMenuItems();
     return;
   }
 
@@ -106,7 +105,6 @@ async function onTSTTabClick(aMessage) {
       globalHighlight: false
     });
     gInSelectionSession = true;
-    reserveRefreshContextMenuItems();
     return true;
   }
   else if (aMessage.shiftKey) {
@@ -120,7 +118,6 @@ async function onTSTTabClick(aMessage) {
       globalHighlight: false
     });
     gInSelectionSession = true;
-    reserveRefreshContextMenuItems();
     return true;
   }
   return false;
@@ -133,7 +130,6 @@ async function onTSTTabbarClick(aMessage) {
     states: ['selected', 'ready-to-close']
   });
   gTargetWindow = null;
-  reserveRefreshContextMenuItems();
 }
 
 

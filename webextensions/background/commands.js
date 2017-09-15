@@ -66,6 +66,7 @@ function setSelection(aTabs, aSelected, aOptions = {}) {
     tabs:  aTabs.map(aTab => aTab.id),
     state: aOptions.states || aOptions.state || 'selected'
   });
+  reserveRefreshContextMenuItems();
 }
 
 async function getAllTabs() {
