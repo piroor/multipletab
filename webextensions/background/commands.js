@@ -159,11 +159,15 @@ async function copyToClipboard(aIds, aFormat) {
   }
   browser.tabs.executeScript(permittedTabs[0].id, {
     /* Due to Firefox's limitation, we cannot copy text from background script.
-       https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Interact_with_the_clipboard#Browser-specific_considerations
        Moreover, when this command is called from context menu on a tab,
        there is no browser_action page.
        Thus we need to embed text field into webpage and execute a command to copy,
-       but scripts in the webpage can steal the data - that's crazy and dangerous! */
+       but scripts in the webpage can steal the data - that's crazy and dangerous!
+       See also:
+        https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Interact_with_the_clipboard#Browser-specific_considerations
+        https://bugzilla.mozilla.org/show_bug.cgi?id=1272869
+        https://bugzilla.mozilla.org/show_bug.cgi?id=1344410
+    */
     code: `
       var field = document.createElement('textarea');
       field.value = ${JSON.stringify(dataToCopy)};
