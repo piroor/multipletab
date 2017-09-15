@@ -45,10 +45,13 @@ var gContextMenuItems = `
 var gLastSelectedTabs = '';
 
 async function refreshContextMenuItems(aContextTab, aForce) {
+  log('refreshContextMenuItems');
   var serialized = JSON.stringify(gSelectedTabs);
   if (!aForce &&
-      serialized == gLastSelectedTabs)
+      serialized == gLastSelectedTabs) {
+    log(' => no change, skip');
     return;
+  }
 
   await browser.contextMenus.removeAll();
   try {
@@ -60,6 +63,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   }
   gLastSelectedTabs = serialized;
   var visibilities = await getContextMenuItemVisibilities(aContextTab);
+  log('visibilities: ', visibilities);
 
   let separatorsCount = 0;
   let normalItemAppearedIn = {};
@@ -87,6 +91,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
         return;
       normalItemAppearedIn[parentId] = true;
     }
+    log('build ', id, parentId);
     createdItems[id] = true;
     let type = isSeparator ? 'separator' : 'normal';
     let title = isSeparator ?
