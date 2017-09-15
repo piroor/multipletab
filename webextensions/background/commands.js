@@ -146,13 +146,25 @@ async function copyToClipboard(aIds, aFormat) {
       converter = (aTab) => `<a title="${sanitizeHtmlText(aTab.title)}" href="${sanitizeHtmlText(aTab.url)}">${sanitizeHtmlText(aTab.title)}</a>`;
       break;
   }
-  var dataToCopy = await Promise.all(tabs.map(converter));
+  var dataToCopy = (await Promise.all(tabs.map(converter))).join('\n');
+  if (tabs.length > 1)
+    dataToCopy += '\n';
+  browser.tabs.executeScript(tabs[0].id, {
+    /* Due to Firefox's limitation, we cannot copy test from background script.
+       https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Interact_with_the_clipboard#Browser-specific_considerations
+       Moreover, when this command is called from context menu on a tab,
+       there is no browser_action page.
+       Thus we need to embed text field into webpage and execute a command to copy,
+       but scripts in the webpage can steal the data - that's crazy and dangerous! */
+    code: `
   var field = document.createElement('textarea');
-  field.value = `${dataToCopy.join('\n')}\n`;
+  field.value = ${JSON.stringify(dataToCopy)};
   document.body.appendChild(field);
   field.select();
   document.execCommand('copy');
-  setTimeout(() => field.parentNode.removeChild(field), 100);
+  field.parentNode.removeChild(field);
+    `
+  });
 }
 
 function sanitizeHtmlText(aText) {
