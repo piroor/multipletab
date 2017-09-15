@@ -150,7 +150,7 @@ async function copyToClipboard(aIds, aFormat) {
   if (tabs.length > 1)
     dataToCopy += '\n';
   browser.tabs.executeScript(tabs[0].id, {
-    /* Due to Firefox's limitation, we cannot copy test from background script.
+    /* Due to Firefox's limitation, we cannot copy text from background script.
        https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Interact_with_the_clipboard#Browser-specific_considerations
        Moreover, when this command is called from context menu on a tab,
        there is no browser_action page.
