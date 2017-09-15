@@ -7,6 +7,20 @@
 
 gLogContext = 'BG';
 
+window.addEventListener('DOMContentLoaded', async () => {
+  await configs.$loaded;
+
+  browser.tabs.onActivated.addListener(() => clearSelection());
+  browser.tabs.onCreated.addListener(() => clearSelection());
+  browser.tabs.onRemoved.addListener(() => clearSelection());
+
+  reserveRefreshContextMenuItems();
+
+  browser.runtime.onMessageExternal.addListener(onMessageExternal);
+  registerToTST();
+}, { once: true });
+
+
 /* utilities */
 
 function retrieveTargetTabs(aSerializedTab) {
@@ -323,11 +337,6 @@ function onMessageExternal(aMessage, aSender) {
       return onTSTAPIMessage(aMessage);
   }
 }
-browser.runtime.onMessageExternal.addListener(onMessageExternal);
-
-browser.tabs.onActivated.addListener(() => clearSelection());
-browser.tabs.onCreated.addListener(() => clearSelection());
-browser.tabs.onRemoved.addListener(() => clearSelection());
 
 
 async function registerToTST() {
@@ -357,11 +366,3 @@ async function registerToTST() {
   });
   refreshContextMenuItems(null, true); // force rebuild menu
 }
-registerToTST();
-
-function wait(aTimeout) {
-  return new Promise((aResolve, aReject) => {
-    setTimeout(aResolve, aTimeout || 0);
-  });
-}
-
