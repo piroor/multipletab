@@ -157,12 +157,12 @@ async function copyToClipboard(aIds, aFormat) {
        Thus we need to embed text field into webpage and execute a command to copy,
        but scripts in the webpage can steal the data - that's crazy and dangerous! */
     code: `
-  var field = document.createElement('textarea');
-  field.value = ${JSON.stringify(dataToCopy)};
-  document.body.appendChild(field);
-  field.select();
-  document.execCommand('copy');
-  field.parentNode.removeChild(field);
+      var field = document.createElement('textarea');
+      field.value = ${JSON.stringify(dataToCopy)};
+      document.body.appendChild(field);
+      field.select();
+      document.execCommand('copy');
+      field.parentNode.removeChild(field);
     `
   });
 }
