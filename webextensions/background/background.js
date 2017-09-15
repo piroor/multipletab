@@ -15,6 +15,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.tabs.onRemoved.addListener(() => clearSelection());
 
   reserveRefreshContextMenuItems();
+  configs.$addObserver(onConfigChanged);
 
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
   registerToTST();
@@ -372,4 +373,17 @@ async function registerToTST() {
     `
   });
   refreshContextMenuItems(null, true); // force rebuild menu
+}
+
+function onConfigChanged(aKey) {
+  switch (aKey) {
+    case 'copyToClipboardFormats':
+      reserveRefreshContextMenuItems();
+      break;
+
+    default:
+      if (aKey.indexOf('context_') == 0)
+        reserveRefreshContextMenuItems();
+      break;
+  }
 }
