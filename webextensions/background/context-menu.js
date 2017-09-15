@@ -155,7 +155,7 @@ async function getContextMenuItemVisibilities(aContextTab) {
     tearOffTabs:   tabIds.length > 0,
     removeTabs:    tabIds.length > 0,
     removeOther:   tabIds.length > 0 && tabIds.length < allTabs.length,
-    clipboard:     false && tabIds.length > 0,
+    clipboard:     tabIds.length > 0,
     saveTabs:      tabIds.length > 0,
     printTabs:     false && tabIds.length > 0,
     freezeTabs:    false && tabIds.length > 0 && frozenCount < tabIds.length,
@@ -230,6 +230,14 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       break;
 
     case 'clipboard':
+      break;
+    case 'copy-url':
+      break;
+    case 'copy-url-and-title':
+      break;
+    case 'copy-html-link':
+      break;
+
     case 'saveTabs':
       await saveTabs(selectedTabIds);
       clearSelection();
