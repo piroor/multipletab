@@ -233,6 +233,8 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       clearSelection();
       break;
     case 'saveTabs':
+      await clearSelection();
+      await wait(100); // to wait tab titles are updated
       await saveTabs(selectedTabIds);
       break;
 
@@ -264,6 +266,8 @@ var contextMenuClickListener = async (aInfo, aTab) => {
     default:
       if (aInfo.menuItemId.indexOf('clipboard:') == 0) {
         let format = aInfo.menuItemId.replace(/^clipboard:/, '');
+        await clearSelection();
+        await wait(100); // to wait tab titles are updated
         await copyToClipboard(selectedTabIds, format);
       }
       break;

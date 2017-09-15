@@ -21,6 +21,20 @@ function log(aMessage, ...aArgs)
   console.log(`mth<${gLogContext}>: ${indent}${aMessage}`, ...aArgs);
 }
 
+async function wait(aTask = 0, aTimeout = 0) {
+  if (typeof aTask != 'function') {
+    aTimeout = aTask;
+    aTask = null;
+  }
+  return new Promise((aResolve, aReject) => {
+    setTimeout(async () => {
+      if (aTask)
+        await aTask();
+      aResolve();
+    }, aTimeout);
+  });
+}
+
 configs = new Configs({
   debug: false
 });
