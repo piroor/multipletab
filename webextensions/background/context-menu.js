@@ -234,7 +234,6 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       break;
     case 'saveTabs':
       await saveTabs(selectedTabIds);
-      clearSelection();
       break;
 
     case 'printTabs':
@@ -266,7 +265,6 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       if (aInfo.menuItemId.indexOf('clipboard:') == 0) {
         let format = aInfo.menuItemId.replace(/^clipboard:/, '');
         await copyToClipboard(selectedTabIds, format);
-        clearSelection();
       }
       break;
   }

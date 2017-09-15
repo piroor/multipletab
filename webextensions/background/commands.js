@@ -132,6 +132,7 @@ async function removeOtherTabs(aIds) {
 }
 
 async function copyToClipboard(aIds, aFormat) {
+  clearSelection();
   var allTabs = await getAllTabs();
   var tabs = allTabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
   var converter;
@@ -187,6 +188,7 @@ function sanitizeHtmlText(aText) {
 }
 
 async function saveTabs(aIds) {
+  clearSelection();
   var tabs = await getAllTabs();
   var prefix = 'saved-tabs/'; // this should be customizable
   for (let tab of tabs) {
