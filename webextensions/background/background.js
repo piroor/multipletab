@@ -265,7 +265,7 @@ async function onTSTTabDragEnd(aMessage) {
   }
   else if (Object.keys(gSelectedTabs).length > 0) {
     let tab = gDragStartTarget.id;
-    refreshContextMenuItems().then(() => {
+    refreshContextMenuItems(tab).then(() => {
       browser.runtime.sendMessage(kTST_ID, {
         type: kTSTAPI_CONTEXT_MENU_OPEN,
         window: gTargetWindow,
