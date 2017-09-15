@@ -131,8 +131,8 @@ async function removeOtherTabs(aIds) {
 }
 
 async function copyToClipboard(aIds, aFormat) {
-  var tabs = await getAllTabs();
-  tabs = tabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
+  var allTabs = await getAllTabs();
+  var tabs = allTabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
   var converter;
   switch (aFormat) {
     default:
@@ -149,7 +149,14 @@ async function copyToClipboard(aIds, aFormat) {
   var dataToCopy = (await Promise.all(tabs.map(converter))).join('\n');
   if (tabs.length > 1)
     dataToCopy += '\n';
-  browser.tabs.executeScript(tabs[0].id, {
+
+  var permittedTabs = tabs.filter(isPermittedTab);
+  if (permittedTabs.length == 0) {
+    permittedTabs = allTabs.filter(isPermittedTab);
+    if (permittedTabs.length == 0)
+      throw new Error('no permitted tab to copy data to the clipboard');
+  }
+  browser.tabs.executeScript(permittedTabs[0].id, {
     /* Due to Firefox's limitation, we cannot copy text from background script.
        https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Interact_with_the_clipboard#Browser-specific_considerations
        Moreover, when this command is called from context menu on a tab,
