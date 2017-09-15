@@ -130,6 +130,38 @@ async function removeOtherTabs(aIds) {
   }
 }
 
+async function copyToClipboard(aIds, aFormat) {
+  var tabs = await getAllTabs();
+  tabs = tabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
+  var converter;
+  switch (aFormat) {
+    default:
+    case 'url':
+      converter = (aTab) => aTab.url;
+      break;
+    case 'title-and-url':
+      converter = (aTab) => `${aTab.title}\n${aTab.url}`;
+      break;
+    case 'html-link':
+      converter = (aTab) => `<a title="${sanitizeHtmlText(aTab.title)}" href="${sanitizeHtmlText(aTab.url)}">${sanitizeHtmlText(aTab.title)}</a>`;
+      break;
+  }
+  var dataToCopy = await Promise.all(tabs.map(converter));
+  var field = document.createElement('textarea');
+  field.value = `${dataToCopy.join('\n')}\n`;
+  document.body.appendChild(field);
+  field.select();
+  document.execCommand('copy');
+  setTimeout(() => field.parentNode.removeChild(field), 100);
+}
+
+function sanitizeHtmlText(aText) {
+  return aText.replace(/&/g, '&amp;')
+              .replace(/"/g, '&quot;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;');
+}
+
 async function saveTabs(aIds) {
   var tabs = await getAllTabs();
   var prefix = 'saved-tabs/'; // this should be customizable
