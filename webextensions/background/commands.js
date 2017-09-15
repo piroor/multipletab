@@ -115,16 +115,16 @@ async function unmuteTabs(aIds) {
 }
 
 async function removeTabs(aIds) {
-  var tabs = await getAllTabs();
-  for (let tab of tabs.reverse()) {
+  var tabs = await getAllTabs(); // because given ids are possibly unsorted.
+  for (let tab of tabs.reverse()) { // close down to top, to keep tree structure of Tree Style Tab
     if (aIds.indexOf(tab.id) > -1)
       await browser.tabs.remove(tab.id);
   }
 }
 
 async function removeOtherTabs(aIds) {
-  var tabs = await getAllTabs();
-  for (let tab of tabs.reverse()) {
+  var tabs = await getAllTabs(); // because given ids are possibly unsorted.
+  for (let tab of tabs.reverse()) { // close down to top, to keep tree structure of Tree Style Tab
     if (aIds.indexOf(tab.id) < 0)
       await browser.tabs.remove(tab.id);
   }
