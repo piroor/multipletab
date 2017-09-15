@@ -7,8 +7,9 @@
   "permissions": [
     "<all_urls>",
     "activeTab",
-    "tabs",
-    "contextMenus"
+    "contextMenus",
+    "downloads",
+    "tabs"
   ],
   "background": {
     "scripts": [

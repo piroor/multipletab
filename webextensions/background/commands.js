@@ -130,6 +130,31 @@ async function removeOtherTabs(aIds) {
   }
 }
 
+async function saveTabs(aIds) {
+  var tabs = await getAllTabs();
+  var prefix = 'saved-tabs/'; // this should be customizable
+  for (let tab of tabs) {
+    if (aIds.indexOf(tab.id) > -1)
+      browser.downloads.download({
+        url:      tab.url,
+        filename: `${prefix}${suggestFileNameForTab(tab)}`
+      });
+  }
+}
+
+function suggestFileNameForTab(aTab) {
+  var fileNameMatch = aTab.url.replace(/^\w+:\/\/[^\/]+\//, '') // remove origin part
+                              .replace(/#.*$/, '') // remove fragment
+                              .replace(/\?.*$/, '') // remove query
+                              .match(/([^\/]+\.([^\.\/]+))$/);
+  // we should suggest filename from content type, but currently simply use the filename except "html" case.
+  if (fileNameMatch &&
+      !/html?/i.test(fileNameMatch[1]))
+    return fileNameMatch[1];
+  // webpages (text/html, application/xhtml+xml, etc.) should have the page title as the filename
+  return `${aTab.title.replace(/\//g, '_')}.html`;
+}
+
 async function selectAllTabs() {
   var tabs = await getAllTabs();
   setSelection(tabs, true);
