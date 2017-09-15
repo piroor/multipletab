@@ -53,6 +53,7 @@ function toggleStateOfDragOverTabs(aParams = {}) {
     for (let id of Object.keys(gUndeterminedRange)) {
       setSelection(gUndeterminedRange[id], !(id in gSelectedTabs), {
         globalHighlight: false,
+        dontUpdateMenu: true,
         state: aParams.state
       });
     }
@@ -69,6 +70,7 @@ function toggleStateOfDragOverTabs(aParams = {}) {
         continue;
       setSelection(tab, !(tab.id in gSelectedTabs), {
         globalHighlight: false,
+        dontUpdateMenu: true,
         state: aParams.state
       });
       gUndeterminedRange[tab.id] = tab;
@@ -80,6 +82,7 @@ function toggleStateOfDragOverTabs(aParams = {}) {
     }
     setSelection(aParams.allTargets, !(aParams.target.id in gSelectedTabs), {
       globalHighlight: false,
+      dontUpdateMenu: true,
       state: aParams.state
     });
   }
@@ -171,12 +174,14 @@ async function onTSTTabDragReady(aMessage) {
   gAllTabsOnDragReady = await browser.tabs.query({ windowId: aMessage.window });
 
   clearSelection({
-    states: ['selected', 'ready-to-close']
+    states: ['selected', 'ready-to-close'],
+    dontUpdateMenu: true
   });
 
   var startTabs = retrieveTargetTabs(aMessage.tab);
   setSelection(startTabs, true, {
     globalHighlight: false,
+    dontUpdateMenu: true,
     state: gWillCloseSelectedTabs ? 'ready-to-close' : 'selected'
   });
 
@@ -202,6 +207,7 @@ async function onTSTTabDragEnter(aMessage) {
   if (gPendingTabs) {
     setSelection(gPendingTabs, true, {
       globalHighlight: false,
+      dontUpdateMenu: true,
       state: state
     });
     gPendingTabs = null;
@@ -219,6 +225,7 @@ async function onTSTTabDragEnter(aMessage) {
         Object.keys(gSelectedTabs).length == targetTabs.length) {
       setSelection(targetTabs, false, {
         globalHighlight: false,
+        dontUpdateMenu: true,
         state: state
       });
       for (let tab of targetTabs) {
