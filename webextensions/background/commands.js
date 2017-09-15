@@ -134,22 +134,10 @@ async function removeOtherTabs(aIds) {
 async function copyToClipboard(aIds, aFormat) {
   var allTabs = await getAllTabs();
   var tabs = allTabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
-  var converter;
-  switch (aFormat) {
-    default:
-    case 'url':
-      converter = (aTab) => aTab.url;
-      break;
-    case 'title-and-url':
-      converter = (aTab) => `${aTab.title}\n${aTab.url}`;
-      break;
-    case 'html-link':
-      converter = (aTab) => `<a title="${sanitizeHtmlText(aTab.title)}" href="${sanitizeHtmlText(aTab.url)}">${sanitizeHtmlText(aTab.title)}</a>`;
-      break;
-  }
-  var dataToCopy = (await Promise.all(tabs.map(converter))).join('\n');
+  var delimiter = configs.useCRLF ? '\r\n' : '\n' ;
+  var dataToCopy = (await Promise.all(tabs.map(aTab => fillPlaceHolders(aFormat, aTab)))).join(delimiter);
   if (tabs.length > 1)
-    dataToCopy += '\n';
+    dataToCopy += delimiter;
 
   var permittedTabs = tabs.filter(isPermittedTab);
   if (permittedTabs.length == 0) {
@@ -177,6 +165,16 @@ async function copyToClipboard(aIds, aFormat) {
       field.parentNode.removeChild(field);
     `
   });
+}
+
+function fillPlaceHolders(aFormat, aTab) {
+  var delimiter = configs.useCRLF ? '\r\n' : '\n' ;
+  return aFormat
+           .replace(/%URL%/gi, aTab.url)
+           .replace(/%TITLE%/gi, aTab.title)
+           .replace(/%URL_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.url))
+           .replace(/%TITLE_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.title))
+           .replace(/%EOL%/gi, delimiter);
 }
 
 function sanitizeHtmlText(aText) {

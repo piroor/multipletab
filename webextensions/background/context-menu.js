@@ -22,9 +22,6 @@ var gContextMenuItems = `
   removeOther
   -----------------
   clipboard
-  clipboard/clipboard:url
-  clipboard/clipboard:title-and-url
-  clipboard/clipboard:html-link
   saveTabs
   -----------------
   printTabs
@@ -67,31 +64,34 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   let separatorsCount = 0;
   let normalItemAppeared = false;
   let createdItems = {};
-  for (let id of gContextMenuItems) {
+  let registerItem = async (id) => {
     let parts = id.split('/');
     id = parts.pop();
 
     let parentId = parts.pop();
     if (parentId && !(parentId in createdItems))
-      continue;
+      return;
 
     let isSeparator = id.charAt(0) == '-';
     if (isSeparator) {
       if (!normalItemAppeared)
-        continue;
+        return;
       normalItemAppeared = false;
       id = `separator${separatorsCount++}`;
     }
     else {
       if (id in visibilities && !visibilities[id])
-        continue;
+        return;
 //      if (!configs[`context_${id}`])
 //        continue;
       normalItemAppeared = true;
     }
     createdItems[id] = true;
     let type = isSeparator ? 'separator' : 'normal';
-    let title = isSeparator ? null : browser.i18n.getMessage(`context.${id}.label`) || id;
+    let title = isSeparator ?
+                  null :
+                  browser.i18n.getMessage(`context.${id}.label`) ||
+                    id.replace(/^clipboard:/, '');
     await browser.contextMenus.create({
       id, type, title, parentId,
       contexts: ['page', 'tab']
@@ -108,6 +108,10 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     catch(e) {
     }
   }
+  await Promise.all(gContextMenuItems.map(registerItem));
+  await Promise.all(Object.keys(configs.copyToClipboardFormats)
+    .map(aId => `clipboard/clipboard:${aId}`)
+    .map(registerItem));
 }
 
 function reserveRefreshContextMenuItems() {
@@ -265,7 +269,8 @@ var contextMenuClickListener = async (aInfo, aTab) => {
 
     default:
       if (aInfo.menuItemId.indexOf('clipboard:') == 0) {
-        let format = aInfo.menuItemId.replace(/^clipboard:/, '');
+        let id = aInfo.menuItemId.replace(/^clipboard:/, '');
+        let format = configs.copyToClipboardFormats[id];
         await clearSelection();
         await wait(100); // to wait tab titles are updated
         await copyToClipboard(selectedTabIds, format);
