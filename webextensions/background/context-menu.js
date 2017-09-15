@@ -91,7 +91,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     }
     createdItems[id] = true;
     let type = isSeparator ? 'separator' : 'normal';
-    let title = isSeparator ? null : browser.i18n.getMessage(`context.${id}.label`);
+    let title = isSeparator ? null : browser.i18n.getMessage(`context.${id}.label`) || id;
     await browser.contextMenus.create({
       id, type, title, parentId,
       contexts: ['page', 'tab']
