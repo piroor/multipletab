@@ -82,8 +82,9 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     else {
       if (id in visibilities && !visibilities[id])
         return;
-//      if (!configs[`context_${id}`])
-//        continue;
+      let key = `context_${id}`;
+      if (key in configs && !configs[key])
+        return;
       normalItemAppeared = true;
     }
     createdItems[id] = true;
@@ -150,7 +151,7 @@ async function getContextMenuItemVisibilities(aContextTab) {
   return {
     reloadTabs:    tabIds.length > 0,
     bookmarkTabs:  tabIds.length > 0,
-    removeBookmarkFromTabs: false && tabIds.length > 0,
+    removeBookmarkFromTabs: tabIds.length > 0,
     duplicateTabs: tabIds.length > 0,
     pinTabs:       tabIds.length > 0 && pinnedCount < tabIds.length,
     unpinTabs:     tabIds.length > 0 && pinnedCount > 0,
@@ -161,15 +162,15 @@ async function getContextMenuItemVisibilities(aContextTab) {
     removeOther:   tabIds.length > 0 && tabIds.length < allTabs.length,
     clipboard:     tabIds.length > 0,
     saveTabs:      tabIds.length > 0,
-    printTabs:     false && tabIds.length > 0,
-    freezeTabs:    false && tabIds.length > 0 && frozenCount < tabIds.length,
-    unfreezeTabs:  false && tabIds.length > 0 && frozenCount > 0,
-    protectTabs:   false && tabIds.length > 0 && protectedCount < tabIds.length,
-    unprotectTabs: false && tabIds.length > 0 && protectedCount > 0,
-    lockTabs:      false && tabIds.length > 0 && lockedCount < tabIds.length,
-    unlockTabs:    false && tabIds.length > 0 && lockedCount > 0,
-    suspendTabs:   false && tabIds.length > 0 && suspendedCount < tabIds.length,
-    resumeTabs:    false && tabIds.length > 0 && suspendedCount > 0,
+    printTabs:     tabIds.length > 0,
+    freezeTabs:    tabIds.length > 0 && frozenCount < tabIds.length,
+    unfreezeTabs:  tabIds.length > 0 && frozenCount > 0,
+    protectTabs:   tabIds.length > 0 && protectedCount < tabIds.length,
+    unprotectTabs: tabIds.length > 0 && protectedCount > 0,
+    lockTabs:      tabIds.length > 0 && lockedCount < tabIds.length,
+    unlockTabs:    tabIds.length > 0 && lockedCount > 0,
+    suspendTabs:   tabIds.length > 0 && suspendedCount < tabIds.length,
+    resumeTabs:    tabIds.length > 0 && suspendedCount > 0,
     selectAll:     tabIds.length < allTabs.length,
     select:        !aContextTab || tabIds.indexOf(aContextTab.id) < 0,
     unselect:      !aContextTab || tabIds.indexOf(aContextTab.id) > -1,

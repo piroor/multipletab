@@ -41,6 +41,33 @@ defaultClipboardFormats[browser.i18n.getMessage('context.clipboard:title-and-url
 defaultClipboardFormats[browser.i18n.getMessage('context.clipboard:html-link.label')] = '<a title="%TITLE_HTML%" href="%URL_HTML%">%TITLE_HTML%</a>';
 
 configs = new Configs({
+  context_reloadTabs: true,
+  context_bookmarkTabs: true,
+  context_removeBookmarkFromTabs: false,
+  context_duplicateTabs: true,
+  context_pinTabs: true,
+  context_unpinTabs: true,
+  context_muteTabs: true,
+  context_unmuteTabs: true,
+  context_tearOffTabs: true,
+  context_removeTabs: true,
+  context_removeOther: true,
+  context_clipboard: true,
+  context_saveTabs: true,
+  context_printTabs: false,
+  context_freezeTabs: false,
+  context_unfreezeTabs: false,
+  context_protectTabs: false,
+  context_unprotectTabs: false,
+  context_lockTabs: false,
+  context_unlockTabs: false,
+  context_suspendTabs: false,
+  context_resumeTabs: false,
+  context_selectAll: true,
+  context_select: true,
+  context_unselect: true,
+  context_invertSelection: true,
+
   copyToClipboardFormats: defaultClipboardFormats,
   useCRLF: false,
 
