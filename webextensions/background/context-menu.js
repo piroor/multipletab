@@ -22,9 +22,9 @@ var gContextMenuItems = `
   removeOther
   -----------------
   clipboard
-  clipboard:copy-url
-  clipboard:copy-url-and-title
-  clipboard:copy-html-link
+  clipboard/clipboard:url
+  clipboard/clipboard:title-and-url
+  clipboard/clipboard:html-link
   saveTabs
   -----------------
   printTabs
@@ -68,7 +68,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   let normalItemAppeared = false;
   let createdItems = {};
   for (let id of gContextMenuItems) {
-    let parts = id.split(':');
+    let parts = id.split('/');
     id = parts.pop();
 
     let parentId = parts.pop();
@@ -230,14 +230,8 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       break;
 
     case 'clipboard':
+      clearSelection();
       break;
-    case 'copy-url':
-      break;
-    case 'copy-url-and-title':
-      break;
-    case 'copy-html-link':
-      break;
-
     case 'saveTabs':
       await saveTabs(selectedTabIds);
       clearSelection();
@@ -269,6 +263,11 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       break;
 
     default:
+      if (aInfo.menuItemId.indexOf('clipboard:') == 0) {
+        let format = aInfo.menuItemId.replace(/^clipboard:/, '');
+        await copyToClipboard(selectedTabIds, format);
+        clearSelection();
+      }
       break;
   }
 };
