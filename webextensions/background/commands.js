@@ -18,6 +18,8 @@ function clearSelection(aOptions = {}) {
 }
 
 function isPermittedTab(aTab) {
+  if (aTab.discarded)
+    return false;
   return /^about:blank($|\?|#)/.test(aTab.url) ||
          !/^(about|resource|chrome|file|view-source):/.test(aTab.url);
 }
