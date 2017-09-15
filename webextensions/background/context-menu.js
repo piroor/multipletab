@@ -62,21 +62,21 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   var visibilities = await getContextMenuItemVisibilities(aContextTab);
 
   let separatorsCount = 0;
-  let normalItemAppeared = false;
+  let normalItemAppearedIn = {};
   let createdItems = {};
   let registerItem = async (id) => {
     let parts = id.split('/');
     id = parts.pop();
 
-    let parentId = parts.pop();
+    let parentId = parts.pop() || '';
     if (parentId && !(parentId in createdItems))
       return;
 
     let isSeparator = id.charAt(0) == '-';
     if (isSeparator) {
-      if (!normalItemAppeared)
+      if (!normalItemAppearedIn[parentId])
         return;
-      normalItemAppeared = false;
+      normalItemAppearedIn[parentId] = false;
       id = `separator${separatorsCount++}`;
     }
     else {
@@ -85,7 +85,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       let key = `context_${id}`;
       if (key in configs && !configs[key])
         return;
-      normalItemAppeared = true;
+      normalItemAppearedIn[parentId] = true;
     }
     createdItems[id] = true;
     let type = isSeparator ? 'separator' : 'normal';
