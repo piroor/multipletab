@@ -96,28 +96,33 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     let type = isSeparator ? 'separator' : 'normal';
     let title = isSeparator ?
                   null :
-                  browser.i18n.getMessage(`context.${id}.label`) ||
-                    id.replace(/^clipboard:/, '');
-    await browser.contextMenus.create({
-      id, type, title, parentId,
+                id.indexOf('clipboard:') == 0 ?
+                  id.replace(/^clipboard:/, '') :
+                  browser.i18n.getMessage(`context.${id}.label`);
+    let params = {
+      id, type, title,
       contexts: ['page', 'tab']
-    });
+    };
+    if (parentId)
+      params.parentId = parentId;
+    await browser.contextMenus.create(params);
     try {
       await browser.runtime.sendMessage(kTST_ID, {
         type: kTSTAPI_CONTEXT_MENU_CREATE,
-        params: {
-          id, type, title, parentId,
-          contexts: ['page', 'tab']
-        }
+        params
       });
     }
     catch(e) {
     }
   }
-  await Promise.all(gContextMenuItems.map(registerItem));
-  await Promise.all(Object.keys(configs.copyToClipboardFormats)
-    .map(aId => `clipboard/clipboard:${aId}`)
-    .map(registerItem));
+
+  for (let id of gContextMenuItems) {
+    await registerItem(id);
+  }
+  for (let id of Object.keys(configs.copyToClipboardFormats)
+                     .map(aId => `clipboard/clipboard:${aId}`)) {
+    await registerItem(id);
+  }
 }
 
 function reserveRefreshContextMenuItems() {
