@@ -13,6 +13,9 @@
     "storage",
     "tabs"
   ],
+  "icons": {
+    "32": "resources/icon.png"
+  },
   "background": {
     "scripts": [
       "common/constants.js",
