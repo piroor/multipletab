@@ -18,7 +18,8 @@
       "common/constants.js",
       "common/Configs.js",
       "common/common.js",
-      "background/commands.js",
+      "common/commands.js",
+      "common/drag-selection.js",
       "background/background.js",
       "background/context-menu.js"
     ]
