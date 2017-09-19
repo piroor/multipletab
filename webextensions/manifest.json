@@ -27,6 +27,14 @@
       "background/context-menu.js"
     ]
   },
+  "browser_action": {
+    "default_title": "__MSG_panelTitle__",
+    "default_icon": {
+      "32": "resources/icon.png"
+    },
+    "browser_style": true,
+    "default_popup": "panel/panel.html"
+  },
   "options_ui": {
     "page": "options/options.html",
     "browser_style": true

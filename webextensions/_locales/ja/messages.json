@@ -10,6 +10,8 @@
       "parent": { "content": "$3", "example": "親フォルダー" }
     }},
 
+  "panelTitle": { "message": "タブをまとめて操作" },
+
   "context.selection.label":              { "message": "選択したタブを操作" },
 
   "context.reloadTabs.label":             { "message": "再読み込み" },

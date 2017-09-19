@@ -11,6 +11,9 @@
     }},
 
 
+  "panelTitle": { "message": "Select and Do" },
+
+
   "context.selection.label":              { "message": "Selected Tabs" },
 
   "context.reloadTabs.label":             { "message": "Reload Tabs" },

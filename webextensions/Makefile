@@ -6,7 +6,7 @@ xpi: ../extlib/webextensions-lib-configs/Configs.js ../extlib/webextensions-lib-
 	cp ../extlib/webextensions-lib-options/Options.js options/
 	cp ../extlib/webextensions-lib-l10n/l10n.js common/
 	rm -f ./*.xpi
-	zip -r -0 multipletab-we.xpi *.json *.js common background _locales >/dev/null 2>/dev/null
+	zip -r -0 multipletab-we.xpi *.json *.js common resources background panel _locales >/dev/null 2>/dev/null
 
 ../extlib/webextensions-lib-configs/Configs.js:
 	cd .. && git submodule update --init
