@@ -37,6 +37,9 @@ function buildTabItem(aTab) {
   var checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
   label.appendChild(checkbox);
+  var favicon = document.createElement('img');
+  favicon.setAttribute('src', aTab.favIconUrl);
+  label.appendChild(favicon);
   label.appendChild(document.createTextNode(aTab.title));
   var item = document.createElement('li');
   item.appendChild(label);
