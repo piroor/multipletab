@@ -11,6 +11,7 @@
     }},
 
 
+  "context.selection.label":              { "message": "Selected Tabs" },
 
   "context.reloadTabs.label":             { "message": "Reload Tabs" },
   "context.bookmarkTabs.label":           { "message": "Bookmark Tabs" },

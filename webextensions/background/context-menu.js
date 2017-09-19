@@ -40,7 +40,8 @@ var gContextMenuItems = `
   select
   unselect
   invertSelection
-`.trim().split(/\s+/);
+`.trim().split(/\s+/).map(aId => `selection/${aId}`);
+gContextMenuItems.unshift('selection');
 
 var gLastSelectedTabs = '';
 
