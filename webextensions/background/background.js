@@ -24,7 +24,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 /*  listen events */
 
-function onDragSelectionEnd() {
+function onDragSelectionEnd(aMessage) {
     let tab = gDragStartTarget.id;
     refreshContextMenuItems(tab).then(() => {
       browser.runtime.sendMessage(kTST_ID, {
