@@ -39,7 +39,7 @@ function setSelection(aTabs, aSelected, aOptions = {}) {
         continue;
       gSelection.tabs[tab.id] = tab;
       try {
-        if (shouldHighlight && isPermittedTab(tab))
+        if (shouldHighlight && isPermittedTab(tab) && !tab.pinned)
           browser.tabs.executeScript(tab.id, {
             code: `document.title = '✔' + document.title;`
           });
@@ -55,7 +55,7 @@ function setSelection(aTabs, aSelected, aOptions = {}) {
         continue;
       delete gSelection.tabs[tab.id];
       try {
-        if (shouldHighlight && isPermittedTab(tab))
+        if (shouldHighlight && isPermittedTab(tab) && !tab.pinned)
           browser.tabs.executeScript(tab.id, {
             code: `document.title = document.title.replace(/^✔/, '');`
           });
