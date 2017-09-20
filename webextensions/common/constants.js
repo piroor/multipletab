@@ -5,6 +5,10 @@
 */
 'use strict';
 
+const kCOMMAND_PULL_SELECTION_INFO = 'multipletab:pull-selection-info';
+const kCOMMAND_PUSH_SELECTION_INFO = 'multipletab:push-selection-info';
+
+
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';
 
 const kTSTAPI_REGISTER_SELF        = 'register-self';

@@ -24,3 +24,9 @@ ul li img {
   max-height: 16px;
   max-width: 16px;
 }
+
+li.selected {
+  background: Highlight;
+  color: HighlightText;
+}
+

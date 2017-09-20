@@ -17,6 +17,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   reserveRefreshContextMenuItems();
   configs.$addObserver(onConfigChanged);
 
+  browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
   registerToTST();
 }, { once: true });
@@ -74,6 +75,25 @@ function onMessageExternal(aMessage, aSender) {
   switch (aSender.id) {
     case kTST_ID:
       return onTSTAPIMessage(aMessage);
+  }
+}
+
+function onMessage(aMessage) {
+  if (!aMessage || !aMessage.type)
+    return;
+
+  switch (aMessage.type) {
+    case kCOMMAND_PULL_SELECTION_INFO:
+      return Promise.resolve({
+        selection:     gSelection,
+        dragSelection: gDragSelection
+      });
+
+    case kCOMMAND_PUSH_SELECTION_INFO:
+      gSelection = aMessage.selection;
+      gDragSelection = aMessage.dragSelection;
+      reserveRefreshContextMenuItems();
+      break;
   }
 }
 
