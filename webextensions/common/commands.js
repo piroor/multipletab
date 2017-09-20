@@ -5,8 +5,10 @@
 */
 'use strict';
 
-var gSelection.tabs = {};
-var gSelection.targetWindow = null;
+var gSelection = {
+  tabs:         {},
+  targetWindow: null
+};
 
 function clearSelection(aOptions = {}) {
   var tabs = [];
