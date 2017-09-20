@@ -20,6 +20,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.tabs.onActivated.addListener(onTabModified);
   browser.tabs.onCreated.addListener(onTabModified);
   browser.tabs.onRemoved.addListener(onTabModified);
+  browser.runtime.onMessage.addListener(onMessage);
 
   gTabBar = document.querySelector('#tabs');
   await rebuildTabItems();
@@ -29,10 +30,28 @@ window.addEventListener('unload', () => {
   browser.tabs.onActivated.removeListener(onTabModified);
   browser.tabs.onCreated.removeListener(onTabModified);
   browser.tabs.onRemoved.removeListener(onTabModified);
+  browser.runtime.onMessage.removeListener(onMessage);
 }, { once: true });
 
 function onTabModified() {
   clearSelection();
+}
+
+function onMessage(aMessage) {
+  if (!aMessage || !aMessage.type)
+    return;
+
+  switch (aMessage.type) {
+    case kCOMMAND_PUSH_SELECTION_INFO:
+      gSelection = aMessage.selection;
+      gDragSelection = aMessage.dragSelection;
+      rebuildTabItems();
+      break;
+  }
+}
+
+function onSelectionChange(aOptions = {}) {
+  reservePushSelectionState();
 }
 
 async function rebuildTabItems() {
@@ -58,7 +77,6 @@ function buildTabItem(aTab) {
   checkbox.addEventListener('change', () => {
     item.classList.toggle('selected');
     setSelection(aTab, item.classList.contains('selected'));
-    reservePushSelectionState();
   });
   label.appendChild(checkbox);
   var favicon = document.createElement('img');
@@ -70,21 +88,4 @@ function buildTabItem(aTab) {
   if (aTab.id in gSelection.tabs)
     item.classList.add('selected');
   return item;
-}
-
-function reservePushSelectionState() {
-  if (reservePushSelectionState.reserved)
-    clearTimeout(reservePushSelectionState.reserved);
-  reservePushSelectionState.reserved = setTimeout(() => {
-    delete reservePushSelectionState.reserved;
-    pushSelectionState();
-  }, 150);
-}
-
-function pushSelectionState() {
-  browser.runtime.sendMessage({
-    type:          kCOMMAND_PUSH_SELECTION_INFO,
-    selection:     gSelection,
-    dragSelection: gDragSelection
-  });
 }

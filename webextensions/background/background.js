@@ -97,6 +97,12 @@ function onMessage(aMessage) {
   }
 }
 
+function onSelectionChange(aOptions = {}) {
+  reservePushSelectionState();
+  if (!aOptions.dontUpdateMenu)
+    reserveRefreshContextMenuItems();
+}
+
 
 async function registerToTST() {
   await browser.runtime.sendMessage(kTST_ID, {

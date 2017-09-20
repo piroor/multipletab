@@ -70,9 +70,27 @@ function setSelection(aTabs, aSelected, aOptions = {}) {
     tabs:  aTabs.map(aTab => aTab.id),
     state: aOptions.states || aOptions.state || 'selected'
   });
-  if (!aOptions.dontUpdateMenu && window.reserveRefreshContextMenuItems)
-    reserveRefreshContextMenuItems();
+  window.onSelectionChange && onSelectionChange(aOptions);
 }
+
+
+function reservePushSelectionState() {
+  if (reservePushSelectionState.reserved)
+    clearTimeout(reservePushSelectionState.reserved);
+  reservePushSelectionState.reserved = setTimeout(() => {
+    delete reservePushSelectionState.reserved;
+    pushSelectionState();
+  }, 150);
+}
+
+function pushSelectionState() {
+  browser.runtime.sendMessage({
+    type:          kCOMMAND_PUSH_SELECTION_INFO,
+    selection:     gSelection,
+    dragSelection: gDragSelection
+  });
+}
+
 
 async function getAllTabs() {
   return gSelection.targetWindow ?
