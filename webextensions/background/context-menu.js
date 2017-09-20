@@ -47,7 +47,7 @@ var gLastSelectedTabs = '';
 
 async function refreshContextMenuItems(aContextTab, aForce) {
   log('refreshContextMenuItems');
-  var serialized = JSON.stringify(gSelectedTabs);
+  var serialized = JSON.stringify(gSelection.tabs);
   if (!aForce &&
       serialized == gLastSelectedTabs) {
     log(' => no change, skip');
@@ -145,7 +145,7 @@ async function getContextMenuItemVisibilities(aContextTab) {
   var frozenCount = 0;
   var tabIds = getSelectedTabIds();
   for (let id of tabIds) {
-    let tab = gSelectedTabs[id];
+    let tab = gSelection.tabs[id];
     if (tab.pinned)
       pinnedCount++;
     if (tab.mutedInfo.muted)

@@ -32,39 +32,39 @@ function getTabsBetween(aBegin, aEnd, aAllTabs = []) {
 }
 
 function toggleStateOfDragOverTabs(aParams = {}) {
-  if (gFirstHoverTarget) {
+  if (gDragSelection.firstHoverTarget) {
     // At first, toggle state to reset all existing items in the undetermined selection.
-    for (let id of Object.keys(gUndeterminedRange)) {
-      setSelection(gUndeterminedRange[id], !(id in gSelectedTabs), {
+    for (let id of Object.keys(gDragSelection.undeterminedRange)) {
+      setSelection(gDragSelection.undeterminedRange[id], !(id in gSelection.tabs), {
         globalHighlight: false,
         dontUpdateMenu: true,
         state: aParams.state
       });
     }
-    gUndeterminedRange = {};
+    gDragSelection.undeterminedRange = {};
 
     let newUndeterminedRange = aParams.allTargets;
-    if (newUndeterminedRange.every(aTab => aTab.id != gFirstHoverTarget.id))
-      newUndeterminedRange.push(gFirstHoverTarget);
+    if (newUndeterminedRange.every(aTab => aTab.id != gDragSelection.firstHoverTarget.id))
+      newUndeterminedRange.push(gDragSelection.firstHoverTarget);
 
-    let betweenTabs = getTabsBetween(gFirstHoverTarget, aParams.target, gAllTabsOnDragReady);
+    let betweenTabs = getTabsBetween(gDragSelection.firstHoverTarget, aParams.target, gDragSelection.allTabsOnDragReady);
     newUndeterminedRange = newUndeterminedRange.concat(betweenTabs);
     for (let tab of newUndeterminedRange) {
-      if (tab.id in gUndeterminedRange)
+      if (tab.id in gDragSelection.undeterminedRange)
         continue;
-      setSelection(tab, !(tab.id in gSelectedTabs), {
+      setSelection(tab, !(tab.id in gSelection.tabs), {
         globalHighlight: false,
         dontUpdateMenu: true,
         state: aParams.state
       });
-      gUndeterminedRange[tab.id] = tab;
+      gDragSelection.undeterminedRange[tab.id] = tab;
     }
   }
   else {
     for (let tab of aParams.allTargets) {
-      gUndeterminedRange[tab.id] = tab;
+      gDragSelection.undeterminedRange[tab.id] = tab;
     }
-    setSelection(aParams.allTargets, !(aParams.target.id in gSelectedTabs), {
+    setSelection(aParams.allTargets, !(aParams.target.id in gSelection.tabs), {
       globalHighlight: false,
       dontUpdateMenu: true,
       state: aParams.state
@@ -85,7 +85,7 @@ async function onTabItemClick(aMessage) {
     clearSelection({
       states: ['selected', 'ready-to-close']
     });
-    gTargetWindow = null;
+    gSelection.targetWindow = null;
     gInSelectionSession = false;
     return;
   }
@@ -132,30 +132,32 @@ async function onNonTabAreaClick(aMessage) {
   clearSelection({
     states: ['selected', 'ready-to-close']
   });
-  gTargetWindow = null;
+  gSelection.targetWindow = null;
 }
 
 
 /* select tabs by dragging */
 
-var gWillCloseSelectedTabs = false;
-var gAllTabsOnDragReady = [];
-var gPendingTabs = null;
-var gDragStartTarget = null;
-var gLastHoverTarget = null;
-var gFirstHoverTarget = null;
-var gUndeterminedRange = {};
-var gDragEnteredCount = 0;
+var gDragSelection = {
+  willCloseSelectedTabs: false,
+  allTabsOnDragReady:    [],
+  pendingTabs:           null,
+  dragStartTarget:       null,
+  lastHoverTarget:       null,
+  firstHoverTarget:      null,
+  undeterminedRange:     {},
+  dragEnteredCount:      0
+};
 
 async function onTabItemDragReady(aMessage) {
   //console.log('onTabItemDragReady', aMessage);
-  gUndeterminedRange = {};
-  gTargetWindow = aMessage.window;
-  gDragEnteredCount = 1;
-  gWillCloseSelectedTabs = aMessage.startOnClosebox;
-  gPendingTabs = null;
-  gDragStartTarget = gFirstHoverTarget = gLastHoverTarget = aMessage.tab;
-  gAllTabsOnDragReady = await browser.tabs.query({ windowId: aMessage.window });
+  gDragSelection.undeterminedRange = {};
+  gSelection.targetWindow = aMessage.window;
+  gDragSelection.dragEnteredCount = 1;
+  gDragSelection.willCloseSelectedTabs = aMessage.startOnClosebox;
+  gDragSelection.pendingTabs = null;
+  gDragSelection.dragStartTarget = gDragSelection.firstHoverTarget = gDragSelection.lastHoverTarget = aMessage.tab;
+  gDragSelection.allTabsOnDragReady = await browser.tabs.query({ windowId: aMessage.window });
 
   clearSelection({
     states: ['selected', 'ready-to-close'],
@@ -166,11 +168,11 @@ async function onTabItemDragReady(aMessage) {
   setSelection(startTabs, true, {
     globalHighlight: false,
     dontUpdateMenu: true,
-    state: gWillCloseSelectedTabs ? 'ready-to-close' : 'selected'
+    state: gDragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected'
   });
 
   for (let tab of startTabs) {
-    gUndeterminedRange[tab.id] = tab;
+    gDragSelection.undeterminedRange[tab.id] = tab;
   }
 }
 
@@ -179,25 +181,25 @@ async function onTabItemDragStart(aMessage) {
 }
 
 async function onTabItemDragEnter(aMessage) {
-  //console.log('onTabItemDragEnter', aMessage, aMessage.tab == gLastHoverTarget);
-  gDragEnteredCount++;
+  //console.log('onTabItemDragEnter', aMessage, aMessage.tab == gDragSelection.lastHoverTarget);
+  gDragSelection.dragEnteredCount++;
   // processAutoScroll(aEvent);
 
-  if (gLastHoverTarget &&
-      aMessage.tab.id == gLastHoverTarget.id)
+  if (gDragSelection.lastHoverTarget &&
+      aMessage.tab.id == gDragSelection.lastHoverTarget.id)
     return;
 
-  var state = gWillCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
-  if (gPendingTabs) {
-    setSelection(gPendingTabs, true, {
+  var state = gDragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
+  if (gDragSelection.pendingTabs) {
+    setSelection(gDragSelection.pendingTabs, true, {
       globalHighlight: false,
       dontUpdateMenu: true,
       state: state
     });
-    gPendingTabs = null;
+    gDragSelection.pendingTabs = null;
   }
 /*
-  if (gWillCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
+  if (gDragSelection.willCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
 */
     let targetTabs = retrieveTargetTabs(aMessage.tab);
     toggleStateOfDragOverTabs({
@@ -205,17 +207,17 @@ async function onTabItemDragEnter(aMessage) {
       allTargets: targetTabs,
       state:      state
     });
-    if (aMessage.tab.id == gDragStartTarget.id &&
-        Object.keys(gSelectedTabs).length == targetTabs.length) {
+    if (aMessage.tab.id == gDragSelection.dragStartTarget.id &&
+        Object.keys(gSelection.tabs).length == targetTabs.length) {
       setSelection(targetTabs, false, {
         globalHighlight: false,
         dontUpdateMenu: true,
         state: state
       });
       for (let tab of targetTabs) {
-        gUndeterminedRange[tab.id] = tab;
+        gDragSelection.undeterminedRange[tab.id] = tab;
       }
-      gPendingTabs = targetTabs;
+      gDragSelection.pendingTabs = targetTabs;
     }
 /*
   }
@@ -223,22 +225,22 @@ async function onTabItemDragEnter(aMessage) {
     browser.tabs.update(aMessage.tab.id, { active: true });
   }
 */
-  gLastHoverTarget = aMessage.tab;
-  if (!gFirstHoverTarget)
-    gFirstHoverTarget = gLastHoverTarget;
+  gDragSelection.lastHoverTarget = aMessage.tab;
+  if (!gDragSelection.firstHoverTarget)
+    gDragSelection.firstHoverTarget = gDragSelection.lastHoverTarget;
 }
 
 async function onTabItemDragExit(aMessage) {
-  gDragEnteredCount--;
+  gDragSelection.dragEnteredCount--;
   dragExitAllWithDelay.reserve();
 }
 
 function dragExitAllWithDelay() {
-  //console.log('dragExitAllWithDelay '+gDragEnteredCount);
+  //console.log('dragExitAllWithDelay '+gDragSelection.dragEnteredCount);
   dragExitAllWithDelay.cancel();
-  if (gDragEnteredCount <= 0) {
-    gFirstHoverTarget = gLastHoverTarget = null;
-    gUndeterminedRange = {};
+  if (gDragSelection.dragEnteredCount <= 0) {
+    gDragSelection.firstHoverTarget = gDragSelection.lastHoverTarget = null;
+    gDragSelection.undeterminedRange = {};
   }
 }
 dragExitAllWithDelay.reserve = () => {
@@ -256,24 +258,24 @@ dragExitAllWithDelay.cancel = () => {
 
 async function onTabItemDragEnd(aMessage) {
   //console.log('onTabItemDragEnd', aMessage);
-  if (gWillCloseSelectedTabs) {
-    let allTabs = gAllTabsOnDragReady.slice(0);
+  if (gDragSelection.willCloseSelectedTabs) {
+    let allTabs = gDragSelection.allTabsOnDragReady.slice(0);
     allTabs.reverse();
     for (let tab of allTabs) {
-      if (tab.id in gSelectedTabs)
+      if (tab.id in gSelection.tabs)
         await browser.tabs.remove(tab.id);
     }
     clearSelection();
-    gTargetWindow = null;
+    gSelection.targetWindow = null;
   }
-  else if (Object.keys(gSelectedTabs).length > 0 &&
+  else if (Object.keys(gSelection.tabs).length > 0 &&
            window.onDragSelectionEnd) {
     onDragSelectionEnd(aMessage);
     // don't clear selection state until menu command is processed.
   }
-  gDragStartTarget = gFirstHoverTarget = gLastHoverTarget = null;
-  gUndeterminedRange = {};
-  gWillCloseSelectedTabs = false;
-  gDragEnteredCount = 0;
-  gAllTabsOnDragReady = [];
+  gDragSelection.dragStartTarget = gDragSelection.firstHoverTarget = gDragSelection.lastHoverTarget = null;
+  gDragSelection.undeterminedRange = {};
+  gDragSelection.willCloseSelectedTabs = false;
+  gDragSelection.dragEnteredCount = 0;
+  gDragSelection.allTabsOnDragReady = [];
 }

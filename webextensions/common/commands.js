@@ -5,16 +5,16 @@
 */
 'use strict';
 
-var gSelectedTabs = {};
-var gTargetWindow = null;
+var gSelection.tabs = {};
+var gSelection.targetWindow = null;
 
 function clearSelection(aOptions = {}) {
   var tabs = [];
-  for (let id of Object.keys(gSelectedTabs)) {
-    tabs.push(gSelectedTabs[id]);
+  for (let id of Object.keys(gSelection.tabs)) {
+    tabs.push(gSelection.tabs[id]);
   }
   setSelection(tabs, false, aOptions);
-  gTargetWindow = null;
+  gSelection.targetWindow = null;
 }
 
 function isPermittedTab(aTab) {
@@ -33,9 +33,9 @@ function setSelection(aTabs, aSelected, aOptions = {}) {
   //console.log('setSelection ', ids, `${aState}=${aSelected}`);
   if (aSelected) {
     for (let tab of aTabs) {
-      if (tab.id in gSelectedTabs)
+      if (tab.id in gSelection.tabs)
         continue;
-      gSelectedTabs[tab.id] = tab;
+      gSelection.tabs[tab.id] = tab;
       try {
         if (shouldHighlight && isPermittedTab(tab))
           browser.tabs.executeScript(tab.id, {
@@ -49,9 +49,9 @@ function setSelection(aTabs, aSelected, aOptions = {}) {
   }
   else {
     for (let tab of aTabs) {
-      if (!(tab.id in gSelectedTabs))
+      if (!(tab.id in gSelection.tabs))
         continue;
-      delete gSelectedTabs[tab.id];
+      delete gSelection.tabs[tab.id];
       try {
         if (shouldHighlight && isPermittedTab(tab))
           browser.tabs.executeScript(tab.id, {
@@ -73,13 +73,13 @@ function setSelection(aTabs, aSelected, aOptions = {}) {
 }
 
 async function getAllTabs() {
-  return gTargetWindow ?
-           await browser.tabs.query({ windowId: gTargetWindow }) :
+  return gSelection.targetWindow ?
+           await browser.tabs.query({ windowId: gSelection.targetWindow }) :
            (await browser.windows.getCurrent({ populate: true })).tabs ;
 }
 
 function getSelectedTabIds() {
-  return Object.keys(gSelectedTabs).map(aId => parseInt(aId));
+  return Object.keys(gSelection.tabs).map(aId => parseInt(aId));
 }
 
 async function reloadTabs(aIds) {
