@@ -312,7 +312,7 @@ function buildTabItem(aTab) {
 
 
 async function openMenu() {
-  await  buildMenu();
+  await buildMenu();
   gMenu.classList.add('open');
   setTimeout(() => {
     window.addEventListener('mousedown', onMenuMouseDown, { capture: true });
