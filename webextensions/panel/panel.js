@@ -22,15 +22,15 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.tabs.onRemoved.addListener(onTabModified);
   browser.runtime.onMessage.addListener(onMessage);
 
+  window.addEventListener('click', onClick);
   gTabBar = document.querySelector('#tabs');
-  gTabBar.addEventListener('click', onClick);
   gTabBar.addEventListener('mousedown', onMouseDown);
   gTabBar.addEventListener('mouseup', onMouseUp);
   await rebuildTabItems();
 }, { once: true });
 
 window.addEventListener('unload', () => {
-  gTabBar.removeEventListener('click', onClick);
+  window.removeEventListener('click', onClick);
   gTabBar.removeEventListener('mousedown', onMouseDown);
   gTabBar.removeEventListener('mouseup', onMouseUp);
   gTabBar.removeEventListener('mouseover', onMouseOver);
@@ -95,10 +95,10 @@ function onSelectionChange(aTabs, aSelected, aOptions = {}) {
 
 function findTabItemFromEvent(aEvent) {
   var target = aEvent.target;
-  while (!target.tab) {
+  while (target && !target.tab) {
     target = target.parentNode;
   }
-  if (target.tab)
+  if (target && target.tab)
     return target;
   else
     return null;
@@ -106,7 +106,8 @@ function findTabItemFromEvent(aEvent) {
 
 function onClick(aEvent) {
   gClickFired = true;
-  if (aEvent.target.classList.contains('closebox')) {
+  if (aEvent.target.classList &&
+      aEvent.target.classList.contains('closebox')) {
     if (!document.querySelector('.ready-to-close'))
       browser.tabs.remove(aEvent.target.parentNode.tab.id);
     return;

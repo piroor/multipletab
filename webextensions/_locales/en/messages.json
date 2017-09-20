@@ -12,6 +12,8 @@
 
 
   "panelTitle": { "message": "Select and Do" },
+  "panelCaptionTop": { "message": "Select Tabs" },
+  "panelCaptionBottom": { "message": "And Click Here to Choose Action" },
 
 
   "context.selection.label":              { "message": "Selected Tabs" },

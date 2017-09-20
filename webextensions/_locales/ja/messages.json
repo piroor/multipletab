@@ -11,6 +11,8 @@
     }},
 
   "panelTitle": { "message": "タブをまとめて操作" },
+  "panelCaptionTop": { "message": "タブを選択してください" },
+  "panelCaptionBottom": { "message": "その後、ここをクリックして操作を選択" },
 
   "context.selection.label":              { "message": "選択したタブを操作" },
 

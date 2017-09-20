@@ -14,6 +14,22 @@ body {
   padding: 0.25em;
 }
 
+.caption {
+  text-align: center;
+}
+
+.caption.top {
+  border-bottom: 1px solid;
+  margin-bottom: 0.25em;
+  padding-bottom: 0.25em;
+}
+
+.caption.bottom {
+  border-top: 1px solid;
+  margin-top: 0.25em;
+  padding-top: 0.25em;
+}
+
 ul {
   list-style: none;
   margin: 0;
