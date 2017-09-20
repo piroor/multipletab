@@ -98,6 +98,7 @@ function findTabItemFromEvent(aEvent) {
 function onClick(aEvent) {
   gWaitingToStartDrag = false;
   if (aEvent.target.classList.contains('closebox')) {
+    if (!document.querySelector('.ready-to-close'))
     browser.tabs.remove(aEvent.target.parentNode.tab.id);
     return;
   }
