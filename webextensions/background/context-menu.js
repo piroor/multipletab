@@ -47,8 +47,10 @@ var gActiveContextMenuItems = [];
 
 var gLastSelectedTabs = '';
 
+var gLastRefreshStart = Date.now();
 async function refreshContextMenuItems(aContextTab, aForce) {
   log('refreshContextMenuItems');
+  var currentRefreshStart = gLastRefreshStart = Date.now();
 
   if (reserveRefreshContextMenuItems.timeout)
     clearTimeout(reserveRefreshContextMenuItems.timeout);
@@ -69,9 +71,13 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   }
   catch(e) {
   }
+  if (currentRefreshStart != gLastRefreshStart)
+    return;
   gActiveContextMenuItems = [];
   gLastSelectedTabs = serialized;
   var visibilities = await getContextMenuItemVisibilities(aContextTab);
+  if (currentRefreshStart != gLastRefreshStart)
+    return;
   log('visibilities: ', visibilities);
 
   let separatorsCount = 0;
@@ -128,10 +134,14 @@ async function refreshContextMenuItems(aContextTab, aForce) {
 
   for (let id of gContextMenuItems) {
     await registerItem(id);
+    if (currentRefreshStart != gLastRefreshStart)
+      return;
   }
   for (let id of Object.keys(configs.copyToClipboardFormats)
                      .map(aId => `clipboard/clipboard:${aId}`)) {
     await registerItem(id);
+    if (currentRefreshStart != gLastRefreshStart)
+      return;
   }
 }
 
