@@ -43,6 +43,8 @@ var gContextMenuItems = `
 `.trim().split(/\s+/).map(aId => `selection/${aId}`);
 gContextMenuItems.unshift('selection');
 
+var gActiveContextMenuItems = [];
+
 var gLastSelectedTabs = '';
 
 async function refreshContextMenuItems(aContextTab, aForce) {
@@ -62,6 +64,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   }
   catch(e) {
   }
+  gActiveContextMenuItems = [];
   gLastSelectedTabs = serialized;
   var visibilities = await getContextMenuItemVisibilities(aContextTab);
   log('visibilities: ', visibilities);
@@ -106,6 +109,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     };
     if (parentId)
       params.parentId = parentId;
+    gActiveContextMenuItems.push(params);
     await browser.contextMenus.create(params);
     try {
       await browser.runtime.sendMessage(kTST_ID, {

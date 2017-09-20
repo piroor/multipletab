@@ -7,6 +7,7 @@
 
 const kCOMMAND_PULL_SELECTION_INFO = 'multipletab:pull-selection-info';
 const kCOMMAND_PUSH_SELECTION_INFO = 'multipletab:push-selection-info';
+const kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO = 'multipletab:pull-active-context-menu-info';
 
 
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';

@@ -94,6 +94,9 @@ function onMessage(aMessage) {
       gDragSelection = aMessage.dragSelection;
       reserveRefreshContextMenuItems();
       break;
+
+    case kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO:
+      return Promise.resolve(gActiveContextMenuItems);
   }
 }
 
