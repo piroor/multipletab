@@ -94,7 +94,7 @@ function onMessage(aMessage) {
       gDragSelection = aMessage.dragSelection;
       if (aMessage.updateMenu) {
         let tab = aMessage.contextTab ? { id: aMessage.contextTab } : null ;
-        return refreshContextMenuItems(tab);
+        return refreshContextMenuItems(tab, true);
       }
       else {
         reserveRefreshContextMenuItems();
