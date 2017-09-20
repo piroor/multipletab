@@ -14,6 +14,33 @@ body {
   padding: 0.25em;
 }
 
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+ul li {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  list-style: none;
+  margin: 0;
+  padding: 0.25em 0;
+}
+
+
+/* main view */
+
+#main {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  max-width: 30em;
+  min-height: 20em;
+  min-width: 25em;
+}
+
 .caption {
   text-align: center;
 }
@@ -30,36 +57,24 @@ body {
   padding-top: 0.25em;
 }
 
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-ul li {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  list-style: none;
-  margin: 0;
-  padding: 0.25em 0;
-}
-
-ul li label {
+#main ul {
   flex-grow: 1;
-  max-width: 30em;
+}
+
+#main ul li label {
+  flex-grow: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-ul li img {
+#main ul li img {
   max-height: 16px;
   max-width: 16px;
 }
 
-li.selected,
-li.ready-to-close .closebox {
+#main li.selected,
+#main li.ready-to-close .closebox {
   background: Highlight;
   color: HighlightText;
 }
@@ -79,4 +94,86 @@ li.ready-to-close .closebox {
 
 .closebox:active {
   opacity: var(--button-active-opacity);
+}
+
+
+/* menu view */
+
+#menu {
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  right: 0;
+  top: 0;
+}
+
+#menu ul {
+  background: Menu;
+  border: 1px outset Menu;
+  box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.65);
+  color: MenuText;
+  left: calc(100% - 2em);
+  margin: 0;
+  opacity: 0;
+  overflow: auto;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  transition: left 0.15s ease-out,
+              opacity 0.15s ease-out;
+  z-index: 999999;
+}
+
+#menu > ul {
+  bottom: 0;
+  top: 0;
+}
+
+#menu ul ul {
+  transition-delay: 300ms;
+}
+
+#menu ul.open,
+#menu ul li:hover > ul {
+  left: 2em;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#menu li {
+  list-style: none;
+  margin: 0;
+  padding: 0.15em 0.5em 0.15em 1.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#menu li.separator {
+  border: 1px inset Menu;
+  margin: 0 0.5em;
+  max-height: 0;
+  opacity: 0.5;
+  padding: 0;
+  pointer-events: none;
+}
+
+#menu li:not(.separator):hover {
+  background: Highlight;
+  color: HighlightText
+}
+
+#menu li:not(.separator):hover ul li:not(:hover) {
+  background: transparent;
+  color: MenuText;
+}
+
+#menu li.has-submenu {
+  padding-right: 1.5em;
+}
+#menu li.has-submenu::after {
+  content: ">";
+  position: absolute;
+  right: 0.5em;
 }

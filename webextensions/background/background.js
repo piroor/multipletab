@@ -92,7 +92,13 @@ function onMessage(aMessage) {
     case kCOMMAND_PUSH_SELECTION_INFO:
       gSelection = aMessage.selection;
       gDragSelection = aMessage.dragSelection;
-      reserveRefreshContextMenuItems();
+      if (aMessage.updateMenu) {
+        let tab = aMessage.contextTab ? { id: aMessage.contextTab } : null ;
+        return refreshContextMenuItems(tab);
+      }
+      else {
+        reserveRefreshContextMenuItems();
+      }
       break;
 
     case kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO:

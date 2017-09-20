@@ -49,6 +49,11 @@ var gLastSelectedTabs = '';
 
 async function refreshContextMenuItems(aContextTab, aForce) {
   log('refreshContextMenuItems');
+
+  if (reserveRefreshContextMenuItems.timeout)
+    clearTimeout(reserveRefreshContextMenuItems.timeout);
+  delete reserveRefreshContextMenuItems.timeout;
+
   var serialized = JSON.stringify(gSelection.tabs);
   if (!aForce &&
       serialized == gLastSelectedTabs) {
@@ -134,7 +139,6 @@ function reserveRefreshContextMenuItems() {
   if (reserveRefreshContextMenuItems.timeout)
     clearTimeout(reserveRefreshContextMenuItems.timeout);
   reserveRefreshContextMenuItems.timeout = setTimeout(() => {
-    delete reserveRefreshContextMenuItems.timeout;
     refreshContextMenuItems();
   }, 150);
 }

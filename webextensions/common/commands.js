@@ -78,16 +78,21 @@ function reservePushSelectionState() {
   if (reservePushSelectionState.reserved)
     clearTimeout(reservePushSelectionState.reserved);
   reservePushSelectionState.reserved = setTimeout(() => {
-    delete reservePushSelectionState.reserved;
     pushSelectionState();
   }, 150);
 }
 
-function pushSelectionState() {
-  browser.runtime.sendMessage({
+async function pushSelectionState(aOptions = {}) {
+  if (reservePushSelectionState.reserved) {
+    clearTimeout(reservePushSelectionState.reserved);
+    delete reservePushSelectionState.reserved;
+  }
+  await browser.runtime.sendMessage({
     type:          kCOMMAND_PUSH_SELECTION_INFO,
     selection:     gSelection,
-    dragSelection: gDragSelection
+    dragSelection: gDragSelection,
+    updateMenu:    !!aOptions.updateMenu,
+    contextTab:    aOptions.contextTab
   });
 }
 

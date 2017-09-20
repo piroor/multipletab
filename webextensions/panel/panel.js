@@ -8,6 +8,7 @@
 gLogContext = 'Panel';
 
 var gTabBar;
+var gMenu;
 
 window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
@@ -22,14 +23,17 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.tabs.onRemoved.addListener(onTabModified);
   browser.runtime.onMessage.addListener(onMessage);
 
+  window.addEventListener('contextmenu', onContextMenu, { capture: true });
   window.addEventListener('click', onClick);
   gTabBar = document.querySelector('#tabs');
   gTabBar.addEventListener('mousedown', onMouseDown);
   gTabBar.addEventListener('mouseup', onMouseUp);
+  gMenu = document.querySelector('#menu ul');
   await rebuildTabItems();
 }, { once: true });
 
 window.addEventListener('unload', () => {
+  window.removeEventListener('contextmenu', onContextMenu, { capture: true });
   window.removeEventListener('click', onClick);
   gTabBar.removeEventListener('mousedown', onMouseDown);
   gTabBar.removeEventListener('mouseup', onMouseUp);
@@ -104,7 +108,26 @@ function findTabItemFromEvent(aEvent) {
     return null;
 }
 
+function findBottomCaptionFromEvent(aEvent) {
+  var target = aEvent.target;
+  while (target && target.className != 'caption bottom') {
+    target = target.parentNode;
+  }
+  if (target && target.className == 'caption bottom')
+    return target;
+  else
+    return null;
+}
+
+function onContextMenu(aEvent) {
+  aEvent.stopPropagation();
+  aEvent.preventDefault();
+}
+
 function onClick(aEvent) {
+  if (aEvent.button != 0)
+    return;
+
   gClickFired = true;
   if (aEvent.target.classList &&
       aEvent.target.classList.contains('closebox')) {
@@ -112,6 +135,12 @@ function onClick(aEvent) {
       browser.tabs.remove(aEvent.target.parentNode.tab.id);
     return;
   }
+  var caption = findBottomCaptionFromEvent(aEvent);
+  if (caption && !gMenu.classList.contains('open')) {
+    openMenu();
+    return;
+  }
+  closeMenu();
   var item = findTabItemFromEvent(aEvent);
   if (!item)
     clearSelection({
@@ -126,8 +155,18 @@ var gOnDragExitTimeout;
 var gClickFired = false;
 
 async function onMouseDown(aEvent) {
-  gClickFired = false;
-  gTabBar.addEventListener('mousemove', onMouseMove);
+  switch (aEvent.button) {
+    case 0:
+      gClickFired = false;
+      gTabBar.addEventListener('mousemove', onMouseMove);
+      break;
+
+    case 2:
+      aEvent.stopPropagation();
+      aEvent.preventDefault();
+      openMenu();
+      break;
+  }
 }
 
 async function onMouseMove(aEvent) {
@@ -216,6 +255,16 @@ function cancelDelayedDragExit() {
   }
 }
 
+function onDragSelectionEnd(aMessage) {
+  let tab = gDragSelection.dragStartTarget.id;
+  pushSelectionState({
+    updateMenu: true,
+    contextTab: tab.id
+  }).then(() => {
+    openMenu();
+  });
+}
+
 
 async function rebuildTabItems() {
   var range = document.createRange();
@@ -259,4 +308,89 @@ function buildTabItem(aTab) {
   item.appendChild(closebox);
 
   return item;
+}
+
+
+async function openMenu() {
+  await  buildMenu();
+  gMenu.classList.add('open');
+  setTimeout(() => {
+    window.addEventListener('mousedown', onMenuMouseDown, { capture: true });
+    window.addEventListener('click', onMenuClick, { capture: true });
+  }, 100);
+}
+
+function closeMenu() {
+  gMenu.classList.remove('open');
+  setTimeout(() => {
+    window.removeEventListener('mousedown', onMenuMouseDown, { capture: true });
+    window.removeEventListener('click', onMenuClick, { capture: true });
+  }, 100);
+}
+
+function onMenuMouseDown(aEvent) {
+  aEvent.stopImmediatePropagation();
+  aEvent.stopPropagation();
+  aEvent.preventDefault();
+}
+
+function onMenuClick(aEvent) {
+  if (aEvent.button != 0)
+    return closeMenu();
+
+  aEvent.stopImmediatePropagation();
+  aEvent.stopPropagation();
+  aEvent.preventDefault();
+
+  var target = aEvent.target;
+  while (target.nodeType != target.ELEMENT_NODE)
+    target = target.parentNode;
+
+  closeMenu();
+}
+
+async function buildMenu() {
+  var items = await browser.runtime.sendMessage({
+    type: kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO
+  });
+  items.shift(); // delete toplevel "selection" menu
+
+  var range = document.createRange();
+  range.selectNodeContents(gMenu);
+  range.deleteContents();
+
+  var fragment = document.createDocumentFragment();
+  var knownItems = {};
+  for (let item of items) {
+    let itemNode = buildMenuItem(item);
+    if (item.parentId &&
+        item.parentId != 'selection' &&
+        item.parentId in knownItems) {
+      let parent = knownItems[item.parentId];
+      parent.classList.add('has-submenu');
+      let subMenu = parent.lastChild.localName == 'ul' ?
+                      parent.lastChild :
+                      parent.appendChild(document.createElement('ul'));
+      subMenu.appendChild(itemNode);
+    }
+    else {
+      gMenu.appendChild(itemNode);
+    }
+    knownItems[item.id] = itemNode;
+  }
+  range.insertNode(fragment);
+
+  range.detach();
+}
+
+function buildMenuItem(aItem) {
+  var itemNode = document.createElement('li');
+  itemNode.setAttribute('data-item-id', aItem.id);
+  itemNode.classList.add('extra');
+  itemNode.classList.add(aItem.type);
+  if (aItem.type != 'separator') {
+    itemNode.appendChild(document.createTextNode(aItem.title));
+    itemNode.setAttribute('title', aItem.title);
+  }
+  return itemNode;
 }
