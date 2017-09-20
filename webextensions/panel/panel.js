@@ -238,7 +238,7 @@ function buildTabItem(aTab) {
     checkbox.setAttribute('checked', true);
   checkbox.addEventListener('change', () => {
     item.classList.toggle('selected');
-    setSelection(aTab, item.classList.contains('selected'));
+    setSelection(aTab, item.classList.contains('selected'), { globalHighlight: false });
   });
   label.appendChild(checkbox);
   var favicon = document.createElement('img');
