@@ -99,7 +99,7 @@ function onClick(aEvent) {
   gWaitingToStartDrag = false;
   if (aEvent.target.classList.contains('closebox')) {
     if (!document.querySelector('.ready-to-close'))
-    browser.tabs.remove(aEvent.target.parentNode.tab.id);
+      browser.tabs.remove(aEvent.target.parentNode.tab.id);
     return;
   }
   var item = findTabItemFromEvent(aEvent);
@@ -145,12 +145,12 @@ function onMouseUp(aEvent) {
     if (!gWaitingToStartDrag)
       return;
     gWaitingToStartDrag = false;
-  onTabItemDragEnd({
-    tab:     item && item.tab,
-    window:  gSelection.targetWindow,
-    clientX: aEvent.clientX,
-    clientY: aEvent.clientY
-  });
+    onTabItemDragEnd({
+      tab:     item && item.tab,
+      window:  gSelection.targetWindow,
+      clientX: aEvent.clientX,
+      clientY: aEvent.clientY
+    });
   }, 10);
   gTabBar.removeEventListener('mousemove', onMouseMove);
   gTabBar.removeEventListener('mouseover', onMouseOver);
