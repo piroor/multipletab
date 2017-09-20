@@ -23,10 +23,12 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.runtime.onMessage.addListener(onMessage);
 
   gTabBar = document.querySelector('#tabs');
+  gTabBar.addEventListener('click', onClick);
   await rebuildTabItems();
 }, { once: true });
 
 window.addEventListener('unload', () => {
+  gTabBar.removeEventListener('click', onClick);
   browser.tabs.onActivated.removeListener(onTabModified);
   browser.tabs.onCreated.removeListener(onTabModified);
   browser.tabs.onRemoved.removeListener(onTabModified);
@@ -52,6 +54,13 @@ function onMessage(aMessage) {
 
 function onSelectionChange(aOptions = {}) {
   reservePushSelectionState();
+}
+
+function onClick(aEvent) {
+  if (aEvent.target.className != 'closebox')
+    return;
+
+  browser.tabs.remove(aEvent.target.parentNode.tab.id);
 }
 
 async function rebuildTabItems() {
@@ -83,9 +92,16 @@ function buildTabItem(aTab) {
   favicon.setAttribute('src', aTab.favIconUrl);
   label.appendChild(favicon);
   label.appendChild(document.createTextNode(aTab.title));
+
   var item = document.createElement('li');
-  item.appendChild(label);
   if (aTab.id in gSelection.tabs)
     item.classList.add('selected');
+  item.appendChild(label);
+  item.tab = aTab;
+
+  var closebox = document.createElement('span');
+  closebox.classList.add('closebox');
+  item.appendChild(closebox);
+
   return item;
 }

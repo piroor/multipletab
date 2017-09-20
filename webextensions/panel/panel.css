@@ -4,6 +4,12 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+:root {
+  --button-opacity: 0.75;
+  --button-hover-opacity: 1;
+  --button-active-opacity: 0.5;
+}
+
 body {
   padding: 0.25em;
 }
@@ -37,3 +43,20 @@ li.selected {
   color: HighlightText;
 }
 
+
+.closebox {
+  opacity: var(--button-opacity);
+  position: relative;
+}
+
+.closebox::before {
+  content: "✖";
+}
+
+.closebox:hover {
+  opacity: var(--button-hover-opacity);
+}
+
+.closebox:active {
+  opacity: var(--button-active-opacity);
+}
