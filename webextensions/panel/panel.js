@@ -42,7 +42,16 @@ window.addEventListener('unload', () => {
 }, { once: true });
 
 function onTabModified() {
-  clearSelection();
+  reserveClearSelection();
+}
+
+function reserveClearSelection() {
+  if (reserveClearSelection.reserved)
+    clearTimeout(reserveClearSelection.reserved);
+  reserveClearSelection.reserved = setTimeout(() => {
+    delete reserveClearSelection.reserved;
+    clearSelection();
+  }, 100);
 }
 
 function onMessage(aMessage) {
@@ -96,7 +105,7 @@ function findTabItemFromEvent(aEvent) {
 }
 
 function onClick(aEvent) {
-  gWaitingToStartDrag = false;
+  gClickFired = true;
   if (aEvent.target.classList.contains('closebox')) {
     if (!document.querySelector('.ready-to-close'))
       browser.tabs.remove(aEvent.target.parentNode.tab.id);
@@ -113,15 +122,17 @@ var gLastDragEnteredItem;
 var gLastDragEnteredTarget;
 var gDragTargetIsClosebox;
 var gOnDragExitTimeout;
-var gWaitingToStartDrag = false;
+var gClickFired = false;
 
 async function onMouseDown(aEvent) {
-  gWaitingToStartDrag = true;
+  gClickFired = false;
   gTabBar.addEventListener('mousemove', onMouseMove);
 }
 
 async function onMouseMove(aEvent) {
   gTabBar.removeEventListener('mousemove', onMouseMove);
+  if (gClickFired)
+    return;
   var item = findTabItemFromEvent(aEvent);
   if (!item)
     return;
@@ -142,9 +153,8 @@ async function onMouseMove(aEvent) {
 function onMouseUp(aEvent) {
   var item = findTabItemFromEvent(aEvent);
   setTimeout(() => {
-    if (!gWaitingToStartDrag)
+    if (gClickFired)
       return;
-    gWaitingToStartDrag = false;
     onTabItemDragEnd({
       tab:     item && item.tab,
       window:  gSelection.targetWindow,
