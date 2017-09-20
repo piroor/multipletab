@@ -317,7 +317,7 @@ async function openMenu() {
   setTimeout(() => {
     window.addEventListener('mousedown', onMenuMouseDown, { capture: true });
     window.addEventListener('click', onMenuClick, { capture: true });
-  }, 100);
+  }, 150);
 }
 
 function closeMenu() {
@@ -325,7 +325,7 @@ function closeMenu() {
   setTimeout(() => {
     window.removeEventListener('mousedown', onMenuMouseDown, { capture: true });
     window.removeEventListener('click', onMenuClick, { capture: true });
-  }, 100);
+  }, 150);
 }
 
 function onMenuMouseDown(aEvent) {
