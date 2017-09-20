@@ -51,7 +51,6 @@ li.ready-to-close .closebox {
 
 .closebox {
   opacity: var(--button-opacity);
-  position: relative;
 }
 
 .closebox::before {
