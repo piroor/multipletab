@@ -15,9 +15,16 @@ ul {
 }
 
 ul li {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   list-style: none;
   margin: 0;
   padding: 0.25em 0;
+}
+
+ul li label {
+  flex-grow: 1;
 }
 
 ul li img {
