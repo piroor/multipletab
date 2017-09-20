@@ -79,16 +79,16 @@ function onSelectionChange(aTabs, aSelected, aOptions = {}) {
     }
   }
   else {
-  let selectors = aTabs.map(aTab => `#tab-${aTab.id} input[type="checkbox"]`);
-  let checkboxes = document.querySelectorAll(selectors.join(', '));
-  for (let checkbox of checkboxes) {
-    checkbox.checked = !!aSelected;
-    let item = checkbox.parentNode.parentNode;
-    if (aSelected)
-      item.classList.add('selected');
-    else
-      item.classList.remove('selected');
-  }
+    let selectors = aTabs.map(aTab => `#tab-${aTab.id} input[type="checkbox"]`);
+    let checkboxes = document.querySelectorAll(selectors.join(', '));
+    for (let checkbox of checkboxes) {
+      checkbox.checked = !!aSelected;
+      let item = checkbox.parentNode.parentNode;
+      if (aSelected)
+        item.classList.add('selected');
+      else
+        item.classList.remove('selected');
+    }
   }
   reservePushSelectionState();
 }
