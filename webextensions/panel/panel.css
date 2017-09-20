@@ -38,7 +38,8 @@ ul li img {
   max-width: 16px;
 }
 
-li.selected {
+li.selected,
+li.ready-to-close .closebox {
   background: Highlight;
   color: HighlightText;
 }

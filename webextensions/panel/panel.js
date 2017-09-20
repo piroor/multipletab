@@ -24,11 +24,17 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   gTabBar = document.querySelector('#tabs');
   gTabBar.addEventListener('click', onClick);
+  gTabBar.addEventListener('mousedown', onMouseDown);
+  gTabBar.addEventListener('mouseup', onMouseUp);
   await rebuildTabItems();
 }, { once: true });
 
 window.addEventListener('unload', () => {
   gTabBar.removeEventListener('click', onClick);
+  gTabBar.removeEventListener('mousedown', onMouseDown);
+  gTabBar.removeEventListener('mouseup', onMouseUp);
+  gTabBar.removeEventListener('mouseover', onMouseOver);
+  gTabBar.removeEventListener('mouseout', onMouseOut);
   browser.tabs.onActivated.removeListener(onTabModified);
   browser.tabs.onCreated.removeListener(onTabModified);
   browser.tabs.onRemoved.removeListener(onTabModified);
@@ -52,16 +58,152 @@ function onMessage(aMessage) {
   }
 }
 
-function onSelectionChange(aOptions = {}) {
+function onSelectionChange(aTabs, aSelected, aOptions = {}) {
+  if (gDragTargetIsClosebox) {
+    let selectors = aTabs.map(aTab => `#tab-${aTab.id}`);
+    let items = document.querySelectorAll(selectors.join(', '));
+    for (let item of items) {
+      if (aSelected)
+        item.classList.add('ready-to-close');
+      else
+        item.classList.remove('ready-to-close');
+    }
+  }
+  else {
+  let selectors = aTabs.map(aTab => `#tab-${aTab.id} input[type="checkbox"]`);
+  let checkboxes = document.querySelectorAll(selectors.join(', '));
+  for (let checkbox of checkboxes) {
+    checkbox.checked = !!aSelected;
+    let item = checkbox.parentNode.parentNode;
+    if (aSelected)
+      item.classList.add('selected');
+    else
+      item.classList.remove('selected');
+  }
+  }
   reservePushSelectionState();
 }
 
-function onClick(aEvent) {
-  if (aEvent.target.className != 'closebox')
-    return;
-
-  browser.tabs.remove(aEvent.target.parentNode.tab.id);
+function findTabItemFromEvent(aEvent) {
+  var target = aEvent.target;
+  while (!target.tab) {
+    target = target.parentNode;
+  }
+  if (target.tab)
+    return target;
+  else
+    return null;
 }
+
+function onClick(aEvent) {
+  gWaitingToStartDrag = false;
+  if (aEvent.target.classList.contains('closebox')) {
+    browser.tabs.remove(aEvent.target.parentNode.tab.id);
+    return;
+  }
+  var item = findTabItemFromEvent(aEvent);
+  if (!item)
+    clearSelection({
+      states: ['selected', 'ready-to-close']
+    });
+}
+
+var gLastDragEnteredItem;
+var gLastDragEnteredTarget;
+var gDragTargetIsClosebox;
+var gOnDragExitTimeout;
+var gWaitingToStartDrag = false;
+
+async function onMouseDown(aEvent) {
+  gWaitingToStartDrag = true;
+  gTabBar.addEventListener('mousemove', onMouseMove);
+}
+
+async function onMouseMove(aEvent) {
+  gTabBar.removeEventListener('mousemove', onMouseMove);
+  var item = findTabItemFromEvent(aEvent);
+  if (!item)
+    return;
+  gSelection.targetWindow = (await browser.windows.getCurrent()).id
+  gDragTargetIsClosebox =  aEvent.target.classList.contains('closebox');
+  gLastDragEnteredItem = item;
+  gLastDragEnteredTarget = gDragTargetIsClosebox ? aEvent.target : item ;
+  onTabItemDragReady({
+    tab:             item.tab,
+    window:          gSelection.targetWindow,
+    startOnClosebox: gDragTargetIsClosebox
+  })
+  gTabBar.addEventListener('mouseover', onMouseOver);
+  gTabBar.addEventListener('mouseout', onMouseOut);
+  gTabBar.setCapture(false);
+}
+
+function onMouseUp(aEvent) {
+  var item = findTabItemFromEvent(aEvent);
+  setTimeout(() => {
+    if (!gWaitingToStartDrag)
+      return;
+    gWaitingToStartDrag = false;
+  onTabItemDragEnd({
+    tab:     item && item.tab,
+    window:  gSelection.targetWindow,
+    clientX: aEvent.clientX,
+    clientY: aEvent.clientY
+  });
+  }, 10);
+  gTabBar.removeEventListener('mousemove', onMouseMove);
+  gTabBar.removeEventListener('mouseover', onMouseOver);
+  gTabBar.removeEventListener('mouseout', onMouseOut);
+  document.releaseCapture();
+}
+
+function onMouseOver(aEvent) {
+  var item = findTabItemFromEvent(aEvent);
+  var isClosebox = aEvent.target.classList.contains('closebox');
+  var target = gDragTargetIsClosebox && isClosebox ?
+                 aEvent.target :
+                 item ;
+  cancelDelayedDragExit(target);
+  if (item &&
+      (!gDragTargetIsClosebox || isClosebox)) {
+    if (target != gLastDragEnteredTarget) {
+      onTabItemDragEnter({
+        tab:    item.tab,
+        window: gSelection.targetWindow
+      });
+    }
+  }
+  gLastDragEnteredItem = item;
+  gLastDragEnteredTarget = target;
+}
+
+function onMouseOut(aEvent) {
+  var isClosebox = aEvent.target.classList.contains('closebox');
+  if (gDragTargetIsClosebox && !isClosebox)
+    return;
+  var item = findTabItemFromEvent(aEvent);
+  if (!item)
+    return;
+  var target = gDragTargetIsClosebox && isClosebox ?
+                 aEvent.target :
+                 item ;
+  cancelDelayedDragExit(target);
+  gOnDragExitTimeout = setTimeout(() => {
+    gOnDragExitTimeout = null;
+    onTabItemDragExit({
+      tab:    item.tab,
+      window: gSelection.targetWindow
+    });
+  }, 10);
+}
+
+function cancelDelayedDragExit() {
+  if (gOnDragExitTimeout) {
+    clearTimeout(gOnDragExitTimeout);
+    gOnDragExitTimeout = null;
+  }
+}
+
 
 async function rebuildTabItems() {
   var range = document.createRange();
@@ -94,6 +236,7 @@ function buildTabItem(aTab) {
   label.appendChild(document.createTextNode(aTab.title));
 
   var item = document.createElement('li');
+  item.setAttribute('id', `tab-${aTab.id}`);
   if (aTab.id in gSelection.tabs)
     item.classList.add('selected');
   item.appendChild(label);

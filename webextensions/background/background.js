@@ -97,7 +97,7 @@ function onMessage(aMessage) {
   }
 }
 
-function onSelectionChange(aOptions = {}) {
+function onSelectionChange(aTabs, aSelected, aOptions = {}) {
   reservePushSelectionState();
   if (!aOptions.dontUpdateMenu)
     reserveRefreshContextMenuItems();
