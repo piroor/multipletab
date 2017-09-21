@@ -177,3 +177,37 @@ ul li {
   position: absolute;
   right: 0.5em;
 }
+
+
+/* disabled message */
+
+#disabled-message {
+  background: rgba(255, 255, 255, 0.85);
+  bottom: 0;
+  color: black;
+  display: none;
+  left: 0;
+  line-height: 1.5;
+  padding: 1.5em;
+  position: fixed;
+  right: 0;
+  text-shadow: 0 0 0.5em white,
+               0 0 0.5em white,
+               0 0 0.5em white,
+               0 0 0.5em white,
+               0 0 0.5em white,
+               0 0 0.5em white,
+               0 0 0.5em white,
+               0 0 0.5em white,
+               0 0 0.5em white,
+               0 0 0.5em white;
+  top: 0;
+  z-index: 10000;
+}
+
+#disabled-message p {
+  margin: 0;
+  padding: 0;
+  text-align: justify;
+  text-justify: distribute;
+}

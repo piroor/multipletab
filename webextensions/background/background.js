@@ -138,6 +138,7 @@ async function registerToTST() {
       }
     `
   });
+  gDragSelection.activatedInVerticalTabbarOfTST = true;
   refreshContextMenuItems(null, true); // force rebuild menu
 }
 

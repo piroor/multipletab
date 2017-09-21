@@ -14,6 +14,8 @@
   "panelCaptionTop": { "message": "タブを選択してください" },
   "panelCaptionBottom": { "message": "その後、ここをクリックして操作を選択" },
 
+  "panelDisabledBy.treestyletab": { "message": "タブをまとめて操作するUIは無効になっています。代わりにツリー型タブが提供するサイドバー内の縦型タブバーを使用して下さい。タブは0.5秒以上の長押しで開始するドラッグ操作で選択でき、また、Ctrl-クリックは選択のトグル、Shift-クリックはクリックしたタブとアクティブなタブの間にあるタブ全てを選択します。" },
+
   "context.selection.label":              { "message": "選択したタブを操作" },
 
   "context.reloadTabs.label":             { "message": "再読み込み" },

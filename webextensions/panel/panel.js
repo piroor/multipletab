@@ -18,6 +18,12 @@ window.addEventListener('DOMContentLoaded', async () => {
   gSelection = response.selection;
   gDragSelection = response.dragSelection;
 
+  var disabledMessage = document.querySelector('#disabled-message')
+  if (gDragSelection.activatedInVerticalTabbarOfTST)
+    disabledMessage.style.display = 'block';
+  else
+    disabledMessage.style.display = 'none';
+
   browser.tabs.onActivated.addListener(onTabModified);
   browser.tabs.onCreated.addListener(onTabModified);
   browser.tabs.onRemoved.addListener(onTabModified);
