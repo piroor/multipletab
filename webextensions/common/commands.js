@@ -167,6 +167,17 @@ async function copyToClipboard(aIds, aFormat) {
   if (tabs.length > 1)
     dataToCopy += delimiter;
 
+  if (!configs.useWorkaroundForBug1272869) {
+    let field = document.createElement('textarea');
+    field.value = dataToCopy;
+    document.body.appendChild(field);
+    field.focus();
+    field.select();
+    document.execCommand('copy');
+    field.parentNode.removeChild(field);
+    return;
+  }
+
   var permittedTabs = tabs.filter(isPermittedTab);
   if (permittedTabs.length == 0) {
     permittedTabs = allTabs.filter(isPermittedTab);

@@ -70,6 +70,7 @@ configs = new Configs({
 
   copyToClipboardFormats: defaultClipboardFormats,
   useCRLF: false,
+  useWorkaroundForBug1272869: true,
 
   debug: false
 });
