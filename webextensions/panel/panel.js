@@ -352,6 +352,14 @@ function onMenuClick(aEvent) {
   while (target.nodeType != target.ELEMENT_NODE)
     target = target.parentNode;
 
+  var id = target.getAttribute('data-item-id');
+  if (id) {
+    browser.runtime.sendMessage({
+      type: kCOMMAND_SELECTION_MENU_ITEM_CLICK,
+      id:   id
+    });
+  }
+
   closeMenu();
 }
 

@@ -103,6 +103,9 @@ function onMessage(aMessage) {
 
     case kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO:
       return Promise.resolve(gActiveContextMenuItems);
+
+    case kCOMMAND_SELECTION_MENU_ITEM_CLICK:
+      return contextMenuClickListener({ menuItemId: aMessage.id });
   }
 }
 
