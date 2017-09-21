@@ -376,6 +376,10 @@ async function buildMenu() {
   var fragment = document.createDocumentFragment();
   var knownItems = {};
   for (let item of items) {
+    if (item.id == 'select' ||
+        item.id == 'unselect')
+      continue;
+
     let itemNode = buildMenuItem(item);
     if (item.parentId &&
         item.parentId != 'selection' &&
