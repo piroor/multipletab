@@ -263,7 +263,7 @@ async function onTabItemDragEnd(aMessage) {
     allTabs.reverse();
     let toBeClosedIds = getSelectedTabIds();
     for (let tab of allTabs) {
-      if (toBeClosedIds.indexOf(tab.id) > -1)
+      if (tab && toBeClosedIds.indexOf(tab.id) > -1)
         await browser.tabs.remove(tab.id);
     }
     clearSelection();
