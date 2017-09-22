@@ -261,8 +261,9 @@ async function onTabItemDragEnd(aMessage) {
   if (gDragSelection.willCloseSelectedTabs) {
     let allTabs = gDragSelection.allTabsOnDragReady.slice(0);
     allTabs.reverse();
+    let toBeClosedIds = getSelectedTabIds();
     for (let tab of allTabs) {
-      if (tab.id in gSelection.tabs)
+      if (toBeClosedIds.indexOf(tab.id) > -1)
         await browser.tabs.remove(tab.id);
     }
     clearSelection();
