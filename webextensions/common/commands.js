@@ -206,8 +206,17 @@ async function copyToClipboard(aIds, aFormat) {
   });
 }
 
-function fillPlaceHolders(aFormat, aTab) {
+async function fillPlaceHolders(aFormat, aTab) {
+  log('fillPlaceHolders ', aTab.id, aFormat);
   var delimiter = configs.useCRLF ? '\r\n' : '\n' ;
+  var contentsData = {};
+  if (!aTab.discarded &&
+      isPermittedTab(aTab)) {
+    contentsData = await browser.tabs.executeScript(aTab.id, {
+      file: '/common/get-content-text.js'
+    });
+    log('contentsData ', contentsData);
+  }
   return aFormat
            .replace(/%URL%/gi, aTab.url)
            .replace(/%TITLE%/gi, aTab.title)
