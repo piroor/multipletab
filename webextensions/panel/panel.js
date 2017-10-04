@@ -298,7 +298,10 @@ function buildTabItem(aTab) {
   });
   label.appendChild(checkbox);
   var favicon = document.createElement('img');
-  favicon.setAttribute('src', aTab.favIconUrl);
+  TabFavIconHelper.loadToImage({
+    image: favicon,
+    tab:   aTab
+  });
   label.appendChild(favicon);
   label.appendChild(document.createTextNode(aTab.title));
 

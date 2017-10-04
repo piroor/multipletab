@@ -10,6 +10,7 @@
     "clipboardWrite",
     "contextMenus",
     "downloads",
+    "sessions",
     "storage",
     "tabs"
   ],
@@ -23,6 +24,7 @@
       "common/common.js",
       "common/commands.js",
       "common/drag-selection.js",
+      "common/TabFavIconHelper.js",
       "background/background.js",
       "background/context-menu.js"
     ]
