@@ -61,6 +61,11 @@ ul li {
   flex-grow: 1;
 }
 
+#main ul li * {
+  line-height: 1;
+  vertical-align: middle;
+}
+
 #main ul li label {
   flex-grow: 1;
   overflow: hidden;

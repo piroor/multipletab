@@ -303,10 +303,15 @@ function buildTabItem(aTab) {
     tab:   aTab
   });
   label.appendChild(favicon);
+
   var defaultFavicon = document.createElement('span');
   defaultFavicon.classList.add('default-favicon');
   label.appendChild(defaultFavicon);
-  label.appendChild(document.createTextNode(aTab.title));
+
+  var title = document.createElement('span');
+  title.classList.add('title');
+  title.appendChild(document.createTextNode(aTab.title));
+  label.appendChild(title);
 
   var item = document.createElement('li');
   item.setAttribute('id', `tab-${aTab.id}`);
