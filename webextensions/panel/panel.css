@@ -73,6 +73,18 @@ ul li {
   max-width: 16px;
 }
 
+#main ul li img.error {
+  display: none;
+}
+#main ul li img.error + .default-favicon {
+  background: url(./moon.svg) no-repeat center center;
+  display: inline-block;
+  min-height: 16px;
+  min-width: 16px;
+  height: 16px;
+  width: 16px;
+}
+
 #main li.selected,
 #main li.ready-to-close .closebox {
   background: Highlight;
