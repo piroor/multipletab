@@ -230,22 +230,46 @@ async function saveTabs(aIds) {
     if (aIds.indexOf(tab.id) > -1)
       browser.downloads.download({
         url:      tab.url,
-        filename: `${prefix}${suggestFileNameForTab(tab)}`
+        filename: `${prefix}${await suggestFileNameForTab(tab)}`
       });
   }
 }
 
-function suggestFileNameForTab(aTab) {
+const kMAYBE_IMAGE_PATTERN    = /\.(jpe?g|png|gif|bmp|svg)/i;
+const kMAYBE_RAW_FILE_PATTERN = /\.(te?xt|md)/i;
+
+async function suggestFileNameForTab(aTab) {
   var fileNameMatch = aTab.url.replace(/^\w+:\/\/[^\/]+\//, '') // remove origin part
                               .replace(/#.*$/, '') // remove fragment
                               .replace(/\?.*$/, '') // remove query
                               .match(/([^\/]+\.([^\.\/]+))$/);
-  // we should suggest filename from content type, but currently simply use the filename except "html" case.
+  log('suggestFileNameForTab ', aTab.id, fileNameMatch);
   if (fileNameMatch &&
-      !/html?/i.test(fileNameMatch[1]))
+      (kMAYBE_IMAGE_PATTERN.test(fileNameMatch[1]) ||
+       kMAYBE_RAW_FILE_PATTERN.test(fileNameMatch[1])))
     return fileNameMatch[1];
-  // webpages (text/html, application/xhtml+xml, etc.) should have the page title as the filename
-  return `${aTab.title.replace(/\//g, '_')}.html`;
+
+  var suggestedExtension = '';
+  if (!aTab.discarded &&
+      isPermittedTab(aTab)) {
+    log(`getting content type of ${aTab.id}`);
+    let contentType = await browser.tabs.executeScript(aTab.id, {
+      code: `document.contentType`
+    });
+    if (Array.isArray(contentType))
+      contentType = contentType[0];
+    log(`contentType of ${aTab.id}: `, contentType);
+    if (/^(text\/html|application\/xhtml\+xml)/.test(contentType)) {
+      suggestedExtension = '.html';
+    }
+    else if (/^text\//.test(contentType)) {
+      suggestedExtension = '.txt';
+    }
+    else if (/^image\//.test(contentType)) {
+      suggestedExtension = `.${contentType.replace(/^image\//, '')}`;
+    }
+  }
+  return `${aTab.title.replace(/\//g, '_')}${suggestedExtension}`;
 }
 
 async function selectAllTabs() {
