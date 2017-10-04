@@ -130,6 +130,7 @@ ul li {
   border: 1px outset Menu;
   box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.65);
   color: MenuText;
+  font: -moz-pull-down-menu;
   left: calc(100% - 2em);
   margin: 0;
   opacity: 0;
