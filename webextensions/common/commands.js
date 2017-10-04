@@ -271,7 +271,7 @@ async function suggestFileNameForTab(aTab) {
   }
   log('suggestedExtension: ', aTab.id, suggestedExtension);
   var fileName = `${aTab.title.replace(/[\/\\:*?"<>|]/g, '_')}${suggestedExtension}`;
-  log('finally suggested fileName: ', aTab.id, suggestedExtension);
+  log('finally suggested fileName: ', aTab.id, fileName);
   return fileName;
 }
 
