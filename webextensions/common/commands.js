@@ -269,7 +269,7 @@ async function suggestFileNameForTab(aTab) {
       suggestedExtension = `.${contentType.replace(/^image\/|\+.+$/g, '')}`;
     }
   }
-  return `${aTab.title.replace(/\//g, '_')}${suggestedExtension}`;
+  return `${aTab.title.replace(/[\/\\:*?"<>|]/g, '_')}${suggestedExtension}`;
 }
 
 async function selectAllTabs() {
