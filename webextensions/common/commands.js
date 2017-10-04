@@ -266,7 +266,7 @@ async function suggestFileNameForTab(aTab) {
       suggestedExtension = '.txt';
     }
     else if (/^image\//.test(contentType)) {
-      suggestedExtension = `.${contentType.replace(/^image\//, '')}`;
+      suggestedExtension = `.${contentType.replace(/^image\/|\+.+$/g, '')}`;
     }
   }
   return `${aTab.title.replace(/\//g, '_')}${suggestedExtension}`;
