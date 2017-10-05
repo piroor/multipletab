@@ -7,26 +7,26 @@
 
 (() => {
   try {
-  function getMetaInfo(aDocument, aName) {
-    var upperCase = aName.toUpperCase();
-    var lowerCase = aName.toLowerCase();
-    return document.evaluate(
-      `/descendant::*[translate(local-name(), "META", "meta")="meta"][translate(@name, "${upperCase}", "${lowerCase}")="${lowerCase}"]/attribute::content`,
-      aDocument,
-      null,
-      XPathResult.STRING_TYPE,
-      null
-    ).stringValue;
-  }
+    function getMetaInfo(aDocument, aName) {
+      var upperCase = aName.toUpperCase();
+      var lowerCase = aName.toLowerCase();
+      return document.evaluate(
+        `/descendant::*[translate(local-name(), "META", "meta")="meta"][translate(@name, "${upperCase}", "${lowerCase}")="${lowerCase}"]/attribute::content`,
+        aDocument,
+        null,
+        XPathResult.STRING_TYPE,
+        null
+      ).stringValue;
+    }
 
-  var author = getMetaInfo(document, 'author') || '';
-  var description = getMetaInfo(document, 'description') || '';
-  var keywords = getMetaInfo(document, 'keywords') || '';
-  return {
-    author,
-    description,
-    keywords
-  };
+    var author = getMetaInfo(document, 'author') || '';
+    var description = getMetaInfo(document, 'description') || '';
+    var keywords = getMetaInfo(document, 'keywords') || '';
+    return {
+      author,
+      description,
+      keywords
+    };
   }
   catch(e) {
     return {
