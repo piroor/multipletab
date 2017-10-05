@@ -57,6 +57,15 @@
 
   "config.menu.caption": { "message": "Extra Context Menu Items" },
 
+  "config.clipboard.caption": { "message": "Copy to Clipboard" },
+  "config.copyToClipboardFormats.labe;":    { "message": "Label" },
+  "config.copyToClipboardFormats.template": { "message": "Format of Copied Data" },
+  "config.copyToClipboardFormats.add":      { "message": "Add New Format" },
+  "config.copyToClipboardFormats.remove":   { "message": "Remove This Format" },
+  "config.copyToClipboardFormats.up":       { "message": "Move Up" },
+  "config.copyToClipboardFormats.down":     { "message": "Move Down" },
+  "config.copyToClipboardFormats.placeholders": { "message": "Available place holders for formats:\n%URL%=Page URL,\n%TITLE%=Page Title,\n%AUTHOR%=Author name (specified by META),\n%DESCRIPTION%=Description (specified by META),\n%KEYWORDS%=Search keywords (specified by META),\n%URL_HTMLIFIED%=URL escaped for HTML,\n%TITLE_HTMLIFIED%=Title escaped for HTML,\n%AUTHOR_HTMLIFIED%=Author name escaped for HTML,\n%DESCRIPTION_HTMLIFIED%=Description escaped for HTML,\n%KEYWORDS_HTMLIFIED%=Search keywords escaped for HTML,\n%TAB%=Tab,\n%EOL%=Line Feed,\n%RT%=Copy as a rich text (Note: this placeholder itself is cleared from the copied text)" },
+
   "config.saveTabs.caption": { "message": "Save Tabs as Files" },
   "config.saveTabsPrefix.label_before": { "message": "Save tabs under " },
   "config.saveTabsPrefix.label_after": { "message": "(*Path under the download folder. \"/\" will be recognized as a path delimiter.)" },

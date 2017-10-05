@@ -56,6 +56,15 @@
 
   "config.menu.caption": { "message": "コンテキストメニューに追加する項目" },
 
+  "config.clipboard.caption": { "message": "タブのクリップボードへのコピー" },
+  "config.copyToClipboardFormats.labe;":    { "message": "ラベル" },
+  "config.copyToClipboardFormats.template": { "message": "コピーする内容の書式" },
+  "config.copyToClipboardFormats.add":      { "message": "書式を追加" },
+  "config.copyToClipboardFormats.remove":   { "message": "この書式を削除" },
+  "config.copyToClipboardFormats.up":       { "message": "上へ移動" },
+  "config.copyToClipboardFormats.down":     { "message": "下へ移動" },
+  "config.copyToClipboardFormats.placeholders": { "message": "書式には以下のプレースホルダを使えます：\n%URL%=ページのURL,\n%TITLE%=ページのタイトル,\n%AUTHOR%=metaタグで指定された作者名,\n%DESCRIPTION%=metaタグで指定された説明文,\n%KEYWORDS%=metaタグで指定された検索用キーワード,\n%URL_HTMLIFIED%=HTML用にエスケープされたURL,\n%TITLE_HTMLIFIED%=HTML用にエスケープされたタイトル,\n%AUTHOR_HTMLIFIED%=HTML用にエスケープされた作者名,\n%DESCRIPTION_HTMLIFIED%=HTML用にエスケープされた説明文,\n%KEYWORDS_HTMLIFIED%=HTML用にエスケープされた検索用キーワード,\n%TAB%=タブ文字,\n%EOL%=改行,\n%RT%=リッチテキストとしてコピーする（このプレースホルダ自体は空文字に変換されます）" },
+
   "config.saveTabs.caption": { "message": "タブのファイルへの保存" },
   "config.saveTabsPrefix.label_before": { "message": "タブを" },
   "config.saveTabsPrefix.label_after": { "message": "以下に保存する（※ダウンロードフォルダ配下の保存先パスを指定できます。「/」はパスの区切り文字として解釈されます。）" },
