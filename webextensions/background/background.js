@@ -26,16 +26,16 @@ window.addEventListener('DOMContentLoaded', async () => {
 /*  listen events */
 
 function onDragSelectionEnd(aMessage) {
-    let tab = gDragSelection.dragStartTarget.id;
-    refreshContextMenuItems(tab, true).then(() => {
-      browser.runtime.sendMessage(kTST_ID, {
-        type: kTSTAPI_CONTEXT_MENU_OPEN,
-        window: gSelection.targetWindow,
-        tab:  tab,
-        left: aMessage.clientX,
-        top:  aMessage.clientY
-      });
+  let tab = gDragSelection.dragStartTarget.id;
+  refreshContextMenuItems(tab, true).then(() => {
+    browser.runtime.sendMessage(kTST_ID, {
+      type: kTSTAPI_CONTEXT_MENU_OPEN,
+      window: gSelection.targetWindow,
+      tab:  tab,
+      left: aMessage.clientX,
+      top:  aMessage.clientY
     });
+  });
 }
 
 function onTSTAPIMessage(aMessage) {
