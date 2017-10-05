@@ -58,7 +58,7 @@
   "config.menu.caption": { "message": "Extra Context Menu Items" },
 
   "config.clipboard.caption": { "message": "Copy to Clipboard" },
-  "config.copyToClipboardFormats.labe;":    { "message": "Label" },
+  "config.copyToClipboardFormats.label":    { "message": "Label" },
   "config.copyToClipboardFormats.template": { "message": "Format of Copied Data" },
   "config.copyToClipboardFormats.add":      { "message": "Add New Format" },
   "config.copyToClipboardFormats.remove":   { "message": "Remove This Format" },

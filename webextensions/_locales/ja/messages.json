@@ -57,7 +57,7 @@
   "config.menu.caption": { "message": "コンテキストメニューに追加する項目" },
 
   "config.clipboard.caption": { "message": "タブのクリップボードへのコピー" },
-  "config.copyToClipboardFormats.labe;":    { "message": "ラベル" },
+  "config.copyToClipboardFormats.label":    { "message": "ラベル" },
   "config.copyToClipboardFormats.template": { "message": "コピーする内容の書式" },
   "config.copyToClipboardFormats.add":      { "message": "書式を追加" },
   "config.copyToClipboardFormats.remove":   { "message": "この書式を削除" },
