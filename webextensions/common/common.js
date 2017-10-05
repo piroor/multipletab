@@ -72,5 +72,7 @@ configs = new Configs({
   useCRLF: false,
   useWorkaroundForBug1272869: true,
 
+  saveTabsPrefix: browser.i18n.getMessage('saveTabsPrefix.defaultValue'),
+
   debug: false
 });

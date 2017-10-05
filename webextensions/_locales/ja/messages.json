@@ -16,6 +16,10 @@
 
   "panelDisabledBy.treestyletab": { "message": "タブをまとめて操作するUIは無効になっています。代わりにツリー型タブが提供するサイドバー内の縦型タブバーを使用して下さい。タブは0.5秒以上の長押しで開始するドラッグ操作で選択でき、また、Ctrl-クリックは選択のトグル、Shift-クリックはクリックしたタブとアクティブなタブの間にあるタブ全てを選択します。" },
 
+
+  "saveTabsPrefix.defaultValue": { "message": "保存されたタブ/" },
+
+
   "context.selection.label":              { "message": "選択したタブを操作" },
 
   "context.reloadTabs.label":             { "message": "再読み込み" },
@@ -33,7 +37,7 @@
   "context.clipboard:url.label":           { "message": "URI" },
   "context.clipboard:title-and-url.label": { "message": "タイトルとURI" },
   "context.clipboard:html-link.label":     { "message": "HTMLのリンク" },
-  "context.saveTabs.label":               { "message": "保存" },
+  "context.saveTabs.label":               { "message": "ファイルに保存" },
   "context.printTabs.label":              { "message": "印刷" },
   "context.freezeTabs.label":             { "message": "凍結" },
   "context.unfreezeTabs.label":           { "message": "凍結を解除" },
@@ -52,6 +56,9 @@
 
   "config.menu.caption": { "message": "コンテキストメニューに追加する項目" },
 
+  "config.saveTabs.caption": { "message": "タブのファイルへの保存" },
+  "config.saveTabsPrefix.label_before": { "message": "タブを" },
+  "config.saveTabsPrefix.label_after": { "message": "以下に保存する（※ダウンロードフォルダ配下の保存先パスを指定できます。「/」はパスの区切り文字として解釈されます。）" },
 
 
   "config.debug.caption": { "message": "開発用" },

@@ -287,7 +287,8 @@ function sanitizeHtmlText(aText) {
 
 async function saveTabs(aIds) {
   var tabs = await getAllTabs();
-  var prefix = 'saved-tabs/'; // this should be customizable
+  var prefix = configs.saveTabsPrefix;
+  prefix = `${prefix.replace(/\/$/, '')}/`;
   for (let tab of tabs) {
     if (aIds.indexOf(tab.id) > -1)
       browser.downloads.download({
