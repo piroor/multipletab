@@ -208,7 +208,7 @@ async function copyToClipboard(aIds, aFormat) {
 
 async function fillPlaceHolders(aFormat, aTab) {
   log('fillPlaceHolders ', aTab.id, aFormat);
-  var delimiter = configs.useCRLF ? '\r\n' : '\n' ;
+  var lineFeed = configs.useCRLF ? '\r\n' : '\n' ;
   var contentsData = {};
   if (!aTab.discarded &&
       isPermittedTab(aTab)) {
@@ -218,12 +218,26 @@ async function fillPlaceHolders(aFormat, aTab) {
     });
     log('contentsData ', contentsData);
   }
+  var now = new Date();
+  var timeUTC = now.toUTCString();
+  var timeLocal = now.toLocaleString();
   return aFormat
+           .replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
            .replace(/%URL%/gi, aTab.url)
-           .replace(/%TITLE%/gi, aTab.title)
+           .replace(/%(?:TITLE|TEXT)%/gi, aTab.title)
            .replace(/%URL_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.url))
            .replace(/%TITLE_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.title))
-           .replace(/%EOL%/gi, delimiter);
+           .replace(/%AUTHOR%/gi, contentsData.author || '')
+           .replace(/%AUTHOR_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.author || ''))
+           .replace(/%DESC(?:RIPTION)?%/gi, contentsData.description || '')
+           .replace(/%DESC(?:RIPTION)?_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.description || ''))
+           .replace(/%KEYWORDS%/gi, contentsData.keywords || '')
+           .replace(/%KEYWORDS_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.keywords || ''))
+           .replace(/%UTC_TIME%/gi, timeUTC)
+           .replace(/%LOCAL_TIME%/gi, timeLocal)
+           .replace(/%TAB%/gi, '\t')
+           .replace(/%EOL%/gi, lineFeed)
+           .replace(/%RT%/gi, '')
 }
 
 function sanitizeHtmlText(aText) {
