@@ -75,7 +75,8 @@ function onTSTAPIMessage(aMessage) {
 }
 
 function onMessageExternal(aMessage, aSender) {
-  //console.log('onMessageExternal: ', aMessage, aSender);
+  if (configs.debug)
+    console.log('onMessageExternal: ', aMessage, aSender);
   switch (aSender.id) {
     case kTST_ID:
       return onTSTAPIMessage(aMessage);
