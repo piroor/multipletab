@@ -233,12 +233,6 @@ async function copyToClipboard(aIds, aFormat) {
 
 async function fillPlaceHolders(aFormat, aTab) {
   log('fillPlaceHolders ', aTab.id, aFormat);
-  if (/%RT%/i.test(aFormat)) {
-    return {
-      richText: `<a href="${sanitizeHtmlText(aTab.url)}">${sanitizeHtmlText(aTab.title)}</a>`,
-      plainText: `${aTab.title}<${aTab.url}>`
-    };
-  }
   var lineFeed = configs.useCRLF ? '\r\n' : '\n' ;
   var contentsData = {};
   if (!aTab.discarded &&
@@ -272,6 +266,15 @@ async function fillPlaceHolders(aFormat, aTab) {
          .replace(/%TAB%/gi, '\t')
          .replace(/%EOL%/gi, lineFeed)
          .replace(/%RT%/gi, '');
+
+  if (/%RT%/i.test(aFormat)) {
+    return {
+      richText:  formatted.trim() && formatted ||
+                   `<a href="${sanitizeHtmlText(aTab.url)}">${sanitizeHtmlText(aTab.title)}</a>`,
+      plainText: formatted.trim() && formatted ||
+                   `${aTab.title}<${aTab.url}>`
+    };
+  }
   return {
     richText:  '',
     plainText: formatted
