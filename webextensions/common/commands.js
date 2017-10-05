@@ -163,18 +163,44 @@ async function copyToClipboard(aIds, aFormat) {
   var allTabs = await getAllTabs();
   var tabs = allTabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
   var lineFeed = configs.useCRLF ? '\r\n' : '\n' ;
-  var dataToCopy = (await Promise.all(tabs.map(aTab => fillPlaceHolders(aFormat, aTab)))).join(lineFeed);
+  var itemsToCopy = await Promise.all(tabs.map(aTab => fillPlaceHolders(aFormat, aTab)));
+
+  var richText = /%RT%/i.test(aFormat) ? itemsToCopy.map(aItem => aItem.richText).join('<br />') : null ;
+  var plainText = itemsToCopy.map(aItem => aItem.plainText).join(lineFeed);
   if (tabs.length > 1)
-    dataToCopy += lineFeed;
+    plainText += lineFeed;
+
+  log('richText: ', richText);
+  log('plainText: ', plainText);
+
+  var doCopy = function() {
+    if (richText) {
+      // This block won't work if dom.event.clipboardevents.enabled=false.
+      // See: https://bugzilla.mozilla.org/show_bug.cgi?id=1396275
+      document.addEventListener('copy', (aEvent) => {
+        aEvent.stopImmediatePropagation();
+        aEvent.preventDefault();
+        aEvent.clipboardData.setData('text/plain', plainText);
+        aEvent.clipboardData.setData('text/html',  richText);
+      }, {
+        once:    true,
+        capture: true
+      });
+      document.execCommand('copy');
+    }
+    else {
+      let field = document.createElement('textarea');
+      field.value = plainText;
+      document.body.appendChild(field);
+      field.focus();
+      field.select();
+      document.execCommand('copy');
+      field.parentNode.removeChild(field);
+    }
+  };
 
   if (!configs.useWorkaroundForBug1272869) {
-    let field = document.createElement('textarea');
-    field.value = dataToCopy;
-    document.body.appendChild(field);
-    field.focus();
-    field.select();
-    document.execCommand('copy');
-    field.parentNode.removeChild(field);
+    doCopy();
     return;
   }
 
@@ -196,18 +222,23 @@ async function copyToClipboard(aIds, aFormat) {
         https://bugzilla.mozilla.org/show_bug.cgi?id=1344410
     */
     code: `
-      var field = document.createElement('textarea');
-      field.value = ${JSON.stringify(dataToCopy)};
-      document.body.appendChild(field);
-      field.select();
-      document.execCommand('copy');
-      field.parentNode.removeChild(field);
+      {
+        let richText = ${JSON.stringify(richText)};
+        let plainText = ${JSON.stringify(plainText)};
+        (${doCopy.toString()})();
+      }
     `
   });
 }
 
 async function fillPlaceHolders(aFormat, aTab) {
   log('fillPlaceHolders ', aTab.id, aFormat);
+  if (/%RT%/i.test(aFormat)) {
+    return {
+      richText: `<a href="${sanitizeHtmlText(aTab.url)}">${sanitizeHtmlText(aTab.title)}</a>`,
+      plainText: `${aTab.title}<${aTab.url}>`
+    };
+  }
   var lineFeed = configs.useCRLF ? '\r\n' : '\n' ;
   var contentsData = {};
   if (!aTab.discarded &&
@@ -217,32 +248,34 @@ async function fillPlaceHolders(aFormat, aTab) {
     contentsData = await browser.tabs.executeScript(aTab.id, {
       file: '/common/get-content-text.js'
     });
+    if (Array.isArray(contentsData))
+      contentsData = contentsData[0];
     log('contentsData ', contentsData);
   }
   var now = new Date();
   var timeUTC = now.toUTCString();
   var timeLocal = now.toLocaleString();
   var formatted = aFormat
-           .replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
-           .replace(/%URL%/gi, aTab.url)
-           .replace(/%(?:TITLE|TEXT)%/gi, aTab.title)
-           .replace(/%URL_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.url))
-           .replace(/%TITLE_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.title))
-           .replace(/%AUTHOR%/gi, contentsData.author || '')
-           .replace(/%AUTHOR_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.author || ''))
-           .replace(/%DESC(?:RIPTION)?%/gi, contentsData.description || '')
-           .replace(/%DESC(?:RIPTION)?_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.description || ''))
-           .replace(/%KEYWORDS%/gi, contentsData.keywords || '')
-           .replace(/%KEYWORDS_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.keywords || ''))
-           .replace(/%UTC_TIME%/gi, timeUTC)
-           .replace(/%LOCAL_TIME%/gi, timeLocal)
-           .replace(/%TAB%/gi, '\t')
-           .replace(/%EOL%/gi, lineFeed)
-           .replace(/%RT%/gi, '');
-  var isRichText = /%RT%/i.test(aFormat);
-  if (isRichText && !formatted.trim())
-    formatted = `<a href="${sanitizeHtmlText(uri)}">${sanitizeHtmlText(title)}</a>`;
-  return formatted;
+         .replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
+         .replace(/%URL%/gi, aTab.url)
+         .replace(/%(?:TITLE|TEXT)%/gi, aTab.title)
+         .replace(/%URL_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.url))
+         .replace(/%TITLE_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.title))
+         .replace(/%AUTHOR%/gi, contentsData.author || '')
+         .replace(/%AUTHOR_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.author || ''))
+         .replace(/%DESC(?:RIPTION)?%/gi, contentsData.description || '')
+         .replace(/%DESC(?:RIPTION)?_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.description || ''))
+         .replace(/%KEYWORDS%/gi, contentsData.keywords || '')
+         .replace(/%KEYWORDS_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.keywords || ''))
+         .replace(/%UTC_TIME%/gi, timeUTC)
+         .replace(/%LOCAL_TIME%/gi, timeLocal)
+         .replace(/%TAB%/gi, '\t')
+         .replace(/%EOL%/gi, lineFeed)
+         .replace(/%RT%/gi, '');
+  return {
+    richText:  '',
+    plainText: formatted
+  };
 }
 
 function sanitizeHtmlText(aText) {
