@@ -125,6 +125,7 @@ function onSelectionChange(aTabs, aSelected, aOptions = {}) {
 
 
 async function registerToTST() {
+  try {
   await browser.runtime.sendMessage(kTST_ID, {
     type:  kTSTAPI_REGISTER_SELF,
     name:  browser.i18n.getMessage('extensionName'),
@@ -151,6 +152,11 @@ async function registerToTST() {
   });
   gDragSelection.activatedInVerticalTabbarOfTST = true;
   refreshContextMenuItems(null, true); // force rebuild menu
+    return true;
+  }
+  catch(e) {
+    return false;
+  }
 }
 
 function unregisterFromTST() {
