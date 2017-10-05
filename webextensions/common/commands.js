@@ -222,7 +222,7 @@ async function fillPlaceHolders(aFormat, aTab) {
   var now = new Date();
   var timeUTC = now.toUTCString();
   var timeLocal = now.toLocaleString();
-  return aFormat
+  var formatted = aFormat
            .replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
            .replace(/%URL%/gi, aTab.url)
            .replace(/%(?:TITLE|TEXT)%/gi, aTab.title)
@@ -238,7 +238,11 @@ async function fillPlaceHolders(aFormat, aTab) {
            .replace(/%LOCAL_TIME%/gi, timeLocal)
            .replace(/%TAB%/gi, '\t')
            .replace(/%EOL%/gi, lineFeed)
-           .replace(/%RT%/gi, '')
+           .replace(/%RT%/gi, '');
+  var isRichText = /%RT%/i.test(aFormat);
+  if (isRichText && !formatted.trim())
+    formatted = `<a href="${sanitizeHtmlText(uri)}">${sanitizeHtmlText(title)}</a>`;
+  return formatted;
 }
 
 function sanitizeHtmlText(aText) {
