@@ -50,6 +50,10 @@
   "context.invertSelection.label":        { "message": "選択を反転" },
 
 
+  "config.menu.caption": { "message": "コンテキストメニューに追加する項目" },
+
+
+
   "config.debug.caption": { "message": "開発用" },
   "config.debug.label": { "message": "デバッグモード" },
   "config.all.caption": { "message": "すべての設定" }

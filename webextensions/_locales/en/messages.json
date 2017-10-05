@@ -52,6 +52,9 @@
   "context.invertSelection.label":        { "message": "Invert Selection" },
 
 
+  "config.menu.caption": { "message": "Extra Context Menu Items" },
+
+
   "config.debug.caption": { "message": "Development" },
   "config.debug.label": { "message": "Debug mode" },
   "config.all.caption": { "message": "All Configs" }
