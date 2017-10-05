@@ -19,10 +19,10 @@
     ).stringValue;
   }
 
-  var now = aParams.now || new Date();
   var author = getMetaInfo(document, 'author') || '';
   var description = getMetaInfo(document, 'description') || '';
   var keywords = getMetaInfo(document, 'keywords') || '';
+  var now = new Date();
   var timeUTC = now.toUTCString();
   var timeLocal = now.toLocaleString();
   return {
