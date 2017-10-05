@@ -22,15 +22,10 @@
   var author = getMetaInfo(document, 'author') || '';
   var description = getMetaInfo(document, 'description') || '';
   var keywords = getMetaInfo(document, 'keywords') || '';
-  var now = new Date();
-  var timeUTC = now.toUTCString();
-  var timeLocal = now.toLocaleString();
   return {
     author,
     description,
-    keywords,
-    timeUTC,
-    timeLocal
+    keywords
   };
   }
   catch(e) {
