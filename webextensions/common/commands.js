@@ -212,6 +212,7 @@ async function fillPlaceHolders(aFormat, aTab) {
   var contentsData = {};
   if (!aTab.discarded &&
       isPermittedTab(aTab)) {
+    log('trying to get data from content ', aTab.id);
     contentsData = await browser.tabs.executeScript(aTab.id, {
       file: '/common/get-content-text.js'
     });

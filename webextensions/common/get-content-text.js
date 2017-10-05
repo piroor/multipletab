@@ -6,6 +6,7 @@
 'use strict';
 
 (() => {
+  try {
   function getMetaInfo(aDocument, aName) {
     var upperCase = aName.toUpperCase();
     var lowerCase = aName.toLowerCase();
@@ -31,4 +32,10 @@
     timeUTC,
     timeLocal
   };
+  }
+  catch(e) {
+    return {
+      error: String(e)
+    };
+  }
 })();
