@@ -126,32 +126,32 @@ function onSelectionChange(aTabs, aSelected, aOptions = {}) {
 
 async function registerToTST() {
   try {
-  await browser.runtime.sendMessage(kTST_ID, {
-    type:  kTSTAPI_REGISTER_SELF,
-    name:  browser.i18n.getMessage('extensionName'),
-    style: `
-      .tab.selected::after {
-        background: Highlight;
-        bottom: 0;
-        content: " ";
-        display: block;
-        left: 0;
-        opacity: 0.5;
-        pointer-events: none;
-        position: absolute;
-        right: 0;
-        top: 0;
-        z-index: 10;
-      }
+    await browser.runtime.sendMessage(kTST_ID, {
+      type:  kTSTAPI_REGISTER_SELF,
+      name:  browser.i18n.getMessage('extensionName'),
+      style: `
+        .tab.selected::after {
+          background: Highlight;
+          bottom: 0;
+          content: " ";
+          display: block;
+          left: 0;
+          opacity: 0.5;
+          pointer-events: none;
+          position: absolute;
+          right: 0;
+          top: 0;
+          z-index: 10;
+        }
 
-      /* ::after pseudo element prevents firing of dragstart event */
-      .tab.ready-to-close .closebox {
-        background: Highlight;
-      }
-    `
-  });
-  gDragSelection.activatedInVerticalTabbarOfTST = true;
-  refreshContextMenuItems(null, true); // force rebuild menu
+        /* ::after pseudo element prevents firing of dragstart event */
+        .tab.ready-to-close .closebox {
+          background: Highlight;
+        }
+      `
+    });
+    gDragSelection.activatedInVerticalTabbarOfTST = true;
+    refreshContextMenuItems(null, true); // force rebuild menu
     return true;
   }
   catch(e) {
