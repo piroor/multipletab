@@ -211,7 +211,8 @@ async function fillPlaceHolders(aFormat, aTab) {
   var lineFeed = configs.useCRLF ? '\r\n' : '\n' ;
   var contentsData = {};
   if (!aTab.discarded &&
-      isPermittedTab(aTab)) {
+      isPermittedTab(aTab) &&
+      /%(AUTHOR|DESC(?:RIPTION)?|KEYWORDS)(?:_HTML(?:IFIED)?)?%/i.test(aFormat)) {
     log('trying to get data from content ', aTab.id);
     contentsData = await browser.tabs.executeScript(aTab.id, {
       file: '/common/get-content-text.js'
