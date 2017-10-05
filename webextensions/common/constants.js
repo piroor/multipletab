@@ -9,12 +9,14 @@ const kCOMMAND_PULL_SELECTION_INFO = 'multipletab:pull-selection-info';
 const kCOMMAND_PUSH_SELECTION_INFO = 'multipletab:push-selection-info';
 const kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO = 'multipletab:pull-active-context-menu-info';
 const kCOMMAND_SELECTION_MENU_ITEM_CLICK = 'multipletab:selection-menu-item-click';
+const kCOMMAND_UNREGISTER_FROM_TST = 'multipletab:unregister-from-tst';
 
 
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';
 
 const kTSTAPI_REGISTER_SELF        = 'register-self';
 const kTSTAPI_UNREGISTER_SELF      = 'unregister-self';
+const kTSTAPI_PING                 = 'ping';
 const kTSTAPI_NOTIFY_READY         = 'ready';
 const kTSTAPI_NOTIFY_TAB_CLICKED   = 'tab-clicked';
 const kTSTAPI_NOTIFY_TABBAR_CLICKED = 'tabbar-clicked';

@@ -18,11 +18,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   gSelection = response.selection;
   gDragSelection = response.dragSelection;
 
-  var disabledMessage = document.querySelector('#disabled-message')
-  if (gDragSelection.activatedInVerticalTabbarOfTST)
-    disabledMessage.style.display = 'block';
-  else
-    disabledMessage.style.display = 'none';
+  await updateUIForTST();
 
   browser.tabs.onActivated.addListener(onTabModified);
   browser.tabs.onCreated.addListener(onTabModified);
@@ -38,7 +34,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   await rebuildTabItems();
 }, { once: true });
 
-window.addEventListener('unload', () => {
+window.addEventListener('pagehide', () => {
   window.removeEventListener('contextmenu', onContextMenu, { capture: true });
   window.removeEventListener('click', onClick);
   gTabBar.removeEventListener('mousedown', onMouseDown);
@@ -54,6 +50,28 @@ window.addEventListener('unload', () => {
 function onTabModified() {
   reserveClearSelection();
 }
+
+async function updateUIForTST() {
+  var disabledMessage = document.querySelector('#disabled-message');
+
+  try {
+    if (await browser.runtime.sendMessage(kTST_ID, {
+          type: kTSTAPI_PING
+        })) {
+      disabledMessage.style.display = 'block';
+    }
+    return;
+  }
+  catch(e) {
+    // failed to establish connection
+  }
+
+  browser.runtime.sendMessage({
+    type: kCOMMAND_UNREGISTER_FROM_TST
+  });
+  disabledMessage.style.display = 'none';
+}
+
 
 function reserveClearSelection() {
   if (reserveClearSelection.reserved)

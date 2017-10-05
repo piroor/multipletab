@@ -20,6 +20,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
   registerToTST();
+
+  window.addEventListener('pagehide', async () => {
+    unregisterFromTST();
+  }, { once: true });
 }, { once: true });
 
 
@@ -106,6 +110,10 @@ function onMessage(aMessage) {
 
     case kCOMMAND_SELECTION_MENU_ITEM_CLICK:
       return contextMenuClickListener({ menuItemId: aMessage.id });
+
+    case kCOMMAND_UNREGISTER_FROM_TST:
+      unregisterFromTST();
+      break;
   }
 }
 
@@ -143,6 +151,20 @@ async function registerToTST() {
   });
   gDragSelection.activatedInVerticalTabbarOfTST = true;
   refreshContextMenuItems(null, true); // force rebuild menu
+}
+
+function unregisterFromTST() {
+  gDragSelection.activatedInVerticalTabbarOfTST = false;
+  try {
+    browser.runtime.sendMessage(kTST_ID, {
+      type: kTSTAPI_CONTEXT_MENU_REMOVE_ALL
+    });
+    browser.runtime.sendMessage(kTST_ID, {
+      type: kTSTAPI_UNREGISTER_SELF
+    });
+  }
+  catch(e) {
+  }
 }
 
 function onConfigChanged(aKey) {
