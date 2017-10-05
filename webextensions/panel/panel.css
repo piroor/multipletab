@@ -133,7 +133,6 @@ ul li {
   font: -moz-pull-down-menu;
   left: calc(100% - 2em);
   margin: 0;
-  max-height: 100%;
   opacity: 0;
   overflow: auto;
   padding: 0;
@@ -145,6 +144,7 @@ ul li {
 }
 
 #menu > ul {
+  bottom: 0;
   top: 0;
 }
 
