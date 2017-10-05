@@ -162,10 +162,10 @@ async function removeOtherTabs(aIds) {
 async function copyToClipboard(aIds, aFormat) {
   var allTabs = await getAllTabs();
   var tabs = allTabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
-  var delimiter = configs.useCRLF ? '\r\n' : '\n' ;
-  var dataToCopy = (await Promise.all(tabs.map(aTab => fillPlaceHolders(aFormat, aTab)))).join(delimiter);
+  var lineFeed = configs.useCRLF ? '\r\n' : '\n' ;
+  var dataToCopy = (await Promise.all(tabs.map(aTab => fillPlaceHolders(aFormat, aTab)))).join(lineFeed);
   if (tabs.length > 1)
-    dataToCopy += delimiter;
+    dataToCopy += lineFeed;
 
   if (!configs.useWorkaroundForBug1272869) {
     let field = document.createElement('textarea');
