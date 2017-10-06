@@ -67,7 +67,8 @@
 
   "config.saveTabs.caption": { "message": "タブのファイルへの保存" },
   "config.saveTabsPrefix.label_before": { "message": "タブを" },
-  "config.saveTabsPrefix.label_after": { "message": "以下に保存する（※ダウンロードフォルダ配下の保存先パスを指定できます。「/」はパスの区切り文字として解釈されます。）" },
+  "config.saveTabsPrefix.label_after": { "message": "以下に保存する" },
+  "config.saveTabsPrefix.description": { "message": "※ダウンロードフォルダ配下の保存先パスを指定できます。「/」はパスの区切り文字として解釈されます。" },
 
 
   "config.debug.caption": { "message": "開発用" },

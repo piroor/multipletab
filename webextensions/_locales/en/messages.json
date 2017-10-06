@@ -68,7 +68,8 @@
 
   "config.saveTabs.caption": { "message": "Save Tabs as Files" },
   "config.saveTabsPrefix.label_before": { "message": "Save tabs under " },
-  "config.saveTabsPrefix.label_after": { "message": "(*Path under the download folder. \"/\" will be recognized as a path delimiter.)" },
+  "config.saveTabsPrefix.label_after": { "message": "" },
+  "config.saveTabsPrefix.description": { "message": "*Path under the download folder. \"/\" will be recognized as a path delimiter." },
 
 
   "config.debug.caption": { "message": "Development" },
