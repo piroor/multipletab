@@ -138,13 +138,17 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       return;
   }
   var formatIds;
-  if (Array.isArray(configs.copyToClipboardFormats)) {
-    formatIds = configs.copyToClipboardFormats
-                  .map((aItem, aIndex) => `clipboard/clipboard:${aIndex}:${aItem.label}`);
+  var formats = configs.copyToClipboardFormats;
+  if (Array.isArray(formats)) {
+    formatIds = formats
+                  .map((aItem, aIndex) => `clipboard/clipboard:${aIndex}:${aItem.label}`)
+                  .filter((aItem, aIndex) => formats[aIndex].label);
   }
   else {
-    formatIds = Object.keys(configs.copyToClipboardFormats)
-                  .map((aLabel, aIndex) => `clipboard/clipboard:${aIndex}:${aLabel}`);
+    let labels = Object.keys(formats);
+    formatIds = labels
+                  .map((aLabel, aIndex) => `clipboard/clipboard:${aIndex}:${aLabel}`)
+                  .filter((aItem, aIndex) => labels[aIndex]);
   }
   for (let id of formatIds) {
     await registerItem(id);
