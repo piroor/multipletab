@@ -112,7 +112,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     let title = isSeparator ?
                   null :
                 id.indexOf('clipboard:') == 0 ?
-                  id.replace(/^clipboard:/, '') :
+                  id.replace(/^clipboard:[0-9]+:/, '') :
                   browser.i18n.getMessage(`context.${id}.label`);
     let params = {
       id, type, title,
@@ -137,8 +137,16 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     if (currentRefreshStart != gLastRefreshStart)
       return;
   }
-  for (let id of Object.keys(configs.copyToClipboardFormats)
-                     .map(aId => `clipboard/clipboard:${aId}`)) {
+  var formatIds;
+  if (Array.isArray(configs.copyToClipboardFormats)) {
+    formatIds = configs.copyToClipboardFormats
+                  .map((aItem, aIndex) => `clipboard/clipboard:${aIndex}:${aItem.label}`);
+  }
+  else {
+    formatIds = Object.keys(configs.copyToClipboardFormats)
+                  .map((aLabel, aIndex) => `clipboard/clipboard:${aIndex}:${aLabel}`);
+  }
+  for (let id of formatIds) {
     await registerItem(id);
     if (currentRefreshStart != gLastRefreshStart)
       return;
@@ -300,7 +308,16 @@ var contextMenuClickListener = async (aInfo, aTab) => {
     default:
       if (aInfo.menuItemId.indexOf('clipboard:') == 0) {
         let id = aInfo.menuItemId.replace(/^clipboard:/, '');
-        let format = configs.copyToClipboardFormats[id];
+        let format;
+        if (Array.isArray(configs.copyToClipboardFormats)) {
+          let index = id.match(/^([0-9]+):/);
+          index = parseInt(index[1]);
+          let item = configs.copyToClipboardFormats[index];
+          format = item.format;
+        }
+        else {
+          format = configs.copyToClipboardFormats[id.replace(/^[0-9]+:/, '')];
+        }
         await clearSelection();
         await wait(100); // to wait tab titles are updated
         await copyToClipboard(selectedTabIds, format);

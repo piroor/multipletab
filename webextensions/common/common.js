@@ -35,10 +35,19 @@ async function wait(aTask = 0, aTimeout = 0) {
   });
 }
 
-var defaultClipboardFormats = {};
-defaultClipboardFormats[browser.i18n.getMessage('context.clipboard:url.label')] = '%URL%';
-defaultClipboardFormats[browser.i18n.getMessage('context.clipboard:title-and-url.label')] = '%TITLE%%EOL%%URL%',
-defaultClipboardFormats[browser.i18n.getMessage('context.clipboard:html-link.label')] = '<a title="%TITLE_HTML%" href="%URL_HTML%">%TITLE_HTML%</a>';
+var defaultClipboardFormats = [];
+defaultClipboardFormats.push({
+  label:  browser.i18n.getMessage('context.clipboard:url.label'),
+  format: '%URL%'
+});
+defaultClipboardFormats.push({
+  label:  browser.i18n.getMessage('context.clipboard:title-and-url.label'),
+  format: '%TITLE%%EOL%%URL%'
+});
+defaultClipboardFormats.push({
+  label:  browser.i18n.getMessage('context.clipboard:html-link.label'),
+  format: '<a title="%TITLE_HTML%" href="%URL_HTML%">%TITLE_HTML%</a>'
+});
 
 configs = new Configs({
   context_reloadTabs: true,
