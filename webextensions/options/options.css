@@ -32,3 +32,8 @@ ul p.sub {
   -moz-user-focus: ignore;
   -moz-user-input: disabled;
 }
+
+
+#menu-items {
+  column-count: 2;
+}
