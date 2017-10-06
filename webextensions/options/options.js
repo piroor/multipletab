@@ -77,7 +77,7 @@ function onFormatInput(aEvent) {
     clearTimeout(field.throttleInputTimer);
   field.throttleInputTimer = setTimeout(() => {
     delete field.throttleInputTimer;
-    var row = field.parentNode.parentNode;
+    var row = field.parentNode;
     var formats = configs.copyToClipboardFormats;
     var item = formats[row.itemIndex];
     if (field.classList.contains('label'))
@@ -126,44 +126,46 @@ function addFormatRow() {
   var row = gFormatRows.appendChild(createFormatRow({
     index: formats.length
   }));
+  row.querySelector('input.label').focus();
   formats.push({ label: '', format: '' });
   configs.copyToClipboardFormats = formats;
 }
 
 function createFormatRow(aParams = {}) {
-  var row = document.createElement('tr');
+  var row = document.createElement('div');
+  row.classList.add('row');
   row.itemIndex= aParams.index;
 
-  var labelColumn = row.appendChild(document.createElement('td'));
-  var labelField = labelColumn.appendChild(document.createElement('input'));
+  var labelField = row.appendChild(document.createElement('input'));
+  labelField.classList.add('column');
   labelField.classList.add('label');
   labelField.setAttribute('type', 'text');
-  labelField.setAttribute('size', 10);
+  labelField.setAttribute('placeholder', browser.i18n.getMessage('config.copyToClipboardFormats.label'));
   if (aParams.label)
     labelField.value = aParams.label;
 
-  var formatColumn = row.appendChild(document.createElement('td'));
-  var formatField = formatColumn.appendChild(document.createElement('input'));
-  labelField.classList.add('format');
+  var formatField = row.appendChild(document.createElement('input'));
+  formatField.classList.add('column');
+  formatField.classList.add('format');
   formatField.setAttribute('type', 'text');
-  formatField.setAttribute('size', 20);
+  formatField.setAttribute('placeholder', browser.i18n.getMessage('config.copyToClipboardFormats.template'));
   if (aParams.format)
     formatField.value = aParams.format;
 
-  var upColumn = row.appendChild(document.createElement('td'));
-  var upButton = upColumn.appendChild(document.createElement('button'));
+  var upButton = row.appendChild(document.createElement('button'));
+  upButton.classList.add('column');
   upButton.classList.add('up');
   upButton.setAttribute('title', browser.i18n.getMessage('config.copyToClipboardFormats.up'));
   upButton.appendChild(document.createTextNode('▲'));
 
-  var downColumn = row.appendChild(document.createElement('td'));
-  var downButton = downColumn.appendChild(document.createElement('button'));
+  var downButton = row.appendChild(document.createElement('button'));
+  downButton.classList.add('column');
   downButton.classList.add('down');
   downButton.setAttribute('title', browser.i18n.getMessage('config.copyToClipboardFormats.down'));
   downButton.appendChild(document.createTextNode('▼'));
 
-  var removeColumn = row.appendChild(document.createElement('td'));
-  var removeButton = removeColumn.appendChild(document.createElement('button'));
+  var removeButton = row.appendChild(document.createElement('button'));
+  removeButton.classList.add('column');
   removeButton.classList.add('remove');
   removeButton.setAttribute('title', browser.i18n.getMessage('config.copyToClipboardFormats.remove'));
   removeButton.appendChild(document.createTextNode('✖'));
@@ -173,7 +175,7 @@ function createFormatRow(aParams = {}) {
 
 function onRowControlButtonClick(aEvent) {
   var button = getButtonFromEvent(aEvent);
-  var row = button.parentNode.parentNode;
+  var row = button.parentNode;
   var formats = configs.copyToClipboardFormats;
   var item = formats[row.itemIndex];
   if (button.classList.contains('remove')) {
