@@ -16,6 +16,8 @@
 
   "panelDisabledBy.treestyletab": { "message": "タブをまとめて操作するUIは無効になっています。代わりにツリー型タブが提供するサイドバー内の縦型タブバーを使用して下さい。タブは0.5秒以上の長押しで開始するドラッグ操作で選択でき、また、Ctrl-クリックは選択のトグル、Shift-クリックはクリックしたタブとアクティブなタブの間にあるタブ全てを選択します。" },
 
+  "message.updatedFromLegacy.description": { "message": "Firefox 57以降のバージョンに対応するため、マルチプルタブハンドラがWebExtensionsベースに生まれ変わりました。タブバー上でのドラッグ操作に代わって、今後はツールバー上の「タブをまとめて操作」ボタンからパネルを開いてタブを選択して下さい。\n\nまた、<a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">ツリー型タブ</a>と併用すると、サイドバー内に表示されたタブバーにおいて同様のタブ選択操作を行えます（この場合は、タブの上でマウスのボタンを押してからしばらく待つとタブの選択が始まります）。" },
+
 
   "saveTabsPrefix.defaultValue": { "message": "保存されたタブ/" },
 

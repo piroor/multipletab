@@ -32,6 +32,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   gTabBar.addEventListener('mouseup', onMouseUp);
   gMenu = document.querySelector('#menu ul');
   await rebuildTabItems();
+
+  browser.runtime.sendMessage({
+    type: kCOMMAND_NOTIFY_PANEL_SHOWN
+  });
 }, { once: true });
 
 window.addEventListener('pagehide', () => {

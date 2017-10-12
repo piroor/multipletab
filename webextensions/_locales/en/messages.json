@@ -17,6 +17,8 @@
 
   "panelDisabledBy.treestyletab": { "message": "Select and Do panel is disabled, instead please see vertical tab bar in the sidebar provided by Tree Style Tab. You can select tabs by dragging (you need to start the drag action with a long press over 0.5sec). Moreover, Ctrl-Click toggles selection and Shift-Click selects tabs between the clicked and the active." },
 
+  "message.updatedFromLegacy.description": { "message": "Multiple Tab Handler is now reborn based on WebExtensions technologies for Firefox 57 and later. Now you can select tabs and do something command from the \"Select and Do\" toolbar button.\n\nMoreover, this addon is compatible to <a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">Tree Style Tab</a> another addon. You'll select tabs in in the TST's sidebar, by long-press (about 0.5sec)." },
+
 
   "saveTabsPrefix.defaultValue": { "message": "Saved Tabs/" },
 

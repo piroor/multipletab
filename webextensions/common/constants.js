@@ -10,6 +10,7 @@ const kCOMMAND_PUSH_SELECTION_INFO = 'multipletab:push-selection-info';
 const kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO = 'multipletab:pull-active-context-menu-info';
 const kCOMMAND_SELECTION_MENU_ITEM_CLICK = 'multipletab:selection-menu-item-click';
 const kCOMMAND_UNREGISTER_FROM_TST = 'multipletab:unregister-from-tst';
+const kCOMMAND_NOTIFY_PANEL_SHOWN = 'multipletab:notify-panel-shown';
 
 
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';

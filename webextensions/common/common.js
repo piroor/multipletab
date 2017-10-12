@@ -83,5 +83,6 @@ configs = new Configs({
 
   saveTabsPrefix: browser.i18n.getMessage('saveTabsPrefix.defaultValue'),
 
+  shouldNotifyUpdatedFromLegacyVersion: false,
   debug: false
 });

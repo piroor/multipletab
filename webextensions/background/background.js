@@ -21,6 +21,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
   registerToTST();
 
+  notifyUpdatedFromLegacy();
+
   window.addEventListener('pagehide', async () => {
     unregisterFromTST();
   }, { once: true });
@@ -185,4 +187,47 @@ function onConfigChanged(aKey) {
         reserveRefreshContextMenuItems();
       break;
   }
+}
+
+
+// migration
+
+browser.runtime.onInstalled.addListener(aDetails => {
+  /* When MTH 2 (or later) is newly installed, this listener is invoked.
+     We should not notify "updated from legacy" for this case.
+     On the other hand, when MTH is updated from legacy to 2 (or later),
+     this listener is not invoked with the reason "install" and
+     invoked with the reason "updated" after Firefox is restarted. */
+  if (aDetails.reason == 'install')
+    configs.shouldNotifyUpdatedFromLegacyVersion = false;
+});
+
+async function notifyUpdatedFromLegacy() {
+  if (!configs.shouldNotifyUpdatedFromLegacyVersion)
+    return;
+  configs.shouldNotifyUpdatedFromLegacyVersion = false;
+
+  var tab = await browser.tabs.create({
+    url:    browser.extension.getURL('resources/updated-from-legacy.html'),
+    active: true
+  });
+  var title       = `${browser.i18n.getMessage('extensionName')} ${browser.runtime.getManifest().version}`
+  var description = browser.i18n.getMessage('message.updatedFromLegacy.description');
+  browser.tabs.executeScript(tab.id, {
+    code: `
+      document.querySelector('#title').textContent = document.title = ${JSON.stringify(title)};
+      document.querySelector('#description').innerHTML = ${JSON.stringify(description)};
+      location.replace('data:text/html,' + encodeURIComponent(document.documentElement.innerHTML));
+    `
+  });
+
+  browser.runtime.onMessage.addListener(function onMessage(aMessage, aSender) {
+    if (aMessage &&
+        typeof aMessage.type == 'string' &&
+        aMessage.type == kCOMMAND_NOTIFY_PANEL_SHOWN) {
+      browser.runtime.onMessage.removeListener(onMessage);
+      browser.tabs.remove(tab.id)
+        .catch(handleMissingTabError);
+    }
+  });
 }
