@@ -21,6 +21,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
   registerToTST();
 
+  notifyReady();
   notifyUpdatedFromLegacy();
 
   window.addEventListener('pagehide', async () => {
@@ -136,10 +137,14 @@ function onMessageExternal(aMessage, aSender) {
       clearSelection();
       return Promise.resolve(true);
 
-    case kMTHAPI_ADD_SELECTED_TAB_COMMAND:
+    case kMTHAPI_ADD_SELECTED_TAB_COMMAND: {
+      let addons = configs.cachedExternalAddons;
+      addons[aSender.id] = true;
+      configs.cachedExternalAddons = addons;
       gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`] = aMessage;
       reserveRefreshContextMenuItems();
       return Promise.resolve(true);
+    };
 
     case kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
       delete gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`];
@@ -252,6 +257,22 @@ function onConfigChanged(aKey) {
   }
 }
 
+
+async function notifyReady() {
+  var addons   = configs.cachedExternalAddons;
+  var modified = false;
+  for (let id of Object.keys(addons)) {
+    try {
+      browser.runtime.sendMessage(id, { type: kMTHAPI_READY });
+    }
+    catch(e) {
+      delete addons[id];
+      modified = true;
+    }
+  }
+  if (modified)
+    configs.cachedExternalAddons = addons;
+}
 
 // migration
 
