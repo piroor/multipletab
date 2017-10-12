@@ -59,11 +59,11 @@ async function updateUIForTST() {
   var disabledMessage = document.querySelector('#disabled-message');
 
   try {
-    if (await browser.runtime.sendMessage(kTST_ID, {
-          type: kTSTAPI_PING
-        })) {
+    let responded = await browser.runtime.sendMessage(kTST_ID, {
+      type: kTSTAPI_PING
+    });
+    if (responded)
       disabledMessage.style.display = 'block';
-    }
     return;
   }
   catch(e) {
