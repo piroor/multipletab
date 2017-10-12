@@ -116,7 +116,7 @@ function onMessageExternal(aMessage, aSender) {
         var allTabs = await getAllTabs(aMessage.window || aMessage.windowId);
 
         var unselectTabs = aMessage.unselect;
-        if (typeof unselectTabs == '*') {
+        if (unselectTabs == '*') {
           unselectTabs = allTabs;
         }
         else {
@@ -129,7 +129,7 @@ function onMessageExternal(aMessage, aSender) {
         });
 
         var selectTabs = aMessage.select;
-        if (typeof selectTabs == '*') {
+        if (selectTabs == '*') {
           selectTabs = allTabs;
         }
         else {
@@ -137,7 +137,7 @@ function onMessageExternal(aMessage, aSender) {
             selectTabs = [selectTabs];
           selectTabs = allTabs.filter(aTab => selectTabs.indexOf(aTab.id) > -1);
         }
-        setSelection(unselectTabs, true, {
+        setSelection(selectTabs, true, {
           globalHighlight: !gDragSelection.activatedInVerticalTabbarOfTST
         });
 
