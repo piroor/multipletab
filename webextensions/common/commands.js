@@ -107,7 +107,7 @@ function getSelectedTabIds() {
   return Object.keys(gSelection.tabs).map(aId => parseInt(aId));
 }
 
-async function buildAPITabSelection(aParams = {}) {
+async function getAPITabSelection(aParams = {}) {
   var ids        = aParams.selectedIds || getSelectedTabIds();
   var selected   = [];
   var unselected = [];
