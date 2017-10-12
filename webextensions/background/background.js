@@ -79,9 +79,13 @@ function onTSTAPIMessage(aMessage) {
 function onMessageExternal(aMessage, aSender) {
   if (configs.debug)
     console.log('onMessageExternal: ', aMessage, aSender);
+
   switch (aSender.id) {
-    case kTST_ID: // Tree Style Tab API
-      return onTSTAPIMessage(aMessage);
+    case kTST_ID: { // Tree Style Tab API
+      let result = onTSTAPIMessage(aMessage);
+      if (result !== undefined)
+        return result;
+    }; break;
 
     default:
       break;
