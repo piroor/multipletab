@@ -178,7 +178,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   }
   for (let id of formatIds) {
     await registerItem(id, {
-      title: id.replace(/^clipboard:[0-9]+:/, '')
+      title: id.replace(/^clipboard\/clipboard:[0-9]+:/, '')
     });
     if (currentRefreshStart != gLastRefreshStart)
       return;
