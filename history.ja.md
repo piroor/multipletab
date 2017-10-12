@@ -1,6 +1,7 @@
 # 更新履歴
 
  - master/HEAD
+   * WebExtensionsベースで作り直した
  - 0.8.2017061501
    * Nightly 56.0a1に対応
    * Firefox 51以前への対応を終了

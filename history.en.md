@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Rebuilt on WebExtensions.
  - 0.8.2017061501
    * Works on Nightly 56.0a1.
    * Drop support for Firefox 51 and older versions.
