@@ -1,5 +1,5 @@
 {
-  "extensionName": { "message": "マルチプルタブハンドラ(WE)" },
+  "extensionName": { "message": "マルチプルタブハンドラ" },
   "extensionDescription": { "message": "複数のタブをまとめて操作する機能を提供します。" },
 
   "bookmarkTabs.notification.title": { "message": "複数のタブをブックマークしました" },

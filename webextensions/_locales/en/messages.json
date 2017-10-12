@@ -1,5 +1,5 @@
 {
-  "extensionName": { "message": "Multiple Tab Handler (WE)" },
+  "extensionName": { "message": "Multiple Tab Handler" },
   "extensionDescription": { "message": "Provides ability to manage multiple tabs at a time." },
 
   "bookmarkTabs.notification.title": { "message": "Tabs are Successfully Bookmarked" },
