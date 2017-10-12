@@ -185,7 +185,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   }
 
   for (let id of Object.keys(gExtraContextMenuItems)) {
-    await registerItem(`extra:${id}`, gExtraContextMenuItems[id]);
+    await registerItem(`selection/extra:${id}`, gExtraContextMenuItems[id]);
     if (currentRefreshStart != gLastRefreshStart)
       return;
   }
