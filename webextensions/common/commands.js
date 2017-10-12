@@ -107,6 +107,21 @@ function getSelectedTabIds() {
   return Object.keys(gSelection.tabs).map(aId => parseInt(aId));
 }
 
+async function buildAPITabSelection(aParams = {}) {
+  var ids        = aParams.selectedIds || getSelectedTabIds();
+  var selected   = [];
+  var unselected = [];
+  var tabs       = aParams.allTabs || await getAllTabs();
+  for (let tab of tabs) {
+    if (ids.indexOf(tab.id) < 0)
+      unselected.push(tab);
+    else
+      selected.push(tab);
+  }
+  return { selected, unselected };
+}
+
+
 async function reloadTabs(aIds) {
   for (let id of aIds) {
     browser.tabs.reload(id);

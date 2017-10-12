@@ -16,6 +16,9 @@ const kCOMMAND_NOTIFY_PANEL_SHOWN = 'multipletab:notify-panel-shown';
 const kMTHAPI_GET_TAB_SELECTION   = 'get-tab-selection';
 const kMTHAPI_SET_TAB_SELECTION   = 'set-tab-selection';
 const kMTHAPI_CLEAR_TAB_SELECTION = 'clear-tab-selection';
+const kMTHAPI_ADD_SELECTED_TAB_COMMAND    = 'add-selected-tab-command';
+const kMTHAPI_REMOVE_SELECTED_TAB_COMMAND = 'remove-selected-tab-command';
+const kMTHAPI_INVOKE_SELECTED_TAB_COMMAND = 'selected-tab-command';
 
 
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';

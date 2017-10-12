@@ -40,10 +40,12 @@ var gContextMenuItems = `
   select
   unselect
   invertSelection
+  -----------------
 `.trim().split(/\s+/).map(aId => `selection/${aId}`);
 gContextMenuItems.unshift('selection');
 
 var gActiveContextMenuItems = [];
+var gExtraContextMenuItems  = {};
 
 var gLastSelectedTabs = '';
 
@@ -74,16 +76,18 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   if (currentRefreshStart != gLastRefreshStart)
     return;
   gActiveContextMenuItems = [];
-  gLastSelectedTabs = serialized;
+  gLastSelectedTabs       = serialized;
   var visibilities = await getContextMenuItemVisibilities(aContextTab);
   if (currentRefreshStart != gLastRefreshStart)
     return;
   log('visibilities: ', visibilities);
 
-  let separatorsCount = 0;
+  let hasSelection         = getSelectedTabIds().length > 0;
+  let separatorsCount      = 0;
   let normalItemAppearedIn = {};
-  let createdItems = {};
-  let registerItem = async (id) => {
+  let createdItems         = {};
+  let nextSeparatorIn      = {};
+  let registerItem = async (id, aOptions = {}) => {
     let parts = id.split('/');
     id = parts.pop();
 
@@ -101,18 +105,33 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     else {
       if (id in visibilities && !visibilities[id])
         return;
+      if (!aOptions.always && !hasSelection)
+        return;
       let key = `context_${id}`;
       if (key in configs && !configs[key])
         return;
       normalItemAppearedIn[parentId] = true;
+      if (nextSeparatorIn[parentId]) {
+        gActiveContextMenuItems.push(nextSeparatorIn[parentId]);
+        await browser.contextMenus.create(nextSeparatorIn[parentId]);
+        try {
+          await browser.runtime.sendMessage(kTST_ID, {
+            type: kTSTAPI_CONTEXT_MENU_CREATE,
+            params: nextSeparatorIn[parentId]
+          });
+        }
+        catch(e) {
+        }
+      }
+      delete nextSeparatorIn[parentId];
     }
     log('build ', id, parentId);
     createdItems[id] = true;
     let type = isSeparator ? 'separator' : 'normal';
     let title = null;
     if (!isSeparator) {
-      if (id.indexOf('clipboard:') == 0)
-        title = id.replace(/^clipboard:[0-9]+:/, '');
+      if (aOptions.title)
+        title = aOptions.title;
       else
         title = browser.i18n.getMessage(`context.${id}.label`);
     }
@@ -122,6 +141,10 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     };
     if (parentId)
       params.parentId = parentId;
+    if (isSeparator) {
+      nextSeparatorIn[parentId] = params;
+      return;
+    }
     gActiveContextMenuItems.push(params);
     await browser.contextMenus.create(params);
     try {
@@ -139,6 +162,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     if (currentRefreshStart != gLastRefreshStart)
       return;
   }
+
   var formatIds;
   var formats = configs.copyToClipboardFormats;
   if (Array.isArray(formats)) {
@@ -153,7 +177,15 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       .filter((aItem, aIndex) => labels[aIndex]);
   }
   for (let id of formatIds) {
-    await registerItem(id);
+    await registerItem(id, {
+      title: id.replace(/^clipboard:[0-9]+:/, '')
+    });
+    if (currentRefreshStart != gLastRefreshStart)
+      return;
+  }
+
+  for (let id of Object.keys(gExtraContextMenuItems)) {
+    await registerItem(`extra:${id}`, gExtraContextMenuItems[id]);
     if (currentRefreshStart != gLastRefreshStart)
       return;
   }
@@ -327,6 +359,18 @@ var contextMenuClickListener = async (aInfo, aTab) => {
         await clearSelection();
         await wait(100); // to wait tab titles are updated
         await copyToClipboard(selectedTabIds, format);
+      }
+      else if (aInfo.menuItemId.indexOf('extra:') == 0) {
+        let idMatch   = aInfo.menuItemId.match(/^extra:([^:]+):(.+)$/);
+        let owner     = idMatch[1];
+        let id        = idMatch[2];
+        let selection = getAPITabSelection({
+          selectedIds: selectedTabIds
+        });
+        browser.runtime.sendMessage(owner, {
+          type: kMTHAPI_INVOKE_SELECTED_TAB_COMMAND,
+          id, selection
+        });
       }
       break;
   }

@@ -97,19 +97,7 @@ function onMessageExternal(aMessage, aSender) {
 
   switch (aMessage.type) {
     case kMTHAPI_GET_TAB_SELECTION:
-      return (async () => {
-        var ids        = getSelectedTabIds();
-        var selected   = [];
-        var unselected = [];
-        var tabs       = await getAllTabs();
-        for (let tab of tabs) {
-          if (ids.indexOf(tab.id) < 0)
-            unselected.push(tab);
-          else
-            selected.push(tab);
-        }
-        return { selected, unselected };
-      })();
+      return getAPITabSelection();
 
     case kMTHAPI_SET_TAB_SELECTION:
       return (async () => {
@@ -147,6 +135,14 @@ function onMessageExternal(aMessage, aSender) {
     case kMTHAPI_CLEAR_TAB_SELECTION:
       clearSelection();
       return Promise.resolve(true);
+
+    case kMTHAPI_ADD_SELECTED_TAB_COMMAND:
+      gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`] = aMessage;
+      break;
+
+    case kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
+      delete gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`];
+      break;
   }
 }
 
