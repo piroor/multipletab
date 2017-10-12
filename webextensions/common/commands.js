@@ -99,8 +99,8 @@ async function pushSelectionState(aOptions = {}) {
 
 async function getAllTabs() {
   return gSelection.targetWindow ?
-           await browser.tabs.query({ windowId: gSelection.targetWindow }) :
-           (await browser.windows.getCurrent({ populate: true })).tabs ;
+    await browser.tabs.query({ windowId: gSelection.targetWindow }) :
+    (await browser.windows.getCurrent({ populate: true })).tabs ;
 }
 
 function getSelectedTabIds() {
@@ -250,22 +250,22 @@ async function fillPlaceHolders(aFormat, aTab) {
   var timeUTC = now.toUTCString();
   var timeLocal = now.toLocaleString();
   var formatted = aFormat
-         .replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
-         .replace(/%URL%/gi, aTab.url)
-         .replace(/%(?:TITLE|TEXT)%/gi, aTab.title)
-         .replace(/%URL_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.url))
-         .replace(/%TITLE_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.title))
-         .replace(/%AUTHOR%/gi, contentsData.author || '')
-         .replace(/%AUTHOR_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.author || ''))
-         .replace(/%DESC(?:RIPTION)?%/gi, contentsData.description || '')
-         .replace(/%DESC(?:RIPTION)?_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.description || ''))
-         .replace(/%KEYWORDS%/gi, contentsData.keywords || '')
-         .replace(/%KEYWORDS_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.keywords || ''))
-         .replace(/%UTC_TIME%/gi, timeUTC)
-         .replace(/%LOCAL_TIME%/gi, timeLocal)
-         .replace(/%TAB%/gi, '\t')
-         .replace(/%EOL%/gi, lineFeed)
-         .replace(/%RT%/gi, '');
+    .replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
+    .replace(/%URL%/gi, aTab.url)
+    .replace(/%(?:TITLE|TEXT)%/gi, aTab.title)
+    .replace(/%URL_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.url))
+    .replace(/%TITLE_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.title))
+    .replace(/%AUTHOR%/gi, contentsData.author || '')
+    .replace(/%AUTHOR_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.author || ''))
+    .replace(/%DESC(?:RIPTION)?%/gi, contentsData.description || '')
+    .replace(/%DESC(?:RIPTION)?_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.description || ''))
+    .replace(/%KEYWORDS%/gi, contentsData.keywords || '')
+    .replace(/%KEYWORDS_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.keywords || ''))
+    .replace(/%UTC_TIME%/gi, timeUTC)
+    .replace(/%LOCAL_TIME%/gi, timeLocal)
+    .replace(/%TAB%/gi, '\t')
+    .replace(/%EOL%/gi, lineFeed)
+    .replace(/%RT%/gi, '');
 
   if (/%RT%/i.test(aFormat)) {
     return {
@@ -282,10 +282,11 @@ async function fillPlaceHolders(aFormat, aTab) {
 }
 
 function sanitizeHtmlText(aText) {
-  return aText.replace(/&/g, '&amp;')
-              .replace(/"/g, '&quot;')
-              .replace(/</g, '&lt;')
-              .replace(/>/g, '&gt;');
+  return aText
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 async function saveTabs(aIds) {
@@ -305,10 +306,11 @@ const kMAYBE_IMAGE_PATTERN    = /\.(jpe?g|png|gif|bmp|svg)/i;
 const kMAYBE_RAW_FILE_PATTERN = /\.(te?xt|md)/i;
 
 async function suggestFileNameForTab(aTab) {
-  var fileNameMatch = aTab.url.replace(/^\w+:\/\/[^\/]+\//, '') // remove origin part
-                              .replace(/#.*$/, '') // remove fragment
-                              .replace(/\?.*$/, '') // remove query
-                              .match(/([^\/]+\.([^\.\/]+))$/);
+  var fileNameMatch = aTab.url
+    .replace(/^\w+:\/\/[^\/]+\//, '') // remove origin part
+    .replace(/#.*$/, '') // remove fragment
+    .replace(/\?.*$/, '') // remove query
+    .match(/([^\/]+\.([^\.\/]+))$/);
   log('suggestFileNameForTab ', aTab.id, fileNameMatch);
   if (fileNameMatch &&
       (kMAYBE_IMAGE_PATTERN.test(fileNameMatch[1]) ||

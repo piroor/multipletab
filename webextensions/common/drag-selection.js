@@ -198,33 +198,33 @@ async function onTabItemDragEnter(aMessage) {
     });
     gDragSelection.pendingTabs = null;
   }
-/*
+  /*
   if (gDragSelection.willCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
-*/
-    let targetTabs = retrieveTargetTabs(aMessage.tab);
-    toggleStateOfDragOverTabs({
-      target:     aMessage.tab,
-      allTargets: targetTabs,
-      state:      state
+  */
+  let targetTabs = retrieveTargetTabs(aMessage.tab);
+  toggleStateOfDragOverTabs({
+    target:     aMessage.tab,
+    allTargets: targetTabs,
+    state:      state
+  });
+  if (aMessage.tab.id == gDragSelection.dragStartTarget.id &&
+      Object.keys(gSelection.tabs).length == targetTabs.length) {
+    setSelection(targetTabs, false, {
+      globalHighlight: false,
+      dontUpdateMenu: true,
+      state: state
     });
-    if (aMessage.tab.id == gDragSelection.dragStartTarget.id &&
-        Object.keys(gSelection.tabs).length == targetTabs.length) {
-      setSelection(targetTabs, false, {
-        globalHighlight: false,
-        dontUpdateMenu: true,
-        state: state
-      });
-      for (let tab of targetTabs) {
-        gDragSelection.undeterminedRange[tab.id] = tab;
-      }
-      gDragSelection.pendingTabs = targetTabs;
+    for (let tab of targetTabs) {
+      gDragSelection.undeterminedRange[tab.id] = tab;
     }
-/*
+    gDragSelection.pendingTabs = targetTabs;
+  }
+  /*
   }
   else { // TAB_DRAG_MODE_SWITCH:
     browser.tabs.update(aMessage.tab.id, { active: true });
   }
-*/
+  */
   gDragSelection.lastHoverTarget = aMessage.tab;
   if (!gDragSelection.firstHoverTarget)
     gDragSelection.firstHoverTarget = gDragSelection.lastHoverTarget;

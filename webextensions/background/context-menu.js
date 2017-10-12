@@ -143,14 +143,14 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   var formats = configs.copyToClipboardFormats;
   if (Array.isArray(formats)) {
     formatIds = formats
-                  .map((aItem, aIndex) => `clipboard/clipboard:${aIndex}:${aItem.label}`)
-                  .filter((aItem, aIndex) => formats[aIndex].label);
+      .map((aItem, aIndex) => `clipboard/clipboard:${aIndex}:${aItem.label}`)
+      .filter((aItem, aIndex) => formats[aIndex].label);
   }
   else {
     let labels = Object.keys(formats);
     formatIds = labels
-                  .map((aLabel, aIndex) => `clipboard/clipboard:${aIndex}:${aLabel}`)
-                  .filter((aItem, aIndex) => labels[aIndex]);
+      .map((aLabel, aIndex) => `clipboard/clipboard:${aIndex}:${aLabel}`)
+      .filter((aItem, aIndex) => labels[aIndex]);
   }
   for (let id of formatIds) {
     await registerItem(id);

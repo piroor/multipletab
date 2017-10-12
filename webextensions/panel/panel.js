@@ -309,7 +309,7 @@ async function rebuildTabItems() {
 }
 
 function buildTabItem(aTab) {
-  var label = document.createElement('label');
+  var label    = document.createElement('label');
   var checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
   if (aTab.id in gSelection.tabs)
