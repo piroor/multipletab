@@ -139,12 +139,12 @@ function onMessageExternal(aMessage, aSender) {
     case kMTHAPI_ADD_SELECTED_TAB_COMMAND:
       gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`] = aMessage;
       reserveRefreshContextMenuItems();
-      break;
+      return Promise.resolve(true);
 
     case kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
       delete gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`];
       reserveRefreshContextMenuItems();
-      break;
+      return Promise.resolve(true);
   }
 }
 
