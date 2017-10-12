@@ -237,11 +237,11 @@ function onMouseUp(aEvent) {
 }
 
 function onMouseOver(aEvent) {
-  var item = findTabItemFromEvent(aEvent);
+  var item       = findTabItemFromEvent(aEvent);
+  var target     = item;
   var isClosebox = aEvent.target.classList.contains('closebox');
-  var target = gDragTargetIsClosebox && isClosebox ?
-                 aEvent.target :
-                 item ;
+  if (gDragTargetIsClosebox && isClosebox)
+    target = aEvent.target;
   cancelDelayedDragExit(target);
   if (item &&
       (!gDragTargetIsClosebox || isClosebox)) {
@@ -263,9 +263,9 @@ function onMouseOut(aEvent) {
   var item = findTabItemFromEvent(aEvent);
   if (!item)
     return;
-  var target = gDragTargetIsClosebox && isClosebox ?
-                 aEvent.target :
-                 item ;
+  var target = item;
+  if (gDragTargetIsClosebox && isClosebox)
+    target = aEvent.target;
   cancelDelayedDragExit(target);
   gOnDragExitTimeout = setTimeout(() => {
     gOnDragExitTimeout = null;
@@ -419,9 +419,9 @@ async function buildMenu() {
         item.parentId in knownItems) {
       let parent = knownItems[item.parentId];
       parent.classList.add('has-submenu');
-      let subMenu = parent.lastChild.localName == 'ul' ?
-                      parent.lastChild :
-                      parent.appendChild(document.createElement('ul'));
+      let subMenu = parent.lastChild;
+      if (!subMenu || subMenu.localName != 'ul')
+        subMenu = parent.appendChild(document.createElement('ul'));
       subMenu.appendChild(itemNode);
     }
     else {

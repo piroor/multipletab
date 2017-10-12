@@ -109,11 +109,13 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     log('build ', id, parentId);
     createdItems[id] = true;
     let type = isSeparator ? 'separator' : 'normal';
-    let title = isSeparator ?
-                  null :
-                id.indexOf('clipboard:') == 0 ?
-                  id.replace(/^clipboard:[0-9]+:/, '') :
-                  browser.i18n.getMessage(`context.${id}.label`);
+    let title = null;
+    if (!isSeparator) {
+      if (id.indexOf('clipboard:') == 0)
+        title = id.replace(/^clipboard:[0-9]+:/, '');
+      else
+        title = browser.i18n.getMessage(`context.${id}.label`);
+    }
     let params = {
       id, type, title,
       contexts: ['page', 'tab']
