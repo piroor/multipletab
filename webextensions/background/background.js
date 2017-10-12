@@ -80,8 +80,27 @@ function onMessageExternal(aMessage, aSender) {
   if (configs.debug)
     console.log('onMessageExternal: ', aMessage, aSender);
   switch (aSender.id) {
-    case kTST_ID:
+    case kTST_ID: // Tree Style Tab API
       return onTSTAPIMessage(aMessage);
+
+    default:
+      break;
+  }
+
+  if (!aMessage ||
+      typeof aMessage.type != 'string')
+    return;
+
+  switch (aMessage.type) {
+    case kMTHAPI_GET_SELECTION:
+      break;
+
+    case kMTHAPI_SET_SELECTION:
+      break;
+
+    case kMTHAPI_CLEAR_SELECTION:
+      clearSelection();
+      return Promise.resolve(true);
   }
 }
 
