@@ -1,6 +1,7 @@
 # 更新履歴
 
  - master/HEAD
+ - 2.0 (2017.10.13)
    * WebExtensionsベースで作り直した
  - 0.8.2017061501
    * Nightly 56.0a1に対応

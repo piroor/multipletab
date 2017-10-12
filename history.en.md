@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 2.0 (2017.10.13)
    * Rebuilt on WebExtensions.
  - 0.8.2017061501
    * Works on Nightly 56.0a1.
