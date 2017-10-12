@@ -364,13 +364,13 @@ var contextMenuClickListener = async (aInfo, aTab) => {
         let idMatch   = aInfo.menuItemId.match(/^extra:([^:]+):(.+)$/);
         let owner     = idMatch[1];
         let id        = idMatch[2];
-        let selection = getAPITabSelection({
+        let selection = await getAPITabSelection({
           selectedIds: selectedTabIds
         });
         browser.runtime.sendMessage(owner, {
           type: kMTHAPI_INVOKE_SELECTED_TAB_COMMAND,
           id, selection
-        });
+        }).catch(e => {});
       }
       break;
   }
