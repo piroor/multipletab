@@ -97,9 +97,9 @@ async function pushSelectionState(aOptions = {}) {
 }
 
 
-async function getAllTabs() {
-  return gSelection.targetWindow ?
-    await browser.tabs.query({ windowId: gSelection.targetWindow }) :
+async function getAllTabs(aWindowId) {
+  return aWindowId || gSelection.targetWindow ?
+    await browser.tabs.query({ windowId: aWindowId || gSelection.targetWindow }) :
     (await browser.windows.getCurrent({ populate: true })).tabs ;
 }
 

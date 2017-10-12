@@ -13,9 +13,9 @@ const kCOMMAND_UNREGISTER_FROM_TST = 'multipletab:unregister-from-tst';
 const kCOMMAND_NOTIFY_PANEL_SHOWN = 'multipletab:notify-panel-shown';
 
 
-const kMTHAPI_GET_SELECTION   = 'get-selection';
-const kMTHAPI_SET_SELECTION   = 'set-selection';
-const kMTHAPI_CLEAR_SELECTION = 'clear-selection';
+const kMTHAPI_GET_TAB_SELECTION   = 'get-tab-selection';
+const kMTHAPI_SET_TAB_SELECTION   = 'set-tab-selection';
+const kMTHAPI_CLEAR_TAB_SELECTION = 'clear-tab-selection';
 
 
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';

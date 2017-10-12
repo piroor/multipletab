@@ -92,13 +92,55 @@ function onMessageExternal(aMessage, aSender) {
     return;
 
   switch (aMessage.type) {
-    case kMTHAPI_GET_SELECTION:
-      break;
+    case kMTHAPI_GET_TAB_SELECTION:
+      return (async () => {
+        var ids        = getSelectedTabIds();
+        var selected   = [];
+        var unselected = [];
+        var tabs       = await getAllTabs();
+        for (let tab of tabs) {
+          if (ids.indexOf(tab.id) < 0)
+            unselected.push(tab);
+          else
+            selected.push(tab);
+        }
+        return { selected, unselected };
+      })();
 
-    case kMTHAPI_SET_SELECTION:
-      break;
+    case kMTHAPI_SET_TAB_SELECTION:
+      return (async () => {
+        var allTabs = await getAllTabs(aMessage.window || aMessage.windowId);
 
-    case kMTHAPI_CLEAR_SELECTION:
+        var unselectTabs = aMessage.unselect;
+        if (typeof unselectTabs == '*') {
+          unselectTabs = allTabs;
+        }
+        else {
+          if (!Array.isArray(unselectTabs))
+            unselectTabs = [unselectTabs];
+          unselectTabs = allTabs.filter(aTab => unselectTabs.indexOf(aTab.id) > -1);
+        }
+        setSelection(unselectTabs, false, {
+          globalHighlight: !gDragSelection.activatedInVerticalTabbarOfTST
+        });
+
+        var selectTabs = aMessage.select;
+        if (typeof selectTabs == '*') {
+          selectTabs = allTabs;
+        }
+        else {
+          if (!Array.isArray(selectTabs))
+            selectTabs = [selectTabs];
+          selectTabs = allTabs.filter(aTab => selectTabs.indexOf(aTab.id) > -1);
+        }
+        setSelection(unselectTabs, true, {
+          globalHighlight: !gDragSelection.activatedInVerticalTabbarOfTST
+        });
+
+        return true;
+      })();
+
+    case kMTHAPI_CLEAR_TAB_SELECTION:
       clearSelection();
       return Promise.resolve(true);
   }
