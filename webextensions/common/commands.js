@@ -69,7 +69,7 @@ function setSelection(aTabs, aSelected, aOptions = {}) {
     type:  aSelected ? kTSTAPI_ADD_TAB_STATE : kTSTAPI_REMOVE_TAB_STATE,
     tabs:  aTabs.map(aTab => aTab.id),
     state: aOptions.states || aOptions.state || 'selected'
-  });
+  }).catch(e => {}); // TST is not available
   window.onSelectionChange && onSelectionChange(aTabs, aSelected, aOptions);
 }
 
