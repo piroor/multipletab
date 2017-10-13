@@ -81,7 +81,8 @@ async function onTabItemClick(aMessage) {
   if (aMessage.button != 0)
     return false;
 
-  if (!aMessage.ctrlKey && !aMessage.shiftKey) {
+  var ctrlKeyPressed = aMessage.ctrlKey || (aMessage.metaKey && navigator.platform.indexOf('Dargin') == 0);
+  if (!ctrlKeyPressed && !aMessage.shiftKey) {
     clearSelection({
       states: ['selected', 'ready-to-close']
     });
@@ -96,7 +97,7 @@ async function onTabItemClick(aMessage) {
   }))[0];
 
   let tabs = retrieveTargetTabs(aMessage.tab);
-  if (aMessage.ctrlKey) {
+  if (ctrlKeyPressed) {
     // toggle selection of the tab and all collapsed descendants
     if (aMessage.tab.id != lastActiveTab.id &&
         !gInSelectionSession) {
