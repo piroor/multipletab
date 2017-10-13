@@ -150,6 +150,7 @@ function findBottomCaptionFromEvent(aEvent) {
 function onContextMenu(aEvent) {
   aEvent.stopPropagation();
   aEvent.preventDefault();
+  openMenu();
 }
 
 function onClick(aEvent) {
@@ -187,12 +188,6 @@ async function onMouseDown(aEvent) {
     case 0:
       gClickFired = false;
       gTabBar.addEventListener('mousemove', onMouseMove);
-      break;
-
-    case 2:
-      aEvent.stopPropagation();
-      aEvent.preventDefault();
-      openMenu();
       break;
   }
 }
