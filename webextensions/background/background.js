@@ -35,17 +35,25 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 /*  listen events */
 
-function onDragSelectionEnd(aMessage) {
+async function onDragSelectionEnd(aMessage) {
   let tab = gDragSelection.dragStartTarget.id;
-  refreshContextMenuItems(tab, true).then(() => {
-    browser.runtime.sendMessage(kTST_ID, {
+  await wait(0);
+  await refreshContextMenuItems(tab, true);
+  // Wait until updated menu items are applied to TST's fake context menu.
+  // (Fake context menu's updating is throttled with 100msec delay.)
+  await wait(150);
+  try {
+    await browser.runtime.sendMessage(kTST_ID, {
       type: kTSTAPI_CONTEXT_MENU_OPEN,
       window: gSelection.targetWindow,
       tab:  tab,
       left: aMessage.clientX,
       top:  aMessage.clientY
     });
-  });
+  }
+  catch(e) {
+    log('failed to open context menu: ', e);
+  }
 }
 
 function onTSTAPIMessage(aMessage) {
