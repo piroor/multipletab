@@ -89,7 +89,7 @@ async function onTabItemClick(aMessage) {
       selected = !!gSelection.tabs[aMessage.tab.id];
   }
 
-  var ctrlKeyPressed = aMessage.ctrlKey || (aMessage.metaKey && navigator.platform.indexOf('Dargin') == 0);
+  var ctrlKeyPressed = aMessage.ctrlKey || (aMessage.metaKey && /^Mac/i.test(navigator.platform));
   if (!ctrlKeyPressed && !aMessage.shiftKey) {
     if (!selected) {
       clearSelection({
