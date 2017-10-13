@@ -177,14 +177,14 @@ function onClick(aEvent) {
   var item = findTabItemFromEvent(aEvent);
   if (item) {
     onTabItemClick({
-      window:   item.tab.windowId,
-      tab:      item.tab,
+      window:        item.tab.windowId,
+      tab:           item.tab,
       lastActiveTab: gLastClickedTab,
-      button:   aEvent.button,
-      altKey:   aEvent.altKey,
-      ctrlKey:  aEvent.ctrlKey,
-      metaKey:  aEvent.metaKey,
-      shiftKey: aEvent.shiftKey
+      button:        aEvent.button,
+      altKey:        aEvent.altKey,
+      ctrlKey:       aEvent.ctrlKey,
+      metaKey:       aEvent.metaKey,
+      shiftKey:      aEvent.shiftKey
     });
     gLastClickedTab = item.tab;
   }
