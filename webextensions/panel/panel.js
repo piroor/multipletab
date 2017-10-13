@@ -18,6 +18,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   gSelection = response.selection;
   gDragSelection = response.dragSelection;
 
+  gLastClickedTab = null;
+
   await updateUIForTST();
 
   browser.tabs.onActivated.addListener(onTabModified);
@@ -153,6 +155,8 @@ function onContextMenu(aEvent) {
   openMenu();
 }
 
+var gLastClickedTab = null;
+
 function onClick(aEvent) {
   if (aEvent.button != 0)
     return;
@@ -171,16 +175,19 @@ function onClick(aEvent) {
   }
   closeMenu();
   var item = findTabItemFromEvent(aEvent);
-  if (item)
+  if (item) {
     onTabItemClick({
       window:   item.tab.windowId,
       tab:      item.tab,
+      lastActiveTab: gLastClickedTab,
       button:   aEvent.button,
       altKey:   aEvent.altKey,
       ctrlKey:  aEvent.ctrlKey,
       metaKey:  aEvent.metaKey,
       shiftKey: aEvent.shiftKey
-    }).catch(e => log(e));
+    });
+    gLastClickedTab = item.tab;
+  }
   else
     onNonTabAreaClick({
       button: aEvent.button

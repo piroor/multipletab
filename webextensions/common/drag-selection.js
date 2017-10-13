@@ -90,7 +90,7 @@ async function onTabItemClick(aMessage) {
     return;
   }
 
-  let activeTab = (await browser.tabs.query({
+  let lastActiveTab = aMessage.lastActiveTab || (await browser.tabs.query({
     active:   true,
     windowId: aMessage.window
   }))[0];
@@ -98,9 +98,9 @@ async function onTabItemClick(aMessage) {
   let tabs = retrieveTargetTabs(aMessage.tab);
   if (aMessage.ctrlKey) {
     // toggle selection of the tab and all collapsed descendants
-    if (aMessage.tab.id != activeTab.id &&
+    if (aMessage.tab.id != lastActiveTab.id &&
         !gInSelectionSession) {
-      setSelection(activeTab, true, {
+      setSelection(lastActiveTab, true, {
         globalHighlight: false
       });
     }
@@ -120,9 +120,9 @@ async function onTabItemClick(aMessage) {
     // select the clicked tab and tabs between last activated tab
     clearSelection();
     let window = await browser.windows.get(aMessage.window, { populate: true });
-    let betweenTabs = getTabsBetween(activeTab, aMessage.tab, window.tabs);
+    let betweenTabs = getTabsBetween(lastActiveTab, aMessage.tab, window.tabs);
     tabs = tabs.concat(betweenTabs);
-    tabs.push(activeTab);
+    tabs.push(lastActiveTab);
     setSelection(tabs, true, {
       globalHighlight: false
     });
