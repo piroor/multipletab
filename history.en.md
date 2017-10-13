@@ -1,6 +1,10 @@
 # History
 
  - master/HEAD
+   * Command(⌘)-Click correctly toggles selection on macOS.
+   * Allow to drag selected tabs on Tree Style Tab's sidebar.
+   * Allow to select multiple tabs by simple click on checkboxes in the toolbar panel.
+   * Open Tree Style Tab's fake context menu on dragend after updated menu items are completely applied.
  - 2.0.2 (2017.10.13)
    * Treat Command(⌘)-Click same as Ctrl-Click on macOS.
  - 2.0.1 (2017.10.13)
