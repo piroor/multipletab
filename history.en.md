@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 2.0.1 (2017.10.13)
+   * Support Ctrl-Click and Shift-Click on the panel.
+   * Add an option to activate "Select and Do" panel even if Tree Style Tab is available.
  - 2.0 (2017.10.13)
    * Rebuilt on WebExtensions.
  - 0.8.2017061501
