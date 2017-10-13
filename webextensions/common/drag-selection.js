@@ -104,7 +104,13 @@ async function onTabItemClick(aMessage) {
         globalHighlight: false
       });
     }
-    setSelection(tabs, aMessage.tab.states.indexOf('selected') < 0, {
+    let states = aMessage.tab.states;
+    let selected = false;
+    if (states)
+      selected = states.indexOf('selected') < 0;
+    else
+      selected = !gSelection.tabs[aMessage.tab.id];
+    setSelection(tabs, selected, {
       globalHighlight: false
     });
     gInSelectionSession = true;

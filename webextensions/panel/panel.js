@@ -171,9 +171,19 @@ function onClick(aEvent) {
   }
   closeMenu();
   var item = findTabItemFromEvent(aEvent);
-  if (!item)
-    clearSelection({
-      states: ['selected', 'ready-to-close']
+  if (item)
+    onTabItemClick({
+      window:   item.tab.windowId,
+      tab:      item.tab,
+      button:   aEvent.button,
+      altKey:   aEvent.altKey,
+      ctrlKey:  aEvent.ctrlKey,
+      metaKey:  aEvent.metaKey,
+      shiftKey: aEvent.shiftKey
+    }).catch(e => log(e));
+  else
+    onNonTabAreaClick({
+      button: aEvent.button
     });
 }
 
