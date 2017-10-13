@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 2.0.2 (2017.10.13)
+   * Treat Command(⌘)-Click same as Ctrl-Click on macOS.
  - 2.0.1 (2017.10.13)
    * Support Ctrl-Click and Shift-Click on the panel.
    * Add an option to activate "Select and Do" panel even if Tree Style Tab is available.
