@@ -61,22 +61,22 @@ async function updateUIForTST() {
   var disabledMessage = document.querySelector('#disabled-message');
 
   if (configs.disablePanelWhenAlternativeTabBarIsAvailable) {
-  try {
-    let responded = await browser.runtime.sendMessage(kTST_ID, {
-      type: kTSTAPI_PING
-    });
-    if (responded) {
-      disabledMessage.style.display = 'block';
-      return;
+    try {
+      let responded = await browser.runtime.sendMessage(kTST_ID, {
+        type: kTSTAPI_PING
+      });
+      if (responded) {
+        disabledMessage.style.display = 'block';
+        return;
+      }
     }
-  }
-  catch(e) {
-    // failed to establish connection
-  }
+    catch(e) {
+      // failed to establish connection
+    }
 
-  browser.runtime.sendMessage({
-    type: kCOMMAND_UNREGISTER_FROM_TST
-  });
+    browser.runtime.sendMessage({
+      type: kCOMMAND_UNREGISTER_FROM_TST
+    });
   }
 
   disabledMessage.style.display = 'none';
