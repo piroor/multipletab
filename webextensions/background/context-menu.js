@@ -53,6 +53,7 @@ var gLastRefreshStart = Date.now();
 async function refreshContextMenuItems(aContextTab, aForce) {
   log('refreshContextMenuItems');
   var currentRefreshStart = gLastRefreshStart = Date.now();
+  var promisedMenuUpdated = [];
 
   if (reserveRefreshContextMenuItems.timeout)
     clearTimeout(reserveRefreshContextMenuItems.timeout);
@@ -65,11 +66,11 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     return;
   }
 
-  await browser.contextMenus.removeAll();
+  promisedMenuUpdated.push(browser.contextMenus.removeAll());
   try {
-    await browser.runtime.sendMessage(kTST_ID, {
+    promisedMenuUpdated.push(browser.runtime.sendMessage(kTST_ID, {
       type: kTSTAPI_CONTEXT_MENU_REMOVE_ALL
-    });
+    }));
   }
   catch(e) {
   }
@@ -113,12 +114,12 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       normalItemAppearedIn[parentId] = true;
       if (nextSeparatorIn[parentId]) {
         gActiveContextMenuItems.push(nextSeparatorIn[parentId]);
-        await browser.contextMenus.create(nextSeparatorIn[parentId]);
+        promisedMenuUpdated.push(browser.contextMenus.create(nextSeparatorIn[parentId]));
         try {
-          await browser.runtime.sendMessage(kTST_ID, {
+          promisedMenuUpdated.push(browser.runtime.sendMessage(kTST_ID, {
             type: kTSTAPI_CONTEXT_MENU_CREATE,
             params: nextSeparatorIn[parentId]
-          });
+          }));
         }
         catch(e) {
         }
@@ -146,12 +147,12 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       return;
     }
     gActiveContextMenuItems.push(params);
-    await browser.contextMenus.create(params);
+    promisedMenuUpdated.push(browser.contextMenus.create(params));
     try {
-      await browser.runtime.sendMessage(kTST_ID, {
+      promisedMenuUpdated.push(browser.runtime.sendMessage(kTST_ID, {
         type: kTSTAPI_CONTEXT_MENU_CREATE,
         params
-      });
+      }));
     }
     catch(e) {
     }
@@ -189,6 +190,8 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     if (currentRefreshStart != gLastRefreshStart)
       return;
   }
+
+  return Promise.all(promisedMenuUpdated);
 }
 
 function reserveRefreshContextMenuItems() {

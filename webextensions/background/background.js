@@ -37,11 +37,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 async function onDragSelectionEnd(aMessage) {
   let tab = gDragSelection.dragStartTarget.id;
-  await wait(0);
   await refreshContextMenuItems(tab, true);
-  // Wait until updated menu items are applied to TST's fake context menu.
-  // (Fake context menu's updating is throttled with 100msec delay.)
-  await wait(150);
   try {
     await browser.runtime.sendMessage(kTST_ID, {
       type: kTSTAPI_CONTEXT_MENU_OPEN,
@@ -153,14 +149,12 @@ function onMessageExternal(aMessage, aSender) {
       addons[aSender.id] = true;
       configs.cachedExternalAddons = addons;
       gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`] = aMessage;
-      reserveRefreshContextMenuItems();
-      return Promise.resolve(true);
+      return reserveRefreshContextMenuItems().then(() => true);
     };
 
     case kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
       delete gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`];
-      reserveRefreshContextMenuItems();
-      return Promise.resolve(true);
+      return reserveRefreshContextMenuItems().then(() => true);
   }
 }
 
@@ -233,8 +227,8 @@ async function registerToTST() {
       `
     });
     gDragSelection.activatedInVerticalTabbarOfTST = true;
-    refreshContextMenuItems(null, true); // force rebuild menu
-    return true;
+    // force rebuild menu
+    return reserveRefreshContextMenuItems(null, true).then(() => true);
   }
   catch(e) {
     return false;
