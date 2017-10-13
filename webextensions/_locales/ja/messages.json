@@ -74,6 +74,7 @@
 
 
   "config.debug.caption": { "message": "開発用" },
+  "config.disablePanelWhenAlternativeTabBarIsAvailable.label": { "message": "代替のタブバーが利用可能な時はパネルを無効化する" },
   "config.debug.label": { "message": "デバッグモード" },
   "config.all.caption": { "message": "すべての設定" }
 }

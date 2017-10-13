@@ -75,6 +75,7 @@
 
 
   "config.debug.caption": { "message": "Development" },
+  "config.disablePanelWhenAlternativeTabBarIsAvailable.label": { "message": "Disable panel when any alternative tab bar is available" },
   "config.debug.label": { "message": "Debug mode" },
   "config.all.caption": { "message": "All Configs" }
 }
