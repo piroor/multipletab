@@ -142,6 +142,17 @@ function findTabItemFromEvent(aEvent) {
     return null;
 }
 
+function findCheckboxFromEvent(aEvent) {
+  var target = aEvent.target;
+  while (target && String(target.localName).toLowerCase() != 'input') {
+    target = target.parentNode;
+  }
+  if (target && target.getAttribute('type') == 'checkbox')
+    return target;
+  else
+    return null;
+}
+
 function findBottomCaptionFromEvent(aEvent) {
   var target = aEvent.target;
   while (target && target.className != 'caption bottom') {
@@ -178,6 +189,8 @@ function onClick(aEvent) {
     return;
   }
   closeMenu();
+  if (findCheckboxFromEvent(aEvent))
+    return;
   var item = findTabItemFromEvent(aEvent);
   if (item) {
     onTabItemClick({
