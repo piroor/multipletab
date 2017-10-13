@@ -81,12 +81,22 @@ async function onTabItemClick(aMessage) {
   if (aMessage.button != 0)
     return false;
 
+  var selected = false;
+  {
+    if (aMessage.tab.states)
+      selected = aMessage.tab.states.indexOf('selected') > -1;
+    else
+      selected = !!gSelection.tabs[aMessage.tab.id];
+  }
+
   var ctrlKeyPressed = aMessage.ctrlKey || (aMessage.metaKey && navigator.platform.indexOf('Dargin') == 0);
   if (!ctrlKeyPressed && !aMessage.shiftKey) {
+    if (!selected) {
     clearSelection({
       states: ['selected', 'ready-to-close']
     });
     gSelection.targetWindow = null;
+    }
     gInSelectionSession = false;
     return;
   }
@@ -105,13 +115,7 @@ async function onTabItemClick(aMessage) {
         globalHighlight: false
       });
     }
-    let states = aMessage.tab.states;
-    let selected = false;
-    if (states)
-      selected = states.indexOf('selected') < 0;
-    else
-      selected = !gSelection.tabs[aMessage.tab.id];
-    setSelection(tabs, selected, {
+    setSelection(tabs, !selected, {
       globalHighlight: false
     });
     gInSelectionSession = true;

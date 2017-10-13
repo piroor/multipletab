@@ -10,7 +10,10 @@ gLogContext = 'BG';
 window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
 
-  browser.tabs.onActivated.addListener(() => clearSelection());
+  browser.tabs.onActivated.addListener((aActiveInfo) => {
+    if (!gSelection.tabs[aActiveInfo.tabId])
+      clearSelection();
+  });
   browser.tabs.onCreated.addListener(() => clearSelection());
   browser.tabs.onRemoved.addListener(() => clearSelection());
 
