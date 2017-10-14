@@ -48,6 +48,14 @@ defaultClipboardFormats.push({
   label:  browser.i18n.getMessage('context.clipboard:html-link.label'),
   format: '<a title="%TITLE_HTML%" href="%URL_HTML%">%TITLE_HTML%</a>'
 });
+defaultClipboardFormats.push({
+  label:  browser.i18n.getMessage('context.clipboard:markdown.label'),
+  format: '[%TITLE%](%URL% "%TITLE%")'
+});
+defaultClipboardFormats.push({
+  label:  browser.i18n.getMessage('context.clipboard:markdown-list.label'),
+  format: ' * [%TITLE%](%URL% "%TITLE%")'
+});
 
 configs = new Configs({
   context_reloadTabs: true,

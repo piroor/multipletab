@@ -40,6 +40,8 @@
   "context.clipboard:title-and-url.label": { "message": "タイトルとURI" },
   "context.clipboard:html-link.label":     { "message": "HTMLのリンク" },
   "context.saveTabs.label":               { "message": "ファイルに保存" },
+  "context.clipboard:markdown.label":      { "message": "Markdown" },
+  "context.clipboard:markdown-list.label": { "message": "Markdown（リスト）" },
   "context.printTabs.label":              { "message": "印刷" },
   "context.freezeTabs.label":             { "message": "凍結" },
   "context.unfreezeTabs.label":           { "message": "凍結を解除" },
