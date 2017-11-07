@@ -49,15 +49,7 @@ Then, please report the bug with these information:
  * **Platform information.**
    If the problem appear on your multiple platforms, please list them.
 
-If your issue is related to tree strucutre, figures or screenshots will help me a lot, like:
-
-```
-A
-\- B (collapsed)
-C
-\- D
-E (selected)
-```
+If your issue is related to something complex conditions, figures or screenshots will help me a lot, instead of long descriptions.
 
 ## Please don't join to an existing discussion if your problem is different from the originally reported one
 
