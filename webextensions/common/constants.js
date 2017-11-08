@@ -22,7 +22,7 @@ const kMTHAPI_REMOVE_SELECTED_TAB_COMMAND = 'remove-selected-tab-command';
 const kMTHAPI_INVOKE_SELECTED_TAB_COMMAND = 'selected-tab-command';
 
 
-const kTST_ID = 'treestyletab-dev@piro.sakura.ne.jp';
+const kTST_ID = 'treestyletab@piro.sakura.ne.jp';
 
 const kTSTAPI_REGISTER_SELF           = 'register-self';
 const kTSTAPI_UNREGISTER_SELF         = 'unregister-self';
