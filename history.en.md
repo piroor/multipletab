@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 2.0.4 (2017.11.15)
    * Implement "bookmark selected tabs" command.
    * Implement "move selected tabs to new window" command.
    * Add Markdown format to default "copy to clipboard" formats.
