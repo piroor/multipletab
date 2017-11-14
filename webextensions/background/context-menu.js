@@ -270,7 +270,7 @@ configs.$addObserver(aKey => {
 var contextMenuClickListener = async (aInfo, aTab) => {
   //log('context menu item clicked: ', aInfo, aTab);
   var selectedTabIds = getSelectedTabIds();
-  console.log('selectedTabIds ', selectedTabIds);
+  console.log('aInfo.menuItemId, selectedTabIds ', aInfo.menuItemId, selectedTabIds);
   switch (aInfo.menuItemId) {
     case 'reloadTabs':
       await reloadTabs(selectedTabIds);
