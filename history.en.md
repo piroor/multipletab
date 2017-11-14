@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+   * Implement "bookmark selected tabs" command.
+   * Implement "move selected tabs to new window" command.
+   * Add Markdown format to default "copy to clipboard" formats.
  - 2.0.3 (2017.10.14)
    * Command(⌘)-Click correctly toggles selection on macOS.
    * Allow to drag selected tabs on Tree Style Tab's sidebar.
