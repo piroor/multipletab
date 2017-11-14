@@ -11,6 +11,7 @@
     "clipboardWrite",
     "contextMenus",
     "downloads",
+    "notifications",
     "sessions",
     "storage",
     "tabs"

@@ -148,7 +148,36 @@ async function bookmarkTabs(aIds, aOptions = {}) {
       url:      tab.url
     });
   }
+
+  browser.bookmarks.get(folder.parentId).then(aFolders => {
+    notify({
+      title:   browser.i18n.getMessage('bookmarkTabs.notification.title'),
+      message: browser.i18n.getMessage('bookmarkTabs.notification.message', [
+        tabs[0].title,
+        tabs.length,
+        aFolders[0].title
+      ]),
+      icon:    kNOTIFICATION_DEFAULT_ICON
+    });
+  });
   return folder;
+}
+
+async function notify(aParams = {}) {
+  var id = await browser.notifications.create({
+    type:    'basic',
+    iconUrl: aParams.icon,
+    title:   aParams.title,
+    message: aParams.message
+  });
+
+  var timeout = aParams.timeout;
+  if (typeof timeout != 'number')
+    timeout = configs.notificationTimeout;
+  if (timeout >= 0)
+    await wait(timeout);
+
+  await browser.notifications.clear(id);
 }
 
 async function duplicateTabs(aIds) {

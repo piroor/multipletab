@@ -21,6 +21,8 @@ const kMTHAPI_ADD_SELECTED_TAB_COMMAND    = 'add-selected-tab-command';
 const kMTHAPI_REMOVE_SELECTED_TAB_COMMAND = 'remove-selected-tab-command';
 const kMTHAPI_INVOKE_SELECTED_TAB_COMMAND = 'selected-tab-command';
 
+const kNOTIFICATION_DEFAULT_ICON = '/resources/24x24-light.svg';
+
 
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';
 
