@@ -214,7 +214,7 @@ async function tearOffTabs(aIds) {
   var structure = await browser.runtime.sendMessage(kTST_ID, {
     type: kTSTAPI_GET_TREE_STRUCTURE,
     tabs: aIds
-  });
+  }).catch(e => {}); // TST is not available
   log('structure ', structure);
   var window = await browser.windows.create({
     tabId: aIds[0]
@@ -222,7 +222,7 @@ async function tearOffTabs(aIds) {
   await browser.runtime.sendMessage(kTST_ID, {
     type:   kTSTAPI_BLOCK_GROUPING,
     window: window.id
-  });
+  }).catch(e => {}); // TST is not available
   var waitUntilCompletelyMoved = new Promise((aResolve, aReject) => {
     var restTabs = aIds.length - 2;
     var listener = (aTabId, aAttachInfo) => {
@@ -247,12 +247,12 @@ async function tearOffTabs(aIds) {
       type: kTSTAPI_SET_TREE_STRUCTURE,
       tabs: aIds,
       structure
-    });
+    }).catch(e => {}); // TST is not available
   }
   await browser.runtime.sendMessage(kTST_ID, {
     type:   kTSTAPI_UNBLOCK_GROUPING,
     window: window.id
-  });
+  }).catch(e => {}); // TST is not available
 }
 
 // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1394477
