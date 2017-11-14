@@ -242,7 +242,7 @@ async function tearOffTabs(aIds) {
     waitUntilCompletelyMoved
   ]);
   if (structure) {
-    await wait(500);
+    await wait(500); // wait until TST's initialization is finished
     await browser.runtime.sendMessage(kTST_ID, {
       type: kTSTAPI_SET_TREE_STRUCTURE,
       tabs: aIds,
