@@ -131,7 +131,7 @@ async function reloadTabs(aIds) {
 async function bookmarkTabs(aIds, aOptions = {}) {
   var tabs = await Promise.all(aIds.map(aId => browser.tabs.get(aId)));
   var folderParams = {
-    title: browser.i18n.getMessage('bookmarkFolder.label', tabs[0].apiTab.title)
+    title: browser.i18n.getMessage('bookmarkFolder.label', tabs[0].title)
   };
   if (aOptions.parentId) {
     folderParams.parentId = aOptions.parentId;
