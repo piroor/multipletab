@@ -2,6 +2,10 @@
   "extensionName": { "message": "マルチプルタブハンドラ" },
   "extensionDescription": { "message": "複数のタブをまとめて操作する機能を提供します。" },
 
+  "bookmarkFolder.label": { "message": "$TITLE$ など",
+    "placeholders": {
+      "title": { "content": "$1", "example": "タイトル" }
+    }},
   "bookmarkTabs.notification.title": { "message": "複数のタブをブックマークしました" },
   "bookmarkTabs.notification.message": { "message": "「$TITLE$」を含む$COUNT$個のタブを「$PARENT$」内の新しいフォルダーにブックマークしました。",
     "placeholders": {

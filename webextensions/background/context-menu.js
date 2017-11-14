@@ -277,8 +277,10 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       clearSelection();
       break;
     case 'bookmarkTabs':
+      await bookmarkTabs(selectedTabIds);
       break;
     case 'removeBookmarkFromTabs':
+      // not implemented
       break;
 
     case 'duplicateTabs':

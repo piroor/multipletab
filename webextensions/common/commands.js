@@ -128,6 +128,29 @@ async function reloadTabs(aIds) {
   }
 }
 
+async function bookmarkTabs(aIds, aOptions = {}) {
+  var tabs = await Promise.all(aIds.map(aId => browser.tabs.get(aId)));
+  var folderParams = {
+    title: browser.i18n.getMessage('bookmarkFolder.label', tabs[0].apiTab.title)
+  };
+  if (aOptions.parentId) {
+    folderParams.parentId = aOptions.parentId;
+    if ('index' in aOptions)
+      folderParams.index = aOptions.index;
+  }
+  var folder = await browser.bookmarks.create(folderParams);
+  for (let i = 0, maxi = tabs.length; i < maxi; i++) {
+    let tab = tabs[i];
+    await browser.bookmarks.create({
+      parentId: folder.id,
+      index:    i,
+      title:    tab.title,
+      url:      tab.url
+    });
+  }
+  return folder;
+}
+
 async function duplicateTabs(aIds) {
   for (let id of aIds) {
     await browser.tabs.duplicate(id);

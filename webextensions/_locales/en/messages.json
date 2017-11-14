@@ -2,6 +2,10 @@
   "extensionName": { "message": "Multiple Tab Handler" },
   "extensionDescription": { "message": "Provides ability to manage multiple tabs at a time." },
 
+  "bookmarkFolder.label": { "message": "$TITLE$ and more",
+    "placeholders": {
+      "title": { "content": "$1", "example": "title" }
+    }},
   "bookmarkTabs.notification.title": { "message": "Tabs are Successfully Bookmarked" },
   "bookmarkTabs.notification.message": { "message": "$COUNT$ tabs including \"$TITLE$\" are bookmarked in a new folder under \"$PARENT$.",
     "placeholders": {
