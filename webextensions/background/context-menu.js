@@ -306,6 +306,7 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       break;
 
     case 'tearOffTabs':
+      await tearOffTabs(selectedTabIds);
       break;
 
     case 'removeTabs':

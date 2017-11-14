@@ -210,6 +210,33 @@ async function unmuteTabs(aIds) {
   }
 }
 
+async function tearOffTabs(aIds) {
+  var window = await browser.windows.create({
+    tabId: aIds[0]
+  });
+  await safeMoveApiTabsAcrossWindows(aIds.slice(1), {
+    index:    1,
+    windowId: window.id
+  });
+}
+
+// workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1394477
+async function safeMoveApiTabsAcrossWindows(aTabIds, aMoveOptions) {
+  return (await Promise.all(aTabIds.map(async (aTabId, aIndex) => {
+    try {
+      var movedTab = await browser.tabs.move(aTabId, clone(aMoveOptions, {
+        index: aMoveOptions.index + aIndex
+      }));
+      if (Array.isArray(movedTab))
+        movedTab = movedTab[0];
+      return movedTab;
+    }
+    catch(e) {
+      return null;
+    }
+  }))).filter(aTab => !!aTab);
+}
+
 async function removeTabs(aIds) {
   var tabs = await getAllTabs(); // because given ids are possibly unsorted.
   for (let tab of tabs.reverse()) { // close down to top, to keep tree structure of Tree Style Tab
