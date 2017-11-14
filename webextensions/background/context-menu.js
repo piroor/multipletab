@@ -277,7 +277,9 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       clearSelection();
       break;
     case 'bookmarkTabs':
+      break;
     case 'removeBookmarkFromTabs':
+      break;
 
     case 'duplicateTabs':
       await duplicateTabs(selectedTabIds);
@@ -302,6 +304,7 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       break;
 
     case 'tearOffTabs':
+      break;
 
     case 'removeTabs':
       await removeTabs(selectedTabIds);
@@ -322,6 +325,7 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       break;
 
     case 'printTabs':
+      break;
 
     case 'freezeTabs':
     case 'unfreezeTabs':
@@ -329,9 +333,11 @@ var contextMenuClickListener = async (aInfo, aTab) => {
     case 'unprotectTabs':
     case 'lockTabs':
     case 'unlockTabs':
+      break;
 
     case 'suspendTabs':
     case 'resumeTabs':
+      break;
 
     case 'selectAll':
       selectAllTabs();
