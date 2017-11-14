@@ -211,12 +211,47 @@ async function unmuteTabs(aIds) {
 }
 
 async function tearOffTabs(aIds) {
+  var structure = await browser.runtime.sendMessage(kTST_ID, {
+    type: kTSTAPI_GET_TREE_STRUCTURE,
+    tabs: aIds
+  });
+  log('structure ', structure);
   var window = await browser.windows.create({
     tabId: aIds[0]
   });
-  await safeMoveApiTabsAcrossWindows(aIds.slice(1), {
-    index:    1,
-    windowId: window.id
+  await browser.runtime.sendMessage(kTST_ID, {
+    type:   kTSTAPI_BLOCK_GROUPING,
+    window: window.id
+  });
+  var waitUntilCompletelyMoved = new Promise((aResolve, aReject) => {
+    var restTabs = aIds.length - 2;
+    var listener = (aTabId, aAttachInfo) => {
+      restTabs--;
+      if (restTabs <= 0) {
+        browser.tabs.onAttached.removeListener(listener);
+        aResolve();
+      }
+    };
+    browser.tabs.onAttached.addListener(listener);
+  });
+  await Promise.all([
+    safeMoveApiTabsAcrossWindows(aIds.slice(1), {
+      index:    1,
+      windowId: window.id
+    }),
+    waitUntilCompletelyMoved
+  ]);
+  if (structure) {
+    await wait(500);
+    await browser.runtime.sendMessage(kTST_ID, {
+      type: kTSTAPI_SET_TREE_STRUCTURE,
+      tabs: aIds,
+      structure
+    });
+  }
+  await browser.runtime.sendMessage(kTST_ID, {
+    type:   kTSTAPI_UNBLOCK_GROUPING,
+    window: window.id
   });
 }
 
