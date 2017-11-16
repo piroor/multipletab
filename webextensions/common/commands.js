@@ -319,6 +319,7 @@ async function copyToClipboard(aIds, aFormat) {
     }
     else {
       let field = document.createElement('textarea');
+      field.setAttribute('style', 'position:fixed; top:0; left:0; opacity:0');
       field.value = plainText;
       document.body.appendChild(field);
       field.focus();
