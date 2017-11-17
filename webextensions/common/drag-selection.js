@@ -194,6 +194,16 @@ async function onTabItemDragReady(aMessage) {
   }
 }
 
+async function onTabItemDragCancel(aMessage) {
+  //console.log('onTabItemDragCancel', aMessage);
+  if (Object.keys(gSelection.tabs).length > 0 &&
+      window.onDragSelectionEnd) {
+    onDragSelectionEnd(aMessage);
+    // don't clear selection state until menu command is processed.
+  }
+  gDragSelection.clear();
+}
+
 async function onTabItemDragStart(aMessage) {
   //console.log('onTabItemDragStart', aMessage);
 }

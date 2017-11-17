@@ -67,6 +67,9 @@ function onTSTAPIMessage(aMessage) {
     case kTSTAPI_NOTIFY_TAB_DRAGREADY:
       return onTabItemDragReady(aMessage);
 
+    case kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
+      return onTabItemDragCancel(aMessage);
+
     case kTSTAPI_NOTIFY_TAB_DRAGSTART:
       return onTabItemDragStart(aMessage);
 
