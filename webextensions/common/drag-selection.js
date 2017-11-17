@@ -157,7 +157,14 @@ var gDragSelection = {
   lastHoverTarget:       null,
   firstHoverTarget:      null,
   undeterminedRange:     {},
-  dragEnteredCount:      0
+  dragEnteredCount:      0,
+  clear() {
+    this.dragStartTarget = this.firstHoverTarget = this.lastHoverTarget = null;
+    this.undeterminedRange = {};
+    this.willCloseSelectedTabs = false;
+    this.dragEnteredCount = 0;
+    this.allTabsOnDragReady = [];
+  }
 };
 
 async function onTabItemDragReady(aMessage) {
@@ -285,9 +292,5 @@ async function onTabItemDragEnd(aMessage) {
     onDragSelectionEnd(aMessage);
     // don't clear selection state until menu command is processed.
   }
-  gDragSelection.dragStartTarget = gDragSelection.firstHoverTarget = gDragSelection.lastHoverTarget = null;
-  gDragSelection.undeterminedRange = {};
-  gDragSelection.willCloseSelectedTabs = false;
-  gDragSelection.dragEnteredCount = 0;
-  gDragSelection.allTabsOnDragReady = [];
+  gDragSelection.clear();
 }
