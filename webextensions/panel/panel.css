@@ -8,9 +8,14 @@
   --button-opacity: 0.75;
   --button-hover-opacity: 1;
   --button-active-opacity: 0.5;
+  /* https://dxr.mozilla.org/mozilla-central/rev/b056526be38e96b3e381b7e90cd8254ad1d96d9d/browser/themes/windows/browser.css#45 */
+  --toolbar-non-lwt-bgcolor: #f9f9fa;
+  --toolbar-non-lwt-textcolor: #0c0c0d;
 }
 
 body {
+  background: var(--toolbar-non-lwt-bgcolor);
+  color: var(--toolbar-non-lwt-textcolor);
   padding: 0.25em;
 }
 
