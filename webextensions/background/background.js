@@ -58,8 +58,11 @@ function onTSTAPIMessage(aMessage) {
       registerToTST();
       return Promise.resolve(true);
 
-    case kTSTAPI_NOTIFY_TAB_CLICKED:
+    case kTSTAPI_NOTIFY_TAB_MOUSEDOWN:
       return onTabItemClick(aMessage);
+
+    case kTSTAPI_NOTIFY_TAB_MOUSEUP:
+      return onTabItemMouseUp(aMessage);
 
     case kTSTAPI_NOTIFY_TABBAR_CLICKED:
       return onNonTabAreaClick(aMessage);

@@ -137,6 +137,21 @@ async function onTabItemClick(aMessage) {
   return false;
 }
 
+async function onTabItemMouseUp(aMessage) {
+  if (aMessage.button != 0)
+    return false;
+
+  var ctrlKeyPressed = aMessage.ctrlKey || (aMessage.metaKey && /^Mac/i.test(navigator.platform));
+  if (!ctrlKeyPressed &&
+      !aMessage.shiftKey &&
+      !gDragSelection.dragStartTarget) {
+    clearSelection({
+      states: ['selected', 'ready-to-close']
+    });
+    gSelection.targetWindow = null;
+  }
+}
+
 async function onNonTabAreaClick(aMessage) {
   if (aMessage.button != 0)
     return;
