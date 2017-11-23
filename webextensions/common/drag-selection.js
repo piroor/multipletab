@@ -91,10 +91,10 @@ async function onTabItemClick(aMessage) {
 
   var ctrlKeyPressed = aMessage.ctrlKey || (aMessage.metaKey && /^Mac/i.test(navigator.platform));
   if (!ctrlKeyPressed && !aMessage.shiftKey) {
-    clearSelection({
-      states: ['selected', 'ready-to-close']
-    });
-    gSelection.targetWindow = null;
+      clearSelection({
+        states: ['selected', 'ready-to-close']
+      });
+      gSelection.targetWindow = null;
     gInSelectionSession = false;
     return;
   }
