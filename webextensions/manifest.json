@@ -41,7 +41,24 @@
       "24": "resources/24x24-light.svg"
     },
     "browser_style": true,
-    "default_popup": "panel/panel.html"
+    "default_popup": "panel/panel.html",
+    "theme_icons": [
+      {
+        "light": "resources/16x16-dark.svg",
+        "dark":  "resources/16x16-light.svg",
+        "size": 16
+      },
+      {
+        "light": "resources/20x20-dark.svg",
+        "dark":  "resources/20x20-light.svg",
+        "size": 20
+      },
+      {
+        "light": "resources/24x24-dark.svg",
+        "dark":  "resources/24x24-light.svg",
+        "size": 24
+      }
+    ]
   },
   "options_ui": {
     "page": "options/options.html",
