@@ -217,18 +217,21 @@ async function moveToWindow(aIds, aWindowId) {
   }).catch(e => {}); // TST is not available
   log('structure ', structure);
   var window;
-  if (aWindowId)
+  if (aWindowId) {
     window = await browser.windows.get(aWindowId);
-  else
+  }
+  else {
     window = await browser.windows.create({
       tabId: aIds[0]
     });
+    aIds = aIds.slice(1);
+  }
   await browser.runtime.sendMessage(kTST_ID, {
     type:   kTSTAPI_BLOCK_GROUPING,
     window: window.id
   }).catch(e => {}); // TST is not available
   var waitUntilCompletelyMoved = new Promise((aResolve, aReject) => {
-    var restTabs = aIds.length - 2;
+    var restTabs = aIds.length - 1;
     var listener = (aTabId, aAttachInfo) => {
       restTabs--;
       if (restTabs <= 0) {
@@ -239,7 +242,7 @@ async function moveToWindow(aIds, aWindowId) {
     browser.tabs.onAttached.addListener(listener);
   });
   await Promise.all([
-    safeMoveApiTabsAcrossWindows(aIds.slice(1), {
+    safeMoveApiTabsAcrossWindows(aIds, {
       index:    1,
       windowId: window.id
     }),
