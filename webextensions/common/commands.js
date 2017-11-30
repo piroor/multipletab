@@ -216,13 +216,14 @@ async function moveToWindow(aIds, aWindowId) {
     tabs: aIds
   }).catch(e => {}); // TST is not available
   log('structure ', structure);
+  var firstTab = aIds[0];
   var window;
   if (aWindowId) {
     window = await browser.windows.get(aWindowId);
   }
   else {
     window = await browser.windows.create({
-      tabId: aIds[0]
+      tabId: firstTab
     });
     aIds = aIds.slice(1);
   }
@@ -248,6 +249,7 @@ async function moveToWindow(aIds, aWindowId) {
     }),
     waitUntilCompletelyMoved
   ]);
+  await browser.tabs.update(firstTab, { active: true });
   if (structure) {
     await wait(500); // wait until TST's initialization is finished
     await browser.runtime.sendMessage(kTST_ID, {
