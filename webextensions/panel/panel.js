@@ -252,6 +252,8 @@ async function onMouseMove(aEvent) {
 }
 
 function onMouseUp(aEvent) {
+  if (gMenu.classList.contains('open'))
+    return;
   var item = findTabItemFromEvent(aEvent);
   setTimeout(() => {
     if (gClickFired)
