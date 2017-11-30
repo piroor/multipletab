@@ -388,7 +388,9 @@ function buildTabItem(aTab) {
 
 
 async function openMenu() {
-  await buildMenu();
+  var hasItems = await buildMenu();
+  if (!hasItems)
+    return;
   gMenu.classList.add('open');
   setTimeout(() => {
     window.addEventListener('mousedown', onMenuMouseDown, { capture: true });
@@ -469,6 +471,7 @@ async function buildMenu() {
   range.insertNode(fragment);
 
   range.detach();
+  return gMenu.hasChildNodes();
 }
 
 function buildMenuItem(aItem) {
