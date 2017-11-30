@@ -106,6 +106,8 @@ function onMessage(aMessage) {
 }
 
 function onSelectionChange(aTabs, aSelected, aOptions = {}) {
+  if (!aTabs.length)
+    return;
   if (gDragTargetIsClosebox) {
     let selectors = aTabs.map(aTab => `#tab-${aTab.id}`);
     let items = document.querySelectorAll(selectors.join(', '));
