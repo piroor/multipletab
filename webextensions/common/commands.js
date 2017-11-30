@@ -210,7 +210,7 @@ async function unmuteTabs(aIds) {
   }
 }
 
-async function tearOffTabs(aIds) {
+async function moveToWindow(aIds) {
   var structure = await browser.runtime.sendMessage(kTST_ID, {
     type: kTSTAPI_GET_TREE_STRUCTURE,
     tabs: aIds

@@ -16,7 +16,7 @@ var gContextMenuItems = `
   unpinTabs
   muteTabs
   unmuteTabs
-  tearOffTabs
+  moveToNewWindow
   -----------------
   removeTabs
   removeOther
@@ -235,7 +235,7 @@ async function getContextMenuItemVisibilities(aContextTab) {
     unpinTabs:     tabIds.length > 0 && pinnedCount > 0,
     muteTabs:      tabIds.length > 0 && mutedCount < tabIds.length,
     unmuteTabs:    tabIds.length > 0 && mutedCount > 0,
-    tearOffTabs:   tabIds.length > 0,
+    moveToNewWindow: tabIds.length > 0,
     removeTabs:    tabIds.length > 0,
     removeOther:   tabIds.length > 0 && tabIds.length < allTabs.length,
     clipboard:     tabIds.length > 0,
@@ -305,8 +305,8 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       clearSelection();
       break;
 
-    case 'tearOffTabs':
-      await tearOffTabs(selectedTabIds);
+    case 'moveToNewWindow':
+      await moveToWindow(selectedTabIds);
       break;
 
     case 'removeTabs':

@@ -79,7 +79,7 @@ configs = new Configs({
   context_unpinTabs: true,
   context_muteTabs: true,
   context_unmuteTabs: true,
-  context_tearOffTabs: true,
+  context_moveToNewWindow: true,
   context_removeTabs: true,
   context_removeOther: true,
   context_clipboard: true,

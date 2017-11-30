@@ -36,7 +36,7 @@
   "context.unpinTabs.label":              { "message": "ピン留めを解除" },
   "context.muteTabs.label":               { "message": "ミュート" },
   "context.unmuteTabs.label":             { "message": "ミュートを解除" },
-  "context.tearOffTabs.label":            { "message": "新しいウィンドウに移動" },
+  "context.moveToNewWindow.label":        { "message": "新しいウィンドウに移動" },
   "context.removeTabs.label":             { "message": "閉じる" },
   "context.removeOther.label":            { "message": "選択されていないタブを閉じる" },
   "context.clipboard.label":              { "message": "クリップボードにコピー" },
