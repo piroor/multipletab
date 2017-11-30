@@ -315,7 +315,7 @@ async function copyToClipboard(aIds, aFormat) {
     if (richText) {
       // This block won't work if dom.event.clipboardevents.enabled=false.
       // See: https://bugzilla.mozilla.org/show_bug.cgi?id=1396275
-      document.addEventListener('copy', (aEvent) => {
+      document.addEventListener('copy', aEvent => {
         aEvent.stopImmediatePropagation();
         aEvent.preventDefault();
         aEvent.clipboardData.setData('text/plain', plainText);
@@ -327,6 +327,15 @@ async function copyToClipboard(aIds, aFormat) {
       document.execCommand('copy');
     }
     else {
+      // this is still required to block overriding clipboard data from scripts of tje webpage.
+      document.addEventListener('copy', aEvent => {
+        aEvent.stopImmediatePropagation();
+        aEvent.preventDefault();
+        aEvent.clipboardData.setData('text/plain', plainText);
+      }, {
+        capture: true,
+        once: true
+      });
       let field = document.createElement('textarea');
       field.setAttribute('style', 'position:fixed; top:0; left:0; opacity:0');
       field.value = plainText;
