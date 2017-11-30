@@ -1,6 +1,16 @@
 # History
 
  - master/HEAD
+ - 2.0.5 (2017.12.1)
+   * Add new command "Move Tabs to Other Window".
+   * Don't move scroll position when a text is copied to the clipboard.
+   * On Tree Style Tab's sidebar, selected tabs are now draggable to move.
+   * Use white icon for the toolbar button on the "Dark" theme.
+   * Item selection behavior in the toolbar button panel becomes more natural like generic list UI.
+   * Don't open menu by right cick when there is no selection.
+   * Show menu-like UI with more menu-like appearance.
+   * Don't reopen menu after outside area is clicked.
+   * Copy plain text data more safely.
  - 2.0.4 (2017.11.15)
    * Implement "bookmark selected tabs" command.
    * Implement "move selected tabs to new window" command.
