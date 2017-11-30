@@ -70,10 +70,14 @@ ul li {
   max-height: 25em;
 }
 
+#main ul li {
+  padding-right: 1em;
+  padding-left: 0.5em;
+}
+
 #main ul li * {
   line-height: 1;
   vertical-align: middle;
-  padding: 0 1em 0 0.25em;
 }
 
 #main ul li label {
