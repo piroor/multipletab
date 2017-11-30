@@ -9,6 +9,7 @@ gLogContext = 'Panel';
 
 var gTabBar;
 var gMenu;
+var gSizeDefinitions;
 
 window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
@@ -17,6 +18,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
   gSelection = response.selection;
   gDragSelection = response.dragSelection;
+
+  gSizeDefinitions = document.getElementById('size-definitions');
 
   gLastClickedItem = null;
 
@@ -34,6 +37,13 @@ window.addEventListener('DOMContentLoaded', async () => {
   gTabBar.addEventListener('mouseup', onMouseUp);
   gMenu = document.querySelector('#menu ul');
   await rebuildTabItems();
+
+  gSizeDefinitions.textContent = `
+    :root {
+      --menu-max-width: ${window.innerWidth - 32}px;
+      --menu-max-height: ${window.innerHeight - 32}px;
+    }
+  `;
 
   browser.runtime.sendMessage({
     type: kCOMMAND_NOTIFY_PANEL_SHOWN
@@ -169,7 +179,7 @@ function findBottomCaptionFromEvent(aEvent) {
 function onContextMenu(aEvent) {
   aEvent.stopPropagation();
   aEvent.preventDefault();
-  openMenu();
+  openMenu(aEvent);
 }
 
 var gLastClickedItem = null;
@@ -187,7 +197,7 @@ function onClick(aEvent) {
   }
   var caption = findBottomCaptionFromEvent(aEvent);
   if (caption && !gMenu.classList.contains('open')) {
-    openMenu();
+    openMenu(aEvent);
     return;
   }
   closeMenu();
@@ -324,7 +334,7 @@ function onDragSelectionEnd(aMessage) {
     updateMenu: true,
     contextTab: tab.id
   }).then(() => {
-    openMenu();
+    openMenu(aMessage);
   });
 }
 
@@ -389,20 +399,33 @@ function buildTabItem(aTab) {
 }
 
 
-async function openMenu() {
+async function openMenu(aEvent) {
   var hasItems = await buildMenu();
   if (!hasItems)
     return;
-  gMenu.classList.add('open');
-  setTimeout(() => {
-    var viewportHeight = 100;
-    for (let menu of Array.slice(gMenu.querySelectorAll('ul'))) {
-      if (menu.offsetHeight > viewportHeight)
-        menu.classList.add('overflow');
+  var containerRect = document.querySelector('#main').getBoundingClientRect();
+  for (let menu of Array.slice(gMenu.parentNode.querySelectorAll('ul'))) {
+    let left = aEvent.clientX;
+    let top  = aEvent.clientY;
+    if (menu.parentNode.localName == 'li') {
+      let parentRect = menu.parentNode.getBoundingClientRect();
+      left = parentRect.right;
+      top  = parentRect.top;
     }
+
+    let menuRect = menu.getBoundingClientRect();
+    left = left || Math.max(0, (containerRect.width - menuRect.width) / 2);
+    top  = top  || Math.max(0, (containerRect.height - menuRect.height) / 2);
+log('left ', left, containerRect.width, menuRect.width);
+    left = Math.min(left, containerRect.width - menuRect.width - 3);
+    top  = Math.min(top,  containerRect.height - menuRect.height - 3);
+    menu.style.left = `${left}px`;
+    menu.style.top  = `${top}px`;
+  }
+  gMenu.classList.add('open');
+  await wait(150);
     window.addEventListener('mousedown', onMenuMouseDown, { capture: true });
     window.addEventListener('click', onMenuClick, { capture: true });
-  }, 150);
 }
 
 function closeMenu() {

@@ -166,6 +166,7 @@ ul li {
 /* menu view */
 
 #menu {
+  bottom: 0;
   left: 0;
   pointer-events: none;
   position: fixed;
@@ -179,23 +180,15 @@ ul li {
   box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.65);
   color: MenuText;
   font: -moz-pull-down-menu;
-  left: calc(100% - 2em);
   margin: 0;
+  max-height: var(--menu-max-height);
+  max-width: var(--menu-max-width);
   opacity: 0;
   padding: 0;
-  position: absolute;
-  right: 0;
-  transition: left 0.15s ease-out,
-              opacity 0.15s ease-out;
+  pointer-events: none;
+  position: fixed;
+  transition: opacity 0.15s ease-out;
   z-index: 999999;
-}
-
-#menu ul.overflow {
-  overflow: auto;
-}
-
-#menu > ul {
-  top: 0;
 }
 
 #menu ul ul {
@@ -204,7 +197,6 @@ ul li {
 
 #menu ul.open,
 #menu ul li:hover > ul {
-  left: 2em;
   opacity: 1;
   pointer-events: auto;
 }
