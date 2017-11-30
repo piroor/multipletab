@@ -416,12 +416,12 @@ async function openMenu(aEvent) {
     let menuRect = menu.getBoundingClientRect();
     left = left || Math.max(0, (containerRect.width - menuRect.width) / 2);
     top  = top  || Math.max(0, (containerRect.height - menuRect.height) / 2);
-log('left ', left, containerRect.width, menuRect.width);
     left = Math.min(left, containerRect.width - menuRect.width - 3);
     top  = Math.min(top,  containerRect.height - menuRect.height - 3);
     menu.style.left = `${left}px`;
     menu.style.top  = `${top}px`;
   }
+  gMenu.parentNode.classList.add('open');
   gMenu.classList.add('open');
   await wait(150);
   window.addEventListener('mousedown', onMenuMouseDown, { capture: true });
@@ -429,6 +429,7 @@ log('left ', left, containerRect.width, menuRect.width);
 }
 
 function closeMenu() {
+  gMenu.parentNode.classList.add('open');
   gMenu.classList.remove('open');
   setTimeout(() => {
     window.removeEventListener('mousedown', onMenuMouseDown, { capture: true });
