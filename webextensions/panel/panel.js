@@ -424,8 +424,8 @@ log('left ', left, containerRect.width, menuRect.width);
   }
   gMenu.classList.add('open');
   await wait(150);
-    window.addEventListener('mousedown', onMenuMouseDown, { capture: true });
-    window.addEventListener('click', onMenuClick, { capture: true });
+  window.addEventListener('mousedown', onMenuMouseDown, { capture: true });
+  window.addEventListener('click', onMenuClick, { capture: true });
 }
 
 function closeMenu() {
