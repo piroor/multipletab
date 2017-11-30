@@ -16,7 +16,6 @@
 body {
   background: var(--toolbar-non-lwt-bgcolor);
   color: var(--toolbar-non-lwt-textcolor);
-  padding: 0.25em;
 }
 
 ul {
@@ -48,27 +47,33 @@ ul li {
 
 .caption {
   text-align: center;
+  padding: 0.25em;
 }
 
 .caption.top {
   border-bottom: 1px solid;
   margin-bottom: 0.25em;
-  padding-bottom: 0.25em;
 }
 
 .caption.bottom {
   border-top: 1px solid;
   margin-top: 0.25em;
-  padding-top: 0.25em;
 }
 
 #main ul {
   flex-grow: 1;
 }
 
+#tabs {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 25em;
+}
+
 #main ul li * {
   line-height: 1;
   vertical-align: middle;
+  padding: 0 1em 0 0.25em;
 }
 
 #main ul li label {
@@ -157,7 +162,6 @@ ul li {
 /* menu view */
 
 #menu {
-  bottom: 0;
   left: 0;
   pointer-events: none;
   position: fixed;
@@ -174,7 +178,6 @@ ul li {
   left: calc(100% - 2em);
   margin: 0;
   opacity: 0;
-  overflow: auto;
   padding: 0;
   position: absolute;
   right: 0;
@@ -183,8 +186,11 @@ ul li {
   z-index: 999999;
 }
 
+#menu ul.overflow {
+  overflow: auto;
+}
+
 #menu > ul {
-  bottom: 0;
   top: 0;
 }
 
