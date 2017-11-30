@@ -393,6 +393,11 @@ async function openMenu() {
     return;
   gMenu.classList.add('open');
   setTimeout(() => {
+    var viewportHeight = 100;
+    for (let menu of Array.slice(gMenu.querySelectorAll('ul'))) {
+      if (menu.offsetHeight > viewportHeight)
+        menu.classList.add('overflow');
+    }
     window.addEventListener('mousedown', onMenuMouseDown, { capture: true });
     window.addEventListener('click', onMenuClick, { capture: true });
   }, 150);
