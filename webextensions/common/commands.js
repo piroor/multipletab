@@ -327,7 +327,7 @@ async function copyToClipboard(aIds, aFormat) {
       document.execCommand('copy');
     }
     else {
-      // this is still required to block overriding clipboard data from scripts of tje webpage.
+      // this is still required to block overriding clipboard data from scripts of the webpage.
       document.addEventListener('copy', aEvent => {
         aEvent.stopImmediatePropagation();
         aEvent.preventDefault();
