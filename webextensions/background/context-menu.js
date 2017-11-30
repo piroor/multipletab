@@ -17,6 +17,7 @@ var gContextMenuItems = `
   muteTabs
   unmuteTabs
   moveToNewWindow
+  moveToOtherWindow
   -----------------
   removeTabs
   removeOther
@@ -78,7 +79,12 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     return;
   gActiveContextMenuItems = [];
   gLastSelectedTabs       = serialized;
-  var visibilities = await getContextMenuItemVisibilities(aContextTab);
+  var currentWindowId = aContextTab ? aContextTab.windowId : (await browser.windows.getLastFocused()).id;
+  var otherWindows = (await browser.windows.getAll()).filter(aWindow => aWindow.id != currentWindowId);
+  var visibilities = await getContextMenuItemVisibilities({
+    tab:          aContextTab,
+    otherWindows: otherWindows
+  });
   if (currentRefreshStart != gLastRefreshStart)
     return;
   log('visibilities: ', visibilities);
@@ -164,6 +170,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       return;
   }
 
+  // create submenu items for "copy to clipboard"
   var formatIds;
   var formats = configs.copyToClipboardFormats;
   if (Array.isArray(formats)) {
@@ -185,6 +192,16 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       return;
   }
 
+  // create submenu items for "move to other window"
+  for (let window of otherWindows) {
+    await registerItem(`moveToOtherWindow/moveToOtherWindow:${window.id}`, {
+      title: window.title
+    });
+    if (currentRefreshStart != gLastRefreshStart)
+      return;
+  }
+
+  // create additional items registered by other addons
   for (let id of Object.keys(gExtraContextMenuItems)) {
     await registerItem(`selection/extra:${id}`, gExtraContextMenuItems[id]);
     if (currentRefreshStart != gLastRefreshStart)
@@ -202,7 +219,8 @@ function reserveRefreshContextMenuItems() {
   }, 150);
 }
 
-async function getContextMenuItemVisibilities(aContextTab) {
+async function getContextMenuItemVisibilities(aParams) {
+  var tab = aParams.tab;
   var allTabs = await getAllTabs();
   var pinnedCount = 0;
   var mutedCount = 0;
@@ -236,6 +254,7 @@ async function getContextMenuItemVisibilities(aContextTab) {
     muteTabs:      tabIds.length > 0 && mutedCount < tabIds.length,
     unmuteTabs:    tabIds.length > 0 && mutedCount > 0,
     moveToNewWindow: tabIds.length > 0,
+    moveToOtherWindow: tabIds.length > 0 && aParams.otherWindows.length > 0,
     removeTabs:    tabIds.length > 0,
     removeOther:   tabIds.length > 0 && tabIds.length < allTabs.length,
     clipboard:     tabIds.length > 0,
@@ -250,8 +269,8 @@ async function getContextMenuItemVisibilities(aContextTab) {
     suspendTabs:   tabIds.length > 0 && suspendedCount < tabIds.length,
     resumeTabs:    tabIds.length > 0 && suspendedCount > 0,
     selectAll:     tabIds.length < allTabs.length,
-    select:        !aContextTab || tabIds.indexOf(aContextTab.id) < 0,
-    unselect:      !aContextTab || tabIds.indexOf(aContextTab.id) > -1,
+    select:        !tab || tabIds.indexOf(tab.id) < 0,
+    unselect:      !tab || tabIds.indexOf(tab.id) > -1,
     invertSelection: tabIds.length > 0
   };
 }
@@ -371,6 +390,11 @@ var contextMenuClickListener = async (aInfo, aTab) => {
         await clearSelection();
         await wait(100); // to wait tab titles are updated
         await copyToClipboard(selectedTabIds, format);
+      }
+      else if (aInfo.menuItemId.indexOf('moveToOtherWindow:') == 0) {
+        let id = parseInt(aInfo.menuItemId.replace(/^moveToOtherWindow:/, ''));
+        await moveToWindow(selectedTabIds, id);
+        await clearSelection();
       }
       else if (aInfo.menuItemId.indexOf('extra:') == 0) {
         let idMatch   = aInfo.menuItemId.match(/^extra:([^:]+):(.+)$/);

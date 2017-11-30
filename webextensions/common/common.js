@@ -80,6 +80,7 @@ configs = new Configs({
   context_muteTabs: true,
   context_unmuteTabs: true,
   context_moveToNewWindow: true,
+  context_moveToOtherWindow: true,
   context_removeTabs: true,
   context_removeOther: true,
   context_clipboard: true,

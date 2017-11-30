@@ -38,6 +38,7 @@
   "context.muteTabs.label":               { "message": "Mute Tabs" },
   "context.unmuteTabs.label":             { "message": "Unmute Tabs" },
   "context.moveToNewWindow.label":        { "message": "Move Tabs to New Window" },
+  "context.moveToOtherWindow.label":      { "message": "Move Tabs to Other Window" },
   "context.removeTabs.label":             { "message": "Close Tabs" },
   "context.removeOther.label":            { "message": "Close Unselected Tabs" },
   "context.clipboard.label":              { "message": "Copy to Clipboard" },
