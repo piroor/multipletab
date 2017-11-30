@@ -18,7 +18,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   gSelection = response.selection;
   gDragSelection = response.dragSelection;
 
-  gLastClickedTab = null;
+  gLastClickedItem = null;
 
   await updateUIForTST();
 
@@ -172,7 +172,7 @@ function onContextMenu(aEvent) {
   openMenu();
 }
 
-var gLastClickedTab = null;
+var gLastClickedItem = null;
 
 function onClick(aEvent) {
   if (aEvent.button != 0)
@@ -198,14 +198,16 @@ function onClick(aEvent) {
     onTabItemClick({
       window:        item.tab.windowId,
       tab:           item.tab,
-      lastActiveTab: gLastClickedTab,
+      lastActiveTab: gLastClickedItem.tab,
       button:        aEvent.button,
       altKey:        aEvent.altKey,
       ctrlKey:       aEvent.ctrlKey,
       metaKey:       aEvent.metaKey,
       shiftKey:      aEvent.shiftKey
     });
-    gLastClickedTab = item.tab;
+    gLastClickedItem.classList.remove('last-focused');
+    gLastClickedItem = item;
+    gLastClickedItem.classList.add('last-focused');
   }
   else
     onNonTabAreaClick({
@@ -368,6 +370,10 @@ function buildTabItem(aTab) {
 
   var item = document.createElement('li');
   item.setAttribute('id', `tab-${aTab.id}`);
+  if (aTab.active) {
+    gLastClickedItem = item;
+    item.classList.add('last-focused');
+  }
   if (aTab.id in gSelection.tabs)
     item.classList.add('selected');
   item.appendChild(label);

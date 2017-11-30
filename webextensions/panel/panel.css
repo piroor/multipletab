@@ -95,6 +95,10 @@ ul li {
   width: 16px;
 }
 
+#main li.last-focused {
+  outline: dotted 1px;
+}
+
 #main li.selected,
 #main li.ready-to-close .closebox {
   background: Highlight;
