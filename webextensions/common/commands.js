@@ -210,15 +210,19 @@ async function unmuteTabs(aIds) {
   }
 }
 
-async function moveToWindow(aIds) {
+async function moveToWindow(aIds, aWindowId) {
   var structure = await browser.runtime.sendMessage(kTST_ID, {
     type: kTSTAPI_GET_TREE_STRUCTURE,
     tabs: aIds
   }).catch(e => {}); // TST is not available
   log('structure ', structure);
-  var window = await browser.windows.create({
-    tabId: aIds[0]
-  });
+  var window;
+  if (aWindowId)
+    window = await browser.windows.get(aWindowId);
+  else
+    window = await browser.windows.create({
+      tabId: aIds[0]
+    });
   await browser.runtime.sendMessage(kTST_ID, {
     type:   kTSTAPI_BLOCK_GROUPING,
     window: window.id
