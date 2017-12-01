@@ -14,6 +14,13 @@
       "parent": { "content": "$3", "example": "Parent Folder" }
     }},
 
+  "notPermitted.allUrls.title": { "message": "Permission error" },
+  "notPermitted.allUrls.message": { "message": "Failed to get permissions to access contents of webpages. Please grant permissions via the configurations of Multiple Tab Handler." },
+  "notPermitted.bookmarks.title": { "message": "Permission error" },
+  "notPermitted.bookmarks.message": { "message": "Failed to get permissions to create bookmarks. Please grant permissions via the configurations of Multiple Tab Handler." },
+  "notPermitted.clipboardWrite.title": { "message": "Permission error" },
+  "notPermitted.clipboardWrite.message": { "message": "Failed to get permissions to write data to the clipboard. Please grant permissions via the configurations of Multiple Tab Handler." },
+
 
   "panelTitle": { "message": "Select and Do" },
   "panelCaptionTop": { "message": "Select Tabs" },

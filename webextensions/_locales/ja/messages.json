@@ -14,6 +14,14 @@
       "parent": { "content": "$3", "example": "親フォルダー" }
     }},
 
+  "notPermitted.allUrls.title": { "message": "権限のエラー" },
+  "notPermitted.allUrls.message": { "message": "Webページの内容にアクセスするために必要な権限を取得できませんでした。マルチプルタブハンドラの設定画面で権限を設定して下さい。" },
+  "notPermitted.bookmarks.title": { "message": "権限のエラー" },
+  "notPermitted.bookmarks.message": { "message": "ブックマーク作成に必要な権限を取得できませんでした。マルチプルタブハンドラの設定画面で権限を設定して下さい。" },
+  "notPermitted.clipboardWrite.title": { "message": "権限のエラー" },
+  "notPermitted.clipboardWrite.message": { "message": "クリップボードへのデータの書き込みに必要な権限を取得できませんでした。マルチプルタブハンドラの設定画面で権限を設定して下さい。" },
+
+
   "panelTitle": { "message": "タブをまとめて操作" },
   "panelCaptionTop": { "message": "タブを選択してください" },
   "panelCaptionBottom": { "message": "その後、ここをクリックして操作を選択" },

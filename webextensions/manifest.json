@@ -5,16 +5,17 @@
   "author": "YUKI \"Piro\" Hiroshi",
   "description": "__MSG_extensionDescription__",
   "permissions": [
-    "<all_urls>",
     "activeTab",
-    "bookmarks",
-    "clipboardWrite",
     "contextMenus",
     "downloads",
     "notifications",
-    "sessions",
     "storage",
     "tabs"
+  ],
+  "optional_permissions": [
+    "<all_urls>",
+    "bookmarks",
+    "clipboardWrite"
   ],
   "icons": {
     "16": "resources/16x16-light.svg",
@@ -26,6 +27,7 @@
       "common/constants.js",
       "common/Configs.js",
       "common/common.js",
+      "common/permissions.js",
       "common/commands.js",
       "common/drag-selection.js",
       "common/TabFavIconHelper.js",

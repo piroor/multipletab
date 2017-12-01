@@ -6,10 +6,9 @@
 'use strict';
 
 const Permissions = {
-  ALL_URLS:  { origins: ['<all_urls>'] },
-  BOOKMARKS: { permissions: ['bookmarks'] },
-  CLIPBOARD_WRITE: { permissions: ['clipboardWrite'] },
-  DOWNLOADS: { permissions: ['downloads'] },
+  ALL_URLS:        { origins: ['<all_urls>'] },
+  BOOKMARKS:       { permissions: ['bookmarks'] },
+  CLIPBOARD_WRITE: { permissions: ['clipboardWrite'], origins: ['<all_urls>'] },
 
   isGranted(aPermissions) {
     return browser.permissions.contains(aPermissions);

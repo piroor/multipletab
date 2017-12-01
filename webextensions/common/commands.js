@@ -38,15 +38,14 @@ function setSelection(aTabs, aSelected, aOptions = {}) {
       if (tab.id in gSelection.tabs)
         continue;
       gSelection.tabs[tab.id] = tab;
-      try {
-        if (shouldHighlight && isPermittedTab(tab) && !tab.pinned)
+      if (shouldHighlight &&
+          isPermittedTab(tab) &&
+          !tab.pinned)
+        Permissions.isGranted(Permissions.ALL_URLS).then(() => {
           browser.tabs.executeScript(tab.id, {
             code: `document.title = '✔' + document.title;`
           });
-      }
-      catch(e){
-        console.log(e);
-      }
+        });
     }
   }
   else {
@@ -54,15 +53,14 @@ function setSelection(aTabs, aSelected, aOptions = {}) {
       if (!(tab.id in gSelection.tabs))
         continue;
       delete gSelection.tabs[tab.id];
-      try {
-        if (shouldHighlight && isPermittedTab(tab) && !tab.pinned)
+      if (shouldHighlight &&
+          isPermittedTab(tab) &&
+          !tab.pinned)
+        Permissions.isGranted(Permissions.ALL_URLS).then(() => {
           browser.tabs.executeScript(tab.id, {
             code: `document.title = document.title.replace(/^✔/, '');`
           });
-      }
-      catch(e){
-        console.log(e);
-      }
+        });
     }
   }
   browser.runtime.sendMessage(kTST_ID, {
@@ -129,6 +127,14 @@ async function reloadTabs(aIds) {
 }
 
 async function bookmarkTabs(aIds, aOptions = {}) {
+  if (!(await Permissions.isGranted(Permissions.BOOKMARKS))) {
+    notify({
+      title:   browser.i18n.getMessage('notPermitted.bookmarks.title'),
+      message: browser.i18n.getMessage('notPermitted.bookmarks.message')
+    });
+    return null;
+  }
+
   var tabs = await Promise.all(aIds.map(aId => browser.tabs.get(aId)));
   var folderParams = {
     title: browser.i18n.getMessage('bookmarkFolder.label', tabs[0].title)
@@ -298,6 +304,14 @@ async function removeOtherTabs(aIds) {
 }
 
 async function copyToClipboard(aIds, aFormat) {
+  if (!(await Permissions.isGranted(Permissions.CLIPBOARD_WRITE))) {
+    notify({
+      title:   browser.i18n.getMessage('notPermitted.clipboardWrite.title'),
+      message: browser.i18n.getMessage('notPermitted.clipboardWrite.message')
+    });
+    return;
+  }
+
   var allTabs = await getAllTabs();
   var tabs = allTabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
   var lineFeed = configs.useCRLF ? '\r\n' : '\n' ;
@@ -469,6 +483,13 @@ async function suggestFileNameForTab(aTab) {
   if (!aTab.discarded &&
       isPermittedTab(aTab)) {
     log(`getting content type of ${aTab.id}`);
+    if (!(await Permissions.isGranted(Permissions.ALL_URLS))) {
+      notify({
+        title:   browser.i18n.getMessage('notPermitted.allUrls.title'),
+        message: browser.i18n.getMessage('notPermitted.allUrls.message')
+      });
+    }
+    else {
     let contentType = await browser.tabs.executeScript(aTab.id, {
       code: `document.contentType`
     });
@@ -483,6 +504,7 @@ async function suggestFileNameForTab(aTab) {
     }
     else if (/^image\//.test(contentType)) {
       suggestedExtension = `.${contentType.replace(/^image\/|\+.+$/g, '')}`;
+    }
     }
   }
   log('suggestedExtension: ', aTab.id, suggestedExtension);
