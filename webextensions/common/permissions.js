@@ -65,9 +65,9 @@ const Permissions = {
         browser.browserAction.setBadgeText({ text: '!' });
 
         notify({
-          title:   browser.i18n.getMessage('config.requestPermissions.fallbackToToolbarButton.title'),
-          message: browser.i18n.getMessage('config.requestPermissions.fallbackToToolbarButton.message'),
-          icon:    'resources/24x24-light.svg'
+          title:   browser.i18n.getMessage('requestPermissions.fallbackToToolbarButton.title'),
+          message: browser.i18n.getMessage('requestPermissions.fallbackToToolbarButton.message'),
+          icon:    '/resources/24x24-light.svg'
         });
         return;
 
