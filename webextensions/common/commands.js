@@ -490,21 +490,21 @@ async function suggestFileNameForTab(aTab) {
       });
     }
     else {
-    let contentType = await browser.tabs.executeScript(aTab.id, {
-      code: `document.contentType`
-    });
-    if (Array.isArray(contentType))
-      contentType = contentType[0];
-    log(`contentType of ${aTab.id}: `, contentType);
-    if (/^(text\/html|application\/xhtml\+xml)/.test(contentType)) {
-      suggestedExtension = '.html';
-    }
-    else if (/^text\//.test(contentType)) {
-      suggestedExtension = '.txt';
-    }
-    else if (/^image\//.test(contentType)) {
-      suggestedExtension = `.${contentType.replace(/^image\/|\+.+$/g, '')}`;
-    }
+      let contentType = await browser.tabs.executeScript(aTab.id, {
+        code: `document.contentType`
+      });
+      if (Array.isArray(contentType))
+        contentType = contentType[0];
+      log(`contentType of ${aTab.id}: `, contentType);
+      if (/^(text\/html|application\/xhtml\+xml)/.test(contentType)) {
+        suggestedExtension = '.html';
+      }
+      else if (/^text\//.test(contentType)) {
+        suggestedExtension = '.txt';
+      }
+      else if (/^image\//.test(contentType)) {
+        suggestedExtension = `.${contentType.replace(/^image\/|\+.+$/g, '')}`;
+      }
     }
   }
   log('suggestedExtension: ', aTab.id, suggestedExtension);
