@@ -115,7 +115,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       if (!aOptions.always && !hasSelection)
         return;
       let key = `context_${id}`;
-      if (key in configs && !configs[key])
+      if (configs[key] !== true)
         return;
       normalItemAppearedIn[parentId] = true;
       if (nextSeparatorIn[parentId]) {

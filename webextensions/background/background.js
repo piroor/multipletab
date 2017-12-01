@@ -155,12 +155,12 @@ function onMessageExternal(aMessage, aSender) {
       addons[aSender.id] = true;
       configs.cachedExternalAddons = addons;
       gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`] = aMessage;
-      return reserveRefreshContextMenuItems().then(() => true);
+      return reserveRefreshContextMenuItems(null, true).then(() => true);
     };
 
     case kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
       delete gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`];
-      return reserveRefreshContextMenuItems().then(() => true);
+      return reserveRefreshContextMenuItems(null, true).then(() => true);
   }
 }
 
@@ -258,12 +258,12 @@ function unregisterFromTST() {
 function onConfigChanged(aKey) {
   switch (aKey) {
     case 'copyToClipboardFormats':
-      reserveRefreshContextMenuItems();
+      reserveRefreshContextMenuItems(null, true);
       break;
 
     default:
       if (aKey.indexOf('context_') == 0)
-        reserveRefreshContextMenuItems();
+        reserveRefreshContextMenuItems(null, true);
       break;
   }
 }
