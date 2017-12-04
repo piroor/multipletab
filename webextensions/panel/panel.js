@@ -12,14 +12,16 @@ var gMenu;
 var gSizeDefinitions;
 
 window.addEventListener('DOMContentLoaded', async () => {
+  gTabBar = document.querySelector('#tabs');
+  gMenu = document.querySelector('#menu ul');
+  gSizeDefinitions = document.getElementById('size-definitions');
+
   await configs.$loaded;
   var response = await browser.runtime.sendMessage({
     type: kCOMMAND_PULL_SELECTION_INFO
   });
   gSelection = response.selection;
   gDragSelection = response.dragSelection;
-
-  gSizeDefinitions = document.getElementById('size-definitions');
 
   gLastClickedItem = null;
 
@@ -32,10 +34,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   window.addEventListener('contextmenu', onContextMenu, { capture: true });
   window.addEventListener('click', onClick);
-  gTabBar = document.querySelector('#tabs');
   gTabBar.addEventListener('mousedown', onMouseDown);
   gTabBar.addEventListener('mouseup', onMouseUp);
-  gMenu = document.querySelector('#menu ul');
   await rebuildTabItems();
 
   gSizeDefinitions.textContent = `
