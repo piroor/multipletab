@@ -169,23 +169,6 @@ async function bookmarkTabs(aIds, aOptions = {}) {
   return folder;
 }
 
-async function notify(aParams = {}) {
-  var id = await browser.notifications.create({
-    type:    'basic',
-    iconUrl: aParams.icon,
-    title:   aParams.title,
-    message: aParams.message
-  });
-
-  var timeout = aParams.timeout;
-  if (typeof timeout != 'number')
-    timeout = configs.notificationTimeout;
-  if (timeout >= 0)
-    await wait(timeout);
-
-  await browser.notifications.clear(id);
-}
-
 async function duplicateTabs(aIds) {
   for (let id of aIds) {
     await browser.tabs.duplicate(id);

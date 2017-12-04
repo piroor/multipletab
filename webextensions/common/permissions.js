@@ -10,6 +10,10 @@ const Permissions = {
   BOOKMARKS:       { permissions: ['bookmarks'] },
   CLIPBOARD_WRITE: { permissions: ['clipboardWrite'], origins: ['<all_urls>'] },
 
+  clearRequest() {
+    configs.requestingPermissions = null;
+  },
+
   isGranted(aPermissions) {
     return browser.permissions.contains(aPermissions);
   },
@@ -63,10 +67,11 @@ const Permissions = {
         configs.requestingPermissions = aPermissions;
         aCheckbox.checked = false;
         browser.browserAction.setBadgeText({ text: '!' });
+        browser.browserAction.setPopup({ popup: '' });
 
         notify({
-          title:   browser.i18n.getMessage('requestPermissions.fallbackToToolbarButton.title'),
-          message: browser.i18n.getMessage('requestPermissions.fallbackToToolbarButton.message'),
+          title:   browser.i18n.getMessage('config.permissions.fallbackToToolbarButton.title'),
+          message: browser.i18n.getMessage('config.permissions.fallbackToToolbarButton.message'),
           icon:    '/resources/24x24-light.svg'
         });
         return;

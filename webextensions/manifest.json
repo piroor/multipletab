@@ -43,7 +43,6 @@
       "24": "resources/24x24-light.svg"
     },
     "browser_style": true,
-    "default_popup": "panel/panel.html",
     "theme_icons": [
       {
         "light": "resources/16x16-dark.svg",

@@ -87,6 +87,10 @@
   "config.saveTabsPrefix.label_after": { "message": "以下に保存する" },
   "config.saveTabsPrefix.description": { "message": "※ダウンロードフォルダ配下の保存先パスを指定できます。「/」はパスの区切り文字として解釈されます。" },
 
+  "config.permissions.caption": { "message": "コマンドの実行に必要な追加の権限" },
+  "config.permissions.fallbackToToolbarButton.title": { "message": "ツールバーの「選択したタブを操作」ボタンをクリックして下さい" },
+  "config.permissions.fallbackToToolbarButton.message": { "message": "Firefoxのバグのため、権限をこの画面から要求することができません。ツールバー上の「選択したタブを操作」ボタンをクリックして権限を承認して下さい。" },
+
 
   "config.debug.caption": { "message": "開発用" },
   "config.disablePanelWhenAlternativeTabBarIsAvailable.label": { "message": "代替のタブバーが利用可能な時はパネルを無効化する" },

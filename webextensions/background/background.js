@@ -20,6 +20,10 @@ window.addEventListener('DOMContentLoaded', async () => {
   reserveRefreshContextMenuItems();
   configs.$addObserver(onConfigChanged);
 
+  browser.browserAction.onClicked.addListener(onToolbarButtonClick);
+  browser.browserAction.setPopup({ popup: kPOPUP_URL });
+  Permissions.clearRequest();
+
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
   registerToTST();
@@ -34,6 +38,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 
 /*  listen events */
+
+function onToolbarButtonClick(aTab) {
+  Permissions.requestPostProcess();
+  setTimeout(() => {
+    browser.browserAction.setPopup({ popup: kPOPUP_URL });
+  }, 0);
+}
 
 async function onDragSelectionEnd(aMessage) {
   let tab = gDragSelection.dragStartTarget.id;

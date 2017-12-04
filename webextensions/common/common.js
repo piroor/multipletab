@@ -48,6 +48,23 @@ function clone(aOriginalObject, aExtraProperties) {
   return cloned;
 }
 
+async function notify(aParams = {}) {
+  var id = await browser.notifications.create({
+    type:    'basic',
+    iconUrl: aParams.icon,
+    title:   aParams.title,
+    message: aParams.message
+  });
+
+  var timeout = aParams.timeout;
+  if (typeof timeout != 'number')
+    timeout = configs.notificationTimeout;
+  if (timeout >= 0)
+    await wait(timeout);
+
+  await browser.notifications.clear(id);
+}
+
 var defaultClipboardFormats = [];
 defaultClipboardFormats.push({
   label:  browser.i18n.getMessage('context.clipboard:url.label'),
@@ -108,6 +125,8 @@ configs = new Configs({
   disablePanelWhenAlternativeTabBarIsAvailable: true,
 
   cachedExternalAddons: {},
+
+  requestingPermissions: null,
 
   shouldNotifyUpdatedFromLegacyVersion: false,
   debug: false

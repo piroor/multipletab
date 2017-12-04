@@ -11,6 +11,7 @@ const kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO = 'multipletab:pull-active-context-
 const kCOMMAND_SELECTION_MENU_ITEM_CLICK     = 'multipletab:selection-menu-item-click';
 const kCOMMAND_UNREGISTER_FROM_TST           = 'multipletab:unregister-from-tst';
 const kCOMMAND_NOTIFY_PANEL_SHOWN            = 'multipletab:notify-panel-shown';
+const kCOMMAND_NOTIFY_PERMISSIONS_GRANTED    = 'multipletab:notify-permissions-granted';
 
 
 const kMTHAPI_READY                       = 'ready';
@@ -22,6 +23,7 @@ const kMTHAPI_REMOVE_SELECTED_TAB_COMMAND = 'remove-selected-tab-command';
 const kMTHAPI_INVOKE_SELECTED_TAB_COMMAND = 'selected-tab-command';
 
 const kNOTIFICATION_DEFAULT_ICON = '/resources/24x24-light.svg';
+const kPOPUP_URL = '/panel/panel.html';
 
 
 const kTST_ID = 'treestyletab@piro.sakura.ne.jp';

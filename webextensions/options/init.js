@@ -33,6 +33,15 @@ window.addEventListener('DOMContentLoaded', () => {
   );
 
   configs.$loaded.then(() => {
+    Permissions.bindToCheckbox(
+      Permissions.BOOKMARKS,
+      document.querySelector('#bookmarksPermissionGranted')
+    );
+    Permissions.bindToCheckbox(
+      Permissions.CLIPBOARD_WRITE,
+      document.querySelector('#clipboardWritePermissionGranted')
+    );
+
     options.buildUIForAllConfigs(document.querySelector('#debug-configs'));
     onConfigChanged('debug');
     rebuildFormatRows();
