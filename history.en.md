@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+   * Make some permissions optional.
+   * Control visibility of the menu item "Mute Tabs" correctly.
  - 2.0.5 (2017.12.1)
    * Add new command "Move Tabs to Other Window".
    * Don't move scroll position when a text is copied to the clipboard.
