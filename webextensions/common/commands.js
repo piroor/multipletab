@@ -96,9 +96,10 @@ async function pushSelectionState(aOptions = {}) {
 
 
 async function getAllTabs(aWindowId) {
-  return aWindowId || gSelection.targetWindow ?
+  var tabs = aWindowId || gSelection.targetWindow ?
     await browser.tabs.query({ windowId: aWindowId || gSelection.targetWindow }) :
     (await browser.windows.getCurrent({ populate: true })).tabs ;
+  return tabs.map(TabIdFixer.fixTab);
 }
 
 function getSelectedTabIds() {
@@ -136,6 +137,7 @@ async function bookmarkTabs(aIds, aOptions = {}) {
   }
 
   var tabs = await Promise.all(aIds.map(aId => browser.tabs.get(aId)));
+  tabs.forEach(TabIdFixer.fixTab);
   var folderParams = {
     title: browser.i18n.getMessage('bookmarkFolder.label', tabs[0].title)
   };

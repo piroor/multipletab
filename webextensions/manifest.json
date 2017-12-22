@@ -30,6 +30,7 @@
       "common/permissions.js",
       "common/commands.js",
       "common/drag-selection.js",
+      "common/TabIdFixer.js",
       "common/TabFavIconHelper.js",
       "background/background.js",
       "background/context-menu.js"

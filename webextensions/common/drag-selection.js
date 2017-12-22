@@ -105,6 +105,8 @@ async function onTabItemClick(aMessage) {
     active:   true,
     windowId: aMessage.window
   }))[0];
+  if (lastActiveTab)
+    TabIdFixer.fixTab(lastActiveTab);
 
   let tabs = retrieveTargetTabs(aMessage.tab);
   if (ctrlKeyPressed) {
@@ -190,7 +192,7 @@ async function onTabItemDragReady(aMessage) {
   gDragSelection.willCloseSelectedTabs = aMessage.startOnClosebox;
   gDragSelection.pendingTabs = null;
   gDragSelection.dragStartTarget = gDragSelection.firstHoverTarget = gDragSelection.lastHoverTarget = aMessage.tab;
-  gDragSelection.allTabsOnDragReady = await browser.tabs.query({ windowId: aMessage.window });
+  gDragSelection.allTabsOnDragReady = (await browser.tabs.query({ windowId: aMessage.window })).map(TabIdFixer.fixTab);
 
   clearSelection({
     states: ['selected', 'ready-to-close'],

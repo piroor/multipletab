@@ -11,7 +11,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
 
   browser.tabs.onActivated.addListener((aActiveInfo) => {
-    if (!gSelection.tabs[aActiveInfo.tabId])
+    if (!gSelection.tabs[TabIdFixer.fixTabId(aActiveInfo.tabId)])
       clearSelection();
   });
   browser.tabs.onCreated.addListener(() => clearSelection());
@@ -47,13 +47,13 @@ function onToolbarButtonClick(aTab) {
 }
 
 async function onDragSelectionEnd(aMessage) {
-  let tab = gDragSelection.dragStartTarget.id;
-  await refreshContextMenuItems(tab, true);
+  let tabId = gDragSelection.dragStartTarget.id;
+  await refreshContextMenuItems(tabId, true);
   try {
     await browser.runtime.sendMessage(kTST_ID, {
       type: kTSTAPI_CONTEXT_MENU_OPEN,
       window: gSelection.targetWindow,
-      tab:  tab,
+      tab:  tabId,
       left: aMessage.clientX,
       top:  aMessage.clientY
     });

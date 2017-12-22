@@ -346,6 +346,7 @@ async function rebuildTabItems() {
   var fragment = document.createDocumentFragment();
   var tabs = await browser.tabs.query({ currentWindow: true });
   for (let tab of tabs) {
+    TabIdFixer.fixTab(tab);
     let tabItem = buildTabItem(tab);
     fragment.appendChild(tabItem);
   }
