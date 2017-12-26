@@ -259,7 +259,7 @@ async function moveToWindow(aIds, aWindowId) {
 async function safeMoveApiTabsAcrossWindows(aTabIds, aMoveOptions) {
   return (await Promise.all(aTabIds.map(async (aTabId, aIndex) => {
     try {
-      var movedTab = await browser.tabs.move(aTabId, Object.assign(aMoveOptions, {
+      var movedTab = await browser.tabs.move(aTabId, Object.assign({}, aMoveOptions, {
         index: aMoveOptions.index + aIndex
       }));
       if (Array.isArray(movedTab))
