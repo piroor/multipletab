@@ -35,19 +35,6 @@ async function wait(aTask = 0, aTimeout = 0) {
   });
 }
 
-function clone(aOriginalObject, aExtraProperties) {
-  var cloned = {};
-  for (let key of Object.keys(aOriginalObject)) {
-    cloned[key] = aOriginalObject[key];
-  }
-  if (aExtraProperties) {
-    for (let key of Object.keys(aExtraProperties)) {
-      cloned[key] = aExtraProperties[key];
-    }
-  }
-  return cloned;
-}
-
 async function notify(aParams = {}) {
   var id = await browser.notifications.create({
     type:    'basic',
