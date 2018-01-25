@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Add "Create New Group" command for selected tabs (requires [Tree Style Tab](https://addons.mozilla.org/firefox/addon/tree-style-tab/).)
    * Make some permissions optional.
    * Control visibility of the menu item "Mute Tabs" correctly.
  - 2.0.5 (2017.12.1)
