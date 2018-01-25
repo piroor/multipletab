@@ -34,6 +34,8 @@ var gContextMenuItems = `
   lockTabs
   unlockTabs
   -----------------
+  groupTabs
+  -----------------
   suspendTabs
   resumeTabs
   -----------------
@@ -266,6 +268,7 @@ async function getContextMenuItemVisibilities(aParams) {
     unprotectTabs: tabIds.length > 0 && protectedCount > 0,
     lockTabs:      tabIds.length > 0 && lockedCount < tabIds.length,
     unlockTabs:    tabIds.length > 0 && lockedCount > 0,
+    groupTabs:     tabIds.length > 1,
     suspendTabs:   tabIds.length > 0 && suspendedCount < tabIds.length,
     resumeTabs:    tabIds.length > 0 && suspendedCount > 0,
     selectAll:     tabIds.length < allTabs.length,
@@ -355,6 +358,13 @@ var contextMenuClickListener = async (aInfo, aTab) => {
     case 'unprotectTabs':
     case 'lockTabs':
     case 'unlockTabs':
+      break;
+
+    case 'groupTabs':
+      browser.runtime.sendMessage(kTST_ID, {
+        type: kTSTAPI_GROUP_TABS,
+        tabs: selectedTabIds
+      }).catch(e => {});
       break;
 
     case 'suspendTabs':

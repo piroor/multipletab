@@ -62,6 +62,7 @@
   "context.unprotectTabs.label":          { "message": "Unprotect Tabs" },
   "context.lockTabs.label":               { "message": "Lock Tabs" },
   "context.unlockTabs.label":             { "message": "Unlock Tabs" },
+  "context.groupTabs.label":              { "message": "Create New Group" },
   "context.suspendTabs.label":            { "message": "Suspend Tabs" },
   "context.resumeTabs.label":             { "message": "Resume Tabs" },
 

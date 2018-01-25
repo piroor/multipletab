@@ -62,6 +62,7 @@
   "context.unprotectTabs.label":          { "message": "保護を解除" },
   "context.lockTabs.label":               { "message": "固定" },
   "context.unlockTabs.label":             { "message": "固定を解除" },
+  "context.groupTabs.label":              { "message": "新しいグループにする" },
   "context.suspendTabs.label":            { "message": "アンロード" },
   "context.resumeTabs.label":             { "message": "読み込み" },
 

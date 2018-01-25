@@ -96,6 +96,7 @@ configs = new Configs({
   context_unprotectTabs: false,
   context_lockTabs: false,
   context_unlockTabs: false,
+  context_groupTabs: false,
   context_suspendTabs: false,
   context_resumeTabs: false,
   context_selectAll: true,
