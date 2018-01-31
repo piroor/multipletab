@@ -286,7 +286,8 @@ async function removeOtherTabs(aIds) {
   await browser.tabs.remove(ids);
 }
 
-const kFORMAT_MATCHER_TST_INDENT = /%TST_INDENT(?:\([^\)]+\)|\[[^\]]+\]|\{[^\}]+\}|<[^>]+>)?%/gi;
+const kFORMAT_PARAMETER_MATCHER  = /\([^\)]+\)|\[[^\]]+\]|\{[^\}]+\}|<[^>]+>/g;
+const kFORMAT_MATCHER_TST_INDENT = new RegExp(`%TST_INDENT(?:${kFORMAT_PARAMETER_MATCHER.source})*%`, 'gi');
 
 async function copyToClipboard(aIds, aFormat) {
   if (!(await Permissions.isGranted(Permissions.CLIPBOARD_WRITE))) {
@@ -414,16 +415,19 @@ async function fillPlaceHolders(aFormat, aTab, aIndentLevel) {
   var timeLocal = now.toLocaleString();
   var formatted = aFormat
     .replace(kFORMAT_MATCHER_TST_INDENT, aMatched => {
-      let indenter = aMatched.replace(/^%TST_INDENT|%$/g, '');
-      if (indenter == '') {
-        indenter = '  ';
+      let indenters = aMatched.replace(/^%TST_INDENT|%$/g, '');
+      if (indenters == '') {
+        indenters = ['  '];
       }
       else {
-        indenter = indenter.substring(1, indenter.length - 1);
+        indenters = indenters.match(kFORMAT_PARAMETER_MATCHER)
+                      .map(aIndenter => aIndenter.substring(1, aIndenter.length - 1))
+                      .reverse();
       }
       let indent = '';
       for (let i = 0; i < aIndentLevel; i++) {
-        indent += indenter;
+        let indenter = indenters[Math.min(i, indenters.length - 1)];
+        indent = `${indenter}${indent}`;
       }
       return indent;
     })
