@@ -420,9 +420,10 @@ async function fillPlaceHolders(aFormat, aTab, aIndentLevel) {
         indenters = ['  '];
       }
       else {
-        indenters = indenters.match(kFORMAT_PARAMETER_MATCHER)
-                      .map(aIndenter => aIndenter.substring(1, aIndenter.length - 1))
-                      .reverse();
+        indenters = indenters
+          .match(kFORMAT_PARAMETER_MATCHER)
+          .map(aIndenter => aIndenter.substring(1, aIndenter.length - 1))
+          .reverse();
       }
       let indent = '';
       for (let i = 0; i < aIndentLevel; i++) {
