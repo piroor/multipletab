@@ -286,6 +286,8 @@ async function removeOtherTabs(aIds) {
   await browser.tabs.remove(ids);
 }
 
+const kFORMAT_MATCHER_TST_INDENT = /%TST_INDENT(?:\([^\)]+\)|\[[^\]]+\]|\{[^\}]+\}|<[^>]+>)?%/gi;
+
 async function copyToClipboard(aIds, aFormat) {
   if (!(await Permissions.isGranted(Permissions.CLIPBOARD_WRITE))) {
     notify({
@@ -297,8 +299,24 @@ async function copyToClipboard(aIds, aFormat) {
 
   var allTabs = await getAllTabs();
   var tabs = allTabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
+
+  var indentLevels = [];
+  if (kFORMAT_MATCHER_TST_INDENT.test(aFormat)) {
+    try {
+      let tabsWithChildren = await browser.runtime.sendMessage(kTST_ID, {
+        type: 'get-tree',
+        tabs: tabs.map(aTab => aTab.id)
+      });
+      indentLevels = tabsWithChildren.map(aTab => aTab.indent || 0);
+      let minIndentLevel = Math.min(...indentLevels);
+      indentLevels = indentLevels.map(aLevel => aLevel - minIndentLevel);
+    }
+    catch(e) {
+    }
+  }
+
   var lineFeed = configs.useCRLF ? '\r\n' : '\n' ;
-  var itemsToCopy = await Promise.all(tabs.map(aTab => fillPlaceHolders(aFormat, aTab)));
+  var itemsToCopy = await Promise.all(tabs.map((aTab, aIndex) => fillPlaceHolders(aFormat, aTab, indentLevels[aIndex])));
 
   var richText = /%RT%/i.test(aFormat) ? itemsToCopy.map(aItem => aItem.richText).join('<br />') : null ;
   var plainText = itemsToCopy.map(aItem => aItem.plainText).join(lineFeed);
@@ -376,8 +394,8 @@ async function copyToClipboard(aIds, aFormat) {
   });
 }
 
-async function fillPlaceHolders(aFormat, aTab) {
-  log('fillPlaceHolders ', aTab.id, aFormat);
+async function fillPlaceHolders(aFormat, aTab, aIndentLevel) {
+  log('fillPlaceHolders ', aTab.id, aFormat, aIndentLevel);
   var lineFeed = configs.useCRLF ? '\r\n' : '\n' ;
   var contentsData = {};
   if (!aTab.discarded &&
@@ -395,6 +413,20 @@ async function fillPlaceHolders(aFormat, aTab) {
   var timeUTC = now.toUTCString();
   var timeLocal = now.toLocaleString();
   var formatted = aFormat
+    .replace(kFORMAT_MATCHER_TST_INDENT, aMatched => {
+      let indenter = aMatched.replace(/^%TST_INDENT|%$/g, '');
+      if (indenter == '') {
+        indenter = '  ';
+      }
+      else {
+        indenter = indenter.substring(1, indenter.length - 1);
+      }
+      let indent = '';
+      for (let i = 0; i < aIndentLevel; i++) {
+        indent += indenter;
+      }
+      return indent;
+    })
     .replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
     .replace(/%URL%/gi, aTab.url)
     .replace(/%(?:TITLE|TEXT)%/gi, aTab.title)

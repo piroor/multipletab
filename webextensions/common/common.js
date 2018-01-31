@@ -71,7 +71,7 @@ defaultClipboardFormats.push({
 });
 defaultClipboardFormats.push({
   label:  browser.i18n.getMessage('context.clipboard:markdown-list.label'),
-  format: ' * [%TITLE%](%URL% "%TITLE%")'
+  format: '%TST_INDENT(  )%* [%TITLE%](%URL% "%TITLE%")'
 });
 
 configs = new Configs({
