@@ -31,6 +31,10 @@ window.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#copyToClipboardFormatsAddNewRow'),
     (aEvent) => { addFormatRow(); }
   );
+  addButtonCommandListener(
+    document.querySelector('#copyToClipboardFormatsRestoreDefaults'),
+    (aEvent) => { restoreDefaultFormats(); }
+  );
 
   configs.$loaded.then(() => {
     Permissions.bindToCheckbox(
@@ -138,6 +142,21 @@ function addFormatRow() {
   row.querySelector('input.label').focus();
   formats.push({ label: '', format: '' });
   configs.copyToClipboardFormats = formats;
+}
+
+function restoreDefaultFormats() {
+  var checked = {};
+  var unifiedFormats = configs.$default.copyToClipboardFormats.concat(configs.copyToClipboardFormats);
+  var uniqueFormats = [];
+  for (let format of unifiedFormats) {
+    let key = JSON.stringify(format);
+    if (key in checked)
+      continue;
+    checked[key] = true;
+    uniqueFormats.push(format);
+  }
+  configs.copyToClipboardFormats = uniqueFormats;
+  rebuildFormatRows();
 }
 
 function createFormatRow(aParams = {}) {
