@@ -414,6 +414,22 @@ async function fillPlaceHolders(aFormat, aTab, aIndentLevel) {
   var timeUTC = now.toUTCString();
   var timeLocal = now.toLocaleString();
   var formatted = aFormat
+    .replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
+    .replace(/%URL%/gi, aTab.url)
+    .replace(/%(?:TITLE|TEXT)%/gi, aTab.title)
+    .replace(/%URL_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.url))
+    .replace(/%TITLE_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.title))
+    .replace(/%AUTHOR%/gi, contentsData.author || '')
+    .replace(/%AUTHOR_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.author || ''))
+    .replace(/%DESC(?:RIPTION)?%/gi, contentsData.description || '')
+    .replace(/%DESC(?:RIPTION)?_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.description || ''))
+    .replace(/%KEYWORDS%/gi, contentsData.keywords || '')
+    .replace(/%KEYWORDS_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.keywords || ''))
+    .replace(/%UTC_TIME%/gi, timeUTC)
+    .replace(/%LOCAL_TIME%/gi, timeLocal)
+    .replace(/%TAB%/gi, '\t')
+    .replace(/%EOL%/gi, lineFeed)
+    .replace(/%RT%/gi, '')
     .replace(kFORMAT_MATCHER_TST_INDENT, aMatched => {
       let indenters = aMatched.replace(/^%TST_INDENT|%$/g, '');
       if (indenters == '') {
@@ -431,23 +447,7 @@ async function fillPlaceHolders(aFormat, aTab, aIndentLevel) {
         indent = `${indenter}${indent}`;
       }
       return indent;
-    })
-    .replace(/%(?:RLINK|RLINK_HTML(?:IFIED)?|SEL|SEL_HTML(?:IFIED)?)%/gi, '')
-    .replace(/%URL%/gi, aTab.url)
-    .replace(/%(?:TITLE|TEXT)%/gi, aTab.title)
-    .replace(/%URL_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.url))
-    .replace(/%TITLE_HTML(?:IFIED)?%/gi, sanitizeHtmlText(aTab.title))
-    .replace(/%AUTHOR%/gi, contentsData.author || '')
-    .replace(/%AUTHOR_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.author || ''))
-    .replace(/%DESC(?:RIPTION)?%/gi, contentsData.description || '')
-    .replace(/%DESC(?:RIPTION)?_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.description || ''))
-    .replace(/%KEYWORDS%/gi, contentsData.keywords || '')
-    .replace(/%KEYWORDS_HTML(?:IFIED)?%/gi, sanitizeHtmlText(contentsData.keywords || ''))
-    .replace(/%UTC_TIME%/gi, timeUTC)
-    .replace(/%LOCAL_TIME%/gi, timeLocal)
-    .replace(/%TAB%/gi, '\t')
-    .replace(/%EOL%/gi, lineFeed)
-    .replace(/%RT%/gi, '');
+    });
 
   if (/%RT%/i.test(aFormat)) {
     return {
