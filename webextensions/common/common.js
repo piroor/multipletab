@@ -61,10 +61,12 @@ defaultClipboardFormats.push({
   label:  browser.i18n.getMessage('context.clipboard:title-and-url.label'),
   format: '%TITLE%%EOL%%URL%'
 });
+/*
 defaultClipboardFormats.push({
   label:  browser.i18n.getMessage('context.clipboard:title-and-url-tree.label'),
   format: '%TST_INDENT(|   )(|---)%%TITLE%%EOL%%TST_INDENT(|   )%%URL%'
 });
+*/
 defaultClipboardFormats.push({
   label:  browser.i18n.getMessage('context.clipboard:html-link.label'),
   format: '<a title="%TITLE_HTML%" href="%URL_HTML%">%TITLE_HTML%</a>'
@@ -75,10 +77,6 @@ defaultClipboardFormats.push({
 });
 defaultClipboardFormats.push({
   label:  browser.i18n.getMessage('context.clipboard:markdown-list.label'),
-  format: '* [%TITLE%](%URL% "%TITLE%")'
-});
-defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context.clipboard:markdown-tree.label'),
   format: '%TST_INDENT(  )%* [%TITLE%](%URL% "%TITLE%")'
 });
 
