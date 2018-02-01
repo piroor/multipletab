@@ -125,4 +125,40 @@ configs = new Configs({
 
   shouldNotifyUpdatedFromLegacyVersion: false,
   debug: false
+}, {
+  syncKeys: `
+    context_reloadTabs
+    context_bookmarkTabs
+    context_removeBookmarkFromTabs
+    context_duplicateTabs
+    context_pinTabs
+    context_unpinTabs
+    context_muteTabs
+    context_unmuteTabs
+    context_moveToNewWindow
+    context_moveToOtherWindow
+    context_removeTabs
+    context_removeOther
+    context_clipboard
+    context_saveTabs
+    context_printTabs
+    context_freezeTabs
+    context_unfreezeTabs
+    context_protectTabs
+    context_unprotectTabs
+    context_lockTabs
+    context_unlockTabs
+    context_groupTabs
+    context_suspendTabs
+    context_resumeTabs
+    context_selectAll
+    context_select
+    context_unselect
+    context_invertSelection
+    autoOpenMenuOnDragEnd
+    copyToClipboardFormats
+    saveTabsPrefix
+    disablePanelWhenAlternativeTabBarIsAvailable
+    debug
+  `.trim().split('\n').map(aKey => aKey.trim()).filter(aKey => aKey && aKey.indexOf('//') != 0)
 });
