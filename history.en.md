@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 2.0.7 (2018.2.1)
    * Add [`%TST_INDENT(...)%` placeholder for the "Copy to Clipboard" command](https://github.com/piroor/multipletab/issues/185#issuecomment-361820213).
    * Add ability to restore default items for "Copy to Clipboard" keeping user-defined items.
    * Add a new option to prevent opening menu after tab selection by dragging started with long press.
