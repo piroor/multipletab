@@ -1,6 +1,10 @@
 # History
 
  - master/HEAD
+   * Add [`%TST_INDENT(...)%` placeholder for the "Copy to Clipboard" command](https://github.com/piroor/multipletab/issues/185#issuecomment-361820213).
+   * Add ability to restore default items for "Copy to Clipboard" keeping user-defined items.
+   * Add a new option to prevent opening menu after tab selection by dragging started with long press.
+   * Synchronize most of configurations via the Firefox Sync.
  - 2.0.6 (2018.1.25)
    * Add "Create New Group" command for selected tabs (requires [Tree Style Tab](https://addons.mozilla.org/firefox/addon/tree-style-tab/).)
    * Make some permissions optional.
