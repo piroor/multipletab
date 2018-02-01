@@ -72,6 +72,11 @@
   "context.invertSelection.label":        { "message": "Invert Selection" },
 
 
+  "config.dragSelection.caption": { "message": "Tab Selection from dragging after long-press" },
+
+  "config.autoOpenMenuOnDragEnd.label": { "message": "Open menu automatically after tabs are selected" },
+
+
   "config.menu.caption": { "message": "Extra Context Menu Items" },
 
   "config.clipboard.caption": { "message": "Copy to Clipboard" },

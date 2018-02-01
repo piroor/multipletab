@@ -110,6 +110,7 @@ configs = new Configs({
   context_unselect: true,
   context_invertSelection: true,
 
+  autoOpenMenuOnDragEnd: true,
   copyToClipboardFormats: defaultClipboardFormats,
   useCRLF: false,
   useWorkaroundForBug1272869: true,

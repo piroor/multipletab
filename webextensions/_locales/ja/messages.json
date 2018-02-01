@@ -72,6 +72,11 @@
   "context.invertSelection.label":        { "message": "選択を反転" },
 
 
+  "config.dragSelection.caption": { "message": "長押しからのドラッグによるタブの選択操作" },
+
+  "config.autoOpenMenuOnDragEnd.label": { "message": "タブを選択した後に自動的にメニューを開く" },
+
+
   "config.menu.caption": { "message": "コンテキストメニューに追加する項目" },
 
   "config.clipboard.caption": { "message": "タブのクリップボードへのコピー" },

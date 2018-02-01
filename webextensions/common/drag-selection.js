@@ -303,6 +303,8 @@ dragExitAllWithDelay.cancel = () => {
 
 async function onTabItemDragEnd(aMessage) {
   //console.log('onTabItemDragEnd', aMessage);
+  if (!configs.autoOpenMenuOnDragEnd)
+    return;
   if (gDragSelection.willCloseSelectedTabs) {
     let allTabs = gDragSelection.allTabsOnDragReady.slice(0);
     allTabs.reverse();
