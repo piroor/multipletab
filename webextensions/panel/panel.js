@@ -13,7 +13,12 @@ var gSizeDefinitions;
 
 window.addEventListener('DOMContentLoaded', async () => {
   gTabBar = document.querySelector('#tabs');
-  gMenu = document.querySelector('#menu ul');
+  gMenu = document.querySelector('#menu');
+  gMenu.ui = new MenuUI({
+    root:              gMenu,
+    onCommand:         onMenuCommand,
+    animationDuration: 150
+  });
   gSizeDefinitions = document.getElementById('size-definitions');
 
   await configs.$loaded;
@@ -404,59 +409,21 @@ async function openMenu(aEvent) {
   var hasItems = await buildMenu();
   if (!hasItems)
     return;
-  var containerRect = document.querySelector('#main').getBoundingClientRect();
-  for (let menu of Array.slice(gMenu.parentNode.querySelectorAll('ul'))) {
-    let left = aEvent.clientX;
-    let top  = aEvent.clientY;
-    if (menu.parentNode.localName == 'li') {
-      let parentRect = menu.parentNode.getBoundingClientRect();
-      left = parentRect.right;
-      top  = parentRect.top;
-    }
-
-    let menuRect = menu.getBoundingClientRect();
-    left = left || Math.max(0, (containerRect.width - menuRect.width) / 2);
-    top  = top  || Math.max(0, (containerRect.height - menuRect.height) / 2);
-    left = Math.min(left, containerRect.width - menuRect.width - 3);
-    top  = Math.min(top,  containerRect.height - menuRect.height - 3);
-    menu.style.left = `${left}px`;
-    menu.style.top  = `${top}px`;
-  }
-  gMenu.parentNode.classList.add('open');
-  gMenu.classList.add('open');
-  await wait(150);
-  window.addEventListener('mousedown', onMenuMouseDown, { capture: true });
-  window.addEventListener('click', onMenuClick, { capture: true });
+  gMenu.ui.open({
+    left: aEvent.clientX,
+    top:  aEvent.clientY
+  });
 }
 
 function closeMenu() {
-  gMenu.parentNode.classList.add('open');
-  gMenu.classList.remove('open');
-  setTimeout(() => {
-    window.removeEventListener('mousedown', onMenuMouseDown, { capture: true });
-    window.removeEventListener('click', onMenuClick, { capture: true });
-  }, 150);
+  gMenu.ui.close();
 }
 
-function onMenuMouseDown(aEvent) {
-  aEvent.stopImmediatePropagation();
-  aEvent.stopPropagation();
-  aEvent.preventDefault();
-}
-
-function onMenuClick(aEvent) {
+function onMenuCommand(aItem, aEvent) {
   if (aEvent.button != 0)
     return closeMenu();
 
-  aEvent.stopImmediatePropagation();
-  aEvent.stopPropagation();
-  aEvent.preventDefault();
-
-  var target = aEvent.target;
-  while (target.nodeType != target.ELEMENT_NODE)
-    target = target.parentNode;
-
-  var id = target.getAttribute('data-item-id');
+  var id = aItem.getAttribute('data-item-id');
   if (id) {
     browser.runtime.sendMessage({
       type: kCOMMAND_SELECTION_MENU_ITEM_CLICK,
@@ -464,7 +431,7 @@ function onMenuClick(aEvent) {
     });
   }
 
-  closeMenu();
+  gMenu.ui.close();
 }
 
 async function buildMenu() {
@@ -489,7 +456,6 @@ async function buildMenu() {
         item.parentId != 'selection' &&
         item.parentId in knownItems) {
       let parent = knownItems[item.parentId];
-      parent.classList.add('has-submenu');
       let subMenu = parent.lastChild;
       if (!subMenu || subMenu.localName != 'ul')
         subMenu = parent.appendChild(document.createElement('ul'));

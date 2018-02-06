@@ -165,78 +165,8 @@ ul li {
 
 /* menu view */
 
-#menu.open {
+#menu.open ~ .menu-ui-blocking-screen {
   background: rgba(0, 0, 0, 0.01); /* this is required to prevent ghost rendering */
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-  position: fixed;
-  right: 0;
-  top: 0;
-}
-
-#menu ul {
-  background: Menu;
-  border: 1px outset Menu;
-  box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.65);
-  color: MenuText;
-  font: -moz-pull-down-menu;
-  margin: 0;
-  max-height: var(--menu-max-height);
-  max-width: var(--menu-max-width);
-  opacity: 0;
-  padding: 0;
-  pointer-events: none;
-  position: fixed;
-  transition: opacity 0.15s ease-out;
-  z-index: 999999;
-}
-
-#menu ul ul {
-  transition-delay: 300ms;
-}
-
-#menu ul.open,
-#menu ul li:hover > ul {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-#menu li {
-  list-style: none;
-  margin: 0;
-  padding: 0.15em 0.5em 0.15em 1.5em;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-#menu li.separator {
-  border: 1px inset Menu;
-  margin: 0 0.5em;
-  max-height: 0;
-  opacity: 0.5;
-  padding: 0;
-  pointer-events: none;
-}
-
-#menu li:not(.separator):hover {
-  background: Highlight;
-  color: HighlightText
-}
-
-#menu li:not(.separator):hover ul li:not(:hover) {
-  background: transparent;
-  color: MenuText;
-}
-
-#menu li.has-submenu {
-  padding-right: 1.5em;
-}
-#menu li.has-submenu::after {
-  content: ">";
-  position: absolute;
-  right: 0.5em;
 }
 
 
