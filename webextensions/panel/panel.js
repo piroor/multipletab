@@ -205,7 +205,7 @@ function onClick(aEvent) {
     openMenu(aEvent);
     return;
   }
-  closeMenu();
+  gMenu.ui.close();
   if (findCheckboxFromEvent(aEvent))
     return;
   var item = findTabItemFromEvent(aEvent);
@@ -415,13 +415,9 @@ async function openMenu(aEvent) {
   });
 }
 
-function closeMenu() {
-  gMenu.ui.close();
-}
-
 function onMenuCommand(aItem, aEvent) {
   if (aEvent.button != 0)
-    return closeMenu();
+    return gMenu.ui.close();
 
   var id = aItem.getAttribute('data-item-id');
   if (id) {
