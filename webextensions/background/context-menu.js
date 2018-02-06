@@ -155,7 +155,11 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       return;
     }
     gActiveContextMenuItems.push(params);
-    promisedMenuUpdated.push(browser.contextMenus.create(params));
+    promisedMenuUpdated.push(browser.contextMenus.create(Object.assign({}, params, {
+      // Access key is not supported by WE API.
+      // See also: https://bugzilla.mozilla.org/show_bug.cgi?id=1320462
+      title: params.title && params.title.replace(/\(&[a-z]\)|&([a-z])/i, '$1')
+    })));
     try {
       promisedMenuUpdated.push(browser.runtime.sendMessage(kTST_ID, {
         type: kTSTAPI_CONTEXT_MENU_CREATE,
