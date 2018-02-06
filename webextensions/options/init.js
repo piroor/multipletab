@@ -21,6 +21,11 @@ function onConfigChanged(aKey) {
 
 configs.$addObserver(onConfigChanged);
 window.addEventListener('DOMContentLoaded', () => {
+  // remove accesskey mark
+  for (let label of Array.slice(document.querySelectorAll('#menu-items label, #bookmarksPermissionCheck, #clipboardWritePermissionCheck'))) {
+    label.lastChild.nodeValue = label.lastChild.nodeValue.replace(/\(&[a-z]\)|&([a-z])/i, '$1');
+  }
+
   gFormatRows = document.querySelector('#copyToClipboardFormatsRows');
   gFormatRows.addEventListener('input', onFormatInput);
   addButtonCommandListener(
