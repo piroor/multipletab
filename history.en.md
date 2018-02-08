@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+   * Better behavior and keyboard operation handling of fake context menu.
+   * Don't apply indent for `%TST_INDENT(...)%` when tree of tabs are partially selected.
  - 2.0.7 (2018.2.1)
    * Add [`%TST_INDENT(...)%` placeholder for the "Copy to Clipboard" command](https://github.com/piroor/multipletab/issues/185#issuecomment-361820213).
    * Add ability to restore default items for "Copy to Clipboard" keeping user-defined items.
