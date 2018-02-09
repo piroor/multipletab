@@ -142,7 +142,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       if (aOptions.title)
         title = aOptions.title;
       else
-        title = browser.i18n.getMessage(`context.${id}.label`);
+        title = browser.i18n.getMessage(`context_${id}_label`);
     }
     let params = {
       id, type, title,
