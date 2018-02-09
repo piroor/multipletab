@@ -2,111 +2,111 @@
   "extensionName": { "message": "Multiple Tab Handler" },
   "extensionDescription": { "message": "Provides ability to manage multiple tabs at a time." },
 
-  "bookmarkFolder.label": { "message": "$TITLE$ and more",
+  "bookmarkFolder_label": { "message": "$TITLE$ and more",
     "placeholders": {
       "title": { "content": "$1", "example": "title" }
     }},
-  "bookmarkTabs.notification.title": { "message": "Tabs are Successfully Bookmarked" },
-  "bookmarkTabs.notification.message": { "message": "$COUNT$ tabs including \"$TITLE$\" are bookmarked in a new folder under \"$PARENT$.",
+  "bookmarkTabs_notification_title": { "message": "Tabs are Successfully Bookmarked" },
+  "bookmarkTabs_notification_message": { "message": "$COUNT$ tabs including \"$TITLE$\" are bookmarked in a new folder under \"$PARENT$.",
     "placeholders": {
       "title": { "content": "$1", "example": "Title" },
       "count": { "content": "$2", "example": "2" },
       "parent": { "content": "$3", "example": "Parent Folder" }
     }},
 
-  "notPermitted.allUrls.title": { "message": "Permission error" },
-  "notPermitted.allUrls.message": { "message": "Failed to get permissions to access contents of webpages. Please grant permissions via the configurations of Multiple Tab Handler." },
-  "notPermitted.bookmarks.title": { "message": "Permission error" },
-  "notPermitted.bookmarks.message": { "message": "Failed to get permissions to create bookmarks. Please grant permissions via the configurations of Multiple Tab Handler." },
-  "notPermitted.clipboardWrite.title": { "message": "Permission error" },
-  "notPermitted.clipboardWrite.message": { "message": "Failed to get permissions to write data to the clipboard. Please grant permissions via the configurations of Multiple Tab Handler." },
+  "notPermitted_allUrls_title": { "message": "Permission error" },
+  "notPermitted_allUrls_message": { "message": "Failed to get permissions to access contents of webpages. Please grant permissions via the configurations of Multiple Tab Handler." },
+  "notPermitted_bookmarks_title": { "message": "Permission error" },
+  "notPermitted_bookmarks_message": { "message": "Failed to get permissions to create bookmarks. Please grant permissions via the configurations of Multiple Tab Handler." },
+  "notPermitted_clipboardWrite_title": { "message": "Permission error" },
+  "notPermitted_clipboardWrite_message": { "message": "Failed to get permissions to write data to the clipboard. Please grant permissions via the configurations of Multiple Tab Handler." },
 
 
   "panelTitle": { "message": "Select and Do" },
   "panelCaptionTop": { "message": "Select Tabs" },
   "panelCaptionBottom": { "message": "And Click Here to Choose Action" },
 
-  "panelDisabledBy.treestyletab": { "message": "Select and Do panel is disabled, instead please see vertical tab bar in the sidebar provided by Tree Style Tab. You can select tabs by dragging (you need to start the drag action with a long press over 0.5sec). Moreover, Ctrl-Click toggles selection and Shift-Click selects tabs between the clicked and the active." },
+  "panelDisabledBy_treestyletab": { "message": "Select and Do panel is disabled, instead please see vertical tab bar in the sidebar provided by Tree Style Tab. You can select tabs by dragging (you need to start the drag action with a long press over 0.5sec). Moreover, Ctrl-Click toggles selection and Shift-Click selects tabs between the clicked and the active." },
 
-  "message.updatedFromLegacy.description": { "message": "Multiple Tab Handler is now reborn based on WebExtensions technologies for Firefox 57 and later. Now you can select tabs and do something command from the \"Select and Do\" toolbar button.\n\nMoreover, this addon is compatible to <a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">Tree Style Tab</a> another addon. You'll select tabs in in the TST's sidebar, by long-press (about 0.5sec)." },
-
-
-  "saveTabsPrefix.defaultValue": { "message": "Saved Tabs/" },
+  "message_updatedFromLegacy_description": { "message": "Multiple Tab Handler is now reborn based on WebExtensions technologies for Firefox 57 and later. Now you can select tabs and do something command from the \"Select and Do\" toolbar button.\n\nMoreover, this addon is compatible to <a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">Tree Style Tab</a> another addon. You'll select tabs in in the TST's sidebar, by long-press (about 0.5sec)." },
 
 
-  "context.selection.label":              { "message": "Selected Tabs" },
-
-  "context.reloadTabs.label":             { "message": "&Reload Tabs" },
-  "context.bookmarkTabs.label":           { "message": "&Bookmark Tabs" },
-  "context.removeBookmarkFromTabs.label": { "message": "Remove Bookmarks from Tabs" },
-  "context.duplicateTabs.label":          { "message": "&Duplicate Tabs" },
-  "context.pinTabs.label":                { "message": "&Pin Tabs" },
-  "context.unpinTabs.label":              { "message": "Unpin Ta&bs" },
-  "context.muteTabs.label":               { "message": "&Mute Tabs" },
-  "context.unmuteTabs.label":             { "message": "U&nmute Tabs" },
-  "context.moveToNewWindow.label":        { "message": "Move Tabs to New &Window" },
-  "context.moveToOtherWindow.label":      { "message": "Move Tabs to Other W&indow" },
-  "context.removeTabs.label":             { "message": "&Close Tabs" },
-  "context.removeOther.label":            { "message": "Cl&ose Unselected Tabs" },
-  "context.clipboard.label":              { "message": "Cop&y to Clipboard" },
-  "context.clipboard:url.label":           { "message": "URI" },
-  "context.clipboard:title-and-url.label": { "message": "Title and URI" },
-  "context.clipboard:html-link.label":     { "message": "HTML Link" },
-  "context.clipboard:markdown.label":      { "message": "Markdown" },
-  "context.clipboard:markdown-list.label": { "message": "Markdown (List)" },
-  "context.saveTabs.label":               { "message": "Sa&ve Tabs as Files" },
-  "context.printTabs.label":              { "message": "&Print Tabs" },
-  "context.freezeTabs.label":             { "message": "Freeze Tabs" },
-  "context.unfreezeTabs.label":           { "message": "Unfreeze Tabs" },
-  "context.protectTabs.label":            { "message": "Protect Tabs" },
-  "context.unprotectTabs.label":          { "message": "Unprotect Tabs" },
-  "context.lockTabs.label":               { "message": "Lock Tabs" },
-  "context.unlockTabs.label":             { "message": "Unlock Tabs" },
-  "context.groupTabs.label":              { "message": "Create New &Group" },
-  "context.suspendTabs.label":            { "message": "Suspen&d Tabs" },
-  "context.resumeTabs.label":             { "message": "R&esume Tabs" },
-
-  "context.select.label":                 { "message": "&Select" },
-  "context.unselect.label":               { "message": "&Unselect" },
-  "context.selectAll.label":              { "message": "Select &All" },
-  "context.invertSelection.label":        { "message": "&Invert Selection" },
+  "saveTabsPrefix_defaultValue": { "message": "Saved Tabs/" },
 
 
-  "config.dragSelection.caption": { "message": "Tab Selection from dragging after long-press" },
+  "context_selection_label":              { "message": "Selected Tabs" },
 
-  "config.autoOpenMenuOnDragEnd.label": { "message": "Open menu automatically after tabs are selected" },
+  "context_reloadTabs_label":             { "message": "&Reload Tabs" },
+  "context_bookmarkTabs_label":           { "message": "&Bookmark Tabs" },
+  "context_removeBookmarkFromTabs_label": { "message": "Remove Bookmarks from Tabs" },
+  "context_duplicateTabs_label":          { "message": "&Duplicate Tabs" },
+  "context_pinTabs_label":                { "message": "&Pin Tabs" },
+  "context_unpinTabs_label":              { "message": "Unpin Ta&bs" },
+  "context_muteTabs_label":               { "message": "&Mute Tabs" },
+  "context_unmuteTabs_label":             { "message": "U&nmute Tabs" },
+  "context_moveToNewWindow_label":        { "message": "Move Tabs to New &Window" },
+  "context_moveToOtherWindow_label":      { "message": "Move Tabs to Other W&indow" },
+  "context_removeTabs_label":             { "message": "&Close Tabs" },
+  "context_removeOther_label":            { "message": "Cl&ose Unselected Tabs" },
+  "context_clipboard_label":              { "message": "Cop&y to Clipboard" },
+  "context_clipboard:url.label":           { "message": "URI" },
+  "context_clipboard:title-and-url.label": { "message": "Title and URI" },
+  "context_clipboard:html-link.label":     { "message": "HTML Link" },
+  "context_clipboard:markdown.label":      { "message": "Markdown" },
+  "context_clipboard:markdown-list.label": { "message": "Markdown (List)" },
+  "context_saveTabs_label":               { "message": "Sa&ve Tabs as Files" },
+  "context_printTabs_label":              { "message": "&Print Tabs" },
+  "context_freezeTabs_label":             { "message": "Freeze Tabs" },
+  "context_unfreezeTabs_label":           { "message": "Unfreeze Tabs" },
+  "context_protectTabs_label":            { "message": "Protect Tabs" },
+  "context_unprotectTabs_label":          { "message": "Unprotect Tabs" },
+  "context_lockTabs_label":               { "message": "Lock Tabs" },
+  "context_unlockTabs_label":             { "message": "Unlock Tabs" },
+  "context_groupTabs_label":              { "message": "Create New &Group" },
+  "context_suspendTabs_label":            { "message": "Suspen&d Tabs" },
+  "context_resumeTabs_label":             { "message": "R&esume Tabs" },
+
+  "context_select_label":                 { "message": "&Select" },
+  "context_unselect_label":               { "message": "&Unselect" },
+  "context_selectAll_label":              { "message": "Select &All" },
+  "context_invertSelection_label":        { "message": "&Invert Selection" },
 
 
-  "config.menu.caption": { "message": "Extra Context Menu Items" },
+  "config_dragSelection_caption": { "message": "Tab Selection from dragging after long-press" },
 
-  "config.clipboard.caption": { "message": "Copy to Clipboard" },
-  "config.copyToClipboardFormats.label":    { "message": "Label" },
-  "config.copyToClipboardFormats.template": { "message": "Format of Copied Data" },
-  "config.copyToClipboardFormats.add":      { "message": "Add New Format" },
-  "config.copyToClipboardFormats.remove":   { "message": "Remove This Format" },
-  "config.copyToClipboardFormats.up":       { "message": "Move Up" },
-  "config.copyToClipboardFormats.down":     { "message": "Move Down" },
-  "config.copyToClipboardFormats.restoreDefaults": { "message": "Restore default formats keeping added formats" },
-  "config.copyToClipboardFormats.placeholders": { "message": "Available place holders for formats:\n%URL%=Page URL,\n%TITLE%=Page Title,\n%AUTHOR%=Author name (specified by META),\n%DESCRIPTION%=Description (specified by META),\n%KEYWORDS%=Search keywords (specified by META),\n%URL_HTMLIFIED%=URL escaped for HTML,\n%TITLE_HTMLIFIED%=Title escaped for HTML,\n%AUTHOR_HTMLIFIED%=Author name escaped for HTML,\n%DESCRIPTION_HTMLIFIED%=Description escaped for HTML,\n%KEYWORDS_HTMLIFIED%=Search keywords escaped for HTML,\n%TST_INDENT(indenter)%, %TST_INDENT(indenter1)(indenter2)...(indenterN)%=Indent (powered by Tree Style Tab)\n%TAB%=Tab,\n%EOL%=Line Feed,\n%RT%=Copy as a rich text (Note: this placeholder itself is cleared from the copied text)" },
-
-  "config.saveTabs.caption": { "message": "Save Tabs as Files" },
-  "config.saveTabsPrefix.label_before": { "message": "Save tabs under " },
-  "config.saveTabsPrefix.label_after": { "message": "" },
-  "config.saveTabsPrefix.description": { "message": "*Path under the download folder. \"/\" will be recognized as a path delimiter." },
-
-  "config.permissions.caption": { "message": "Extra Permissions for Commands" },
-  "config.permissions.fallbackToToolbarButton.title": { "message": "Click the \"Select and Do\" toolbar button" },
-  "config.permissions.fallbackToToolbarButton.message": { "message": "Due to Firefox's bug, you cannot request permission from this screen. Please click the \"Select and Do\" toolbar button to grant permissions." },
+  "config_autoOpenMenuOnDragEnd_label": { "message": "Open menu automatically after tabs are selected" },
 
 
-  "config.dependsOn.before": { "message": "*This feature requires " },
-  "config.dependsOn.after":  { "message": "." },
-  "config.dependsOn.treestyletab.name": { "message": "Tree Style Tab" },
-  "config.dependsOn.treestyletab.uri":  { "message": "https://addons.mozilla.org/firefox/addon/tree-style-tab/" },
+  "config_menu_caption": { "message": "Extra Context Menu Items" },
+
+  "config_clipboard_caption": { "message": "Copy to Clipboard" },
+  "config_copyToClipboardFormats_label":    { "message": "Label" },
+  "config_copyToClipboardFormats_template": { "message": "Format of Copied Data" },
+  "config_copyToClipboardFormats_add":      { "message": "Add New Format" },
+  "config_copyToClipboardFormats_remove":   { "message": "Remove This Format" },
+  "config_copyToClipboardFormats_up":       { "message": "Move Up" },
+  "config_copyToClipboardFormats_down":     { "message": "Move Down" },
+  "config_copyToClipboardFormats_restoreDefaults": { "message": "Restore default formats keeping added formats" },
+  "config_copyToClipboardFormats_placeholders": { "message": "Available place holders for formats:\n%URL%=Page URL,\n%TITLE%=Page Title,\n%AUTHOR%=Author name (specified by META),\n%DESCRIPTION%=Description (specified by META),\n%KEYWORDS%=Search keywords (specified by META),\n%URL_HTMLIFIED%=URL escaped for HTML,\n%TITLE_HTMLIFIED%=Title escaped for HTML,\n%AUTHOR_HTMLIFIED%=Author name escaped for HTML,\n%DESCRIPTION_HTMLIFIED%=Description escaped for HTML,\n%KEYWORDS_HTMLIFIED%=Search keywords escaped for HTML,\n%TST_INDENT(indenter)%, %TST_INDENT(indenter1)(indenter2)...(indenterN)%=Indent (powered by Tree Style Tab)\n%TAB%=Tab,\n%EOL%=Line Feed,\n%RT%=Copy as a rich text (Note: this placeholder itself is cleared from the copied text)" },
+
+  "config_saveTabs_caption": { "message": "Save Tabs as Files" },
+  "config_saveTabsPrefix_label_before": { "message": "Save tabs under " },
+  "config_saveTabsPrefix_label_after": { "message": "" },
+  "config_saveTabsPrefix_description": { "message": "*Path under the download folder. \"/\" will be recognized as a path delimiter." },
+
+  "config_permissions_caption": { "message": "Extra Permissions for Commands" },
+  "config_permissions_fallbackToToolbarButton_title": { "message": "Click the \"Select and Do\" toolbar button" },
+  "config_permissions_fallbackToToolbarButton_message": { "message": "Due to Firefox's bug, you cannot request permission from this screen. Please click the \"Select and Do\" toolbar button to grant permissions." },
 
 
-  "config.debug.caption": { "message": "Development" },
-  "config.disablePanelWhenAlternativeTabBarIsAvailable.label": { "message": "Disable panel when any alternative tab bar is available" },
-  "config.debug.label": { "message": "Debug mode" },
-  "config.all.caption": { "message": "All Configs" }
+  "config_dependsOn_before": { "message": "*This feature requires " },
+  "config_dependsOn_after":  { "message": "." },
+  "config_dependsOn_treestyletab_name": { "message": "Tree Style Tab" },
+  "config_dependsOn_treestyletab_uri":  { "message": "https://addons.mozilla.org/firefox/addon/tree-style-tab/" },
+
+
+  "config_debug_caption": { "message": "Development" },
+  "config_disablePanelWhenAlternativeTabBarIsAvailable_label": { "message": "Disable panel when any alternative tab bar is available" },
+  "config_debug_label": { "message": "Debug mode" },
+  "config_all_caption": { "message": "All Configs" }
 }

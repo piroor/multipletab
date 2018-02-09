@@ -318,7 +318,7 @@ async function notifyUpdatedFromLegacy() {
     active: true
   });
   var title       = `${browser.i18n.getMessage('extensionName')} ${browser.runtime.getManifest().version}`
-  var description = browser.i18n.getMessage('message.updatedFromLegacy.description');
+  var description = browser.i18n.getMessage('message_updatedFromLegacy_description');
   browser.tabs.executeScript(tab.id, {
     code: `
       document.querySelector('#title').textContent = document.title = ${JSON.stringify(title)};

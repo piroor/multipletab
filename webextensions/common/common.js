@@ -54,29 +54,29 @@ async function notify(aParams = {}) {
 
 var defaultClipboardFormats = [];
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context.clipboard:url.label'),
+  label:  browser.i18n.getMessage('context_clipboard:url.label'),
   format: '%URL%'
 });
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context.clipboard:title-and-url.label'),
+  label:  browser.i18n.getMessage('context_clipboard:title-and-url.label'),
   format: '%TITLE%%EOL%%URL%'
 });
 /*
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context.clipboard:title-and-url-tree.label'),
+  label:  browser.i18n.getMessage('context_clipboard:title-and-url-tree.label'),
   format: '%TST_INDENT(|   )(|---)%%TITLE%%EOL%%TST_INDENT(|   )%%URL%'
 });
 */
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context.clipboard:html-link.label'),
+  label:  browser.i18n.getMessage('context_clipboard:html-link.label'),
   format: '<a title="%TITLE_HTML%" href="%URL_HTML%">%TITLE_HTML%</a>'
 });
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context.clipboard:markdown.label'),
+  label:  browser.i18n.getMessage('context_clipboard:markdown.label'),
   format: '[%TITLE%](%URL% "%TITLE%")'
 });
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context.clipboard:markdown-list.label'),
+  label:  browser.i18n.getMessage('context_clipboard:markdown-list.label'),
   format: '%TST_INDENT(  )%* [%TITLE%](%URL% "%TITLE%")'
 });
 
@@ -115,7 +115,7 @@ configs = new Configs({
   useCRLF: false,
   useWorkaroundForBug1272869: true,
 
-  saveTabsPrefix: browser.i18n.getMessage('saveTabsPrefix.defaultValue'),
+  saveTabsPrefix: browser.i18n.getMessage('saveTabsPrefix_defaultValue'),
 
   disablePanelWhenAlternativeTabBarIsAvailable: true,
 

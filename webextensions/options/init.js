@@ -173,7 +173,7 @@ function createFormatRow(aParams = {}) {
   labelField.classList.add('column');
   labelField.classList.add('label');
   labelField.setAttribute('type', 'text');
-  labelField.setAttribute('placeholder', browser.i18n.getMessage('config.copyToClipboardFormats.label'));
+  labelField.setAttribute('placeholder', browser.i18n.getMessage('config_copyToClipboardFormats_label'));
   if (aParams.label)
     labelField.value = aParams.label;
 
@@ -181,26 +181,26 @@ function createFormatRow(aParams = {}) {
   formatField.classList.add('column');
   formatField.classList.add('format');
   formatField.setAttribute('type', 'text');
-  formatField.setAttribute('placeholder', browser.i18n.getMessage('config.copyToClipboardFormats.template'));
+  formatField.setAttribute('placeholder', browser.i18n.getMessage('config_copyToClipboardFormats_template'));
   if (aParams.format)
     formatField.value = aParams.format;
 
   var upButton = row.appendChild(document.createElement('button'));
   upButton.classList.add('column');
   upButton.classList.add('up');
-  upButton.setAttribute('title', browser.i18n.getMessage('config.copyToClipboardFormats.up'));
+  upButton.setAttribute('title', browser.i18n.getMessage('config_copyToClipboardFormats_up'));
   upButton.appendChild(document.createTextNode('▲'));
 
   var downButton = row.appendChild(document.createElement('button'));
   downButton.classList.add('column');
   downButton.classList.add('down');
-  downButton.setAttribute('title', browser.i18n.getMessage('config.copyToClipboardFormats.down'));
+  downButton.setAttribute('title', browser.i18n.getMessage('config_copyToClipboardFormats_down'));
   downButton.appendChild(document.createTextNode('▼'));
 
   var removeButton = row.appendChild(document.createElement('button'));
   removeButton.classList.add('column');
   removeButton.classList.add('remove');
-  removeButton.setAttribute('title', browser.i18n.getMessage('config.copyToClipboardFormats.remove'));
+  removeButton.setAttribute('title', browser.i18n.getMessage('config_copyToClipboardFormats_remove'));
   removeButton.appendChild(document.createTextNode('✖'));
 
   return row;

@@ -130,8 +130,8 @@ async function reloadTabs(aIds) {
 async function bookmarkTabs(aIds, aOptions = {}) {
   if (!(await Permissions.isGranted(Permissions.BOOKMARKS))) {
     notify({
-      title:   browser.i18n.getMessage('notPermitted.bookmarks.title'),
-      message: browser.i18n.getMessage('notPermitted.bookmarks.message')
+      title:   browser.i18n.getMessage('notPermitted_bookmarks_title'),
+      message: browser.i18n.getMessage('notPermitted_bookmarks_message')
     });
     return null;
   }
@@ -139,7 +139,7 @@ async function bookmarkTabs(aIds, aOptions = {}) {
   var tabs = await Promise.all(aIds.map(aId => browser.tabs.get(aId)));
   tabs.forEach(TabIdFixer.fixTab);
   var folderParams = {
-    title: browser.i18n.getMessage('bookmarkFolder.label', tabs[0].title)
+    title: browser.i18n.getMessage('bookmarkFolder_label', tabs[0].title)
   };
   if (aOptions.parentId) {
     folderParams.parentId = aOptions.parentId;
@@ -159,8 +159,8 @@ async function bookmarkTabs(aIds, aOptions = {}) {
 
   browser.bookmarks.get(folder.parentId).then(aFolders => {
     notify({
-      title:   browser.i18n.getMessage('bookmarkTabs.notification.title'),
-      message: browser.i18n.getMessage('bookmarkTabs.notification.message', [
+      title:   browser.i18n.getMessage('bookmarkTabs_notification_title'),
+      message: browser.i18n.getMessage('bookmarkTabs_notification_message', [
         tabs[0].title,
         tabs.length,
         aFolders[0].title
@@ -292,8 +292,8 @@ const kFORMAT_MATCHER_TST_INDENT = new RegExp(`%TST_INDENT(?:${kFORMAT_PARAMETER
 async function copyToClipboard(aIds, aFormat) {
   if (!(await Permissions.isGranted(Permissions.CLIPBOARD_WRITE))) {
     notify({
-      title:   browser.i18n.getMessage('notPermitted.clipboardWrite.title'),
-      message: browser.i18n.getMessage('notPermitted.clipboardWrite.message')
+      title:   browser.i18n.getMessage('notPermitted_clipboardWrite_title'),
+      message: browser.i18n.getMessage('notPermitted_clipboardWrite_message')
     });
     return;
   }
@@ -517,8 +517,8 @@ async function suggestFileNameForTab(aTab) {
     log(`getting content type of ${aTab.id}`);
     if (!(await Permissions.isGranted(Permissions.ALL_URLS))) {
       notify({
-        title:   browser.i18n.getMessage('notPermitted.allUrls.title'),
-        message: browser.i18n.getMessage('notPermitted.allUrls.message')
+        title:   browser.i18n.getMessage('notPermitted_allUrls_title'),
+        message: browser.i18n.getMessage('notPermitted_allUrls_message')
       });
     }
     else {
