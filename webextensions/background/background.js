@@ -71,6 +71,10 @@ async function onShortcutCommand(aCommand) {
     currentWindow: true
   }))[0];
   const selectedTabIds = getSelectedTabIds();
+
+  if (selectedTabIds.length <= 0)
+    return;
+
   switch (aCommand) {
     case 'reloadSelectedTabs':
       reloadTabs(selectedTabIds);
@@ -102,6 +106,8 @@ async function onShortcutCommand(aCommand) {
 
     case 'moveSelectedTabsToOtherWindow': {
       const otherWindows = (await browser.windows.getAll()).filter(aWindow => aWindow.id != activeTab.windowId);
+      if (otherWindows.length <= 0)
+        return moveToWindow(selectedTabIds);
       const result = await RichConfirm.showInTab(activeTab.id, {
         message: browser.i18n.getMessage('command_moveSelectedTabsToOtherWindow_message'),
         buttons: otherWindows.map(aWindow => aWindow.title)
