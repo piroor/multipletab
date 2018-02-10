@@ -55,10 +55,6 @@ window.addEventListener('DOMContentLoaded', () => {
       Permissions.CLIPBOARD_WRITE,
       document.querySelector('#clipboardWritePermissionGranted')
     );
-    Permissions.bindToCheckbox(
-      Permissions.ALL_URLS,
-      document.querySelector('#allUrlsPermissionGranted')
-    );
 
     options.buildUIForAllConfigs(document.querySelector('#debug-configs'));
     onConfigChanged('debug');
