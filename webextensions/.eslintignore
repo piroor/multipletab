@@ -4,7 +4,9 @@ common/TabFavIconHelper.js
 common/Configs.js
 common/l10n.js
 common/MenuUI.js
+common/RichConfirm.js
 options/Options.js
+options/ShortcutCustomizeUI.js
 
 # include as a lint target.
 !.eslintrc.js
