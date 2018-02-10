@@ -24,6 +24,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.browserAction.setPopup({ popup: kPOPUP_URL });
   Permissions.clearRequest();
 
+  browser.commands.onCommand.addListener(onShortcutCommand);
+
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
   registerToTST();
@@ -60,6 +62,121 @@ async function onDragSelectionEnd(aMessage) {
   }
   catch(e) {
     log('failed to open context menu: ', e);
+  }
+}
+
+async function onShortcutCommand(aCommand) {
+  const activeTab = (await browser.tabs.query({
+    active:        true,
+    currentWindow: true
+  }))[0];
+  const selectedTabIds = getSelectedTabIds();
+  switch (aCommand) {
+    case 'reloadSelectedTabs':
+      reloadTabs(selectedTabIds);
+      break;
+    case 'bookmarkSelectedTabs':
+      bookmarkTabs(selectedTabIds);
+      break;
+
+    case 'duplicateSelectedTabs':
+      duplicateTabs(selectedTabIds);
+      break;
+
+    case 'pinSelectedTabs':
+      pinTabs(selectedTabIds);
+      break;
+    case 'unpinSelectedTabs':
+      unpinTabs(selectedTabIds);
+      break;
+    case 'muteSelectedTabs':
+      muteTabs(selectedTabIds);
+      break;
+    case 'unmuteSelectedTabs':
+      unmuteTabs(selectedTabIds);
+      break;
+
+    case 'moveSelectedTabsToNewWindow':
+      moveToWindow(selectedTabIds);
+      break;
+
+    case 'moveSelectedTabsToOtherWindow': {
+      const otherWindows = (await browser.windows.getAll()).filter(aWindow => aWindow.id != activeTab.windowId);
+      const result = await RichConfirm.showInTab(activeTab.id, {
+        message: browser.i18n.getMessage('command_moveSelectedTabsToOtherWindow_message'),
+        buttons: otherWindows.map(aWindow => aWindow.title)
+      });
+      if (result.buttonIndex > -1)
+        moveToWindow(selectedTabIds, otherWindows[result.buttonIndex].id);
+    }; break;
+
+    case 'removeSelectedTabs':
+      removeTabs(selectedTabIds);
+      break;
+    case 'removeUnselectedTabs':
+      removeOtherTabs(selectedTabIds);
+      break;
+
+    case 'copySelectedTabs': {
+      let formats;
+      if (!Array.isArray(configs.copyToClipboardFormats)) { // migrate to array
+        formats = [];
+        for (let label of Object.keys(configs.copyToClipboardFormats)) {
+          formats.push({
+            label:  label,
+            format: configs.copyToClipboardFormats[label]
+          });
+        }
+      }
+      else {
+        formats = configs.copyToClipboardFormats;
+      }
+      const result = await RichConfirm.showInTab(activeTab.id, {
+        message: browser.i18n.getMessage('command_copySelectedTabs_message'),
+        buttons: formats.map(aFormat => aFormat.label)
+      });
+      if (result.buttonIndex > -1) {
+        await clearSelection();
+        await wait(100); // to wait tab titles are updated
+        await copyToClipboard(selectedTabIds, formats[result.buttonIndex].format);
+        const tabs = await getAllTabs(activeTab.windowId);
+        tabs.filter(aTab => selectedTabIds.indexOf(aTab.id) > -1)
+          .forEach(aTab => setSelection(aTab, true));
+      }
+    } break;
+
+    case 'saveSelectedTabs':
+      await clearSelection();
+      await wait(100); // to wait tab titles are updated
+      await saveTabs(selectedTabIds);
+      const tabs = await getAllTabs(activeTab.windowId);
+      tabs.filter(aTab => selectedTabIds.indexOf(aTab.id) > -1)
+        .forEach(aTab => setSelection(aTab, true));
+      break;
+
+    case 'printSelectedTabs':
+      break;
+
+    case 'groupSelectedTabs':
+      browser.runtime.sendMessage(kTST_ID, {
+        type: kTSTAPI_GROUP_TABS,
+        tabs: selectedTabIds
+      }).catch(e => {});
+      break;
+
+    case 'suspendSelectedTabs':
+    case 'resumeSelectedTabs':
+      break;
+
+    case 'toggleSelection':
+      setSelection(activeTab, selectedTabIds.indexOf(activeTab.id) < 0);
+      break;
+    case 'selectAll':
+      selectAllTabs();
+      break;
+    case 'invertSelection':
+      invertSelection();
+      break;
   }
 }
 

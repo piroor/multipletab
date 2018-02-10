@@ -32,6 +32,7 @@
       "common/drag-selection.js",
       "common/TabIdFixer.js",
       "common/TabFavIconHelper.js",
+      "common/RichConfirm.js",
       "background/background.js",
       "background/context-menu.js"
     ]
