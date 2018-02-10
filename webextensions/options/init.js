@@ -41,6 +41,11 @@ window.addEventListener('DOMContentLoaded', () => {
     (aEvent) => { restoreDefaultFormats(); }
   );
 
+  ShortcutCustomizeUI.build().then(aUI => {
+    document.getElementById('shortcuts').appendChild(aUI);
+    l10n.updateDocument();
+  });
+
   configs.$loaded.then(() => {
     Permissions.bindToCheckbox(
       Permissions.BOOKMARKS,

@@ -84,11 +84,11 @@
     "unmuteSelectedTabs": {
       "description": "__MSG_command_unmuteSelectedTabs__"
     },
-    "moveToNewWindowSelectedTabs": {
-      "description": "__MSG_command_moveToNewWindowSelectedTabs__"
+    "moveSelectedTabsToNewWindow": {
+      "description": "__MSG_command_moveSelectedTabsToNewWindow__"
     },
-    "moveToOtherWindowSelectedTabs": {
-      "description": "__MSG_command_moveToOtherWindowSelectedTabs__"
+    "moveSelectedTabsToOtherWindow": {
+      "description": "__MSG_command_moveSelectedTabsToOtherWindow__"
     },
     "removeSelectedTabs": {
       "description": "__MSG_command_removeSelectedTabs__"

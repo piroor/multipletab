@@ -127,6 +127,9 @@
   "config_dependsOn_treestyletab_uri":  { "message": "https://addons.mozilla.org/firefox/addon/tree-style-tab/" },
 
 
+  "config_shortcuts_caption": { "message": "キーボードショートカット" },
+
+
   "config_debug_caption": { "message": "開発用" },
   "config_disablePanelWhenAlternativeTabBarIsAvailable_label": { "message": "代替のタブバーが利用可能な時はパネルを無効化する" },
   "config_debug_label": { "message": "デバッグモード" },

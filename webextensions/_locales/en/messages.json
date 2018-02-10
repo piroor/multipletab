@@ -128,6 +128,9 @@
   "config_dependsOn_treestyletab_uri":  { "message": "https://addons.mozilla.org/firefox/addon/tree-style-tab/" },
 
 
+  "config_shortcuts_caption": { "message": "Keyboard shortcuts" },
+
+
   "config_debug_caption": { "message": "Development" },
   "config_disablePanelWhenAlternativeTabBarIsAvailable_label": { "message": "Disable panel when any alternative tab bar is available" },
   "config_debug_label": { "message": "Debug mode" },
