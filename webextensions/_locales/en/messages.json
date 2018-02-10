@@ -72,6 +72,29 @@
   "context_invertSelection_label":        { "message": "&Invert Selection" },
 
 
+
+  "command_reloadSelectedTabs":            { "message": "Reload Selected Tabs" },
+  "command_bookmarkSelectedTabs":          { "message": "Bookmark Selected Tabs" },
+  "command_duplicateSelectedTabs":         { "message": "Duplicate Selected Tabs" },
+  "command_pinSelectedTabs":               { "message": "Pin Selected Tabs" },
+  "command_unpinSelectedTabs":             { "message": "Unpin Selected Tabs" },
+  "command_muteSelectedTabs":              { "message": "Mute Selected Tabs" },
+  "command_unmuteSelectedTabs":            { "message": "Unmute Selected Tabs" },
+  "command_moveSelectedTabsToNewWindow":   { "message": "Move Selected Tabs to New Window" },
+  "command_moveSelectedTabsToOtherWindow": { "message": "Move Selected Tabs to Other Window" },
+  "command_removeSelectedTabs":            { "message": "Close Selected Tabs" },
+  "command_removeUnselectedTabs":          { "message": "Close Unselected Tabs" },
+  "command_copySelectedTabs":              { "message": "Copy Selected Tabs to Clipboard" },
+  "command_saveSelectedTabs":              { "message": "Save Selected Tabs as Files" },
+  "command_printSelectedTabs":             { "message": "Print Selected Tabs" },
+  "command_groupSelectedTabs":             { "message": "Create New Group from Selected Tabs" },
+  "command_suspendSelectedTabs":           { "message": "Suspend Selected Tabs" },
+  "command_resumeSelectedTabs":            { "message": "Resume Selected Tabs" },
+  "command_toggleSelection":               { "message": "Toggle Selected Status of Current Tab" },
+  "command_selectAll":                     { "message": "Select All Tabs" },
+  "command_invertSelection":               { "message": "Invert Selection of All Tabs" },
+
+
   "config_dragSelection_caption": { "message": "Tab Selection from dragging after long-press" },
 
   "config_autoOpenMenuOnDragEnd_label": { "message": "Open menu automatically after tabs are selected" },
