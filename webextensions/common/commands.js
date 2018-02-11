@@ -578,8 +578,8 @@ async function resumeTabs(aIds) {
   const activeTab = allTabs.filter(aTab => aTab.active)[0];
   const selectedTabs = allTabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
   for (let tab of selectedTabs) {
-    if (tab.discarded)
-      await browser.tabs.update(tab.id, { active: true });
+    //if (tab.discarded)
+    await browser.tabs.update(tab.id, { active: true });
   }
   return browser.tabs.update(activeTab.id, { active: true });
 }
