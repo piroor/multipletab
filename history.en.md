@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Implement "suspend" and "resume" for selected tabs. ("suspend" is available only on Firefox 59 and later.)
    * Keyboard shortcuts for commands are now customizable on Firefox 60 and later. (No keyboard shortcut is defined by default.)
    * Better behavior and keyboard operation handling of fake context menu.
    * Don't apply indent for `%TST_INDENT(...)%` when tree of tabs are partially selected.
