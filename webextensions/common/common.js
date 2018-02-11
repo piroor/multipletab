@@ -54,29 +54,29 @@ async function notify(aParams = {}) {
 
 var defaultClipboardFormats = [];
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard:url.label'),
+  label:  browser.i18n.getMessage('context_clipboard_url_label'),
   format: '%URL%'
 });
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard:title-and-url.label'),
+  label:  browser.i18n.getMessage('context_clipboard_title_and_url_label'),
   format: '%TITLE%%EOL%%URL%'
 });
 /*
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard:title-and-url-tree.label'),
+  label:  browser.i18n.getMessage('context_clipboard_title_and_url_tree_label'),
   format: '%TST_INDENT(|   )(|---)%%TITLE%%EOL%%TST_INDENT(|   )%%URL%'
 });
 */
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard:html-link.label'),
+  label:  browser.i18n.getMessage('context_clipboard_html_link_label'),
   format: '<a title="%TITLE_HTML%" href="%URL_HTML%">%TITLE_HTML%</a>'
 });
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard:markdown.label'),
+  label:  browser.i18n.getMessage('context_clipboard_markdown_label'),
   format: '[%TITLE%](%URL% "%TITLE%")'
 });
 defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard:markdown-list.label'),
+  label:  browser.i18n.getMessage('context_clipboard_markdown_list_label'),
   format: '%TST_INDENT(  )%* [%TITLE%](%URL% "%TITLE%")'
 });
 
