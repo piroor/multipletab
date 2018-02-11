@@ -365,7 +365,7 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       break;
 
     case 'groupTabs':
-      browser.runtime.sendMessage(kTST_ID, {
+      await browser.runtime.sendMessage(kTST_ID, {
         type: kTSTAPI_GROUP_TABS,
         tabs: selectedTabIds
       }).catch(e => {});
