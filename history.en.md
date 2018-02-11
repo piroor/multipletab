@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 2.0.8 (2018.2.11)
    * Implement "suspend" and "resume" for selected tabs. ("suspend" is available only on Firefox 59 and later.)
    * Keyboard shortcuts for commands are now customizable on Firefox 60 and later. (No keyboard shortcut is defined by default.)
    * Better behavior and keyboard operation handling of fake context menu.
