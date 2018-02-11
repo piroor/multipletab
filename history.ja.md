@@ -1,8 +1,10 @@
 # 更新履歴
 
  - master/HEAD
+   * Firefox 60以降においてコマンドに割り当てるキーボードショートカットをカスタマイズできるようにした（※初期状態では、すべてのコマンドについてキーボードショートカットは未定義です）
    * 偽コンテキストメニューの振る舞いを改善し、キーボード操作に対応した
    * `%TST_INDENT(...)%`について、ツリーが部分的に選択されている場合はインデントを反映しないようにした
+   * 言語リソースのキー名が[仕様](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n/Locale-Specific_Message_reference#Member_details)に則っていなかったのを修正
  - 2.0.7 (2018.2.1)
    * [「クリップボードにコピー」機能の新しいプレースホルダー `%TST_INDENT(...)%`](https://github.com/piroor/multipletab/issues/185#issuecomment-361820213)を追加
    * 「クリップボードにコピー」機能について、ユーザー定義の項目を維持しながらの既定の項目を復元できるようにした
