@@ -554,6 +554,11 @@ async function suspendTabs(aIds, aOptions = {}) {
   let unselectedTabs = [];
   let nextFocusedTab = null;
   for (let tab of allTabs) {
+    if (tab.active && aIds.indexOf(tab.id) < 0) {
+      nextFocusedTab = null;
+      unselectedTabs = [];
+      break;
+    }
     if (!inSelection && aIds.indexOf(tab.id) > -1) {
       inSelection = true;
       selectionFound = true;
