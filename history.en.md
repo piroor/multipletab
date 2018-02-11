@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 2.0.9 (2018.2.11)
+   * Reformat keys of localized messages matching to the [spec](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n/Locale-Specific_Message_reference#Member_details).
  - 2.0.8 (2018.2.11)
    * Implement "suspend" and "resume" for selected tabs. ("suspend" is available only on Firefox 59 and later.)
    * Keyboard shortcuts for commands are now customizable on Firefox 60 and later. (No keyboard shortcut is defined by default.)

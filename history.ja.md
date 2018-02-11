@@ -1,6 +1,8 @@
 # 更新履歴
 
  - master/HEAD
+ - 2.0.9 (2018.2.11)
+   * 言語リソースのキー名が[仕様](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n/Locale-Specific_Message_reference#Member_details)に則っていなかったのを修正
  - 2.0.8 (2018.2.11)
    * 選択されたタブの「アンロード」と「復元」を行えるようにした（アンロードはFIrefox59以降でのみ使用可能）
    * Firefox 60以降においてコマンドに割り当てるキーボードショートカットをカスタマイズできるようにした（※初期状態では、すべてのコマンドについてキーボードショートカットは未定義です）
