@@ -560,14 +560,22 @@ async function suspendTabs(aIds, aOptions = {}) {
     }
     else if (inSelection && aIds.indexOf(tab.id) < 0) {
       inSelection = false;
+    }
+    if (selectionFound && !inSelection && !tab.discarded) {
       nextFocusedTab = tab;
       break;
     }
-    if (!inSelection)
+    if (!inSelection && !selectionFound)
       unselectedTabs.push(tab);
   }
-  if (!nextFocusedTab && unselectedTabs.length > 0)
-    nextFocusedTab = unselectedTabs[unselectedTabs.length - 1];
+  if (!nextFocusedTab && unselectedTabs.length > 0) {
+    for (let tab of unselectedTabs.reverse()) {
+      if (tab.discarded)
+        continue;
+      nextFocusedTab = tab;
+      break;
+    }
+  }
   if (nextFocusedTab)
     await browser.tabs.update(nextFocusedTab.id, { active: true });
   return browser.tabs.discard(aIds);
