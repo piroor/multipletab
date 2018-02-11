@@ -372,7 +372,10 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       break;
 
     case 'suspendTabs':
+      await suspendTabs(selectedTabIds);
+      break;
     case 'resumeTabs':
+      await resumeTabs(selectedTabIds);
       break;
 
     case 'selectAll':

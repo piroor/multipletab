@@ -171,7 +171,10 @@ async function onShortcutCommand(aCommand) {
       break;
 
     case 'suspendSelectedTabs':
+      suspendTabs(selectedTabIds);
+      break;
     case 'resumeSelectedTabs':
+      resumeTabs(selectedTabIds);
       break;
 
     case 'toggleSelection':

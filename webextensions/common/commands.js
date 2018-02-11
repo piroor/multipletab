@@ -545,6 +545,45 @@ async function suggestFileNameForTab(aTab) {
   return fileName;
 }
 
+async function suspendTabs(aIds, aOptions = {}) {
+  if (typeof browser.tabs.discard != 'function')
+    throw new Error('Error: required API "tabs.discard()" is not available on this version of Firefox.');
+  const allTabs = await browser.tabs.query({ windowId: gSelection.targetWindow });
+  let inSelection = false;
+  let selectionFound = false;
+  let unselectedTabs = [];
+  let nextFocusedTab = null;
+  for (let tab of allTabs) {
+    if (!inSelection && aIds.indexOf(tab.id) > -1) {
+      inSelection = true;
+      selectionFound = true;
+    }
+    else if (inSelection && aIds.indexOf(tab.id) < 0) {
+      inSelection = false;
+      nextFocusedTab = tab;
+      break;
+    }
+    if (!inSelection)
+      unselectedTabs.push(tab);
+  }
+  if (!nextFocusedTab && unselectedTabs.length > 0)
+    nextFocusedTab = unselectedTabs[unselectedTabs.length - 1];
+  if (nextFocusedTab)
+    await browser.tabs.update(nextFocusedTab.id, { active: true });
+  return browser.tabs.discard(aIds);
+}
+
+async function resumeTabs(aIds) {
+  const allTabs = (await browser.tabs.query({ windowId: gSelection.targetWindow }));
+  const activeTab = allTabs.filter(aTab => aTab.active)[0];
+  const selectedTabs = allTabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
+  for (let tab of selectedTabs) {
+    if (tab.discarded)
+      await browser.tabs.update(tab.id, { active: true });
+  }
+  return browser.tabs.update(activeTab.id, { active: true });
+}
+
 async function selectAllTabs() {
   var tabs = await getAllTabs();
   setSelection(tabs, true);
