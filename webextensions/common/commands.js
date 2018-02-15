@@ -308,6 +308,7 @@ async function copyToClipboard(aIds, aFormat) {
       for (let tab of tabs) {
         ancestorsOf[tab.id] = tab.openerTabId ? [tab.openerTabId].concat(ancestorsOf[tab.openerTabId] || []) : [];
       }
+      console.log('ancestorsOf ', ancestorsOf);
       // ignore indent information for partial selection
       indentLevels = tabs.map(aTab => {
         return ancestorsOf[aTab.id].filter(aAncestorId => aIds.indexOf(aAncestorId) > -1).length
