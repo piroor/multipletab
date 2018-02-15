@@ -304,13 +304,23 @@ async function copyToClipboard(aIds, aFormat) {
   var indentLevels = [];
   if (kFORMAT_MATCHER_TST_INDENT.test(aFormat)) {
     try {
+      const tabsWithChildren = await browser.runtime.sendMessage(kTST_ID, {
+        type: 'get-tree',
+        tabs: tabs.map(aTab => aTab.id)
+      });
       const ancestorsOf = {};
-      for (let tab of tabs) {
-        ancestorsOf[tab.id] = tab.openerTabId ? [tab.openerTabId].concat(ancestorsOf[tab.openerTabId] || []) : [];
+      const collectAncestors = (aTab) => {
+        ancestorsOf[aTab.id] = ancestorsOf[aTab.id] || [];
+        for (let child of aTab.children) {
+          collectAncestors(child);
+          ancestorsOf[child.id] = [aTab.id].concat(ancestorsOf[aTab.id]);
+        }
+      };
+      for (let tab of tabsWithChildren) {
+        collectAncestors(tab);
       }
-      console.log('ancestorsOf ', ancestorsOf);
       // ignore indent information for partial selection
-      indentLevels = tabs.map(aTab => {
+      indentLevels = tabsWithChildren.map(aTab => {
         return ancestorsOf[aTab.id].filter(aAncestorId => aIds.indexOf(aAncestorId) > -1).length
       });
     }
