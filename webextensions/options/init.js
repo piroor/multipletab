@@ -78,8 +78,7 @@ function addButtonCommandListener(aButton, aOnCommand) {
   aButton.addEventListener('keypress', (aEvent) => {
     if (!getButtonFromEvent(aEvent))
       return;
-    if (aEvent.keyCode == aEvent.DOM_VK_ENTER ||
-        aEvent.keyCode == aEvent.DOM_VK_RETURN)
+    if (aEvent.code == 'Enter')
       aOnCommand(aEvent);
   });
 }
