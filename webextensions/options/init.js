@@ -78,7 +78,7 @@ function addButtonCommandListener(aButton, aOnCommand) {
   aButton.addEventListener('keypress', (aEvent) => {
     if (!getButtonFromEvent(aEvent))
       return;
-    if (aEvent.code == 'Enter')
+    if (aEvent.key == 'Enter')
       aOnCommand(aEvent);
   });
 }
