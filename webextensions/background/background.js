@@ -348,6 +348,18 @@ async function registerToTST() {
     await browser.runtime.sendMessage(kTST_ID, {
       type:  kTSTAPI_REGISTER_SELF,
       name:  browser.i18n.getMessage('extensionName'),
+      listeningTypes: [
+        kTSTAPI_NOTIFY_READY,
+        kTSTAPI_NOTIFY_TAB_MOUSEDOWN,
+        kTSTAPI_NOTIFY_TAB_MOUSEUP,
+        kTSTAPI_NOTIFY_TABBAR_CLICKED,
+        kTSTAPI_NOTIFY_TAB_DRAGREADY,
+        kTSTAPI_NOTIFY_TAB_DRAGCANCEL,
+        kTSTAPI_NOTIFY_TAB_DRAGSTART,
+        kTSTAPI_NOTIFY_TAB_DRAGENTER,
+        kTSTAPI_NOTIFY_TAB_DRAGEXIT,
+        kTSTAPI_NOTIFY_TAB_DRAGEND
+      ],
       style: `
         .tab.selected::after {
           background: Highlight;
