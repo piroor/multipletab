@@ -1,6 +1,8 @@
 # 更新履歴
 
  - master/HEAD
+ - 2.0.10 (2018.3.7)
+   * ツリー型タブ2.4.17での仕様変更に追従
  - 2.0.9 (2018.2.11)
    * 言語リソースのキー名が[仕様](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n/Locale-Specific_Message_reference#Member_details)に則っていなかったのを修正
  - 2.0.8 (2018.2.11)

@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 2.0.10 (2018.3.7)
+   * Make compatible to Tree Style Tab 2.4.17 and later.
  - 2.0.9 (2018.2.11)
    * Reformat keys of localized messages matching to the [spec](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n/Locale-Specific_Message_reference#Member_details).
  - 2.0.8 (2018.2.11)
