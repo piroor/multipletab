@@ -348,6 +348,7 @@ async function registerToTST() {
     await browser.runtime.sendMessage(kTST_ID, {
       type:  kTSTAPI_REGISTER_SELF,
       name:  browser.i18n.getMessage('extensionName'),
+      icons: browser.runtime.getManifest().icons,
       listeningTypes: [
         kTSTAPI_NOTIFY_READY,
         kTSTAPI_NOTIFY_TAB_MOUSEDOWN,
