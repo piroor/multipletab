@@ -148,8 +148,6 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       id, type, title,
       contexts: ['page', 'tab']
     };
-    if (id == 'selection')
-      params.icons = browser.runtime.getManifest().icons;
     if (parentId)
       params.parentId = parentId;
     if (isSeparator) {
