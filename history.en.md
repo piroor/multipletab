@@ -1,6 +1,11 @@
 # History
 
  - master/HEAD
+   * Reduce flicking of tab selection while dragging.
+   * Show icon for the root contest menu item.
+   * Handle keyboard operations around the fake context menu and fake confirmation dialog on `keydown`. This behavior is same to native UI.
+   * Show menu label correctly even if it has an access key.
+   * Features require special permissions now work again. (regression)
  - 2.0.10 (2018.3.7)
    * Make compatible to Tree Style Tab 2.4.17 and later.
  - 2.0.9 (2018.2.11)
