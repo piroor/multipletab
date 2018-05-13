@@ -181,6 +181,20 @@ var gDragSelection = {
     this.willCloseSelectedTabs = false;
     this.dragEnteredCount = 0;
     this.allTabsOnDragReady = [];
+  },
+  export() {
+    const exported = {};
+    for (let key of Object.keys(this)) {
+      if (typeof this[key] != 'function')
+        exported[key] = this[key];
+    }
+    return exported;
+  },
+  apply(aForeignSession) {
+    for (let key of Object.keys(aForeignSession)) {
+      if (typeof this[key] != 'function')
+        this[key] = aForeignSession[key];
+    }
   }
 };
 

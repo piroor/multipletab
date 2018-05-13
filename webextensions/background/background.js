@@ -309,12 +309,12 @@ function onMessage(aMessage) {
     case kCOMMAND_PULL_SELECTION_INFO:
       return Promise.resolve({
         selection:     gSelection,
-        dragSelection: gDragSelection
+        dragSelection: gDragSelection.export()
       });
 
     case kCOMMAND_PUSH_SELECTION_INFO:
       gSelection = aMessage.selection;
-      gDragSelection = aMessage.dragSelection;
+      gDragSelection.apply(aMessage.dragSelection);
       if (aMessage.updateMenu) {
         let tab = aMessage.contextTab ? { id: aMessage.contextTab } : null ;
         return refreshContextMenuItems(tab, true);

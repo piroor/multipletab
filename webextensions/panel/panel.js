@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     type: kCOMMAND_PULL_SELECTION_INFO
   });
   gSelection = response.selection;
-  gDragSelection = response.dragSelection;
+  gDragSelection.apply(response.dragSelection);
 
   gLastClickedItem = null;
 
@@ -114,7 +114,7 @@ function onMessage(aMessage) {
   switch (aMessage.type) {
     case kCOMMAND_PUSH_SELECTION_INFO:
       gSelection = aMessage.selection;
-      gDragSelection = aMessage.dragSelection;
+      gDragSelection.apply(aMessage.dragSelection);
       rebuildTabItems();
       break;
   }

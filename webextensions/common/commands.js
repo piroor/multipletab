@@ -88,7 +88,7 @@ async function pushSelectionState(aOptions = {}) {
   await browser.runtime.sendMessage({
     type:          kCOMMAND_PUSH_SELECTION_INFO,
     selection:     gSelection,
-    dragSelection: gDragSelection,
+    dragSelection: gDragSelection.export(),
     updateMenu:    !!aOptions.updateMenu,
     contextTab:    aOptions.contextTab
   });
