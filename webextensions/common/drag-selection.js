@@ -57,17 +57,14 @@ function toggleStateOfDragOverTabs(aParams = {}) {
     for (let tab of newUndeterminedRange) {
       if (tab.id in gDragSelection.undeterminedRange)
         continue;
-      let selected = !(tab.id in gSelection.tabs);
+      gDragSelection.undeterminedRange[tab.id] = tab;
       if (oldUndeterminedRangeIds.indexOf(tab.id) > -1)
-        selected = !selected;
-      if ((tab.id in gSelection.tabs) != selected) {
-        setSelection(tab, selected, {
+        continue;
+        setSelection(tab, !(tab.id in gSelection.tabs), {
           globalHighlight: false,
           dontUpdateMenu: true,
           state: aParams.state
         });
-      }
-      gDragSelection.undeterminedRange[tab.id] = tab;
     }
   }
   else {
