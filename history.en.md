@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 2.0.11 (2018.5.14)
    * Reduce flicking of tab selection while dragging.
    * Show icon for the root contest menu item.
    * Handle keyboard operations around the fake context menu and fake confirmation dialog on `keydown`. This behavior is same to native UI.
