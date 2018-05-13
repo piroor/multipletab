@@ -33,14 +33,7 @@ function getTabsBetween(aBegin, aEnd, aAllTabs = []) {
 
 function toggleStateOfDragOverTabs(aParams = {}) {
   if (gDragSelection.firstHoverTarget) {
-    // At first, toggle state to reset all existing items in the undetermined selection.
-    for (let id of Object.keys(gDragSelection.undeterminedRange)) {
-      setSelection(gDragSelection.undeterminedRange[id], !(id in gSelection.tabs), {
-        globalHighlight: false,
-        dontUpdateMenu: true,
-        state: aParams.state
-      });
-    }
+    const oldUndeterminedRange = gDragSelection.undeterminedRange;
     gDragSelection.undeterminedRange = {};
 
     let newUndeterminedRange = aParams.allTargets;
@@ -49,14 +42,31 @@ function toggleStateOfDragOverTabs(aParams = {}) {
 
     let betweenTabs = getTabsBetween(gDragSelection.firstHoverTarget, aParams.target, gDragSelection.allTabsOnDragReady);
     newUndeterminedRange = newUndeterminedRange.concat(betweenTabs);
-    for (let tab of newUndeterminedRange) {
-      if (tab.id in gDragSelection.undeterminedRange)
-        continue;
-      setSelection(tab, !(tab.id in gSelection.tabs), {
+
+    const oldUndeterminedRangeIds = Object.keys(oldUndeterminedRange).map(aId => parseInt(aId));
+    const newUndeterminedRangeIds = newUndeterminedRange.map(aTab => aTab.id);
+    const outOfRangeTabIds = oldUndeterminedRangeIds.filter(aId => newUndeterminedRangeIds.indexOf(aId) < 0);
+    for (let id of outOfRangeTabIds) {
+      setSelection(oldUndeterminedRange[id], !(id in gSelection.tabs), {
         globalHighlight: false,
         dontUpdateMenu: true,
         state: aParams.state
       });
+    }
+
+    for (let tab of newUndeterminedRange) {
+      if (tab.id in gDragSelection.undeterminedRange)
+        continue;
+      let selected = !(tab.id in gSelection.tabs);
+      if (oldUndeterminedRangeIds.indexOf(tab.id) > -1)
+        selected = !selected;
+      if ((tab.id in gSelection.tabs) != selected) {
+      setSelection(tab, selected, {
+        globalHighlight: false,
+        dontUpdateMenu: true,
+        state: aParams.state
+      });
+      }
       gDragSelection.undeterminedRange[tab.id] = tab;
     }
   }
@@ -125,11 +135,14 @@ async function onTabItemClick(aMessage) {
   }
   else if (aMessage.shiftKey) {
     // select the clicked tab and tabs between last activated tab
-    clearSelection();
     let window = await browser.windows.get(aMessage.window, { populate: true });
     let betweenTabs = getTabsBetween(lastActiveTab, aMessage.tab, window.tabs);
     tabs = tabs.concat(betweenTabs);
     tabs.push(lastActiveTab);
+    const selectedTabIds = tabs.map(aTab => aTab.id);
+    setSelection(window.tabs.filter(aTab => selectedTabIds.indexOf(aTab.id) < 0), false, {
+      globalHighlight: false
+    });
     setSelection(tabs, true, {
       globalHighlight: false
     });
