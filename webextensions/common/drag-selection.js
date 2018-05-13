@@ -61,11 +61,11 @@ function toggleStateOfDragOverTabs(aParams = {}) {
       if (oldUndeterminedRangeIds.indexOf(tab.id) > -1)
         selected = !selected;
       if ((tab.id in gSelection.tabs) != selected) {
-      setSelection(tab, selected, {
-        globalHighlight: false,
-        dontUpdateMenu: true,
-        state: aParams.state
-      });
+        setSelection(tab, selected, {
+          globalHighlight: false,
+          dontUpdateMenu: true,
+          state: aParams.state
+        });
       }
       gDragSelection.undeterminedRange[tab.id] = tab;
     }
