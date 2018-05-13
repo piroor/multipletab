@@ -14,7 +14,7 @@ https://github.com/piroor/multipletab/blob/master/CONTRIBUTING.md
 
 <!--
 Please describe how to reproduce your problem on my (developer/author/other peoples') environment.
-If your issue is related to tree strucutre, figures or screenshots will help me a lot, like:
+If your issue is related to the order of tabs, figures or screenshots will help me a lot, like:
 
 ```
 A
