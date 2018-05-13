@@ -18,21 +18,6 @@ body {
   color: var(--toolbar-non-lwt-textcolor);
 }
 
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-ul li {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  list-style: none;
-  margin: 0;
-  padding: 0.25em 0;
-}
-
 
 /* main view */
 
@@ -65,37 +50,49 @@ ul li {
 }
 
 #tabs {
+  list-style: none;
+  margin: 0;
+  max-height: 25em;
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 25em;
+  padding: 0;
 }
 
-#main ul li {
+#tabs li {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  list-style: none;
+  margin: 0;
+  padding: 0.25em 0;
+}
+
+#tabs li {
   padding-right: 1em;
   padding-left: 0.5em;
 }
 
-#main ul li * {
+#tabs li * {
   line-height: 1;
   vertical-align: middle;
 }
 
-#main ul li label {
+#tabs li label {
   flex-grow: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-#main ul li img {
+#tabs li img {
   max-height: 16px;
   max-width: 16px;
 }
 
-#main ul li img.error {
+#tabs li img.error {
   display: none;
 }
-#main ul li img.error + .default-favicon {
+#tabs li img.error + .default-favicon {
   background: url(./moon.svg) no-repeat center center;
   display: inline-block;
   min-height: 16px;
@@ -104,12 +101,12 @@ ul li {
   width: 16px;
 }
 
-#main li.last-focused {
+#tabs li.last-focused {
   outline: dotted 1px;
 }
 
-#main li.selected,
-#main li.ready-to-close .closebox {
+#tabs li.selected,
+#tabs li.ready-to-close .closebox {
   background: Highlight;
   color: HighlightText;
 }
