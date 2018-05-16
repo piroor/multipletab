@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 2.0.12 (2018.5.16)
    * Execute command in the fake context menu, by an access key without Enter, when there is no other command with same access key.
  - 2.0.11 (2018.5.14)
    * Reduce flicking of tab selection while dragging.
