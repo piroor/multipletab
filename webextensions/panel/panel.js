@@ -22,6 +22,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   gSizeDefinitions = document.getElementById('size-definitions');
 
   await configs.$loaded;
+  document.documentElement.dataset.theme = configs.theme;
   var response = await browser.runtime.sendMessage({
     type: kCOMMAND_PULL_SELECTION_INFO
   });

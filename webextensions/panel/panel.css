@@ -11,6 +11,21 @@
   /* https://dxr.mozilla.org/mozilla-central/rev/b056526be38e96b3e381b7e90cd8254ad1d96d9d/browser/themes/windows/browser.css#45 */
   --toolbar-non-lwt-bgcolor: #f9f9fa;
   --toolbar-non-lwt-textcolor: #0c0c0d;
+  --focused-item-bgcolor: Highlight;
+  --focused-item-textcolor: HighlightText;
+  --disabled-message-bgcolor: rgba(249, 249, 250, 0.85); /* #f9f9fa */
+}
+
+:root[data-theme="dark"] {
+  --toolbar-non-lwt-bgcolor: #474749;
+  --toolbar-non-lwt-textcolor: #f9f9fa;
+  --focused-item-bgcolor: #707071;
+  --focused-item-textcolor: #f9f9fa;
+  --disabled-message-bgcolor: rgba(71, 71, 73, 0.85); /* #474749 */
+/*
+  --tab-active-marker: #0a84ff;
+  --tab-active-marker-inactive: rgba(255, 255, 255, 0.2);
+*/
 }
 
 body {
@@ -107,8 +122,8 @@ body {
 
 #tabs li.selected,
 #tabs li.ready-to-close .closebox {
-  background: Highlight;
-  color: HighlightText;
+  background: var(--focused-item-bgcolor);
+  color: var(--focused-item-textcolor);
 }
 
 
@@ -170,25 +185,25 @@ body {
 /* disabled message */
 
 #disabled-message {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--disabled-message-bgcolor);
   bottom: 0;
-  color: black;
+  color: var(--toolbar-non-lwt-textcolor);
   display: none;
   left: 0;
   line-height: 1.5;
   padding: 1.5em;
   position: fixed;
   right: 0;
-  text-shadow: 0 0 0.5em white,
-               0 0 0.5em white,
-               0 0 0.5em white,
-               0 0 0.5em white,
-               0 0 0.5em white,
-               0 0 0.5em white,
-               0 0 0.5em white,
-               0 0 0.5em white,
-               0 0 0.5em white,
-               0 0 0.5em white;
+  text-shadow: 0 0 0.5em var(--toolbar-non-lwt-bgcolor),
+               0 0 0.5em var(--toolbar-non-lwt-bgcolor),
+               0 0 0.5em var(--toolbar-non-lwt-bgcolor),
+               0 0 0.5em var(--toolbar-non-lwt-bgcolor),
+               0 0 0.5em var(--toolbar-non-lwt-bgcolor),
+               0 0 0.5em var(--toolbar-non-lwt-bgcolor),
+               0 0 0.5em var(--toolbar-non-lwt-bgcolor),
+               0 0 0.5em var(--toolbar-non-lwt-bgcolor),
+               0 0 0.5em var(--toolbar-non-lwt-bgcolor),
+               0 0 0.5em var(--toolbar-non-lwt-bgcolor);
   top: 0;
   z-index: 10000;
 }
