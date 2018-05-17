@@ -112,6 +112,7 @@ configs = new Configs({
 
   autoOpenMenuOnDragEnd: true,
   copyToClipboardFormats: defaultClipboardFormats,
+  theme: 'default',
   useCRLF: false,
   useWorkaroundForBug1272869: true,
 
@@ -127,6 +128,7 @@ configs = new Configs({
   debug: false
 }, {
   localKeys: `
+    theme
     useCRLF
     useWorkaroundForBug1272869
     cachedExternalAddons

@@ -97,6 +97,13 @@
   "command_invertSelection":               { "message": "Invert Selection of All Tabs" },
 
 
+  "config_appearance_caption": { "message": "Appearance" },
+
+  "config_theme_caption": { "message": "Color scheme" },
+  "config_theme_default": { "message": "Default" },
+  "config_theme_dark":    { "message": "Dark" },
+
+
   "config_dragSelection_caption": { "message": "Tab Selection from dragging after long-press" },
 
   "config_autoOpenMenuOnDragEnd_label": { "message": "Open menu automatically after tabs are selected" },

@@ -96,6 +96,13 @@
   "command_invertSelection":               { "message": "すべてのタブの選択状態を反転" },
 
 
+  "config_appearance_caption": { "message": "外観" },
+
+  "config_theme_caption": { "message": "配色" },
+  "config_theme_default": { "message": "既定" },
+  "config_theme_dark":    { "message": "Dark" },
+
+
   "config_dragSelection_caption": { "message": "長押しからのドラッグによるタブの選択操作" },
 
   "config_autoOpenMenuOnDragEnd_label": { "message": "タブを選択した後に自動的にメニューを開く" },
