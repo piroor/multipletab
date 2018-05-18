@@ -16,7 +16,11 @@
     <link rel="stylesheet" type="text/css" href="options.css"/>
   </head>
   <body>
-    <h1>__MSG_config_permissions_caption__</h1>
+    <section id="section-general">
+    <h1>__MSG_config_general_caption__</h1>
+
+    <fieldset>
+    <legend>__MSG_config_permissions_caption__</legend>
     <ul>
       <li><label id="bookmarksPermissionCheck"><input id="bookmarksPermissionGranted"
                         type="checkbox">
@@ -25,9 +29,11 @@
                         type="checkbox">
                 __MSG_context_clipboard_label__</label></li>
     </ul>
+    </fieldset>
 
 
-    <h1>__MSG_config_appearance_caption__</h1>
+    <fieldset>
+    <legend>__MSG_config_appearance_caption__</legend>
     <p>__MSG_config_theme_caption__
        <label><input type="radio"
                      name="theme" value="default">
@@ -36,12 +42,27 @@
                      name="theme" value="dark">
          __MSG_config_theme_dark__</label>
     </p>
+    </fieldset>
 
-
-    <h1>__MSG_config_dragSelection_caption__</h1>
+    <fieldset>
+    <legend>__MSG_config_dragSelection_caption__</legend>
     <p><label><input id="autoOpenMenuOnDragEnd"
                      type="checkbox">__MSG_config_autoOpenMenuOnDragEnd_label__</label></p>
+    </fieldset>
 
+    <fieldset>
+    <legend>__MSG_config_saveTabs_caption__</legend>
+    <p><label>__MSG_config_saveTabsPrefix_label_before__
+              <input id="saveTabsPrefix"
+                      type="text"
+                      size="40">
+              __MSG_config_saveTabsPrefix_label_after__</label></p>
+    <p class="sub">__MSG_config_saveTabsPrefix_description__</p>
+    </fieldset>
+    </section>
+
+
+    <section id="section-menu">
     <h1>__MSG_config_menu_caption__</h1>
     <div id="menu-items">
     <ul>
@@ -155,15 +176,9 @@
                 __MSG_context_invertSelection_label__</label></li>
     </ul>
     </div>
+    </section>
 
-    <h1>__MSG_config_saveTabs_caption__</h1>
-    <p><label>__MSG_config_saveTabsPrefix_label_before__
-              <input id="saveTabsPrefix"
-                      type="text"
-                      size="40">
-              __MSG_config_saveTabsPrefix_label_after__</label></p>
-    <p class="sub">__MSG_config_saveTabsPrefix_description__</p>
-
+    <section id="section-clipboard">
     <h1>__MSG_config_clipboard_caption__</h1>
     <div class="grid" id="copyToClipboardFormatsRows">
     </div>
@@ -171,12 +186,17 @@
                title="__MSG_config_copyToClipboardFormats_add__">+</button></p>
     <p><button id="copyToClipboardFormatsRestoreDefaults">__MSG_config_copyToClipboardFormats_restoreDefaults__</button></p>
     <p style="white-space:pre-wrap">__MSG_config_copyToClipboardFormats_placeholders__</p>
+    </section>
 
 
+    <section id="section-shortcuts">
     <h1>__MSG_config_shortcuts_caption__</h1>
     <div id="shortcuts"></div>
+    </section>
 
+    <hr>
 
+    <section id="section-debug">
     <h1>__MSG_config_debug_caption__</h1>
     <p><label><input id="disablePanelWhenAlternativeTabBarIsAvailable"
                      type="checkbox">
@@ -187,5 +207,6 @@
     <div id="debug-configs">
       <h2>__MSG_config_all_caption__</h2>
     </div>
+    </section>
   </body>
 </html>

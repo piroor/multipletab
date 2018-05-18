@@ -97,6 +97,8 @@
   "command_invertSelection":               { "message": "Invert Selection of All Tabs" },
 
 
+  "config_general_caption": { "message": "General" },
+
   "config_appearance_caption": { "message": "Appearance" },
 
   "config_theme_caption": { "message": "Color scheme" },

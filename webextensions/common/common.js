@@ -81,6 +81,8 @@ defaultClipboardFormats.push({
 });
 
 configs = new Configs({
+  optionsExpandedSections: ['section-general'],
+
   context_reloadTabs: true,
   context_bookmarkTabs: true,
   context_removeBookmarkFromTabs: false,
@@ -128,6 +130,7 @@ configs = new Configs({
   debug: false
 }, {
   localKeys: `
+    optionsExpandedSections
     theme
     useCRLF
     useWorkaroundForBug1272869
