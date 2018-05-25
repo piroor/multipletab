@@ -420,6 +420,8 @@ function onMenuCommand(aItem, aEvent) {
   if (aEvent.button != 0)
     return gMenu.ui.close();
 
+  wait(0).then(() => gMenu.ui.close());
+
   var id = aItem.getAttribute('data-item-id');
   if (id) {
     browser.runtime.sendMessage({
@@ -427,8 +429,6 @@ function onMenuCommand(aItem, aEvent) {
       id:   id
     });
   }
-
-  gMenu.ui.close();
 }
 
 async function buildMenu() {
