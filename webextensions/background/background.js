@@ -288,7 +288,7 @@ function onMessageExternal(aMessage, aSender) {
       return Promise.resolve(true);
 
     case kMTHAPI_ADD_SELECTED_TAB_COMMAND: {
-      let addons = configs.cachedExternalAddons;
+      let addons = Object.assign({}, configs.cachedExternalAddons);
       addons[aSender.id] = true;
       configs.cachedExternalAddons = addons;
       gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`] = aMessage;
