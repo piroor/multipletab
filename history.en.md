@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 2.0.13 (2018.5.30)
    * Add ability to switch color scheme to Dark theme.
    * Make configuration categories collapsible.
    * Close the fake context menu immediately when any item is clicked.
