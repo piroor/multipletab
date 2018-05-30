@@ -1,6 +1,11 @@
 # History
 
  - master/HEAD
+   * Add ability to switch color scheme to Dark theme.
+   * Make configuration categories collapsible.
+   * Close the fake context menu immediately when any item is clicked.
+   * Keyboard operations affects correctly for the fake context menu even if the cursor is on any separator.
+   * Save cached external addons correctly.
  - 2.0.12 (2018.5.16)
    * Execute command in the fake context menu, by an access key without Enter, when there is no other command with same access key.
  - 2.0.11 (2018.5.14)
