@@ -83,6 +83,7 @@ function toggleStateOfDragOverTabs(aParams = {}) {
 /* select tabs by clicking */
 
 var gInSelectionSession = false;
+var gLastClickedTab = null;
 
 async function onTabItemClick(aMessage) {
   if (aMessage.button != 0)
@@ -102,9 +103,10 @@ async function onTabItemClick(aMessage) {
       clearSelection({
         states: ['selected', 'ready-to-close']
       });
-      gSelection.targetWindow = null;
+      gSelection.clear();
     }
     gInSelectionSession = false;
+    gSelection.lastClickedTab = null;
     return;
   }
 
@@ -128,23 +130,19 @@ async function onTabItemClick(aMessage) {
       globalHighlight: false
     });
     // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
-    if (!aMessage.tab.active && !getSelectedTabIds().includes(lastActiveTab.id)) {
-      browser.tabs.update(aMessage.tab.id, { active: true });
-    }
-    else if (aMessage.tab.active && selected) {
-      const selectedTabIds = getSelectedTabIds();
-      if (selectedTabIds.length > 0)
-        browser.tabs.update(selectedTabIds[0], { active: true });
-    }
+    const selectedTabIds = getSelectedTabIds();
+    if (selectedTabIds.length > 0 && !selectedTabIds.includes(lastActiveTab.id))
+      browser.tabs.update(selectedTabIds[0], { active: true });
     gInSelectionSession = true;
+    gSelection.lastClickedTab = aMessage.tab;
     return true;
   }
   else if (aMessage.shiftKey) {
     // select the clicked tab and tabs between last activated tab
     let window = await browser.windows.get(aMessage.window, { populate: true });
-    let betweenTabs = getTabsBetween(lastActiveTab, aMessage.tab, window.tabs);
+    let betweenTabs = getTabsBetween(gSelection.lastClickedTab || lastActiveTab, aMessage.tab, window.tabs);
     tabs = tabs.concat(betweenTabs);
-    tabs.push(lastActiveTab);
+    tabs.push(gSelection.lastClickedTab || lastActiveTab);
     const selectedTabIds = tabs.map(aTab => aTab.id);
     setSelection(window.tabs.filter(aTab => selectedTabIds.indexOf(aTab.id) < 0), false, {
       globalHighlight: false
@@ -153,6 +151,10 @@ async function onTabItemClick(aMessage) {
       globalHighlight: false
     });
     gInSelectionSession = true;
+    // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
+    const newSelectedTabIds = getSelectedTabIds();
+    if (newSelectedTabIds.length > 0 && !newSelectedTabIds.includes(lastActiveTab.id))
+      browser.tabs.update(gSelection.lastClickedTab ? gSelection.lastClickedTab.id : newSelectedTabIds[0], { active: true });
     return true;
   }
   return false;
@@ -169,7 +171,7 @@ async function onTabItemMouseUp(aMessage) {
     clearSelection({
       states: ['selected', 'ready-to-close']
     });
-    gSelection.targetWindow = null;
+    gSelection.clear();;
   }
 }
 
@@ -179,7 +181,7 @@ async function onNonTabAreaClick(aMessage) {
   clearSelection({
     states: ['selected', 'ready-to-close']
   });
-  gSelection.targetWindow = null;
+  gSelection.clear();;
 }
 
 
@@ -347,7 +349,7 @@ async function onTabItemDragEnd(aMessage) {
         await browser.tabs.remove(tab.id);
     }
     clearSelection();
-    gSelection.targetWindow = null;
+    gSelection.clear();
   }
   else if (Object.keys(gSelection.tabs).length > 0 &&
            window.onDragSelectionEnd) {

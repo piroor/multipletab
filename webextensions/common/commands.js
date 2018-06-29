@@ -7,7 +7,12 @@
 
 var gSelection = {
   tabs:         {},
-  targetWindow: null
+  targetWindow: null,
+  lastClickedTab: null,
+  clear() {
+    this.tabs = {};
+    this.targetWindow = this.lastClickedTab = null;
+  }
 };
 
 function clearSelection(aOptions = {}) {
@@ -16,7 +21,7 @@ function clearSelection(aOptions = {}) {
     tabs.push(gSelection.tabs[id]);
   }
   setSelection(tabs, false, aOptions);
-  gSelection.targetWindow = null;
+  gSelection.clear();
 }
 
 function isPermittedTab(aTab) {
