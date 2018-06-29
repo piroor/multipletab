@@ -127,6 +127,15 @@ async function onTabItemClick(aMessage) {
     setSelection(tabs, !selected, {
       globalHighlight: false
     });
+    // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
+    if (!aMessage.tab.active && !getSelectedTabIds().includes(lastActiveTab.id)) {
+      browser.tabs.update(aMessage.tab.id, { active: true });
+    }
+    else if (aMessage.tab.active && selected) {
+      const selectedTabIds = getSelectedTabIds();
+      if (selectedTabIds.length > 0)
+        browser.tabs.update(selectedTabIds[0], { active: true });
+    }
     gInSelectionSession = true;
     return true;
   }
