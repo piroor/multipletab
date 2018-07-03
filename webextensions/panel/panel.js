@@ -24,7 +24,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
   document.documentElement.dataset.theme = configs.theme;
   var response = await browser.runtime.sendMessage({
-    type: kCOMMAND_PULL_SELECTION_INFO
+    type: Constants.kCOMMAND_PULL_SELECTION_INFO
   });
   gSelection = response.selection;
   gDragSelection.apply(response.dragSelection);
@@ -52,7 +52,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   `;
 
   browser.runtime.sendMessage({
-    type: kCOMMAND_NOTIFY_PANEL_SHOWN
+    type: Constants.kCOMMAND_NOTIFY_PANEL_SHOWN
   });
 }, { once: true });
 
@@ -78,8 +78,8 @@ async function updateUIForTST() {
 
   if (configs.disablePanelWhenAlternativeTabBarIsAvailable) {
     try {
-      let responded = await browser.runtime.sendMessage(kTST_ID, {
-        type: kTSTAPI_PING
+      let responded = await browser.runtime.sendMessage(Constants.kTST_ID, {
+        type: Constants.kTSTAPI_PING
       });
       if (responded) {
         disabledMessage.style.display = 'block';
@@ -91,7 +91,7 @@ async function updateUIForTST() {
     }
 
     browser.runtime.sendMessage({
-      type: kCOMMAND_UNREGISTER_FROM_TST
+      type: Constants.kCOMMAND_UNREGISTER_FROM_TST
     });
   }
 
@@ -113,7 +113,7 @@ function onMessage(aMessage) {
     return;
 
   switch (aMessage.type) {
-    case kCOMMAND_PUSH_SELECTION_INFO:
+    case Constants.kCOMMAND_PUSH_SELECTION_INFO:
       gSelection = aMessage.selection;
       gDragSelection.apply(aMessage.dragSelection);
       rebuildTabItems();
@@ -425,7 +425,7 @@ function onMenuCommand(aItem, aEvent) {
   var id = aItem.getAttribute('data-item-id');
   if (id) {
     browser.runtime.sendMessage({
-      type: kCOMMAND_SELECTION_MENU_ITEM_CLICK,
+      type: Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK,
       id:   id
     });
   }
@@ -433,7 +433,7 @@ function onMenuCommand(aItem, aEvent) {
 
 async function buildMenu() {
   var items = await browser.runtime.sendMessage({
-    type: kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO
+    type: Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO
   });
   items.shift(); // delete toplevel "selection" menu
 

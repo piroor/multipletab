@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   configs.$addObserver(onConfigChanged);
 
   browser.browserAction.onClicked.addListener(onToolbarButtonClick);
-  browser.browserAction.setPopup({ popup: kPOPUP_URL });
+  browser.browserAction.setPopup({ popup: Constants.kPOPUP_URL });
   Permissions.clearRequest();
 
   browser.commands.onCommand.addListener(onShortcutCommand);
@@ -44,7 +44,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 function onToolbarButtonClick(aTab) {
   Permissions.requestPostProcess();
   setTimeout(() => {
-    browser.browserAction.setPopup({ popup: kPOPUP_URL });
+    browser.browserAction.setPopup({ popup: Constants.kPOPUP_URL });
   }, 0);
 }
 
@@ -52,8 +52,8 @@ async function onDragSelectionEnd(aMessage) {
   let tabId = gDragSelection.dragStartTarget.id;
   await refreshContextMenuItems(tabId, true);
   try {
-    await browser.runtime.sendMessage(kTST_ID, {
-      type: kTSTAPI_CONTEXT_MENU_OPEN,
+    await browser.runtime.sendMessage(Constants.kTST_ID, {
+      type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
       window: gSelection.targetWindow,
       tab:  tabId,
       left: aMessage.clientX,
@@ -164,8 +164,8 @@ async function onShortcutCommand(aCommand) {
       break;
 
     case 'groupSelectedTabs':
-      browser.runtime.sendMessage(kTST_ID, {
-        type: kTSTAPI_GROUP_TABS,
+      browser.runtime.sendMessage(Constants.kTST_ID, {
+        type: Constants.kTSTAPI_GROUP_TABS,
         tabs: selectedTabIds
       }).catch(e => {});
       break;
@@ -191,38 +191,38 @@ async function onShortcutCommand(aCommand) {
 
 function onTSTAPIMessage(aMessage) {
   switch (aMessage.type) {
-    case kTSTAPI_NOTIFY_READY:
+    case Constants.kTSTAPI_NOTIFY_READY:
       registerToTST();
       return Promise.resolve(true);
 
-    case kTSTAPI_NOTIFY_TAB_MOUSEDOWN:
+    case Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN:
       return onTabItemClick(aMessage);
 
-    case kTSTAPI_NOTIFY_TAB_MOUSEUP:
+    case Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP:
       return onTabItemMouseUp(aMessage);
 
-    case kTSTAPI_NOTIFY_TABBAR_CLICKED:
+    case Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED:
       return onNonTabAreaClick(aMessage);
 
-    case kTSTAPI_NOTIFY_TAB_DRAGREADY:
+    case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
       return onTabItemDragReady(aMessage);
 
-    case kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
+    case Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
       return onTabItemDragCancel(aMessage);
 
-    case kTSTAPI_NOTIFY_TAB_DRAGSTART:
+    case Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART:
       return onTabItemDragStart(aMessage);
 
-    case kTSTAPI_NOTIFY_TAB_DRAGENTER:
+    case Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER:
       return onTabItemDragEnter(aMessage);
 
-    case kTSTAPI_NOTIFY_TAB_DRAGEXIT:
+    case Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT:
       return onTabItemDragExit(aMessage);
 
-    case kTSTAPI_NOTIFY_TAB_DRAGEND:
+    case Constants.kTSTAPI_NOTIFY_TAB_DRAGEND:
       return onTabItemDragEnd(aMessage);
 
-    case kTSTAPI_CONTEXT_MENU_CLICK:
+    case Constants.kTSTAPI_CONTEXT_MENU_CLICK:
       return contextMenuClickListener(aMessage.info, aMessage.tab);
   }
 }
@@ -232,7 +232,7 @@ function onMessageExternal(aMessage, aSender) {
     console.log('onMessageExternal: ', aMessage, aSender);
 
   switch (aSender.id) {
-    case kTST_ID: { // Tree Style Tab API
+    case Constants.kTST_ID: { // Tree Style Tab API
       let result = onTSTAPIMessage(aMessage);
       if (result !== undefined)
         return result;
@@ -247,10 +247,10 @@ function onMessageExternal(aMessage, aSender) {
     return;
 
   switch (aMessage.type) {
-    case kMTHAPI_GET_TAB_SELECTION:
+    case Constants.kMTHAPI_GET_TAB_SELECTION:
       return getAPITabSelection();
 
-    case kMTHAPI_SET_TAB_SELECTION:
+    case Constants.kMTHAPI_SET_TAB_SELECTION:
       return (async () => {
         var allTabs = await getAllTabs(aMessage.window || aMessage.windowId);
 
@@ -283,11 +283,11 @@ function onMessageExternal(aMessage, aSender) {
         return true;
       })();
 
-    case kMTHAPI_CLEAR_TAB_SELECTION:
+    case Constants.kMTHAPI_CLEAR_TAB_SELECTION:
       clearSelection();
       return Promise.resolve(true);
 
-    case kMTHAPI_ADD_SELECTED_TAB_COMMAND: {
+    case Constants.kMTHAPI_ADD_SELECTED_TAB_COMMAND: {
       let addons = Object.assign({}, configs.cachedExternalAddons);
       addons[aSender.id] = true;
       configs.cachedExternalAddons = addons;
@@ -295,7 +295,7 @@ function onMessageExternal(aMessage, aSender) {
       return reserveRefreshContextMenuItems(null, true).then(() => true);
     };
 
-    case kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
+    case Constants.kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
       delete gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`];
       return reserveRefreshContextMenuItems(null, true).then(() => true);
   }
@@ -306,13 +306,13 @@ function onMessage(aMessage) {
     return;
 
   switch (aMessage.type) {
-    case kCOMMAND_PULL_SELECTION_INFO:
+    case Constants.kCOMMAND_PULL_SELECTION_INFO:
       return Promise.resolve({
         selection:     gSelection,
         dragSelection: gDragSelection.export()
       });
 
-    case kCOMMAND_PUSH_SELECTION_INFO:
+    case Constants.kCOMMAND_PUSH_SELECTION_INFO:
       gSelection = aMessage.selection;
       gDragSelection.apply(aMessage.dragSelection);
       if (aMessage.updateMenu) {
@@ -324,13 +324,13 @@ function onMessage(aMessage) {
       }
       break;
 
-    case kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO:
+    case Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO:
       return Promise.resolve(gActiveContextMenuItems);
 
-    case kCOMMAND_SELECTION_MENU_ITEM_CLICK:
+    case Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK:
       return contextMenuClickListener({ menuItemId: aMessage.id });
 
-    case kCOMMAND_UNREGISTER_FROM_TST:
+    case Constants.kCOMMAND_UNREGISTER_FROM_TST:
       unregisterFromTST();
       break;
   }
@@ -345,21 +345,21 @@ function onSelectionChange(aTabs, aSelected, aOptions = {}) {
 
 async function registerToTST() {
   try {
-    await browser.runtime.sendMessage(kTST_ID, {
-      type:  kTSTAPI_REGISTER_SELF,
+    await browser.runtime.sendMessage(Constants.kTST_ID, {
+      type:  Constants.kTSTAPI_REGISTER_SELF,
       name:  browser.i18n.getMessage('extensionName'),
       icons: browser.runtime.getManifest().icons,
       listeningTypes: [
-        kTSTAPI_NOTIFY_READY,
-        kTSTAPI_NOTIFY_TAB_MOUSEDOWN,
-        kTSTAPI_NOTIFY_TAB_MOUSEUP,
-        kTSTAPI_NOTIFY_TABBAR_CLICKED,
-        kTSTAPI_NOTIFY_TAB_DRAGREADY,
-        kTSTAPI_NOTIFY_TAB_DRAGCANCEL,
-        kTSTAPI_NOTIFY_TAB_DRAGSTART,
-        kTSTAPI_NOTIFY_TAB_DRAGENTER,
-        kTSTAPI_NOTIFY_TAB_DRAGEXIT,
-        kTSTAPI_NOTIFY_TAB_DRAGEND
+        Constants.kTSTAPI_NOTIFY_READY,
+        Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN,
+        Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP,
+        Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED,
+        Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY,
+        Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL,
+        Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART,
+        Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER,
+        Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT,
+        Constants.kTSTAPI_NOTIFY_TAB_DRAGEND
       ],
       style: `
         .tab.selected::after {
@@ -394,11 +394,11 @@ async function registerToTST() {
 function unregisterFromTST() {
   gDragSelection.activatedInVerticalTabbarOfTST = false;
   try {
-    browser.runtime.sendMessage(kTST_ID, {
-      type: kTSTAPI_CONTEXT_MENU_REMOVE_ALL
+    browser.runtime.sendMessage(Constants.kTST_ID, {
+      type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
     });
-    browser.runtime.sendMessage(kTST_ID, {
-      type: kTSTAPI_UNREGISTER_SELF
+    browser.runtime.sendMessage(Constants.kTST_ID, {
+      type: Constants.kTSTAPI_UNREGISTER_SELF
     });
   }
   catch(e) {
@@ -424,7 +424,7 @@ async function notifyReady() {
   var modified = false;
   for (let id of Object.keys(addons)) {
     try {
-      browser.runtime.sendMessage(id, { type: kMTHAPI_READY });
+      browser.runtime.sendMessage(id, { type: Constants.kMTHAPI_READY });
     }
     catch(e) {
       delete addons[id];
@@ -469,7 +469,7 @@ async function notifyUpdatedFromLegacy() {
   browser.runtime.onMessage.addListener(function onMessage(aMessage, aSender) {
     if (aMessage &&
         typeof aMessage.type == 'string' &&
-        aMessage.type == kCOMMAND_NOTIFY_PANEL_SHOWN) {
+        aMessage.type == Constants.kCOMMAND_NOTIFY_PANEL_SHOWN) {
       browser.runtime.onMessage.removeListener(onMessage);
       browser.tabs.remove(tab.id)
         .catch(handleMissingTabError);

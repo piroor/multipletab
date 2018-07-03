@@ -71,8 +71,8 @@ async function refreshContextMenuItems(aContextTab, aForce) {
 
   promisedMenuUpdated.push(browser.contextMenus.removeAll());
   try {
-    promisedMenuUpdated.push(browser.runtime.sendMessage(kTST_ID, {
-      type: kTSTAPI_CONTEXT_MENU_REMOVE_ALL
+    promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
+      type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
     }));
   }
   catch(e) {
@@ -124,8 +124,8 @@ async function refreshContextMenuItems(aContextTab, aForce) {
         gActiveContextMenuItems.push(nextSeparatorIn[parentId]);
         promisedMenuUpdated.push(browser.contextMenus.create(nextSeparatorIn[parentId]));
         try {
-          promisedMenuUpdated.push(browser.runtime.sendMessage(kTST_ID, {
-            type: kTSTAPI_CONTEXT_MENU_CREATE,
+          promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
+            type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
             params: nextSeparatorIn[parentId]
           }));
         }
@@ -161,8 +161,8 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       title: params.title && params.title.replace(/\(&[a-z]\)|&([a-z])/i, '$1')
     })));
     try {
-      promisedMenuUpdated.push(browser.runtime.sendMessage(kTST_ID, {
-        type: kTSTAPI_CONTEXT_MENU_CREATE,
+      promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
+        type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
         params
       }));
     }
@@ -365,8 +365,8 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       break;
 
     case 'groupTabs':
-      await browser.runtime.sendMessage(kTST_ID, {
-        type: kTSTAPI_GROUP_TABS,
+      await browser.runtime.sendMessage(Constants.kTST_ID, {
+        type: Constants.kTSTAPI_GROUP_TABS,
         tabs: selectedTabIds
       }).catch(e => {});
       break;
@@ -421,7 +421,7 @@ var contextMenuClickListener = async (aInfo, aTab) => {
           selectedIds: selectedTabIds
         });
         browser.runtime.sendMessage(owner, {
-          type: kMTHAPI_INVOKE_SELECTED_TAB_COMMAND,
+          type: Constants.kMTHAPI_INVOKE_SELECTED_TAB_COMMAND,
           id, selection
         }).catch(e => {});
       }

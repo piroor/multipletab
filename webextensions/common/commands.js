@@ -68,8 +68,8 @@ function setSelection(aTabs, aSelected, aOptions = {}) {
         });
     }
   }
-  browser.runtime.sendMessage(kTST_ID, {
-    type:  aSelected ? kTSTAPI_ADD_TAB_STATE : kTSTAPI_REMOVE_TAB_STATE,
+  browser.runtime.sendMessage(Constants.kTST_ID, {
+    type:  aSelected ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
     tabs:  aTabs.map(aTab => aTab.id),
     state: aOptions.states || aOptions.state || 'selected'
   }).catch(e => {}); // TST is not available
@@ -91,7 +91,7 @@ async function pushSelectionState(aOptions = {}) {
     delete reservePushSelectionState.reserved;
   }
   await browser.runtime.sendMessage({
-    type:          kCOMMAND_PUSH_SELECTION_INFO,
+    type:          Constants.kCOMMAND_PUSH_SELECTION_INFO,
     selection:     gSelection,
     dragSelection: gDragSelection.export(),
     updateMenu:    !!aOptions.updateMenu,
@@ -170,7 +170,7 @@ async function bookmarkTabs(aIds, aOptions = {}) {
         tabs.length,
         aFolders[0].title
       ]),
-      icon:    kNOTIFICATION_DEFAULT_ICON
+      icon:    Constants.kNOTIFICATION_DEFAULT_ICON
     });
   });
   return folder;
@@ -207,8 +207,8 @@ async function unmuteTabs(aIds) {
 }
 
 async function moveToWindow(aIds, aWindowId) {
-  var structure = await browser.runtime.sendMessage(kTST_ID, {
-    type: kTSTAPI_GET_TREE_STRUCTURE,
+  var structure = await browser.runtime.sendMessage(Constants.kTST_ID, {
+    type: Constants.kTSTAPI_GET_TREE_STRUCTURE,
     tabs: aIds
   }).catch(e => {}); // TST is not available
   log('structure ', structure);
@@ -223,8 +223,8 @@ async function moveToWindow(aIds, aWindowId) {
     });
     aIds = aIds.slice(1);
   }
-  await browser.runtime.sendMessage(kTST_ID, {
-    type:   kTSTAPI_BLOCK_GROUPING,
+  await browser.runtime.sendMessage(Constants.kTST_ID, {
+    type:   Constants.kTSTAPI_BLOCK_GROUPING,
     window: window.id
   }).catch(e => {}); // TST is not available
   var waitUntilCompletelyMoved = new Promise((aResolve, aReject) => {
@@ -248,14 +248,14 @@ async function moveToWindow(aIds, aWindowId) {
   await browser.tabs.update(firstTab, { active: true });
   if (structure) {
     await wait(500); // wait until TST's initialization is finished
-    await browser.runtime.sendMessage(kTST_ID, {
-      type: kTSTAPI_SET_TREE_STRUCTURE,
+    await browser.runtime.sendMessage(Constants.kTST_ID, {
+      type: Constants.kTSTAPI_SET_TREE_STRUCTURE,
       tabs: aIds,
       structure
     }).catch(e => {}); // TST is not available
   }
-  await browser.runtime.sendMessage(kTST_ID, {
-    type:   kTSTAPI_UNBLOCK_GROUPING,
+  await browser.runtime.sendMessage(Constants.kTST_ID, {
+    type:   Constants.kTSTAPI_UNBLOCK_GROUPING,
     window: window.id
   }).catch(e => {}); // TST is not available
 }
@@ -309,7 +309,7 @@ async function copyToClipboard(aIds, aFormat) {
   var indentLevels = [];
   if (kFORMAT_MATCHER_TST_INDENT.test(aFormat)) {
     try {
-      const tabsWithChildren = await browser.runtime.sendMessage(kTST_ID, {
+      const tabsWithChildren = await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: 'get-tree',
         tabs: tabs.map(aTab => aTab.id)
       });

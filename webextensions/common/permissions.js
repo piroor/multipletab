@@ -29,7 +29,7 @@ const Permissions = {
     browser.runtime.onMessage.addListener((aMessage, aSender) => {
       if (!aMessage ||
           !aMessage.type ||
-          aMessage.type != kCOMMAND_NOTIFY_PERMISSIONS_GRANTED ||
+          aMessage.type != Constants.kCOMMAND_NOTIFY_PERMISSIONS_GRANTED ||
           JSON.stringify(aMessage.permissions) != JSON.stringify(aPermissions))
         return;
       if (aOptions.onChanged)
@@ -102,7 +102,7 @@ const Permissions = {
       log('permission requested: ', permissions, aGranted);
       if (aGranted)
         browser.runtime.sendMessage({
-          type:        kCOMMAND_NOTIFY_PERMISSIONS_GRANTED,
+          type:        Constants.kCOMMAND_NOTIFY_PERMISSIONS_GRANTED,
           permissions: permissions
         });
     });
