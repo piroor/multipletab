@@ -24,6 +24,20 @@ export const gSelection = {
   clear() {
     this.tabs = {};
     this.targetWindow = this.lastClickedTab = null;
+  },
+  export() {
+    const exported = {};
+    for (const key of Object.keys(this)) {
+      if (typeof this[key] != 'function')
+        exported[key] = this[key];
+    }
+    return exported;
+  },
+  apply(aForeignSession) {
+    for (const key of Object.keys(aForeignSession)) {
+      if (typeof this[key] != 'function')
+        this[key] = aForeignSession[key];
+    }
   }
 };
 
@@ -136,7 +150,7 @@ export async function pushSelectionState(aOptions = {}) {
   }
   await browser.runtime.sendMessage({
     type:          Constants.kCOMMAND_PUSH_SELECTION_INFO,
-    selection:     gSelection,
+    selection:     gSelection.export(),
     dragSelection: gDragSelection.export(),
     updateMenu:    !!aOptions.updateMenu,
     contextTab:    aOptions.contextTab

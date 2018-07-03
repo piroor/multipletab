@@ -308,12 +308,12 @@ function onMessage(aMessage) {
   switch (aMessage.type) {
     case Constants.kCOMMAND_PULL_SELECTION_INFO:
       return Promise.resolve({
-        selection:     Commands.gSelection,
+        selection:     Commands.gSelection.export(),
         dragSelection: Commands.gDragSelection.export()
       });
 
     case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      Commands.gSelection = aMessage.selection;
+      Commands.gSelection.apply(aMessage.selection);
       Commands.gDragSelection.apply(aMessage.dragSelection);
       if (aMessage.updateMenu) {
         let tab = aMessage.contextTab ? { id: aMessage.contextTab } : null ;
