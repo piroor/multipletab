@@ -5,7 +5,15 @@
 */
 'use strict';
 
-var gContextMenuItems = `
+import {
+  log,
+  wait,
+  configs
+} from '../../common/common.js';
+import * as Constants from '../../common/constants.js';
+import * as Commands from '../../common/commands.js';
+
+const gContextMenuItems = `
   reloadTabs
   bookmarkTabs
   removeBookmarkFromTabs
@@ -47,22 +55,22 @@ var gContextMenuItems = `
 `.trim().split(/\s+/).map(aId => `selection/${aId}`);
 gContextMenuItems.unshift('selection');
 
-var gActiveContextMenuItems = [];
-var gExtraContextMenuItems  = {};
+let gActiveContextMenuItems = [];
+const gExtraContextMenuItems  = {};
 
-var gLastSelectedTabs = '';
+let gLastSelectedTabs = '';
 
-var gLastRefreshStart = Date.now();
-async function refreshContextMenuItems(aContextTab, aForce) {
+let gLastRefreshStart = Date.now();
+export async function refreshContextMenuItems(aContextTab, aForce) {
   log('refreshContextMenuItems');
-  var currentRefreshStart = gLastRefreshStart = Date.now();
-  var promisedMenuUpdated = [];
+  const currentRefreshStart = gLastRefreshStart = Date.now();
+  const promisedMenuUpdated = [];
 
   if (reserveRefreshContextMenuItems.timeout)
     clearTimeout(reserveRefreshContextMenuItems.timeout);
   delete reserveRefreshContextMenuItems.timeout;
 
-  var serialized = JSON.stringify(Commands.gSelection.tabs);
+  const serialized = JSON.stringify(Commands.gSelection.tabs);
   if (!aForce &&
       serialized == gLastSelectedTabs) {
     log(' => no change, skip');
@@ -75,15 +83,15 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
     }));
   }
-  catch(e) {
+  catch(_e) {
   }
   if (currentRefreshStart != gLastRefreshStart)
     return;
   gActiveContextMenuItems = [];
   gLastSelectedTabs       = serialized;
-  var currentWindowId = aContextTab ? aContextTab.windowId : (await browser.windows.getLastFocused()).id;
-  var otherWindows = (await browser.windows.getAll()).filter(aWindow => aWindow.id != currentWindowId);
-  var visibilities = await getContextMenuItemVisibilities({
+  const currentWindowId = aContextTab ? aContextTab.windowId : (await browser.windows.getLastFocused()).id;
+  const otherWindows = (await browser.windows.getAll()).filter(aWindow => aWindow.id != currentWindowId);
+  const visibilities = await getContextMenuItemVisibilities({
     tab:          aContextTab,
     otherWindows: otherWindows
   });
@@ -91,20 +99,20 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     return;
   log('visibilities: ', visibilities);
 
-  let hasSelection         = Commands.getSelectedTabIds().length > 0;
+  const hasSelection         = Commands.getSelectedTabIds().length > 0;
   let separatorsCount      = 0;
-  let normalItemAppearedIn = {};
-  let createdItems         = {};
-  let nextSeparatorIn      = {};
-  let registerItem = async (id, aOptions = {}) => {
-    let parts = id.split('/');
+  const normalItemAppearedIn = {};
+  const createdItems         = {};
+  const nextSeparatorIn      = {};
+  const registerItem = async (id, aOptions = {}) => {
+    const parts = id.split('/');
     id = parts.pop();
 
-    let parentId = parts.pop() || '';
+    const parentId = parts.pop() || '';
     if (parentId && !(parentId in createdItems))
       return;
 
-    let isSeparator = id.charAt(0) == '-';
+    const isSeparator = id.charAt(0) == '-';
     if (isSeparator) {
       if (!normalItemAppearedIn[parentId])
         return;
@@ -116,7 +124,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
         return;
       if (!aOptions.always && !hasSelection)
         return;
-      let key = `context_${id}`;
+      const key = `context_${id}`;
       if (configs[key] === false)
         return;
       normalItemAppearedIn[parentId] = true;
@@ -129,14 +137,14 @@ async function refreshContextMenuItems(aContextTab, aForce) {
             params: nextSeparatorIn[parentId]
           }));
         }
-        catch(e) {
+        catch(_e) {
         }
       }
       delete nextSeparatorIn[parentId];
     }
     log('build ', id, parentId);
     createdItems[id] = true;
-    let type = isSeparator ? 'separator' : 'normal';
+    const type = isSeparator ? 'separator' : 'normal';
     let title = null;
     if (!isSeparator) {
       if (aOptions.title)
@@ -144,7 +152,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
       else
         title = browser.i18n.getMessage(`context_${id.replace(/[^a-z0-9@_]/gi, '_')}_label`);
     }
-    let params = {
+    const params = {
       id, type, title,
       contexts: ['page', 'tab']
     };
@@ -166,31 +174,31 @@ async function refreshContextMenuItems(aContextTab, aForce) {
         params
       }));
     }
-    catch(e) {
+    catch(_e) {
     }
   }
 
-  for (let id of gContextMenuItems) {
+  for (const id of gContextMenuItems) {
     await registerItem(id);
     if (currentRefreshStart != gLastRefreshStart)
       return;
   }
 
   // create submenu items for "copy to clipboard"
-  var formatIds;
-  var formats = configs.copyToClipboardFormats;
+  let formatIds;
+  const formats = configs.copyToClipboardFormats;
   if (Array.isArray(formats)) {
     formatIds = formats
       .map((aItem, aIndex) => `clipboard/clipboard:${aIndex}:${aItem.label}`)
       .filter((aItem, aIndex) => formats[aIndex].label);
   }
   else {
-    let labels = Object.keys(formats);
+    const labels = Object.keys(formats);
     formatIds = labels
       .map((aLabel, aIndex) => `clipboard/clipboard:${aIndex}:${aLabel}`)
       .filter((aItem, aIndex) => labels[aIndex]);
   }
-  for (let id of formatIds) {
+  for (const id of formatIds) {
     await registerItem(id, {
       title: id.replace(/^clipboard\/clipboard:[0-9]+:/, '')
     });
@@ -199,7 +207,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   }
 
   // create submenu items for "move to other window"
-  for (let window of otherWindows) {
+  for (const window of otherWindows) {
     await registerItem(`moveToOtherWindow/moveToOtherWindow:${window.id}`, {
       title: window.title
     });
@@ -208,7 +216,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   }
 
   // create additional items registered by other addons
-  for (let id of Object.keys(gExtraContextMenuItems)) {
+  for (const id of Object.keys(gExtraContextMenuItems)) {
     await registerItem(`selection/extra:${id}`, gExtraContextMenuItems[id]);
     if (currentRefreshStart != gLastRefreshStart)
       return;
@@ -217,7 +225,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
   return Promise.all(promisedMenuUpdated);
 }
 
-function reserveRefreshContextMenuItems() {
+export function reserveRefreshContextMenuItems() {
   if (reserveRefreshContextMenuItems.timeout)
     clearTimeout(reserveRefreshContextMenuItems.timeout);
   reserveRefreshContextMenuItems.timeout = setTimeout(() => {
@@ -225,18 +233,18 @@ function reserveRefreshContextMenuItems() {
   }, 150);
 }
 
-async function getContextMenuItemVisibilities(aParams) {
-  var tab = aParams.tab;
-  var allTabs = await Commands.getAllTabs();
-  var pinnedCount = 0;
-  var mutedCount = 0;
-  var suspendedCount = 0;
-  var lockedCount = 0;
-  var protectedCount = 0;
-  var frozenCount = 0;
-  var tabIds = Commands.getSelectedTabIds();
-  for (let id of tabIds) {
-    let tab = Commands.gSelection.tabs[id];
+export async function getContextMenuItemVisibilities(aParams) {
+  const tab = aParams.tab;
+  const allTabs = await Commands.getAllTabs();
+  let pinnedCount = 0;
+  let mutedCount = 0;
+  let suspendedCount = 0;
+  let lockedCount = 0;
+  let protectedCount = 0;
+  let frozenCount = 0;
+  const tabIds = Commands.getSelectedTabIds();
+  for (const id of tabIds) {
+    const tab = Commands.gSelection.tabs[id];
     if (tab.pinned)
       pinnedCount++;
     if (tab.mutedInfo.muted)
@@ -293,9 +301,9 @@ configs.$addObserver(aKey => {
 });
 */
 
-var contextMenuClickListener = async (aInfo, aTab) => {
+export async function contextMenuClickListener(aInfo, aTab) {
   //log('context menu item clicked: ', aInfo, aTab);
-  var selectedTabIds = Commands.getSelectedTabIds();
+  const selectedTabIds = Commands.getSelectedTabIds();
   console.log('aInfo.menuItemId, selectedTabIds ', aInfo.menuItemId, selectedTabIds);
   switch (aInfo.menuItemId) {
     case 'reloadTabs':
@@ -368,7 +376,7 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_GROUP_TABS,
         tabs: selectedTabIds
-      }).catch(e => {});
+      }).catch(_e => {});
       break;
 
     case 'suspendTabs':
@@ -393,12 +401,12 @@ var contextMenuClickListener = async (aInfo, aTab) => {
 
     default:
       if (aInfo.menuItemId.indexOf('clipboard:') == 0) {
-        let id = aInfo.menuItemId.replace(/^clipboard:/, '');
+        const id = aInfo.menuItemId.replace(/^clipboard:/, '');
         let format;
         if (Array.isArray(configs.copyToClipboardFormats)) {
           let index = id.match(/^([0-9]+):/);
           index = parseInt(index[1]);
-          let item = configs.copyToClipboardFormats[index];
+          const item = configs.copyToClipboardFormats[index];
           format = item.format;
         }
         else {
@@ -409,21 +417,21 @@ var contextMenuClickListener = async (aInfo, aTab) => {
         await Commands.copyToClipboard(selectedTabIds, format);
       }
       else if (aInfo.menuItemId.indexOf('moveToOtherWindow:') == 0) {
-        let id = parseInt(aInfo.menuItemId.replace(/^moveToOtherWindow:/, ''));
+        const id = parseInt(aInfo.menuItemId.replace(/^moveToOtherWindow:/, ''));
         await Commands.moveToWindow(selectedTabIds, id);
         await Commands.clearSelection();
       }
       else if (aInfo.menuItemId.indexOf('extra:') == 0) {
-        let idMatch   = aInfo.menuItemId.match(/^extra:([^:]+):(.+)$/);
-        let owner     = idMatch[1];
-        let id        = idMatch[2];
-        let selection = await Commands.getAPITabSelection({
+        const idMatch   = aInfo.menuItemId.match(/^extra:([^:]+):(.+)$/);
+        const owner     = idMatch[1];
+        const id        = idMatch[2];
+        const selection = await Commands.getAPITabSelection({
           selectedIds: selectedTabIds
         });
         browser.runtime.sendMessage(owner, {
           type: Constants.kMTHAPI_INVOKE_SELECTED_TAB_COMMAND,
           id, selection
-        }).catch(e => {});
+        }).catch(_e => {});
       }
       break;
   }

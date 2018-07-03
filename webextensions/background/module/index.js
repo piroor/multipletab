@@ -16,6 +16,7 @@ import ShortcutCustomizeUI from '../../extlib/ShortcutCustomizeUI.js';
 import TabFavIconHelper from '../../extlib/TabFavIconHelper.js';
 import TabIdFixer from '../../extlib/TabIdFixer.js';
 import l10n from '../../extlib/l10n.js';
+import * as ContextMenu from './context-menu.js';
 
 window.Constants = Constants;
 window.Common = Common;
@@ -29,6 +30,7 @@ window.ShortcutCustomizeUI = ShortcutCustomizeUI;
 window.TabFavIconHelper = TabFavIconHelper;
 window.TabIdFixer = TabIdFixer;
 window.l10n = l10n;
+window.ContextMenu = ContextMenu;
 
 window.log = Common.log;
 window.notify = Common.notify;
