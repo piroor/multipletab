@@ -13,7 +13,7 @@ import {
   selection as mSelection,
   dragSelection as mDragSelection
 } from './selections.js';
-import EventListenerManager from './EventListenerManager.js';
+import EventListenerManager from '../extlib/EventListenerManager.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
 
 export const onDragSelectionEnd = new EventListenerManager();
