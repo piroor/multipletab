@@ -45,11 +45,11 @@ window.addEventListener('DOMContentLoaded', () => {
   );
   addButtonCommandListener(
     document.querySelector('#copyToClipboardFormatsAddNewRow'),
-    (aEvent) => { addFormatRow(); }
+    (_event) => { addFormatRow(); }
   );
   addButtonCommandListener(
     document.querySelector('#copyToClipboardFormatsRestoreDefaults'),
-    (aEvent) => { restoreDefaultFormats(); }
+    (_event) => { restoreDefaultFormats(); }
   );
 
   ShortcutCustomizeUI.build().then(aUI => {
