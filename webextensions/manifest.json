@@ -23,19 +23,7 @@
     "24": "resources/24x24.svg"
   },
   "background": {
-    "scripts": [
-      "common/constants.js",
-      "extlib/Configs.js",
-      "common/common.js",
-      "common/permissions.js",
-      "common/commands.js",
-      "common/drag-selection.js",
-      "extlib/TabIdFixer.js",
-      "extlib/TabFavIconHelper.js",
-      "extlib/RichConfirm.js",
-      "background/background.js",
-      "background/context-menu.js"
-    ]
+    "page": "background/background.html"
   },
   "browser_action": {
     "default_title": "__MSG_panelTitle__",
