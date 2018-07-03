@@ -283,17 +283,17 @@ export async function safeMoveApiTabsAcrossWindows(aTabIds, aMoveOptions) {
   }))).filter(aTab => !!aTab);
 }
 
-export async function removeTabs(aIds) {
+export async function removeTabs(removeIds) {
   const tabs = await getAllTabs(); // because given ids are possibly unsorted.
   // close down to top, to keep tree structure of Tree Style Tab
-  const ids = tabs.reverse().filter(aTab => aIds.indexOf(aTab.id) > -1).map(aTab => aTab.id);
+  const ids = tabs.reverse().filter(aTab => removeIds.indexOf(aTab.id) > -1).map(aTab => aTab.id);
   await browser.tabs.remove(ids);
 }
 
-export async function removeOtherTabs(aIds) {
+export async function removeOtherTabs(keepIds) {
   const tabs = await getAllTabs(); // because given ids are possibly unsorted.
   // close down to top, to keep tree structure of Tree Style Tab
-  const ids = tabs.reverse().filter(aTab => aIds.indexOf(aTab.id) < 0 && !aTab.pinned).map(aTab => aTab.id);
+  const ids = tabs.reverse().filter(aTab => keepIds.indexOf(aTab.id) < 0 && !aTab.pinned).map(aTab => aTab.id);
   await browser.tabs.remove(ids);
 }
 
