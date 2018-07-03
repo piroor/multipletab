@@ -336,11 +336,11 @@ function onMessage(aMessage) {
   }
 }
 
-function onSelectionChange(aTabs, aSelected, aOptions = {}) {
+onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
   reservePushSelectionState();
   if (!aOptions.dontUpdateMenu)
     reserveRefreshContextMenuItems();
-}
+});
 
 
 async function registerToTST() {

@@ -121,7 +121,7 @@ function onMessage(aMessage) {
   }
 }
 
-function onSelectionChange(aTabs, aSelected, aOptions = {}) {
+onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
   if (!aTabs.length)
     return;
   if (gDragTargetIsClosebox) {
@@ -147,7 +147,7 @@ function onSelectionChange(aTabs, aSelected, aOptions = {}) {
     }
   }
   reservePushSelectionState();
-}
+});
 
 function findTabItemFromEvent(aEvent) {
   var target = aEvent.target;

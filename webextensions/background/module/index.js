@@ -6,9 +6,13 @@
 
 import * as Constants from '../../common/module/constants.js';
 import * as Common from '../../common/module/common.js';
+import * as Commands from '../../common/module/commands.js';
+import TabIdFixer from '../../extlib/TabIdFixer.js';
 
 window.Constants = Constants;
 window.Common = Common;
+window.Commands = Commands;
+window.TabIdFixer = TabIdFixer;
 
 window.log = Common.log;
 window.notify = Common.notify;

@@ -188,38 +188,6 @@ async function onNonTabAreaClick(aMessage) {
 
 /* select tabs by dragging */
 
-var gDragSelection = {
-  willCloseSelectedTabs: false,
-  allTabsOnDragReady:    [],
-  pendingTabs:           null,
-  dragStartTarget:       null,
-  lastHoverTarget:       null,
-  firstHoverTarget:      null,
-  undeterminedRange:     {},
-  dragEnteredCount:      0,
-  clear() {
-    this.dragStartTarget = this.firstHoverTarget = this.lastHoverTarget = null;
-    this.undeterminedRange = {};
-    this.willCloseSelectedTabs = false;
-    this.dragEnteredCount = 0;
-    this.allTabsOnDragReady = [];
-  },
-  export() {
-    const exported = {};
-    for (let key of Object.keys(this)) {
-      if (typeof this[key] != 'function')
-        exported[key] = this[key];
-    }
-    return exported;
-  },
-  apply(aForeignSession) {
-    for (let key of Object.keys(aForeignSession)) {
-      if (typeof this[key] != 'function')
-        this[key] = aForeignSession[key];
-    }
-  }
-};
-
 async function onTabItemDragReady(aMessage) {
   //console.log('onTabItemDragReady', aMessage);
   gDragSelection.undeterminedRange = {};

@@ -22,7 +22,7 @@ update_extlib:
 	cd .. && git submodule update --init
 
 install_extlib:
-	cp ../submodules/webextensions-lib-tab-id-fixer/TabIdFixer.js extlib/
+	cp ../submodules/webextensions-lib-tab-id-fixer/TabIdFixer.js extlib/; echo 'export default TabIdFixer;' >> extlib/TabIdFixer.js
 	cp ../submodules/webextensions-lib-tab-favicon-helper/TabFavIconHelper.js extlib/
 	cp ../submodules/webextensions-lib-rich-confirm/RichConfirm.js extlib/
 	cp ../submodules/webextensions-lib-menu-ui/MenuUI.js extlib/
