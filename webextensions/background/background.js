@@ -192,31 +192,31 @@ function onTSTAPIMessage(message) {
       return Promise.resolve(true);
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN:
-      return DragSelection.onTabItemClick(message);
+      return DragSelection.onClick(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP:
-      return DragSelection.onTabItemMouseUp(message);
+      return DragSelection.onMouseUp(message);
 
     case Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED:
       return DragSelection.onNonTabAreaClick(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
-      return DragSelection.onTabItemDragReady(message);
+      return DragSelection.onDragReady(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
-      return DragSelection.onTabItemDragCancel(message);
+      return DragSelection.onDragCancel(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART:
-      return DragSelection.onTabItemDragStart(message);
+      return DragSelection.onDragStart(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER:
-      return DragSelection.onTabItemDragEnter(message);
+      return DragSelection.onDragEnter(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT:
-      return DragSelection.onTabItemDragExit(message);
+      return DragSelection.onDragExit(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEND:
-      return DragSelection.onTabItemDragEnd(message);
+      return DragSelection.onDragEnd(message);
   }
 }
 

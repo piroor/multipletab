@@ -224,7 +224,7 @@ function onClick(event) {
     return;
   const item = findTabItemFromEvent(event);
   if (item) {
-    DragSelection.onTabItemClick({
+    DragSelection.onClick({
       window:        item.tab.windowId,
       tab:           item.tab,
       lastActiveTab: gLastClickedItem.tab,
@@ -266,7 +266,7 @@ async function onMouseMove(event) {
   Selections.selection.targetWindow = (await browser.windows.getCurrent()).id
   gDragTargetIsClosebox =  event.target.classList.contains('closebox');
   gLastDragEnteredTarget = gDragTargetIsClosebox ? event.target : item ;
-  DragSelection.onTabItemDragReady({
+  DragSelection.onDragReady({
     tab:             item.tab,
     window:          Selections.selection.targetWindow,
     startOnClosebox: gDragTargetIsClosebox
@@ -283,7 +283,7 @@ function onMouseUp(event) {
   setTimeout(() => {
     if (gClickFired)
       return;
-    DragSelection.onTabItemDragEnd({
+    DragSelection.onDragEnd({
       tab:     item && item.tab,
       window:  Selections.selection.targetWindow,
       clientX: event.clientX,
@@ -306,7 +306,7 @@ function onMouseOver(event) {
   if (item &&
       (!gDragTargetIsClosebox || isClosebox)) {
     if (target != gLastDragEnteredTarget) {
-      DragSelection.onTabItemDragEnter({
+      DragSelection.onDragEnter({
         tab:    item.tab,
         window: Selections.selection.targetWindow
       });
@@ -328,7 +328,7 @@ function onMouseOut(event) {
   cancelDelayedDragExit(target);
   gOnDragExitTimeout = setTimeout(() => {
     gOnDragExitTimeout = null;
-    DragSelection.onTabItemDragExit({
+    DragSelection.onDragExit({
       tab:    item.tab,
       window: Selections.selection.targetWindow
     });

@@ -94,7 +94,7 @@ function toggleStateOfDragOverTabs(params = {}) {
 
 let gInSelectionSession = false;
 
-export async function onTabItemClick(message) {
+export async function onClick(message) {
   if (message.button != 0)
     return false;
 
@@ -170,7 +170,7 @@ export async function onTabItemClick(message) {
   return false;
 }
 
-export async function onTabItemMouseUp(message) {
+export async function onMouseUp(message) {
   if (message.button != 0)
     return false;
 
@@ -197,8 +197,8 @@ export async function onNonTabAreaClick(message) {
 
 /* select tabs by dragging */
 
-export async function onTabItemDragReady(message) {
-  //console.log('onTabItemDragReady', message);
+export async function onDragReady(message) {
+  //console.log('onDragReady', message);
   Selections.dragSelection.undeterminedRange = {};
   Selections.selection.targetWindow = message.window;
   Selections.dragSelection.dragEnteredCount = 1;
@@ -224,8 +224,8 @@ export async function onTabItemDragReady(message) {
   }
 }
 
-export async function onTabItemDragCancel(message) {
-  //console.log('onTabItemDragCancel', message);
+export async function onDragCancel(message) {
+  //console.log('onDragCancel', message);
   if (Object.keys(Selections.selection.tabs).length > 0) {
     onDragSelectionEnd.dispatch(message);
     // don't clear selection state until menu command is processed.
@@ -233,12 +233,12 @@ export async function onTabItemDragCancel(message) {
   Selections.dragSelection.clear();
 }
 
-export async function onTabItemDragStart(_message) {
-  //console.log('onTabItemDragStart', message);
+export async function onDragStart(_message) {
+  //console.log('onDragStart', message);
 }
 
-export async function onTabItemDragEnter(message) {
-  //console.log('onTabItemDragEnter', message, message.tab == Selections.dragSelection.lastHoverTarget);
+export async function onDragEnter(message) {
+  //console.log('onDragEnter', message, message.tab == Selections.dragSelection.lastHoverTarget);
   Selections.dragSelection.dragEnteredCount++;
   // processAutoScroll(event);
 
@@ -287,7 +287,7 @@ export async function onTabItemDragEnter(message) {
     Selections.dragSelection.firstHoverTarget = Selections.dragSelection.lastHoverTarget;
 }
 
-export async function onTabItemDragExit(_message) {
+export async function onDragExit(_message) {
   Selections.dragSelection.dragEnteredCount--;
   dragExitAllWithDelay.reserve();
 }
@@ -313,8 +313,8 @@ dragExitAllWithDelay.cancel = () => {
   }
 };
 
-export async function onTabItemDragEnd(message) {
-  //console.log('onTabItemDragEnd', message);
+export async function onDragEnd(message) {
+  //console.log('onDragEnd', message);
   if (!configs.autoOpenMenuOnDragEnd)
     return;
   if (Selections.dragSelection.willCloseSelectedTabs) {
