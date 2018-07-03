@@ -328,9 +328,8 @@ export async function onTabItemDragEnd(message) {
     Commands.clearSelection();
     Selections.selection.clear();
   }
-  else if (Object.keys(Selections.selection.tabs).length > 0 &&
-           window.onDragSelectionEnd) {
-    onDragSelectionEnd(message);
+  else if (Object.keys(Selections.selection.tabs).length > 0) {
+    onDragSelectionEnd.dispatch(message);
     // don't clear selection state until menu command is processed.
   }
   Selections.dragSelection.clear();
