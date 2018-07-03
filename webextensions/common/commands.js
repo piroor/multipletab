@@ -12,74 +12,22 @@ import {
   configs
 } from './common.js';
 import * as Constants from './constants.js';
+import {
+  selection as mSelection,
+  dragSelection as mDragSelection
+} from './selections.js';
 import EventListenerManager from './EventListenerManager.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
 
 export const onSelectionChange = new EventListenerManager();
 
-export const gSelection = {
-  tabs:         {},
-  targetWindow: null,
-  lastClickedTab: null,
-  clear() {
-    this.tabs = {};
-    this.targetWindow = this.lastClickedTab = null;
-  },
-  export() {
-    const exported = {};
-    for (const key of Object.keys(this)) {
-      if (typeof this[key] != 'function')
-        exported[key] = this[key];
-    }
-    return exported;
-  },
-  apply(aForeignSession) {
-    for (const key of Object.keys(aForeignSession)) {
-      if (typeof this[key] != 'function')
-        this[key] = aForeignSession[key];
-    }
-  }
-};
-
-export const gDragSelection = {
-  willCloseSelectedTabs: false,
-  allTabsOnDragReady:    [],
-  pendingTabs:           null,
-  dragStartTarget:       null,
-  lastHoverTarget:       null,
-  firstHoverTarget:      null,
-  undeterminedRange:     {},
-  dragEnteredCount:      0,
-  clear() {
-    this.dragStartTarget = this.firstHoverTarget = this.lastHoverTarget = null;
-    this.undeterminedRange = {};
-    this.willCloseSelectedTabs = false;
-    this.dragEnteredCount = 0;
-    this.allTabsOnDragReady = [];
-  },
-  export() {
-    const exported = {};
-    for (const key of Object.keys(this)) {
-      if (typeof this[key] != 'function')
-        exported[key] = this[key];
-    }
-    return exported;
-  },
-  apply(aForeignSession) {
-    for (const key of Object.keys(aForeignSession)) {
-      if (typeof this[key] != 'function')
-        this[key] = aForeignSession[key];
-    }
-  }
-};
-
 export function clearSelection(aOptions = {}) {
   const tabs = [];
-  for (const id of Object.keys(gSelection.tabs)) {
-    tabs.push(gSelection.tabs[id]);
+  for (const id of Object.keys(mSelection.tabs)) {
+    tabs.push(mSelection.tabs[id]);
   }
   setSelection(tabs, false, aOptions);
-  gSelection.clear();
+  mSelection.clear();
 }
 
 export function isPermittedTab(aTab) {
@@ -98,9 +46,9 @@ export function setSelection(aTabs, aSelected, aOptions = {}) {
   //console.log('setSelection ', ids, `${aState}=${aSelected}`);
   if (aSelected) {
     for (const tab of aTabs) {
-      if (tab.id in gSelection.tabs)
+      if (tab.id in mSelection.tabs)
         continue;
-      gSelection.tabs[tab.id] = tab;
+      mSelection.tabs[tab.id] = tab;
       if (shouldHighlight &&
           isPermittedTab(tab) &&
           !tab.pinned)
@@ -113,9 +61,9 @@ export function setSelection(aTabs, aSelected, aOptions = {}) {
   }
   else {
     for (const tab of aTabs) {
-      if (!(tab.id in gSelection.tabs))
+      if (!(tab.id in mSelection.tabs))
         continue;
-      delete gSelection.tabs[tab.id];
+      delete mSelection.tabs[tab.id];
       if (shouldHighlight &&
           isPermittedTab(tab) &&
           !tab.pinned)
@@ -150,8 +98,8 @@ export async function pushSelectionState(aOptions = {}) {
   }
   await browser.runtime.sendMessage({
     type:          Constants.kCOMMAND_PUSH_SELECTION_INFO,
-    selection:     gSelection.export(),
-    dragSelection: gDragSelection.export(),
+    selection:     mSelection.export(),
+    dramSelection: mDragSelection.export(),
     updateMenu:    !!aOptions.updateMenu,
     contextTab:    aOptions.contextTab
   });
@@ -159,14 +107,14 @@ export async function pushSelectionState(aOptions = {}) {
 
 
 export async function getAllTabs(aWindowId) {
-  const tabs = aWindowId || gSelection.targetWindow ?
-    await browser.tabs.query({ windowId: aWindowId || gSelection.targetWindow }) :
+  const tabs = aWindowId || mSelection.targetWindow ?
+    await browser.tabs.query({ windowId: aWindowId || mSelection.targetWindow }) :
     (await browser.windows.getCurrent({ populate: true })).tabs ;
   return tabs.map(TabIdFixer.fixTab);
 }
 
 export function getSelectedTabIds() {
-  return Object.keys(gSelection.tabs).map(aId => parseInt(aId));
+  return Object.keys(mSelection.tabs).map(aId => parseInt(aId));
 }
 
 export async function getAPITabSelection(aParams = {}) {
@@ -611,7 +559,7 @@ export async function suggestFileNameForTab(aTab) {
 export async function suspendTabs(aIds, _options = {}) {
   if (typeof browser.tabs.discard != 'function')
     throw new Error('Error: required API "tabs.discard()" is not available on this version of Firefox.');
-  const allTabs = await browser.tabs.query({ windowId: gSelection.targetWindow });
+  const allTabs = await browser.tabs.query({ windowId: mSelection.targetWindow });
   let inSelection = false;
   let selectionFound = false;
   let unselectedTabs = [];
@@ -650,7 +598,7 @@ export async function suspendTabs(aIds, _options = {}) {
 }
 
 export async function resumeTabs(aIds) {
-  const allTabs = (await browser.tabs.query({ windowId: gSelection.targetWindow }));
+  const allTabs = (await browser.tabs.query({ windowId: mSelection.targetWindow }));
   const activeTab = allTabs.filter(aTab => aTab.active)[0];
   const selectedTabs = allTabs.filter(aTab => aIds.indexOf(aTab.id) > -1);
   for (const tab of selectedTabs) {

@@ -11,6 +11,10 @@ import {
   configs
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
+import {
+  selection as mSelection,
+  dragSelection as mDragSelection
+} from '../common/selections.js';
 import * as Commands from '../common/commands.js';
 import * as DragSelection from '../common/drag-selection.js';
 
@@ -79,7 +83,7 @@ async function refreshItems(aContextTab, aForce) {
     clearTimeout(reserveRefreshItems.timeout);
   delete reserveRefreshItems.timeout;
 
-  const serialized = JSON.stringify(Commands.gSelection.tabs);
+  const serialized = JSON.stringify(mSelection.tabs);
   if (!aForce &&
       serialized == mLastSelectedTabs) {
     log(' => no change, skip');
@@ -253,7 +257,7 @@ async function getContextMenuItemVisibilities(aParams) {
   let frozenCount = 0;
   const tabIds = Commands.getSelectedTabIds();
   for (const id of tabIds) {
-    const tab = Commands.gSelection.tabs[id];
+    const tab = mSelection.tabs[id];
     if (tab.pinned)
       pinnedCount++;
     if (tab.mutedInfo.muted)
@@ -454,8 +458,8 @@ function onMessage(aMessage) {
 
   switch (aMessage.type) {
     case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      Commands.gSelection.apply(aMessage.selection);
-      Commands.gDragSelection.apply(aMessage.dragSelection);
+      mSelection.apply(aMessage.selection);
+      mDragSelection.apply(aMessage.dragSelection);
       if (aMessage.updateMenu) {
         const tab = aMessage.contextTab ? { id: aMessage.contextTab } : null ;
         return refreshItems(tab, true);
@@ -515,12 +519,12 @@ function onTSTAPIMessage(aMessage) {
 }
 
 DragSelection.onDragSelectionEnd.addListener(async aMessage => {
-  const tabId = Commands.gDragSelection.dragStartTarget.id;
+  const tabId = mDragSelection.dragStartTarget.id;
   await refreshItems(tabId, true);
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
-      window: Commands.gSelection.targetWindow,
+      window: mSelection.targetWindow,
       tab:  tabId,
       left: aMessage.clientX,
       top:  aMessage.clientY
