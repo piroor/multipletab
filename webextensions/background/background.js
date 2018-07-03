@@ -30,8 +30,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.tabs.onCreated.addListener(() => Commands.clearSelection());
   browser.tabs.onRemoved.addListener(() => Commands.clearSelection());
 
-  ContextMenu.reserveRefreshContextMenuItems();
-  configs.$addObserver(onConfigChanged);
+  ContextMenu.init();
 
   browser.browserAction.onClicked.addListener(onToolbarButtonClick);
   browser.browserAction.setPopup({ popup: Constants.kPOPUP_URL });
@@ -60,23 +59,6 @@ function onToolbarButtonClick(_tab) {
     browser.browserAction.setPopup({ popup: Constants.kPOPUP_URL });
   }, 0);
 }
-
-DragSelection.onDragSelectionEnd.addListener(async aMessage => {
-  const tabId = Commands.gDragSelection.dragStartTarget.id;
-  await ContextMenu.refreshContextMenuItems(tabId, true);
-  try {
-    await browser.runtime.sendMessage(Constants.kTST_ID, {
-      type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
-      window: Commands.gSelection.targetWindow,
-      tab:  tabId,
-      left: aMessage.clientX,
-      top:  aMessage.clientY
-    });
-  }
-  catch(e) {
-    log('failed to open context menu: ', e);
-  }
-});
 
 async function onShortcutCommand(aCommand) {
   const activeTab = (await browser.tabs.query({
@@ -234,9 +216,6 @@ function onTSTAPIMessage(aMessage) {
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEND:
       return DragSelection.onTabItemDragEnd(aMessage);
-
-    case Constants.kTSTAPI_CONTEXT_MENU_CLICK:
-      return ContextMenu.contextMenuClickListener(aMessage.info, aMessage.tab);
   }
 }
 
@@ -299,18 +278,6 @@ function onMessageExternal(aMessage, aSender) {
     case Constants.kMTHAPI_CLEAR_TAB_SELECTION:
       Commands.clearSelection();
       return Promise.resolve(true);
-
-    case Constants.kMTHAPI_ADD_SELECTED_TAB_COMMAND: {
-      const addons = Object.assign({}, configs.cachedExternalAddons);
-      addons[aSender.id] = true;
-      configs.cachedExternalAddons = addons;
-      ContextMenu.gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`] = aMessage;
-      return ContextMenu.reserveRefreshContextMenuItems(null, true).then(() => true);
-    };
-
-    case Constants.kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
-      delete ContextMenu.gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`];
-      return ContextMenu.reserveRefreshContextMenuItems(null, true).then(() => true);
   }
 }
 
@@ -328,20 +295,7 @@ function onMessage(aMessage) {
     case Constants.kCOMMAND_PUSH_SELECTION_INFO:
       Commands.gSelection.apply(aMessage.selection);
       Commands.gDragSelection.apply(aMessage.dragSelection);
-      if (aMessage.updateMenu) {
-        const tab = aMessage.contextTab ? { id: aMessage.contextTab } : null ;
-        return ContextMenu.refreshContextMenuItems(tab, true);
-      }
-      else {
-        ContextMenu.reserveRefreshContextMenuItems();
-      }
       break;
-
-    case Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO:
-      return Promise.resolve(ContextMenu.gActiveContextMenuItems);
-
-    case Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK:
-      return ContextMenu.contextMenuClickListener({ menuItemId: aMessage.id });
 
     case Constants.kCOMMAND_UNREGISTER_FROM_TST:
       unregisterFromTST();
@@ -349,10 +303,8 @@ function onMessage(aMessage) {
   }
 }
 
-Commands.onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
+Commands.onSelectionChange.addListener((aTabs, aSelected, _options = {}) => {
   Commands.reservePushSelectionState();
-  if (!aOptions.dontUpdateMenu)
-    ContextMenu.reserveRefreshContextMenuItems();
 });
 
 
@@ -415,19 +367,6 @@ function unregisterFromTST() {
     });
   }
   catch(_e) {
-  }
-}
-
-function onConfigChanged(aKey) {
-  switch (aKey) {
-    case 'copyToClipboardFormats':
-      ContextMenu.reserveRefreshContextMenuItems(null, true);
-      break;
-
-    default:
-      if (aKey.indexOf('context_') == 0)
-        ContextMenu.reserveRefreshContextMenuItems(null, true);
-      break;
   }
 }
 
