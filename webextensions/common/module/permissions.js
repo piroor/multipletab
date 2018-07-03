@@ -5,7 +5,14 @@
 */
 'use strict';
 
-const Permissions = {
+import {
+  log,
+  notify,
+  configs
+} from './common.js';
+import * as Constants from './constants.js';
+
+export const Permissions = {
   ALL_URLS:        { origins: ['<all_urls>'] },
   BOOKMARKS:       { permissions: ['bookmarks'] },
   CLIPBOARD_WRITE: { permissions: ['clipboardWrite'], origins: ['<all_urls>'] },
@@ -22,11 +29,11 @@ const Permissions = {
     this.isGranted(aPermissions).then(aGranted => {
       aCheckbox.checked = aGranted;
     });
-    aCheckbox.addEventListener('change', aEvent => {
+    aCheckbox.addEventListener('change', _event => {
       aCheckbox.requestPermissions()
     });
 
-    browser.runtime.onMessage.addListener((aMessage, aSender) => {
+    browser.runtime.onMessage.addListener((aMessage, _sender) => {
       if (!aMessage ||
           !aMessage.type ||
           aMessage.type != Constants.kCOMMAND_NOTIFY_PERMISSIONS_GRANTED ||
@@ -58,7 +65,7 @@ const Permissions = {
           return;
         }
 
-        var granted = await this.isGranted(aPermissions);
+        const granted = await this.isGranted(aPermissions);
         if (granted) {
           aOptions.onChanged(true);
           return;
@@ -95,7 +102,7 @@ const Permissions = {
     if (!configs.requestingPermissions)
       return false;
 
-    var permissions = configs.requestingPermissions;
+    const permissions = configs.requestingPermissions;
     configs.requestingPermissions = null;
     browser.browserAction.setBadgeText({ text: '' });
     browser.permissions.request(permissions).then(aGranted => {

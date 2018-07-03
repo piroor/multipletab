@@ -7,6 +7,7 @@
 import * as Constants from '../../common/module/constants.js';
 import * as Common from '../../common/module/common.js';
 import * as Commands from '../../common/module/commands.js';
+import * as Permissions from '../../common/module/permissions.js';
 import MenuUI from '../../extlib/MenuUI.js';
 import Options from '../../extlib/Options.js';
 import RichConfirm from '../../extlib/RichConfirm.js';
@@ -18,6 +19,7 @@ import l10n from '../../extlib/l10n.js';
 window.Constants = Constants;
 window.Common = Common;
 window.Commands = Commands;
+window.Permissions = Permissions;
 window.MenuUI = MenuUI;
 window.Options = Options;
 window.RichConfirm = RichConfirm;
