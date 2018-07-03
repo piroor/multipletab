@@ -8,8 +8,8 @@
 (() => {
   try {
     function getMetaInfo(aDocument, aName) {
-      var upperCase = aName.toUpperCase();
-      var lowerCase = aName.toLowerCase();
+      const upperCase = aName.toUpperCase();
+      const lowerCase = aName.toLowerCase();
       return document.evaluate(
         `/descendant::*[translate(local-name(), "META", "meta")="meta"][translate(@name, "${upperCase}", "${lowerCase}")="${lowerCase}"]/attribute::content`,
         aDocument,
@@ -19,9 +19,9 @@
       ).stringValue;
     }
 
-    var author = getMetaInfo(document, 'author') || '';
-    var description = getMetaInfo(document, 'description') || '';
-    var keywords = getMetaInfo(document, 'keywords') || '';
+    const author = getMetaInfo(document, 'author') || '';
+    const description = getMetaInfo(document, 'description') || '';
+    const keywords = getMetaInfo(document, 'keywords') || '';
     return {
       author,
       description,
