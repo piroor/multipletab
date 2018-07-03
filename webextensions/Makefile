@@ -26,7 +26,7 @@ install_extlib:
 	cp ../submodules/webextensions-lib-tab-favicon-helper/TabFavIconHelper.js extlib/
 	cp ../submodules/webextensions-lib-rich-confirm/RichConfirm.js extlib/
 	cp ../submodules/webextensions-lib-menu-ui/MenuUI.js extlib/
-	cp ../submodules/webextensions-lib-configs/Configs.js extlib/
+	cp ../submodules/webextensions-lib-configs/Configs.js extlib/; echo 'export default Configs;' >> extlib/Configs.js
 	cp ../submodules/webextensions-lib-options/Options.js extlib/
 	cp ../submodules/webextensions-lib-l10n/l10n.js extlib/
 	cp ../submodules/webextensions-lib-shortcut-customize-ui/ShortcutCustomizeUI.js extlib/

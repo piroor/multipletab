@@ -5,5 +5,13 @@
 */
 
 import * as Constants from '../../common/module/constants.js';
+import * as Common from '../../common/module/common.js';
+
 window.Constants = Constants;
+window.Common = Common;
+
+window.log = Common.log;
+window.notify = Common.notify;
+window.wait = Common.wait;
+window.configs = Common.configs;
 

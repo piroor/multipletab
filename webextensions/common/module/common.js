@@ -5,23 +5,9 @@
 */
 'use strict';
 
-var configs;
-var gLogContext = '?';
+import Configs from '../../extlib/Configs.js';
 
-function log(aMessage, ...aArgs)
-{
-  if (!configs || !configs.debug)
-    return;
-
-  var nest = (new Error()).stack.split('\n').length;
-  var indent = '';
-  for (let i = 0; i < nest; i++) {
-    indent += ' ';
-  }
-  console.log(`mth<${gLogContext}>: ${indent}${aMessage}`, ...aArgs);
-}
-
-async function wait(aTask = 0, aTimeout = 0) {
+export async function wait(aTask = 0, aTimeout = 0) {
   if (typeof aTask != 'function') {
     aTimeout = aTask;
     aTask = null;
@@ -35,7 +21,7 @@ async function wait(aTask = 0, aTimeout = 0) {
   });
 }
 
-async function notify(aParams = {}) {
+export async function notify(aParams = {}) {
   var id = await browser.notifications.create({
     type:    'basic',
     iconUrl: aParams.icon,
@@ -80,7 +66,7 @@ defaultClipboardFormats.push({
   format: '%TST_INDENT(  )%* [%TITLE%](%URL% "%TITLE%")'
 });
 
-configs = new Configs({
+export const configs = new Configs({
   optionsExpandedSections: ['section-general'],
 
   context_reloadTabs: true,
@@ -140,3 +126,19 @@ configs = new Configs({
     debug
   `.trim().split('\n').map(aKey => aKey.trim()).filter(aKey => aKey && aKey.indexOf('//') != 0)
 });
+
+
+var gLogContext = '?';
+
+export function log(aMessage, ...aArgs)
+{
+  if (!configs || !configs.debug)
+    return;
+
+  var nest = (new Error()).stack.split('\n').length;
+  var indent = '';
+  for (let i = 0; i < nest; i++) {
+    indent += ' ';
+  }
+  console.log(`mth<${gLogContext}>: ${indent}${aMessage}`, ...aArgs);
+}
