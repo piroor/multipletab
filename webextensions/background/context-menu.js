@@ -9,9 +9,9 @@ import {
   log,
   wait,
   configs
-} from '../../common/common.js';
-import * as Constants from '../../common/constants.js';
-import * as Commands from '../../common/commands.js';
+} from '../common/common.js';
+import * as Constants from '../common/constants.js';
+import * as Commands from '../common/commands.js';
 
 const gContextMenuItems = `
   reloadTabs
@@ -55,8 +55,8 @@ const gContextMenuItems = `
 `.trim().split(/\s+/).map(aId => `selection/${aId}`);
 gContextMenuItems.unshift('selection');
 
-let gActiveContextMenuItems = [];
-const gExtraContextMenuItems  = {};
+export let gActiveContextMenuItems = [];
+export const gExtraContextMenuItems  = {};
 
 let gLastSelectedTabs = '';
 

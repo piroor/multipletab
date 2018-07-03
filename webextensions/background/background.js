@@ -5,6 +5,19 @@
 */
 'use strict';
 
+import {
+  log,
+  wait,
+  configs
+} from '../common/common.js';
+import * as Constants from '../common/constants.js';
+import * as Commands from '../common/commands.js';
+import * as Permissions from '../common/permissions.js';
+import * as DragSelection from '../common/drag-selection.js';
+import RichConfirm from '../extlib/RichConfirm.js';
+import TabIdFixer from '../extlib/TabIdFixer.js';
+import * as ContextMenu from './context-menu.js';
+
 log.context = 'BG';
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -41,7 +54,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 /*  listen events */
 
-function onToolbarButtonClick(aTab) {
+function onToolbarButtonClick(_tab) {
   Permissions.requestPostProcess();
   setTimeout(() => {
     browser.browserAction.setPopup({ popup: Constants.kPOPUP_URL });
@@ -49,7 +62,7 @@ function onToolbarButtonClick(aTab) {
 }
 
 DragSelection.onDragSelectionEnd.addListener(async aMessage => {
-  let tabId = Commands.gDragSelection.dragStartTarget.id;
+  const tabId = Commands.gDragSelection.dragStartTarget.id;
   await ContextMenu.refreshContextMenuItems(tabId, true);
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
@@ -127,7 +140,7 @@ async function onShortcutCommand(aCommand) {
       let formats;
       if (!Array.isArray(configs.copyToClipboardFormats)) { // migrate to array
         formats = [];
-        for (let label of Object.keys(configs.copyToClipboardFormats)) {
+        for (const label of Object.keys(configs.copyToClipboardFormats)) {
           formats.push({
             label:  label,
             format: configs.copyToClipboardFormats[label]
@@ -167,7 +180,7 @@ async function onShortcutCommand(aCommand) {
       browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_GROUP_TABS,
         tabs: selectedTabIds
-      }).catch(e => {});
+      }).catch(_e => {});
       break;
 
     case 'suspendSelectedTabs':
@@ -233,7 +246,7 @@ function onMessageExternal(aMessage, aSender) {
 
   switch (aSender.id) {
     case Constants.kTST_ID: { // Tree Style Tab API
-      let result = onTSTAPIMessage(aMessage);
+      const result = onTSTAPIMessage(aMessage);
       if (result !== undefined)
         return result;
     }; break;
@@ -252,9 +265,9 @@ function onMessageExternal(aMessage, aSender) {
 
     case Constants.kMTHAPI_SET_TAB_SELECTION:
       return (async () => {
-        var allTabs = await Commands.getAllTabs(aMessage.window || aMessage.windowId);
+        const allTabs = await Commands.getAllTabs(aMessage.window || aMessage.windowId);
 
-        var unselectTabs = aMessage.unselect;
+        let unselectTabs = aMessage.unselect;
         if (unselectTabs == '*') {
           unselectTabs = allTabs;
         }
@@ -267,7 +280,7 @@ function onMessageExternal(aMessage, aSender) {
           globalHighlight: !Commands.gDragSelection.activatedInVerticalTabbarOfTST
         });
 
-        var selectTabs = aMessage.select;
+        let selectTabs = aMessage.select;
         if (selectTabs == '*') {
           selectTabs = allTabs;
         }
@@ -288,15 +301,15 @@ function onMessageExternal(aMessage, aSender) {
       return Promise.resolve(true);
 
     case Constants.kMTHAPI_ADD_SELECTED_TAB_COMMAND: {
-      let addons = Object.assign({}, configs.cachedExternalAddons);
+      const addons = Object.assign({}, configs.cachedExternalAddons);
       addons[aSender.id] = true;
       configs.cachedExternalAddons = addons;
-      gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`] = aMessage;
+      ContextMenu.gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`] = aMessage;
       return ContextMenu.reserveRefreshContextMenuItems(null, true).then(() => true);
     };
 
     case Constants.kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
-      delete gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`];
+      delete ContextMenu.gExtraContextMenuItems[`${aSender.id}:${aMessage.id}`];
       return ContextMenu.reserveRefreshContextMenuItems(null, true).then(() => true);
   }
 }
@@ -316,7 +329,7 @@ function onMessage(aMessage) {
       Commands.gSelection.apply(aMessage.selection);
       Commands.gDragSelection.apply(aMessage.dragSelection);
       if (aMessage.updateMenu) {
-        let tab = aMessage.contextTab ? { id: aMessage.contextTab } : null ;
+        const tab = aMessage.contextTab ? { id: aMessage.contextTab } : null ;
         return ContextMenu.refreshContextMenuItems(tab, true);
       }
       else {
@@ -325,7 +338,7 @@ function onMessage(aMessage) {
       break;
 
     case Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO:
-      return Promise.resolve(gActiveContextMenuItems);
+      return Promise.resolve(ContextMenu.gActiveContextMenuItems);
 
     case Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK:
       return ContextMenu.contextMenuClickListener({ menuItemId: aMessage.id });
@@ -386,7 +399,7 @@ async function registerToTST() {
     // force rebuild menu
     return ContextMenu.reserveRefreshContextMenuItems(null, true).then(() => true);
   }
-  catch(e) {
+  catch(_e) {
     return false;
   }
 }
@@ -401,7 +414,7 @@ function unregisterFromTST() {
       type: Constants.kTSTAPI_UNREGISTER_SELF
     });
   }
-  catch(e) {
+  catch(_e) {
   }
 }
 
@@ -420,13 +433,13 @@ function onConfigChanged(aKey) {
 
 
 async function notifyReady() {
-  var addons   = configs.cachedExternalAddons;
-  var modified = false;
-  for (let id of Object.keys(addons)) {
+  const addons   = configs.cachedExternalAddons;
+  let modified = false;
+  for (const id of Object.keys(addons)) {
     try {
       browser.runtime.sendMessage(id, { type: Constants.kMTHAPI_READY });
     }
-    catch(e) {
+    catch(_e) {
       delete addons[id];
       modified = true;
     }
@@ -452,12 +465,12 @@ async function notifyUpdatedFromLegacy() {
     return;
   configs.shouldNotifyUpdatedFromLegacyVersion = false;
 
-  var tab = await browser.tabs.create({
+  const tab = await browser.tabs.create({
     url:    browser.extension.getURL('resources/updated-from-legacy.html'),
     active: true
   });
-  var title       = `${browser.i18n.getMessage('extensionName')} ${browser.runtime.getManifest().version}`
-  var description = browser.i18n.getMessage('message_updatedFromLegacy_description');
+  const title       = `${browser.i18n.getMessage('extensionName')} ${browser.runtime.getManifest().version}`
+  const description = browser.i18n.getMessage('message_updatedFromLegacy_description');
   browser.tabs.executeScript(tab.id, {
     code: `
       document.querySelector('#title').textContent = document.title = ${JSON.stringify(title)};
@@ -466,13 +479,13 @@ async function notifyUpdatedFromLegacy() {
     `
   });
 
-  browser.runtime.onMessage.addListener(function onMessage(aMessage, aSender) {
+  browser.runtime.onMessage.addListener(function onMessage(aMessage, _sender) {
     if (aMessage &&
         typeof aMessage.type == 'string' &&
         aMessage.type == Constants.kCOMMAND_NOTIFY_PANEL_SHOWN) {
       browser.runtime.onMessage.removeListener(onMessage);
       browser.tabs.remove(tab.id)
-        .catch(handleMissingTabError);
+        .catch(_e => {}); // ignore already closed tab
     }
   });
 }
