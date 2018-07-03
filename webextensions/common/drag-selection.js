@@ -118,7 +118,28 @@ async function onTabItemClick(aMessage) {
     TabIdFixer.fixTab(lastActiveTab);
 
   let tabs = retrieveTargetTabs(aMessage.tab);
-  if (ctrlKeyPressed) {
+  if (aMessage.shiftKey) {
+    // select the clicked tab and tabs between last activated tab
+    let window = await browser.windows.get(aMessage.window, { populate: true });
+    let betweenTabs = getTabsBetween(gSelection.lastClickedTab || lastActiveTab, aMessage.tab, window.tabs);
+    tabs = tabs.concat(betweenTabs);
+    tabs.push(gSelection.lastClickedTab || lastActiveTab);
+    const selectedTabIds = tabs.map(aTab => aTab.id);
+    if (!ctrlKeyPressed)
+    setSelection(window.tabs.filter(aTab => selectedTabIds.indexOf(aTab.id) < 0), false, {
+      globalHighlight: false
+    });
+    setSelection(tabs, true, {
+      globalHighlight: false
+    });
+    gInSelectionSession = true;
+    // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
+    const newSelectedTabIds = getSelectedTabIds();
+    if (newSelectedTabIds.length > 0 && !newSelectedTabIds.includes(lastActiveTab.id))
+      browser.tabs.update(gSelection.lastClickedTab ? gSelection.lastClickedTab.id : newSelectedTabIds[0], { active: true });
+    return true;
+  }
+  else if (ctrlKeyPressed) {
     // toggle selection of the tab and all collapsed descendants
     if (aMessage.tab.id != lastActiveTab.id &&
         !gInSelectionSession) {
@@ -135,26 +156,6 @@ async function onTabItemClick(aMessage) {
       browser.tabs.update(selectedTabIds[0], { active: true });
     gInSelectionSession = true;
     gSelection.lastClickedTab = aMessage.tab;
-    return true;
-  }
-  else if (aMessage.shiftKey) {
-    // select the clicked tab and tabs between last activated tab
-    let window = await browser.windows.get(aMessage.window, { populate: true });
-    let betweenTabs = getTabsBetween(gSelection.lastClickedTab || lastActiveTab, aMessage.tab, window.tabs);
-    tabs = tabs.concat(betweenTabs);
-    tabs.push(gSelection.lastClickedTab || lastActiveTab);
-    const selectedTabIds = tabs.map(aTab => aTab.id);
-    setSelection(window.tabs.filter(aTab => selectedTabIds.indexOf(aTab.id) < 0), false, {
-      globalHighlight: false
-    });
-    setSelection(tabs, true, {
-      globalHighlight: false
-    });
-    gInSelectionSession = true;
-    // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
-    const newSelectedTabIds = getSelectedTabIds();
-    if (newSelectedTabIds.length > 0 && !newSelectedTabIds.includes(lastActiveTab.id))
-      browser.tabs.update(gSelection.lastClickedTab ? gSelection.lastClickedTab.id : newSelectedTabIds[0], { active: true });
     return true;
   }
   return false;
