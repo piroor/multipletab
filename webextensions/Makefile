@@ -16,17 +16,17 @@ format:
 
 xpi: update_extlib install_extlib lint
 	rm -f ./*.xpi
-	zip -r -0 multipletab-we.xpi manifest.json common resources background panel options _locales >/dev/null 2>/dev/null
+	zip -r -0 multipletab-we.xpi manifest.json common resources background panel options _locales extlib >/dev/null 2>/dev/null
 
 update_extlib:
 	cd .. && git submodule update --init
 
 install_extlib:
-	cp ../extlib/webextensions-lib-tab-id-fixer/TabIdFixer.js common/
-	cp ../extlib/webextensions-lib-tab-favicon-helper/TabFavIconHelper.js common/
-	cp ../extlib/webextensions-lib-rich-confirm/RichConfirm.js common/
-	cp ../extlib/webextensions-lib-menu-ui/MenuUI.js common/
-	cp ../extlib/webextensions-lib-configs/Configs.js common/
-	cp ../extlib/webextensions-lib-options/Options.js options/
-	cp ../extlib/webextensions-lib-l10n/l10n.js common/
-	cp ../extlib/webextensions-lib-shortcut-customize-ui/ShortcutCustomizeUI.js options/
+	cp ../submodules/webextensions-lib-tab-id-fixer/TabIdFixer.js extlib/
+	cp ../submodules/webextensions-lib-tab-favicon-helper/TabFavIconHelper.js extlib/
+	cp ../submodules/webextensions-lib-rich-confirm/RichConfirm.js extlib/
+	cp ../submodules/webextensions-lib-menu-ui/MenuUI.js extlib/
+	cp ../submodules/webextensions-lib-configs/Configs.js extlib/
+	cp ../submodules/webextensions-lib-options/Options.js extlib/
+	cp ../submodules/webextensions-lib-l10n/l10n.js extlib/
+	cp ../submodules/webextensions-lib-shortcut-customize-ui/ShortcutCustomizeUI.js extlib/

@@ -25,14 +25,14 @@
   "background": {
     "scripts": [
       "common/constants.js",
-      "common/Configs.js",
+      "extlib/Configs.js",
       "common/common.js",
       "common/permissions.js",
       "common/commands.js",
       "common/drag-selection.js",
-      "common/TabIdFixer.js",
-      "common/TabFavIconHelper.js",
-      "common/RichConfirm.js",
+      "extlib/TabIdFixer.js",
+      "extlib/TabFavIconHelper.js",
+      "extlib/RichConfirm.js",
       "background/background.js",
       "background/context-menu.js"
     ]
