@@ -62,7 +62,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     clearTimeout(reserveRefreshContextMenuItems.timeout);
   delete reserveRefreshContextMenuItems.timeout;
 
-  var serialized = JSON.stringify(gSelection.tabs);
+  var serialized = JSON.stringify(Commands.gSelection.tabs);
   if (!aForce &&
       serialized == gLastSelectedTabs) {
     log(' => no change, skip');
@@ -91,7 +91,7 @@ async function refreshContextMenuItems(aContextTab, aForce) {
     return;
   log('visibilities: ', visibilities);
 
-  let hasSelection         = getSelectedTabIds().length > 0;
+  let hasSelection         = Commands.getSelectedTabIds().length > 0;
   let separatorsCount      = 0;
   let normalItemAppearedIn = {};
   let createdItems         = {};
@@ -227,16 +227,16 @@ function reserveRefreshContextMenuItems() {
 
 async function getContextMenuItemVisibilities(aParams) {
   var tab = aParams.tab;
-  var allTabs = await getAllTabs();
+  var allTabs = await Commands.getAllTabs();
   var pinnedCount = 0;
   var mutedCount = 0;
   var suspendedCount = 0;
   var lockedCount = 0;
   var protectedCount = 0;
   var frozenCount = 0;
-  var tabIds = getSelectedTabIds();
+  var tabIds = Commands.getSelectedTabIds();
   for (let id of tabIds) {
-    let tab = gSelection.tabs[id];
+    let tab = Commands.gSelection.tabs[id];
     if (tab.pinned)
       pinnedCount++;
     if (tab.mutedInfo.muted)
@@ -295,62 +295,62 @@ configs.$addObserver(aKey => {
 
 var contextMenuClickListener = async (aInfo, aTab) => {
   //log('context menu item clicked: ', aInfo, aTab);
-  var selectedTabIds = getSelectedTabIds();
+  var selectedTabIds = Commands.getSelectedTabIds();
   console.log('aInfo.menuItemId, selectedTabIds ', aInfo.menuItemId, selectedTabIds);
   switch (aInfo.menuItemId) {
     case 'reloadTabs':
-      await reloadTabs(selectedTabIds);
-      clearSelection();
+      await Commands.reloadTabs(selectedTabIds);
+      Commands.clearSelection();
       break;
     case 'bookmarkTabs':
-      await bookmarkTabs(selectedTabIds);
+      await Commands.bookmarkTabs(selectedTabIds);
       break;
     case 'removeBookmarkFromTabs':
       // not implemented
       break;
 
     case 'duplicateTabs':
-      await duplicateTabs(selectedTabIds);
-      clearSelection();
+      await Commands.duplicateTabs(selectedTabIds);
+      Commands.clearSelection();
       break;
 
     case 'pinTabs':
-      await pinTabs(selectedTabIds);
-      clearSelection();
+      await Commands.pinTabs(selectedTabIds);
+      Commands.clearSelection();
       break;
     case 'unpinTabs':
-      await unpinTabs(selectedTabIds);
-      clearSelection();
+      await Commands.unpinTabs(selectedTabIds);
+      Commands.clearSelection();
       break;
     case 'muteTabs':
-      await muteTabs(selectedTabIds);
-      clearSelection();
+      await Commands.muteTabs(selectedTabIds);
+      Commands.clearSelection();
       break;
     case 'unmuteTabs':
-      await unmuteTabs(selectedTabIds);
-      clearSelection();
+      await Commands.unmuteTabs(selectedTabIds);
+      Commands.clearSelection();
       break;
 
     case 'moveToNewWindow':
-      await moveToWindow(selectedTabIds);
+      await Commands.moveToWindow(selectedTabIds);
       break;
 
     case 'removeTabs':
-      await removeTabs(selectedTabIds);
-      clearSelection();
+      await Commands.removeTabs(selectedTabIds);
+      Commands.clearSelection();
       break;
     case 'removeOther':
-      await removeOtherTabs(selectedTabIds);
-      clearSelection();
+      await Commands.removeOtherTabs(selectedTabIds);
+      Commands.clearSelection();
       break;
 
     case 'clipboard':
-      clearSelection();
+      Commands.clearSelection();
       break;
     case 'saveTabs':
-      await clearSelection();
+      await Commands.clearSelection();
       await wait(100); // to wait tab titles are updated
-      await saveTabs(selectedTabIds);
+      await Commands.saveTabs(selectedTabIds);
       break;
 
     case 'printTabs':
@@ -372,23 +372,23 @@ var contextMenuClickListener = async (aInfo, aTab) => {
       break;
 
     case 'suspendTabs':
-      await suspendTabs(selectedTabIds);
+      await Commands.suspendTabs(selectedTabIds);
       break;
     case 'resumeTabs':
-      await resumeTabs(selectedTabIds);
+      await Commands.resumeTabs(selectedTabIds);
       break;
 
     case 'selectAll':
-      selectAllTabs();
+      Commands.selectAllTabs();
       break;
     case 'select':
-      setSelection(aTab, true);
+      Commands.setSelection(aTab, true);
       break;
     case 'unselect':
-      setSelection(aTab, false);
+      Commands.setSelection(aTab, false);
       break;
     case 'invertSelection':
-      invertSelection();
+      Commands.invertSelection();
       break;
 
     default:
@@ -404,20 +404,20 @@ var contextMenuClickListener = async (aInfo, aTab) => {
         else {
           format = configs.copyToClipboardFormats[id.replace(/^[0-9]+:/, '')];
         }
-        await clearSelection();
+        await Commands.clearSelection();
         await wait(100); // to wait tab titles are updated
-        await copyToClipboard(selectedTabIds, format);
+        await Commands.copyToClipboard(selectedTabIds, format);
       }
       else if (aInfo.menuItemId.indexOf('moveToOtherWindow:') == 0) {
         let id = parseInt(aInfo.menuItemId.replace(/^moveToOtherWindow:/, ''));
-        await moveToWindow(selectedTabIds, id);
-        await clearSelection();
+        await Commands.moveToWindow(selectedTabIds, id);
+        await Commands.clearSelection();
       }
       else if (aInfo.menuItemId.indexOf('extra:') == 0) {
         let idMatch   = aInfo.menuItemId.match(/^extra:([^:]+):(.+)$/);
         let owner     = idMatch[1];
         let id        = idMatch[2];
-        let selection = await getAPITabSelection({
+        let selection = await Commands.getAPITabSelection({
           selectedIds: selectedTabIds
         });
         browser.runtime.sendMessage(owner, {

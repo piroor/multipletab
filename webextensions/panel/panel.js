@@ -26,8 +26,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   var response = await browser.runtime.sendMessage({
     type: Constants.kCOMMAND_PULL_SELECTION_INFO
   });
-  gSelection = response.selection;
-  gDragSelection.apply(response.dragSelection);
+  Commands.gSelection = response.selection;
+  Commands.gDragSelection.apply(response.dragSelection);
 
   gLastClickedItem = null;
 
@@ -104,7 +104,7 @@ function reserveClearSelection() {
     clearTimeout(reserveClearSelection.reserved);
   reserveClearSelection.reserved = setTimeout(() => {
     delete reserveClearSelection.reserved;
-    clearSelection();
+    Commands.clearSelection();
   }, 100);
 }
 
@@ -114,14 +114,14 @@ function onMessage(aMessage) {
 
   switch (aMessage.type) {
     case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      gSelection = aMessage.selection;
-      gDragSelection.apply(aMessage.dragSelection);
+      Commands.gSelection = aMessage.selection;
+      Commands.gDragSelection.apply(aMessage.dragSelection);
       rebuildTabItems();
       break;
   }
 }
 
-onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
+Commands.onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
   if (!aTabs.length)
     return;
   if (gDragTargetIsClosebox) {
@@ -146,7 +146,7 @@ onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
         item.classList.remove('selected');
     }
   }
-  reservePushSelectionState();
+  Commands.reservePushSelectionState();
 });
 
 function findTabItemFromEvent(aEvent) {
@@ -253,13 +253,13 @@ async function onMouseMove(aEvent) {
   var item = findTabItemFromEvent(aEvent);
   if (!item)
     return;
-  gSelection.targetWindow = (await browser.windows.getCurrent()).id
+  Commands.gSelection.targetWindow = (await browser.windows.getCurrent()).id
   gDragTargetIsClosebox =  aEvent.target.classList.contains('closebox');
   gLastDragEnteredItem = item;
   gLastDragEnteredTarget = gDragTargetIsClosebox ? aEvent.target : item ;
   onTabItemDragReady({
     tab:             item.tab,
-    window:          gSelection.targetWindow,
+    window:          Commands.gSelection.targetWindow,
     startOnClosebox: gDragTargetIsClosebox
   })
   gTabBar.addEventListener('mouseover', onMouseOver);
@@ -276,7 +276,7 @@ function onMouseUp(aEvent) {
       return;
     onTabItemDragEnd({
       tab:     item && item.tab,
-      window:  gSelection.targetWindow,
+      window:  Commands.gSelection.targetWindow,
       clientX: aEvent.clientX,
       clientY: aEvent.clientY
     });
@@ -299,7 +299,7 @@ function onMouseOver(aEvent) {
     if (target != gLastDragEnteredTarget) {
       onTabItemDragEnter({
         tab:    item.tab,
-        window: gSelection.targetWindow
+        window: Commands.gSelection.targetWindow
       });
     }
   }
@@ -322,7 +322,7 @@ function onMouseOut(aEvent) {
     gOnDragExitTimeout = null;
     onTabItemDragExit({
       tab:    item.tab,
-      window: gSelection.targetWindow
+      window: Commands.gSelection.targetWindow
     });
   }, 10);
 }
@@ -335,8 +335,8 @@ function cancelDelayedDragExit() {
 }
 
 function onDragSelectionEnd(aMessage) {
-  let tab = gDragSelection.dragStartTarget.id;
-  pushSelectionState({
+  let tab = Commands.gDragSelection.dragStartTarget.id;
+  Commands.pushSelectionState({
     updateMenu: true,
     contextTab: tab.id
   }).then(() => {
@@ -364,11 +364,11 @@ function buildTabItem(aTab) {
   var label    = document.createElement('label');
   var checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
-  if (aTab.id in gSelection.tabs)
+  if (aTab.id in Commands.gSelection.tabs)
     checkbox.setAttribute('checked', true);
   checkbox.addEventListener('change', () => {
     item.classList.toggle('selected');
-    setSelection(aTab, item.classList.contains('selected'), { globalHighlight: false });
+    Commands.setSelection(aTab, item.classList.contains('selected'), { globalHighlight: false });
   });
   label.appendChild(checkbox);
   var favicon = document.createElement('img');
@@ -393,7 +393,7 @@ function buildTabItem(aTab) {
     gLastClickedItem = item;
     item.classList.add('last-focused');
   }
-  if (aTab.id in gSelection.tabs)
+  if (aTab.id in Commands.gSelection.tabs)
     item.classList.add('selected');
   item.appendChild(label);
   item.tab = aTab;

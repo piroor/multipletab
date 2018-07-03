@@ -11,11 +11,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
 
   browser.tabs.onActivated.addListener((aActiveInfo) => {
-    if (!gSelection.tabs[TabIdFixer.fixTabId(aActiveInfo.tabId)])
-      clearSelection();
+    if (!Commands.gSelection.tabs[TabIdFixer.fixTabId(aActiveInfo.tabId)])
+      Commands.clearSelection();
   });
-  browser.tabs.onCreated.addListener(() => clearSelection());
-  browser.tabs.onRemoved.addListener(() => clearSelection());
+  browser.tabs.onCreated.addListener(() => Commands.clearSelection());
+  browser.tabs.onRemoved.addListener(() => Commands.clearSelection());
 
   reserveRefreshContextMenuItems();
   configs.$addObserver(onConfigChanged);
@@ -49,12 +49,12 @@ function onToolbarButtonClick(aTab) {
 }
 
 async function onDragSelectionEnd(aMessage) {
-  let tabId = gDragSelection.dragStartTarget.id;
+  let tabId = Commands.gDragSelection.dragStartTarget.id;
   await refreshContextMenuItems(tabId, true);
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
-      window: gSelection.targetWindow,
+      window: Commands.gSelection.targetWindow,
       tab:  tabId,
       left: aMessage.clientX,
       top:  aMessage.clientY
@@ -70,57 +70,57 @@ async function onShortcutCommand(aCommand) {
     active:        true,
     currentWindow: true
   }))[0];
-  const selectedTabIds = getSelectedTabIds();
+  const selectedTabIds = Commands.getSelectedTabIds();
 
   if (selectedTabIds.length <= 0)
     return;
 
   switch (aCommand) {
     case 'reloadSelectedTabs':
-      reloadTabs(selectedTabIds);
+      Commands.reloadTabs(selectedTabIds);
       break;
     case 'bookmarkSelectedTabs':
-      bookmarkTabs(selectedTabIds);
+      Commands.bookmarkTabs(selectedTabIds);
       break;
 
     case 'duplicateSelectedTabs':
-      duplicateTabs(selectedTabIds);
+      Commands.duplicateTabs(selectedTabIds);
       break;
 
     case 'pinSelectedTabs':
-      pinTabs(selectedTabIds);
+      Commands.pinTabs(selectedTabIds);
       break;
     case 'unpinSelectedTabs':
-      unpinTabs(selectedTabIds);
+      Commands.unpinTabs(selectedTabIds);
       break;
     case 'muteSelectedTabs':
-      muteTabs(selectedTabIds);
+      Commands.muteTabs(selectedTabIds);
       break;
     case 'unmuteSelectedTabs':
-      unmuteTabs(selectedTabIds);
+      Commands.unmuteTabs(selectedTabIds);
       break;
 
     case 'moveSelectedTabsToNewWindow':
-      moveToWindow(selectedTabIds);
+      Commands.moveToWindow(selectedTabIds);
       break;
 
     case 'moveSelectedTabsToOtherWindow': {
       const otherWindows = (await browser.windows.getAll()).filter(aWindow => aWindow.id != activeTab.windowId);
       if (otherWindows.length <= 0)
-        return moveToWindow(selectedTabIds);
+        return Commands.moveToWindow(selectedTabIds);
       const result = await RichConfirm.showInTab(activeTab.id, {
         message: browser.i18n.getMessage('command_moveSelectedTabsToOtherWindow_message'),
         buttons: otherWindows.map(aWindow => aWindow.title)
       });
       if (result.buttonIndex > -1)
-        moveToWindow(selectedTabIds, otherWindows[result.buttonIndex].id);
+        Commands.moveToWindow(selectedTabIds, otherWindows[result.buttonIndex].id);
     }; break;
 
     case 'removeSelectedTabs':
-      removeTabs(selectedTabIds);
+      Commands.removeTabs(selectedTabIds);
       break;
     case 'removeUnselectedTabs':
-      removeOtherTabs(selectedTabIds);
+      Commands.removeOtherTabs(selectedTabIds);
       break;
 
     case 'copySelectedTabs': {
@@ -142,22 +142,22 @@ async function onShortcutCommand(aCommand) {
         buttons: formats.map(aFormat => aFormat.label)
       });
       if (result.buttonIndex > -1) {
-        await clearSelection();
+        await Commands.clearSelection();
         await wait(100); // to wait tab titles are updated
-        await copyToClipboard(selectedTabIds, formats[result.buttonIndex].format);
-        const tabs = await getAllTabs(activeTab.windowId);
+        await Commands.copyToClipboard(selectedTabIds, formats[result.buttonIndex].format);
+        const tabs = await Commands.getAllTabs(activeTab.windowId);
         tabs.filter(aTab => selectedTabIds.indexOf(aTab.id) > -1)
-          .forEach(aTab => setSelection(aTab, true));
+          .forEach(aTab => Commands.setSelection(aTab, true));
       }
     } break;
 
     case 'saveSelectedTabs':
-      await clearSelection();
+      await Commands.clearSelection();
       await wait(100); // to wait tab titles are updated
-      await saveTabs(selectedTabIds);
-      const tabs = await getAllTabs(activeTab.windowId);
+      await Commands.saveTabs(selectedTabIds);
+      const tabs = await Commands.getAllTabs(activeTab.windowId);
       tabs.filter(aTab => selectedTabIds.indexOf(aTab.id) > -1)
-        .forEach(aTab => setSelection(aTab, true));
+        .forEach(aTab => Commands.setSelection(aTab, true));
       break;
 
     case 'printSelectedTabs':
@@ -171,20 +171,20 @@ async function onShortcutCommand(aCommand) {
       break;
 
     case 'suspendSelectedTabs':
-      suspendTabs(selectedTabIds);
+      Commands.suspendTabs(selectedTabIds);
       break;
     case 'resumeSelectedTabs':
-      resumeTabs(selectedTabIds);
+      Commands.resumeTabs(selectedTabIds);
       break;
 
     case 'toggleSelection':
-      setSelection(activeTab, selectedTabIds.indexOf(activeTab.id) < 0);
+      Commands.setSelection(activeTab, selectedTabIds.indexOf(activeTab.id) < 0);
       break;
     case 'selectAll':
-      selectAllTabs();
+      Commands.selectAllTabs();
       break;
     case 'invertSelection':
-      invertSelection();
+      Commands.invertSelection();
       break;
   }
 }
@@ -248,11 +248,11 @@ function onMessageExternal(aMessage, aSender) {
 
   switch (aMessage.type) {
     case Constants.kMTHAPI_GET_TAB_SELECTION:
-      return getAPITabSelection();
+      return Commands.getAPITabSelection();
 
     case Constants.kMTHAPI_SET_TAB_SELECTION:
       return (async () => {
-        var allTabs = await getAllTabs(aMessage.window || aMessage.windowId);
+        var allTabs = await Commands.getAllTabs(aMessage.window || aMessage.windowId);
 
         var unselectTabs = aMessage.unselect;
         if (unselectTabs == '*') {
@@ -263,8 +263,8 @@ function onMessageExternal(aMessage, aSender) {
             unselectTabs = [unselectTabs];
           unselectTabs = allTabs.filter(aTab => unselectTabs.indexOf(aTab.id) > -1);
         }
-        setSelection(unselectTabs, false, {
-          globalHighlight: !gDragSelection.activatedInVerticalTabbarOfTST
+        Commands.setSelection(unselectTabs, false, {
+          globalHighlight: !Commands.gDragSelection.activatedInVerticalTabbarOfTST
         });
 
         var selectTabs = aMessage.select;
@@ -276,15 +276,15 @@ function onMessageExternal(aMessage, aSender) {
             selectTabs = [selectTabs];
           selectTabs = allTabs.filter(aTab => selectTabs.indexOf(aTab.id) > -1);
         }
-        setSelection(selectTabs, true, {
-          globalHighlight: !gDragSelection.activatedInVerticalTabbarOfTST
+        Commands.setSelection(selectTabs, true, {
+          globalHighlight: !Commands.gDragSelection.activatedInVerticalTabbarOfTST
         });
 
         return true;
       })();
 
     case Constants.kMTHAPI_CLEAR_TAB_SELECTION:
-      clearSelection();
+      Commands.clearSelection();
       return Promise.resolve(true);
 
     case Constants.kMTHAPI_ADD_SELECTED_TAB_COMMAND: {
@@ -308,13 +308,13 @@ function onMessage(aMessage) {
   switch (aMessage.type) {
     case Constants.kCOMMAND_PULL_SELECTION_INFO:
       return Promise.resolve({
-        selection:     gSelection,
-        dragSelection: gDragSelection.export()
+        selection:     Commands.gSelection,
+        dragSelection: Commands.gDragSelection.export()
       });
 
     case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      gSelection = aMessage.selection;
-      gDragSelection.apply(aMessage.dragSelection);
+      Commands.gSelection = aMessage.selection;
+      Commands.gDragSelection.apply(aMessage.dragSelection);
       if (aMessage.updateMenu) {
         let tab = aMessage.contextTab ? { id: aMessage.contextTab } : null ;
         return refreshContextMenuItems(tab, true);
@@ -336,8 +336,8 @@ function onMessage(aMessage) {
   }
 }
 
-onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
-  reservePushSelectionState();
+Commands.onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
+  Commands.reservePushSelectionState();
   if (!aOptions.dontUpdateMenu)
     reserveRefreshContextMenuItems();
 });
@@ -382,7 +382,7 @@ async function registerToTST() {
         }
       `
     });
-    gDragSelection.activatedInVerticalTabbarOfTST = true;
+    Commands.gDragSelection.activatedInVerticalTabbarOfTST = true;
     // force rebuild menu
     return reserveRefreshContextMenuItems(null, true).then(() => true);
   }
@@ -392,7 +392,7 @@ async function registerToTST() {
 }
 
 function unregisterFromTST() {
-  gDragSelection.activatedInVerticalTabbarOfTST = false;
+  Commands.gDragSelection.activatedInVerticalTabbarOfTST = false;
   try {
     browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
