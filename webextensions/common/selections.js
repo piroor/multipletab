@@ -21,10 +21,10 @@ export const selection = {
     }
     return exported;
   },
-  apply(aForeignSession) {
-    for (const key of Object.keys(aForeignSession)) {
+  apply(foreignSession) {
+    for (const key of Object.keys(foreignSession)) {
       if (typeof this[key] != 'function')
-        this[key] = aForeignSession[key];
+        this[key] = foreignSession[key];
     }
   }
 };
@@ -53,10 +53,10 @@ export const dragSelection = {
     }
     return exported;
   },
-  apply(aForeignSession) {
-    for (const key of Object.keys(aForeignSession)) {
+  apply(foreignSession) {
+    for (const key of Object.keys(foreignSession)) {
       if (typeof this[key] != 'function')
-        this[key] = aForeignSession[key];
+        this[key] = foreignSession[key];
     }
   }
 };

@@ -19,8 +19,8 @@ const options = new Options(configs);
 
 let gFormatRows;
 
-function onConfigChanged(aKey) {
-  switch (aKey) {
+function onConfigChanged(key) {
+  switch (key) {
     case 'debug':
       if (configs.debug)
         document.documentElement.classList.add('debugging');
@@ -41,7 +41,7 @@ window.addEventListener('DOMContentLoaded', () => {
   gFormatRows.addEventListener('input', onFormatInput);
   addButtonCommandListener(
     gFormatRows,
-    (aEvent) => { onRowControlButtonClick(aEvent); }
+    (event) => { onRowControlButtonClick(event); }
   );
   addButtonCommandListener(
     document.querySelector('#copyToClipboardFormatsAddNewRow'),
@@ -74,36 +74,36 @@ window.addEventListener('DOMContentLoaded', () => {
 }, { once: true });
 
 
-function getButtonFromEvent(aEvent) {
-  let target = aEvent.target;
+function getButtonFromEvent(event) {
+  let target = event.target;
   if (target.nodeType != Node.ELEMENT_NODE)
     target = target.parentNode;
   return target.localName == 'button' && target;
 }
 
 function addButtonCommandListener(aButton, aOnCommand) {
-  aButton.addEventListener('click', (aEvent) => {
-    if (!getButtonFromEvent(aEvent))
+  aButton.addEventListener('click', (event) => {
+    if (!getButtonFromEvent(event))
       return;
-    aOnCommand(aEvent);
+    aOnCommand(event);
   });
-  aButton.addEventListener('keyup', (aEvent) => {
-    if (!getButtonFromEvent(aEvent))
+  aButton.addEventListener('keyup', (event) => {
+    if (!getButtonFromEvent(event))
       return;
-    if (aEvent.key == 'Enter')
-      aOnCommand(aEvent);
+    if (event.key == 'Enter')
+      aOnCommand(event);
   });
 }
 
-function getInputFieldFromEvent(aEvent) {
-  let target = aEvent.target;
+function getInputFieldFromEvent(event) {
+  let target = event.target;
   if (target.nodeType != Node.ELEMENT_NODE)
     target = target.parentNode;
   return target.localName == 'input' && target;
 }
 
-function onFormatInput(aEvent) {
-  const field = getInputFieldFromEvent(aEvent);
+function onFormatInput(event) {
+  const field = getInputFieldFromEvent(event);
   if (!field)
     return;
   if (field.throttleInputTimer)
@@ -139,11 +139,11 @@ function rebuildFormatRows() {
     }
     configs.copyToClipboardFormats = items;
   }
-  configs.copyToClipboardFormats.forEach((aItem, aIndex) => {
+  configs.copyToClipboardFormats.forEach((item, index) => {
     rows.appendChild(createFormatRow({
-      index:  aIndex,
-      label:  aItem.label,
-      format: aItem.format
+      index:  index,
+      label:  item.label,
+      format: item.format
     }));
   });
   range.insertNode(rows);
@@ -176,26 +176,26 @@ function restoreDefaultFormats() {
   rebuildFormatRows();
 }
 
-function createFormatRow(aParams = {}) {
+function createFormatRow(params = {}) {
   const row = document.createElement('div');
   row.classList.add('row');
-  row.itemIndex= aParams.index;
+  row.itemIndex= params.index;
 
   const labelField = row.appendChild(document.createElement('input'));
   labelField.classList.add('column');
   labelField.classList.add('label');
   labelField.setAttribute('type', 'text');
   labelField.setAttribute('placeholder', browser.i18n.getMessage('config_copyToClipboardFormats_label'));
-  if (aParams.label)
-    labelField.value = aParams.label;
+  if (params.label)
+    labelField.value = params.label;
 
   const formatField = row.appendChild(document.createElement('input'));
   formatField.classList.add('column');
   formatField.classList.add('format');
   formatField.setAttribute('type', 'text');
   formatField.setAttribute('placeholder', browser.i18n.getMessage('config_copyToClipboardFormats_template'));
-  if (aParams.format)
-    formatField.value = aParams.format;
+  if (params.format)
+    formatField.value = params.format;
 
   const upButton = row.appendChild(document.createElement('button'));
   upButton.classList.add('column');
@@ -218,8 +218,8 @@ function createFormatRow(aParams = {}) {
   return row;
 }
 
-function onRowControlButtonClick(aEvent) {
-  const button = getButtonFromEvent(aEvent);
+function onRowControlButtonClick(event) {
+  const button = getButtonFromEvent(event);
   const row = button.parentNode;
   const formats = configs.copyToClipboardFormats;
   const item = formats[row.itemIndex];
@@ -244,8 +244,8 @@ function onRowControlButtonClick(aEvent) {
       row.parentNode.insertBefore(row, row.nextSibling.nextSibling);
     }
   }
-  Array.slice(row.parentNode.childNodes).forEach((aRow, aIndex) => {
-    aRow.itemIndex = aIndex;
+  Array.slice(row.parentNode.childNodes).forEach((aRow, index) => {
+    aRow.itemIndex = index;
   });
 }
 
@@ -258,7 +258,7 @@ function initCollapsibleSections() {
       section.classList.add('collapsed');
     heading.addEventListener('click', () => {
       section.classList.toggle('collapsed');
-      const otherExpandedSections = configs.optionsExpandedSections.filter(aId => aId != section.id);
+      const otherExpandedSections = configs.optionsExpandedSections.filter(id => id != section.id);
       if (section.classList.contains('collapsed'))
         configs.optionsExpandedSections = otherExpandedSections;
       else

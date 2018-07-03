@@ -93,11 +93,11 @@ export const configs = new Configs({
     requestingPermissions
     shouldNotifyUpdatedFromLegacyVersion
     debug
-  `.trim().split('\n').map(aKey => aKey.trim()).filter(aKey => aKey && aKey.indexOf('//') != 0)
+  `.trim().split('\n').map(key => key.trim()).filter(key => key && key.indexOf('//') != 0)
 });
 
 
-export function log(aMessage, ...aArgs)
+export function log(message, ...args)
 {
   if (!configs || !configs.debug)
     return;
@@ -107,33 +107,33 @@ export function log(aMessage, ...aArgs)
   for (let i = 0; i < nest; i++) {
     indent += ' ';
   }
-  console.log(`mth<${log.context}>: ${indent}${aMessage}`, ...aArgs);
+  console.log(`mth<${log.context}>: ${indent}${message}`, ...args);
 }
 log.context = '?';
 
-export async function wait(aTask = 0, aTimeout = 0) {
-  if (typeof aTask != 'function') {
-    aTimeout = aTask;
-    aTask = null;
+export async function wait(task = 0, timeout = 0) {
+  if (typeof task != 'function') {
+    timeout = task;
+    task = null;
   }
-  return new Promise((aResolve, _reject) => {
+  return new Promise((resolve, _reject) => {
     setTimeout(async () => {
-      if (aTask)
-        await aTask();
-      aResolve();
-    }, aTimeout);
+      if (task)
+        await task();
+      resolve();
+    }, timeout);
   });
 }
 
-export async function notify(aParams = {}) {
+export async function notify(params = {}) {
   const id = await browser.notifications.create({
     type:    'basic',
-    iconUrl: aParams.icon,
-    title:   aParams.title,
-    message: aParams.message
+    iconUrl: params.icon,
+    title:   params.title,
+    message: params.message
   });
 
-  let timeout = aParams.timeout;
+  let timeout = params.timeout;
   if (typeof timeout != 'number')
     timeout = configs.notificationTimeout;
   if (timeout >= 0)

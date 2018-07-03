@@ -57,7 +57,7 @@ const mItems = `
   unselect
   invertSelection
   -----------------
-`.trim().split(/\s+/).map(aId => `selection/${aId}`);
+`.trim().split(/\s+/).map(id => `selection/${id}`);
 mItems.unshift('selection');
 
 let mActiveItems = [];
@@ -74,7 +74,7 @@ export function init() {
 let mLastSelectedTabs = '';
 
 let mLastRefreshStart = Date.now();
-async function refreshItems(aContextTab, aForce) {
+async function refreshItems(contextTab, force) {
   log('refreshItems');
   const currentRefreshStart = mLastRefreshStart = Date.now();
   const promisedMenuUpdated = [];
@@ -84,7 +84,7 @@ async function refreshItems(aContextTab, aForce) {
   delete reserveRefreshItems.timeout;
 
   const serialized = JSON.stringify(mSelection.tabs);
-  if (!aForce &&
+  if (!force &&
       serialized == mLastSelectedTabs) {
     log(' => no change, skip');
     return;
@@ -102,10 +102,10 @@ async function refreshItems(aContextTab, aForce) {
     return;
   mActiveItems = [];
   mLastSelectedTabs       = serialized;
-  const currentWindowId = aContextTab ? aContextTab.windowId : (await browser.windows.getLastFocused()).id;
-  const otherWindows = (await browser.windows.getAll()).filter(aWindow => aWindow.id != currentWindowId);
+  const currentWindowId = contextTab ? contextTab.windowId : (await browser.windows.getLastFocused()).id;
+  const otherWindows = (await browser.windows.getAll()).filter(window => window.id != currentWindowId);
   const visibilities = await getContextMenuItemVisibilities({
-    tab:          aContextTab,
+    tab:          contextTab,
     otherWindows: otherWindows
   });
   if (currentRefreshStart != mLastRefreshStart)
@@ -117,7 +117,7 @@ async function refreshItems(aContextTab, aForce) {
   const normalItemAppearedIn = {};
   const createdItems         = {};
   const nextSeparatorIn      = {};
-  const registerItem = async (id, aOptions = {}) => {
+  const registerItem = async (id, options = {}) => {
     const parts = id.split('/');
     id = parts.pop();
 
@@ -135,7 +135,7 @@ async function refreshItems(aContextTab, aForce) {
     else {
       if (id in visibilities && !visibilities[id])
         return;
-      if (!aOptions.always && !hasSelection)
+      if (!options.always && !hasSelection)
         return;
       const key = `context_${id}`;
       if (configs[key] === false)
@@ -160,8 +160,8 @@ async function refreshItems(aContextTab, aForce) {
     const type = isSeparator ? 'separator' : 'normal';
     let title = null;
     if (!isSeparator) {
-      if (aOptions.title)
-        title = aOptions.title;
+      if (options.title)
+        title = options.title;
       else
         title = browser.i18n.getMessage(`context_${id.replace(/[^a-z0-9@_]/gi, '_')}_label`);
     }
@@ -202,14 +202,14 @@ async function refreshItems(aContextTab, aForce) {
   const formats = configs.copyToClipboardFormats;
   if (Array.isArray(formats)) {
     formatIds = formats
-      .map((aItem, aIndex) => `clipboard/clipboard:${aIndex}:${aItem.label}`)
-      .filter((aItem, aIndex) => formats[aIndex].label);
+      .map((item, index) => `clipboard/clipboard:${index}:${item.label}`)
+      .filter((item, index) => formats[index].label);
   }
   else {
     const labels = Object.keys(formats);
     formatIds = labels
-      .map((aLabel, aIndex) => `clipboard/clipboard:${aIndex}:${aLabel}`)
-      .filter((aItem, aIndex) => labels[aIndex]);
+      .map((label, index) => `clipboard/clipboard:${index}:${label}`)
+      .filter((item, index) => labels[index]);
   }
   for (const id of formatIds) {
     await registerItem(id, {
@@ -246,8 +246,8 @@ export function reserveRefreshItems() {
   }, 150);
 }
 
-async function getContextMenuItemVisibilities(aParams) {
-  const tab = aParams.tab;
+async function getContextMenuItemVisibilities(params) {
+  const tab = params.tab;
   const allTabs = await Commands.getAllTabs();
   let pinnedCount = 0;
   let mutedCount = 0;
@@ -281,7 +281,7 @@ async function getContextMenuItemVisibilities(aParams) {
     muteTabs:      tabIds.length > 0 && mutedCount < tabIds.length,
     unmuteTabs:    tabIds.length > 0 && mutedCount > 0,
     moveToNewWindow: tabIds.length > 0,
-    moveToOtherWindow: tabIds.length > 0 && aParams.otherWindows.length > 0,
+    moveToOtherWindow: tabIds.length > 0 && params.otherWindows.length > 0,
     removeTabs:    tabIds.length > 0,
     removeOther:   tabIds.length > 0 && tabIds.length < allTabs.length,
     clipboard:     tabIds.length > 0,
@@ -308,17 +308,17 @@ configs.$load().then(() => {
   refreshItems();
 });
 
-configs.$addObserver(aKey => {
-  if (aKey.indexOf('context_') == 0)
+configs.$addObserver(key => {
+  if (key.indexOf('context_') == 0)
     refreshItems();
 });
 */
 
-async function onClick(aInfo, aTab) {
-  //log('context menu item clicked: ', aInfo, aTab);
+async function onClick(info, tab) {
+  //log('context menu item clicked: ', info, tab);
   const selectedTabIds = Commands.getSelectedTabIds();
-  console.log('aInfo.menuItemId, selectedTabIds ', aInfo.menuItemId, selectedTabIds);
-  switch (aInfo.menuItemId) {
+  console.log('info.menuItemId, selectedTabIds ', info.menuItemId, selectedTabIds);
+  switch (info.menuItemId) {
     case 'reloadTabs':
       await Commands.reloadTabs(selectedTabIds);
       Commands.clearSelection();
@@ -403,18 +403,18 @@ async function onClick(aInfo, aTab) {
       Commands.selectAllTabs();
       break;
     case 'select':
-      Commands.setSelection(aTab, true);
+      Commands.setSelection(tab, true);
       break;
     case 'unselect':
-      Commands.setSelection(aTab, false);
+      Commands.setSelection(tab, false);
       break;
     case 'invertSelection':
       Commands.invertSelection();
       break;
 
     default:
-      if (aInfo.menuItemId.indexOf('clipboard:') == 0) {
-        const id = aInfo.menuItemId.replace(/^clipboard:/, '');
+      if (info.menuItemId.indexOf('clipboard:') == 0) {
+        const id = info.menuItemId.replace(/^clipboard:/, '');
         let format;
         if (Array.isArray(configs.copyToClipboardFormats)) {
           let index = id.match(/^([0-9]+):/);
@@ -429,13 +429,13 @@ async function onClick(aInfo, aTab) {
         await wait(100); // to wait tab titles are updated
         await Commands.copyToClipboard(selectedTabIds, format);
       }
-      else if (aInfo.menuItemId.indexOf('moveToOtherWindow:') == 0) {
-        const id = parseInt(aInfo.menuItemId.replace(/^moveToOtherWindow:/, ''));
+      else if (info.menuItemId.indexOf('moveToOtherWindow:') == 0) {
+        const id = parseInt(info.menuItemId.replace(/^moveToOtherWindow:/, ''));
         await Commands.moveToWindow(selectedTabIds, id);
         await Commands.clearSelection();
       }
-      else if (aInfo.menuItemId.indexOf('extra:') == 0) {
-        const idMatch   = aInfo.menuItemId.match(/^extra:([^:]+):(.+)$/);
+      else if (info.menuItemId.indexOf('extra:') == 0) {
+        const idMatch   = info.menuItemId.match(/^extra:([^:]+):(.+)$/);
         const owner     = idMatch[1];
         const id        = idMatch[2];
         const selection = await Commands.getAPITabSelection({
@@ -452,16 +452,16 @@ async function onClick(aInfo, aTab) {
 browser.contextMenus.onClicked.addListener(onClick);
 
 
-function onMessage(aMessage) {
-  if (!aMessage || !aMessage.type)
+function onMessage(message) {
+  if (!message || !message.type)
     return;
 
-  switch (aMessage.type) {
+  switch (message.type) {
     case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      mSelection.apply(aMessage.selection);
-      mDragSelection.apply(aMessage.dragSelection);
-      if (aMessage.updateMenu) {
-        const tab = aMessage.contextTab ? { id: aMessage.contextTab } : null ;
+      mSelection.apply(message.selection);
+      mDragSelection.apply(message.dragSelection);
+      if (message.updateMenu) {
+        const tab = message.contextTab ? { id: message.contextTab } : null ;
         return refreshItems(tab, true);
       }
       else {
@@ -473,21 +473,21 @@ function onMessage(aMessage) {
       return Promise.resolve(mActiveItems);
 
     case Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK:
-      return onClick({ menuItemId: aMessage.id });
+      return onClick({ menuItemId: message.id });
   }
 }
 
-function onMessageExternal(aMessage, aSender) {
+function onMessageExternal(message, sender) {
   if (configs.debug)
-    console.log('onMessageExternal: ', aMessage, aSender);
+    console.log('onMessageExternal: ', message, sender);
 
-  if (!aMessage ||
-      typeof aMessage.type != 'string')
+  if (!message ||
+      typeof message.type != 'string')
     return;
 
-  switch (aSender.id) {
+  switch (sender.id) {
     case Constants.kTST_ID: { // Tree Style Tab API
-      const result = onTSTAPIMessage(aMessage);
+      const result = onTSTAPIMessage(message);
       if (result !== undefined)
         return result;
     }; break;
@@ -496,29 +496,29 @@ function onMessageExternal(aMessage, aSender) {
       break;
   }
 
-  switch (aMessage.type) {
+  switch (message.type) {
     case Constants.kMTHAPI_ADD_SELECTED_TAB_COMMAND: {
       const addons = Object.assign({}, configs.cachedExternalAddons);
-      addons[aSender.id] = true;
+      addons[sender.id] = true;
       configs.cachedExternalAddons = addons;
-      mExtraItems[`${aSender.id}:${aMessage.id}`] = aMessage;
+      mExtraItems[`${sender.id}:${message.id}`] = message;
       return reserveRefreshItems(null, true).then(() => true);
     };
 
     case Constants.kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
-      delete mExtraItems[`${aSender.id}:${aMessage.id}`];
+      delete mExtraItems[`${sender.id}:${message.id}`];
       return reserveRefreshItems(null, true).then(() => true);
   }
 }
 
-function onTSTAPIMessage(aMessage) {
-  switch (aMessage.type) {
+function onTSTAPIMessage(message) {
+  switch (message.type) {
     case Constants.kTSTAPI_CONTEXT_MENU_CLICK:
-      return onClick(aMessage.info, aMessage.tab);
+      return onClick(message.info, message.tab);
   }
 }
 
-DragSelection.onDragSelectionEnd.addListener(async aMessage => {
+DragSelection.onDragSelectionEnd.addListener(async message => {
   const tabId = mDragSelection.dragStartTarget.id;
   await refreshItems(tabId, true);
   try {
@@ -526,8 +526,8 @@ DragSelection.onDragSelectionEnd.addListener(async aMessage => {
       type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
       window: mSelection.targetWindow,
       tab:  tabId,
-      left: aMessage.clientX,
-      top:  aMessage.clientY
+      left: message.clientX,
+      top:  message.clientY
     });
   }
   catch(e) {
@@ -535,19 +535,19 @@ DragSelection.onDragSelectionEnd.addListener(async aMessage => {
   }
 });
 
-Commands.onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
-  if (!aOptions.dontUpdateMenu)
+Commands.onSelectionChange.addListener((tabs, selected, options = {}) => {
+  if (!options.dontUpdateMenu)
     reserveRefreshItems();
 });
 
-configs.$addObserver(aKey => {
-  switch (aKey) {
+configs.$addObserver(key => {
+  switch (key) {
     case 'copyToClipboardFormats':
       reserveRefreshItems(null, true);
       break;
 
     default:
-      if (aKey.indexOf('context_') == 0)
+      if (key.indexOf('context_') == 0)
         reserveRefreshItems(null, true);
       break;
   }

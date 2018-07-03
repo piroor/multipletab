@@ -7,12 +7,12 @@
 
 (() => {
   try {
-    function getMetaInfo(aDocument, aName) {
-      const upperCase = aName.toUpperCase();
-      const lowerCase = aName.toLowerCase();
+    function getMetaInfo(document, name) {
+      const upperCase = name.toUpperCase();
+      const lowerCase = name.toLowerCase();
       return document.evaluate(
         `/descendant::*[translate(local-name(), "META", "meta")="meta"][translate(@name, "${upperCase}", "${lowerCase}")="${lowerCase}"]/attribute::content`,
-        aDocument,
+        document,
         null,
         XPathResult.STRING_TYPE,
         null

@@ -128,39 +128,39 @@ function reserveClearSelection() {
   }, 100);
 }
 
-function onMessage(aMessage) {
-  if (!aMessage || !aMessage.type)
+function onMessage(message) {
+  if (!message || !message.type)
     return;
 
-  switch (aMessage.type) {
+  switch (message.type) {
     case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      mSelection.apply(aMessage.selection);
-      mDragSelection.apply(aMessage.dragSelection);
+      mSelection.apply(message.selection);
+      mDragSelection.apply(message.dragSelection);
       rebuildTabItems();
       break;
   }
 }
 
-Commands.onSelectionChange.addListener((aTabs, aSelected, _options = {}) => {
-  if (!aTabs.length)
+Commands.onSelectionChange.addListener((tabs, selected, _options = {}) => {
+  if (!tabs.length)
     return;
   if (gDragTargetIsClosebox) {
-    const selectors = aTabs.map(aTab => `#tab-${aTab.id}`);
+    const selectors = tabs.map(tab => `#tab-${tab.id}`);
     const items = document.querySelectorAll(selectors.join(', '));
     for (const item of items) {
-      if (aSelected)
+      if (selected)
         item.classList.add('ready-to-close');
       else
         item.classList.remove('ready-to-close');
     }
   }
   else {
-    const selectors = aTabs.map(aTab => `#tab-${aTab.id} input[type="checkbox"]`);
+    const selectors = tabs.map(tab => `#tab-${tab.id} input[type="checkbox"]`);
     const checkboxes = document.querySelectorAll(selectors.join(', '));
     for (const checkbox of checkboxes) {
-      checkbox.checked = !!aSelected;
+      checkbox.checked = !!selected;
       const item = checkbox.parentNode.parentNode;
-      if (aSelected)
+      if (selected)
         item.classList.add('selected');
       else
         item.classList.remove('selected');
@@ -169,8 +169,8 @@ Commands.onSelectionChange.addListener((aTabs, aSelected, _options = {}) => {
   Commands.reservePushSelectionState();
 });
 
-function findTabItemFromEvent(aEvent) {
-  let target = aEvent.target;
+function findTabItemFromEvent(event) {
+  let target = event.target;
   while (target && !target.tab) {
     target = target.parentNode;
   }
@@ -180,8 +180,8 @@ function findTabItemFromEvent(aEvent) {
     return null;
 }
 
-function findCheckboxFromEvent(aEvent) {
-  let target = aEvent.target;
+function findCheckboxFromEvent(event) {
+  let target = event.target;
   while (target && String(target.localName).toLowerCase() != 'input') {
     target = target.parentNode;
   }
@@ -191,8 +191,8 @@ function findCheckboxFromEvent(aEvent) {
     return null;
 }
 
-function findBottomCaptionFromEvent(aEvent) {
-  let target = aEvent.target;
+function findBottomCaptionFromEvent(event) {
+  let target = event.target;
   while (target && target.className != 'caption bottom') {
     target = target.parentNode;
   }
@@ -202,42 +202,42 @@ function findBottomCaptionFromEvent(aEvent) {
     return null;
 }
 
-function onContextMenu(aEvent) {
-  aEvent.stopPropagation();
-  aEvent.preventDefault();
-  openMenu(aEvent);
+function onContextMenu(event) {
+  event.stopPropagation();
+  event.preventDefault();
+  openMenu(event);
 }
 
-function onClick(aEvent) {
-  if (aEvent.button != 0)
+function onClick(event) {
+  if (event.button != 0)
     return;
 
   gClickFired = true;
-  if (aEvent.target.classList &&
-      aEvent.target.classList.contains('closebox')) {
+  if (event.target.classList &&
+      event.target.classList.contains('closebox')) {
     if (!document.querySelector('.ready-to-close'))
-      browser.tabs.remove(aEvent.target.parentNode.tab.id);
+      browser.tabs.remove(event.target.parentNode.tab.id);
     return;
   }
-  const caption = findBottomCaptionFromEvent(aEvent);
+  const caption = findBottomCaptionFromEvent(event);
   if (caption && !gMenu.classList.contains('open')) {
-    openMenu(aEvent);
+    openMenu(event);
     return;
   }
   gMenu.ui.close();
-  if (findCheckboxFromEvent(aEvent))
+  if (findCheckboxFromEvent(event))
     return;
-  const item = findTabItemFromEvent(aEvent);
+  const item = findTabItemFromEvent(event);
   if (item) {
     DragSelection.onTabItemClick({
       window:        item.tab.windowId,
       tab:           item.tab,
       lastActiveTab: gLastClickedItem.tab,
-      button:        aEvent.button,
-      altKey:        aEvent.altKey,
-      ctrlKey:       aEvent.ctrlKey,
-      metaKey:       aEvent.metaKey,
-      shiftKey:      aEvent.shiftKey
+      button:        event.button,
+      altKey:        event.altKey,
+      ctrlKey:       event.ctrlKey,
+      metaKey:       event.metaKey,
+      shiftKey:      event.shiftKey
     });
     gLastClickedItem.classList.remove('last-focused');
     gLastClickedItem = item;
@@ -245,15 +245,15 @@ function onClick(aEvent) {
   }
   else
     DragSelection.onNonTabAreaClick({
-      button: aEvent.button
+      button: event.button
     });
 }
 
 let gLastDragEnteredTarget;
 let gOnDragExitTimeout;
 
-async function onMouseDown(aEvent) {
-  switch (aEvent.button) {
+async function onMouseDown(event) {
+  switch (event.button) {
     case 0:
       gClickFired = false;
       gTabBar.addEventListener('mousemove', onMouseMove);
@@ -261,16 +261,16 @@ async function onMouseDown(aEvent) {
   }
 }
 
-async function onMouseMove(aEvent) {
+async function onMouseMove(event) {
   gTabBar.removeEventListener('mousemove', onMouseMove);
   if (gClickFired)
     return;
-  const item = findTabItemFromEvent(aEvent);
+  const item = findTabItemFromEvent(event);
   if (!item)
     return;
   mSelection.targetWindow = (await browser.windows.getCurrent()).id
-  gDragTargetIsClosebox =  aEvent.target.classList.contains('closebox');
-  gLastDragEnteredTarget = gDragTargetIsClosebox ? aEvent.target : item ;
+  gDragTargetIsClosebox =  event.target.classList.contains('closebox');
+  gLastDragEnteredTarget = gDragTargetIsClosebox ? event.target : item ;
   DragSelection.onTabItemDragReady({
     tab:             item.tab,
     window:          mSelection.targetWindow,
@@ -281,18 +281,18 @@ async function onMouseMove(aEvent) {
   gTabBar.setCapture(false);
 }
 
-function onMouseUp(aEvent) {
+function onMouseUp(event) {
   if (gMenu.classList.contains('open'))
     return;
-  const item = findTabItemFromEvent(aEvent);
+  const item = findTabItemFromEvent(event);
   setTimeout(() => {
     if (gClickFired)
       return;
     DragSelection.onTabItemDragEnd({
       tab:     item && item.tab,
       window:  mSelection.targetWindow,
-      clientX: aEvent.clientX,
-      clientY: aEvent.clientY
+      clientX: event.clientX,
+      clientY: event.clientY
     });
   }, 10);
   gTabBar.removeEventListener('mousemove', onMouseMove);
@@ -301,12 +301,12 @@ function onMouseUp(aEvent) {
   document.releaseCapture();
 }
 
-function onMouseOver(aEvent) {
-  const item       = findTabItemFromEvent(aEvent);
+function onMouseOver(event) {
+  const item       = findTabItemFromEvent(event);
   let target     = item;
-  const isClosebox = aEvent.target.classList.contains('closebox');
+  const isClosebox = event.target.classList.contains('closebox');
   if (gDragTargetIsClosebox && isClosebox)
-    target = aEvent.target;
+    target = event.target;
   cancelDelayedDragExit(target);
   if (item &&
       (!gDragTargetIsClosebox || isClosebox)) {
@@ -320,16 +320,16 @@ function onMouseOver(aEvent) {
   gLastDragEnteredTarget = target;
 }
 
-function onMouseOut(aEvent) {
-  const isClosebox = aEvent.target.classList.contains('closebox');
+function onMouseOut(event) {
+  const isClosebox = event.target.classList.contains('closebox');
   if (gDragTargetIsClosebox && !isClosebox)
     return;
-  const item = findTabItemFromEvent(aEvent);
+  const item = findTabItemFromEvent(event);
   if (!item)
     return;
   let target = item;
   if (gDragTargetIsClosebox && isClosebox)
-    target = aEvent.target;
+    target = event.target;
   cancelDelayedDragExit(target);
   gOnDragExitTimeout = setTimeout(() => {
     gOnDragExitTimeout = null;
@@ -347,13 +347,13 @@ function cancelDelayedDragExit() {
   }
 }
 
-DragSelection.onDragSelectionEnd.addListener(aMessage => {
+DragSelection.onDragSelectionEnd.addListener(message => {
   const tab = mDragSelection.dragStartTarget.id;
   Commands.pushSelectionState({
     updateMenu: true,
     contextTab: tab.id
   }).then(() => {
-    openMenu(aMessage);
+    openMenu(message);
   });
 });
 
@@ -373,23 +373,23 @@ async function rebuildTabItems() {
   range.detach();
 }
 
-function buildTabItem(aTab) {
+function buildTabItem(tab) {
   const item = document.createElement('li');
 
   const label    = document.createElement('label');
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
-  if (aTab.id in mSelection.tabs)
+  if (tab.id in mSelection.tabs)
     checkbox.setAttribute('checked', true);
   checkbox.addEventListener('change', () => {
     item.classList.toggle('selected');
-    Commands.setSelection(aTab, item.classList.contains('selected'), { globalHighlight: false });
+    Commands.setSelection(tab, item.classList.contains('selected'), { globalHighlight: false });
   });
   label.appendChild(checkbox);
   const favicon = document.createElement('img');
   TabFavIconHelper.loadToImage({
     image: favicon,
-    tab:   aTab
+    tab:   tab
   });
   label.appendChild(favicon);
 
@@ -399,18 +399,18 @@ function buildTabItem(aTab) {
 
   const title = document.createElement('span');
   title.classList.add('title');
-  title.appendChild(document.createTextNode(aTab.title));
+  title.appendChild(document.createTextNode(tab.title));
   label.appendChild(title);
 
-  item.setAttribute('id', `tab-${aTab.id}`);
-  if (aTab.active) {
+  item.setAttribute('id', `tab-${tab.id}`);
+  if (tab.active) {
     gLastClickedItem = item;
     item.classList.add('last-focused');
   }
-  if (aTab.id in mSelection.tabs)
+  if (tab.id in mSelection.tabs)
     item.classList.add('selected');
   item.appendChild(label);
-  item.tab = aTab;
+  item.tab = tab;
 
   const closebox = document.createElement('span');
   closebox.classList.add('closebox');
@@ -420,23 +420,23 @@ function buildTabItem(aTab) {
 }
 
 
-async function openMenu(aEvent) {
+async function openMenu(event) {
   const hasItems = await buildMenu();
   if (!hasItems)
     return;
   gMenu.ui.open({
-    left: aEvent.clientX,
-    top:  aEvent.clientY
+    left: event.clientX,
+    top:  event.clientY
   });
 }
 
-function onMenuCommand(aItem, aEvent) {
-  if (aEvent.button != 0)
+function onMenuCommand(item, event) {
+  if (event.button != 0)
     return gMenu.ui.close();
 
   wait(0).then(() => gMenu.ui.close());
 
-  const id = aItem.getAttribute('data-item-id');
+  const id = item.getAttribute('data-item-id');
   if (id) {
     browser.runtime.sendMessage({
       type: Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK,
@@ -483,14 +483,14 @@ async function buildMenu() {
   return gMenu.hasChildNodes();
 }
 
-function buildMenuItem(aItem) {
+function buildMenuItem(item) {
   const itemNode = document.createElement('li');
-  itemNode.setAttribute('data-item-id', aItem.id);
+  itemNode.setAttribute('data-item-id', item.id);
   itemNode.classList.add('extra');
-  itemNode.classList.add(aItem.type);
-  if (aItem.type != 'separator') {
-    itemNode.appendChild(document.createTextNode(aItem.title));
-    itemNode.setAttribute('title', aItem.title);
+  itemNode.classList.add(item.type);
+  if (item.type != 'separator') {
+    itemNode.appendChild(document.createTextNode(item.title));
+    itemNode.setAttribute('title', item.title);
   }
   return itemNode;
 }
