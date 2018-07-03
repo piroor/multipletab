@@ -16,6 +16,7 @@ import {
   selection as mSelection,
   dragSelection as mDragSelection
 } from './selections.js';
+import * as Permissions from './permissions.js';
 import EventListenerManager from '../extlib/EventListenerManager.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
 
