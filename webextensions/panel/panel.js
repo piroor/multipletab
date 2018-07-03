@@ -5,11 +5,27 @@
 */
 'use strict';
 
+import {
+  log,
+  wait,
+  configs
+} from '../common/common.js';
+import * as Constants from '../common/constants.js';
+import * as Commands from '../common/commands.js';
+import * as DragSelection from '../common/drag-selection.js';
+import MenuUI from '../extlib/MenuUI.js';
+import TabFavIconHelper from '../extlib/TabFavIconHelper.js';
+import TabIdFixer from '../extlib/TabIdFixer.js';
+import '../extlib/l10n.js';
+
 log.context = 'Panel';
 
-var gTabBar;
-var gMenu;
-var gSizeDefinitions;
+let gTabBar;
+let gMenu;
+let gSizeDefinitions;
+let gLastClickedItem = null;
+let gDragTargetIsClosebox;
+let gClickFired = false;
 
 window.addEventListener('DOMContentLoaded', async () => {
   gTabBar = document.querySelector('#tabs');
@@ -23,7 +39,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   await configs.$loaded;
   document.documentElement.dataset.theme = configs.theme;
-  var response = await browser.runtime.sendMessage({
+  const response = await browser.runtime.sendMessage({
     type: Constants.kCOMMAND_PULL_SELECTION_INFO
   });
   Commands.gSelection.apply(response.selection);
@@ -74,11 +90,11 @@ function onTabModified() {
 }
 
 async function updateUIForTST() {
-  var disabledMessage = document.querySelector('#disabled-message');
+  const disabledMessage = document.querySelector('#disabled-message');
 
   if (configs.disablePanelWhenAlternativeTabBarIsAvailable) {
     try {
-      let responded = await browser.runtime.sendMessage(Constants.kTST_ID, {
+      const responded = await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_PING
       });
       if (responded) {
@@ -86,7 +102,7 @@ async function updateUIForTST() {
         return;
       }
     }
-    catch(e) {
+    catch(_e) {
       // failed to establish connection
     }
 
@@ -121,13 +137,13 @@ function onMessage(aMessage) {
   }
 }
 
-Commands.onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
+Commands.onSelectionChange.addListener((aTabs, aSelected, _options = {}) => {
   if (!aTabs.length)
     return;
   if (gDragTargetIsClosebox) {
-    let selectors = aTabs.map(aTab => `#tab-${aTab.id}`);
-    let items = document.querySelectorAll(selectors.join(', '));
-    for (let item of items) {
+    const selectors = aTabs.map(aTab => `#tab-${aTab.id}`);
+    const items = document.querySelectorAll(selectors.join(', '));
+    for (const item of items) {
       if (aSelected)
         item.classList.add('ready-to-close');
       else
@@ -135,11 +151,11 @@ Commands.onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
     }
   }
   else {
-    let selectors = aTabs.map(aTab => `#tab-${aTab.id} input[type="checkbox"]`);
-    let checkboxes = document.querySelectorAll(selectors.join(', '));
-    for (let checkbox of checkboxes) {
+    const selectors = aTabs.map(aTab => `#tab-${aTab.id} input[type="checkbox"]`);
+    const checkboxes = document.querySelectorAll(selectors.join(', '));
+    for (const checkbox of checkboxes) {
       checkbox.checked = !!aSelected;
-      let item = checkbox.parentNode.parentNode;
+      const item = checkbox.parentNode.parentNode;
       if (aSelected)
         item.classList.add('selected');
       else
@@ -150,7 +166,7 @@ Commands.onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
 });
 
 function findTabItemFromEvent(aEvent) {
-  var target = aEvent.target;
+  let target = aEvent.target;
   while (target && !target.tab) {
     target = target.parentNode;
   }
@@ -161,7 +177,7 @@ function findTabItemFromEvent(aEvent) {
 }
 
 function findCheckboxFromEvent(aEvent) {
-  var target = aEvent.target;
+  let target = aEvent.target;
   while (target && String(target.localName).toLowerCase() != 'input') {
     target = target.parentNode;
   }
@@ -172,7 +188,7 @@ function findCheckboxFromEvent(aEvent) {
 }
 
 function findBottomCaptionFromEvent(aEvent) {
-  var target = aEvent.target;
+  let target = aEvent.target;
   while (target && target.className != 'caption bottom') {
     target = target.parentNode;
   }
@@ -188,8 +204,6 @@ function onContextMenu(aEvent) {
   openMenu(aEvent);
 }
 
-var gLastClickedItem = null;
-
 function onClick(aEvent) {
   if (aEvent.button != 0)
     return;
@@ -201,7 +215,7 @@ function onClick(aEvent) {
       browser.tabs.remove(aEvent.target.parentNode.tab.id);
     return;
   }
-  var caption = findBottomCaptionFromEvent(aEvent);
+  const caption = findBottomCaptionFromEvent(aEvent);
   if (caption && !gMenu.classList.contains('open')) {
     openMenu(aEvent);
     return;
@@ -209,7 +223,7 @@ function onClick(aEvent) {
   gMenu.ui.close();
   if (findCheckboxFromEvent(aEvent))
     return;
-  var item = findTabItemFromEvent(aEvent);
+  const item = findTabItemFromEvent(aEvent);
   if (item) {
     DragSelection.onTabItemClick({
       window:        item.tab.windowId,
@@ -231,11 +245,8 @@ function onClick(aEvent) {
     });
 }
 
-var gLastDragEnteredItem;
-var gLastDragEnteredTarget;
-var gDragTargetIsClosebox;
-var gOnDragExitTimeout;
-var gClickFired = false;
+let gLastDragEnteredTarget;
+let gOnDragExitTimeout;
 
 async function onMouseDown(aEvent) {
   switch (aEvent.button) {
@@ -250,12 +261,11 @@ async function onMouseMove(aEvent) {
   gTabBar.removeEventListener('mousemove', onMouseMove);
   if (gClickFired)
     return;
-  var item = findTabItemFromEvent(aEvent);
+  const item = findTabItemFromEvent(aEvent);
   if (!item)
     return;
   Commands.gSelection.targetWindow = (await browser.windows.getCurrent()).id
   gDragTargetIsClosebox =  aEvent.target.classList.contains('closebox');
-  gLastDragEnteredItem = item;
   gLastDragEnteredTarget = gDragTargetIsClosebox ? aEvent.target : item ;
   DragSelection.onTabItemDragReady({
     tab:             item.tab,
@@ -270,7 +280,7 @@ async function onMouseMove(aEvent) {
 function onMouseUp(aEvent) {
   if (gMenu.classList.contains('open'))
     return;
-  var item = findTabItemFromEvent(aEvent);
+  const item = findTabItemFromEvent(aEvent);
   setTimeout(() => {
     if (gClickFired)
       return;
@@ -288,9 +298,9 @@ function onMouseUp(aEvent) {
 }
 
 function onMouseOver(aEvent) {
-  var item       = findTabItemFromEvent(aEvent);
-  var target     = item;
-  var isClosebox = aEvent.target.classList.contains('closebox');
+  const item       = findTabItemFromEvent(aEvent);
+  let target     = item;
+  const isClosebox = aEvent.target.classList.contains('closebox');
   if (gDragTargetIsClosebox && isClosebox)
     target = aEvent.target;
   cancelDelayedDragExit(target);
@@ -303,18 +313,17 @@ function onMouseOver(aEvent) {
       });
     }
   }
-  gLastDragEnteredItem = item;
   gLastDragEnteredTarget = target;
 }
 
 function onMouseOut(aEvent) {
-  var isClosebox = aEvent.target.classList.contains('closebox');
+  const isClosebox = aEvent.target.classList.contains('closebox');
   if (gDragTargetIsClosebox && !isClosebox)
     return;
-  var item = findTabItemFromEvent(aEvent);
+  const item = findTabItemFromEvent(aEvent);
   if (!item)
     return;
-  var target = item;
+  let target = item;
   if (gDragTargetIsClosebox && isClosebox)
     target = aEvent.target;
   cancelDelayedDragExit(target);
@@ -335,7 +344,7 @@ function cancelDelayedDragExit() {
 }
 
 DragSelection.onDragSelectionEnd.addListener(aMessage => {
-  let tab = Commands.gDragSelection.dragStartTarget.id;
+  const tab = Commands.gDragSelection.dragStartTarget.id;
   Commands.pushSelectionState({
     updateMenu: true,
     contextTab: tab.id
@@ -346,14 +355,14 @@ DragSelection.onDragSelectionEnd.addListener(aMessage => {
 
 
 async function rebuildTabItems() {
-  var range = document.createRange();
+  const range = document.createRange();
   range.selectNodeContents(gTabBar);
   range.deleteContents();
-  var fragment = document.createDocumentFragment();
-  var tabs = await browser.tabs.query({ currentWindow: true });
-  for (let tab of tabs) {
+  const fragment = document.createDocumentFragment();
+  const tabs = await browser.tabs.query({ currentWindow: true });
+  for (const tab of tabs) {
     TabIdFixer.fixTab(tab);
-    let tabItem = buildTabItem(tab);
+    const tabItem = buildTabItem(tab);
     fragment.appendChild(tabItem);
   }
   range.insertNode(fragment);
@@ -361,8 +370,10 @@ async function rebuildTabItems() {
 }
 
 function buildTabItem(aTab) {
-  var label    = document.createElement('label');
-  var checkbox = document.createElement('input');
+  const item = document.createElement('li');
+
+  const label    = document.createElement('label');
+  const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
   if (aTab.id in Commands.gSelection.tabs)
     checkbox.setAttribute('checked', true);
@@ -371,23 +382,22 @@ function buildTabItem(aTab) {
     Commands.setSelection(aTab, item.classList.contains('selected'), { globalHighlight: false });
   });
   label.appendChild(checkbox);
-  var favicon = document.createElement('img');
+  const favicon = document.createElement('img');
   TabFavIconHelper.loadToImage({
     image: favicon,
     tab:   aTab
   });
   label.appendChild(favicon);
 
-  var defaultFavicon = document.createElement('span');
+  const defaultFavicon = document.createElement('span');
   defaultFavicon.classList.add('default-favicon');
   label.appendChild(defaultFavicon);
 
-  var title = document.createElement('span');
+  const title = document.createElement('span');
   title.classList.add('title');
   title.appendChild(document.createTextNode(aTab.title));
   label.appendChild(title);
 
-  var item = document.createElement('li');
   item.setAttribute('id', `tab-${aTab.id}`);
   if (aTab.active) {
     gLastClickedItem = item;
@@ -398,7 +408,7 @@ function buildTabItem(aTab) {
   item.appendChild(label);
   item.tab = aTab;
 
-  var closebox = document.createElement('span');
+  const closebox = document.createElement('span');
   closebox.classList.add('closebox');
   item.appendChild(closebox);
 
@@ -407,7 +417,7 @@ function buildTabItem(aTab) {
 
 
 async function openMenu(aEvent) {
-  var hasItems = await buildMenu();
+  const hasItems = await buildMenu();
   if (!hasItems)
     return;
   gMenu.ui.open({
@@ -422,7 +432,7 @@ function onMenuCommand(aItem, aEvent) {
 
   wait(0).then(() => gMenu.ui.close());
 
-  var id = aItem.getAttribute('data-item-id');
+  const id = aItem.getAttribute('data-item-id');
   if (id) {
     browser.runtime.sendMessage({
       type: Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK,
@@ -432,27 +442,27 @@ function onMenuCommand(aItem, aEvent) {
 }
 
 async function buildMenu() {
-  var items = await browser.runtime.sendMessage({
+  const items = await browser.runtime.sendMessage({
     type: Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO
   });
   items.shift(); // delete toplevel "selection" menu
 
-  var range = document.createRange();
+  const range = document.createRange();
   range.selectNodeContents(gMenu);
   range.deleteContents();
 
-  var fragment = document.createDocumentFragment();
-  var knownItems = {};
-  for (let item of items) {
+  const fragment = document.createDocumentFragment();
+  const knownItems = {};
+  for (const item of items) {
     if (item.id == 'select' ||
         item.id == 'unselect')
       continue;
 
-    let itemNode = buildMenuItem(item);
+    const itemNode = buildMenuItem(item);
     if (item.parentId &&
         item.parentId != 'selection' &&
         item.parentId in knownItems) {
-      let parent = knownItems[item.parentId];
+      const parent = knownItems[item.parentId];
       let subMenu = parent.lastChild;
       if (!subMenu || subMenu.localName != 'ul')
         subMenu = parent.appendChild(document.createElement('ul'));
@@ -470,7 +480,7 @@ async function buildMenu() {
 }
 
 function buildMenuItem(aItem) {
-  var itemNode = document.createElement('li');
+  const itemNode = document.createElement('li');
   itemNode.setAttribute('data-item-id', aItem.id);
   itemNode.classList.add('extra');
   itemNode.classList.add(aItem.type);
