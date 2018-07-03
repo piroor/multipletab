@@ -126,9 +126,9 @@ async function onTabItemClick(aMessage) {
     tabs.push(gSelection.lastClickedTab || lastActiveTab);
     const selectedTabIds = tabs.map(aTab => aTab.id);
     if (!ctrlKeyPressed)
-    setSelection(window.tabs.filter(aTab => selectedTabIds.indexOf(aTab.id) < 0), false, {
-      globalHighlight: false
-    });
+      setSelection(window.tabs.filter(aTab => selectedTabIds.indexOf(aTab.id) < 0), false, {
+        globalHighlight: false
+      });
     setSelection(tabs, true, {
       globalHighlight: false
     });
