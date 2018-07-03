@@ -11,10 +11,7 @@ import {
   configs
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
-import {
-  selection as mSelection,
-  dragSelection as mDragSelection
-} from '../common/selections.js';
+import * as Selections from '../common/selections.js';
 import * as Commands from '../common/commands.js';
 import * as DragSelection from '../common/drag-selection.js';
 import MenuUI from '../extlib/MenuUI.js';
@@ -43,11 +40,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   await configs.$loaded;
   document.documentElement.dataset.theme = configs.theme;
-  const response = await browser.runtime.sendMessage({
+  const serializedSelections = await browser.runtime.sendMessage({
     type: Constants.kCOMMAND_PULL_SELECTION_INFO
   });
-  mSelection.apply(response.selection);
-  mDragSelection.apply(response.dragSelection);
+  Selections.apply(serializedSelections);
 
   gLastClickedItem = null;
 
@@ -134,8 +130,7 @@ function onMessage(message) {
 
   switch (message.type) {
     case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      mSelection.apply(message.selection);
-      mDragSelection.apply(message.dragSelection);
+      Selections.apply(message.selections);
       rebuildTabItems();
       break;
   }
@@ -268,12 +263,12 @@ async function onMouseMove(event) {
   const item = findTabItemFromEvent(event);
   if (!item)
     return;
-  mSelection.targetWindow = (await browser.windows.getCurrent()).id
+  Selections.selection.targetWindow = (await browser.windows.getCurrent()).id
   gDragTargetIsClosebox =  event.target.classList.contains('closebox');
   gLastDragEnteredTarget = gDragTargetIsClosebox ? event.target : item ;
   DragSelection.onTabItemDragReady({
     tab:             item.tab,
-    window:          mSelection.targetWindow,
+    window:          Selections.selection.targetWindow,
     startOnClosebox: gDragTargetIsClosebox
   })
   gTabBar.addEventListener('mouseover', onMouseOver);
@@ -290,7 +285,7 @@ function onMouseUp(event) {
       return;
     DragSelection.onTabItemDragEnd({
       tab:     item && item.tab,
-      window:  mSelection.targetWindow,
+      window:  Selections.selection.targetWindow,
       clientX: event.clientX,
       clientY: event.clientY
     });
@@ -313,7 +308,7 @@ function onMouseOver(event) {
     if (target != gLastDragEnteredTarget) {
       DragSelection.onTabItemDragEnter({
         tab:    item.tab,
-        window: mSelection.targetWindow
+        window: Selections.selection.targetWindow
       });
     }
   }
@@ -335,7 +330,7 @@ function onMouseOut(event) {
     gOnDragExitTimeout = null;
     DragSelection.onTabItemDragExit({
       tab:    item.tab,
-      window: mSelection.targetWindow
+      window: Selections.selection.targetWindow
     });
   }, 10);
 }
@@ -348,7 +343,7 @@ function cancelDelayedDragExit() {
 }
 
 DragSelection.onDragSelectionEnd.addListener(message => {
-  const tab = mDragSelection.dragStartTarget.id;
+  const tab = Selections.dragSelection.dragStartTarget.id;
   Commands.pushSelectionState({
     updateMenu: true,
     contextTab: tab.id
@@ -379,7 +374,7 @@ function buildTabItem(tab) {
   const label    = document.createElement('label');
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
-  if (tab.id in mSelection.tabs)
+  if (tab.id in Selections.selection.tabs)
     checkbox.setAttribute('checked', true);
   checkbox.addEventListener('change', () => {
     item.classList.toggle('selected');
@@ -407,7 +402,7 @@ function buildTabItem(tab) {
     gLastClickedItem = item;
     item.classList.add('last-focused');
   }
-  if (tab.id in mSelection.tabs)
+  if (tab.id in Selections.selection.tabs)
     item.classList.add('selected');
   item.appendChild(label);
   item.tab = tab;

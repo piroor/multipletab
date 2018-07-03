@@ -11,10 +11,7 @@ import {
   configs
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
-import {
-  selection as mSelection,
-  dragSelection as mDragSelection
-} from '../common/selections.js';
+import * as Selections from '../common/selections.js';
 import * as Commands from '../common/commands.js';
 import * as DragSelection from '../common/drag-selection.js';
 
@@ -83,7 +80,7 @@ async function refreshItems(contextTab, force) {
     clearTimeout(reserveRefreshItems.timeout);
   delete reserveRefreshItems.timeout;
 
-  const serialized = JSON.stringify(mSelection.tabs);
+  const serialized = JSON.stringify(Selections.selection.tabs);
   if (!force &&
       serialized == mLastSelectedTabs) {
     log(' => no change, skip');
@@ -257,7 +254,7 @@ async function getContextMenuItemVisibilities(params) {
   let frozenCount = 0;
   const tabIds = Commands.getSelectedTabIds();
   for (const id of tabIds) {
-    const tab = mSelection.tabs[id];
+    const tab = Selections.selection.tabs[id];
     if (tab.pinned)
       pinnedCount++;
     if (tab.mutedInfo.muted)
@@ -458,8 +455,7 @@ function onMessage(message) {
 
   switch (message.type) {
     case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      mSelection.apply(message.selection);
-      mDragSelection.apply(message.dragSelection);
+      Selections.apply(message.selections);
       if (message.updateMenu) {
         const tab = message.contextTab ? { id: message.contextTab } : null ;
         return refreshItems(tab, true);
@@ -519,12 +515,12 @@ function onTSTAPIMessage(message) {
 }
 
 DragSelection.onDragSelectionEnd.addListener(async message => {
-  const tabId = mDragSelection.dragStartTarget.id;
+  const tabId = Selections.dragSelection.dragStartTarget.id;
   await refreshItems(tabId, true);
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
-      window: mSelection.targetWindow,
+      window: Selections.selection.targetWindow,
       tab:  tabId,
       left: message.clientX,
       top:  message.clientY

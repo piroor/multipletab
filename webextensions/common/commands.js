@@ -12,10 +12,7 @@ import {
   configs
 } from './common.js';
 import * as Constants from './constants.js';
-import {
-  selection as mSelection,
-  dragSelection as mDragSelection
-} from './selections.js';
+import * as Selections from './selections.js';
 import * as Permissions from './permissions.js';
 import EventListenerManager from '../extlib/EventListenerManager.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
@@ -24,11 +21,11 @@ export const onSelectionChange = new EventListenerManager();
 
 export function clearSelection(options = {}) {
   const tabs = [];
-  for (const id of Object.keys(mSelection.tabs)) {
-    tabs.push(mSelection.tabs[id]);
+  for (const id of Object.keys(Selections.selection.tabs)) {
+    tabs.push(Selections.selection.tabs[id]);
   }
   setSelection(tabs, false, options);
-  mSelection.clear();
+  Selections.selection.clear();
 }
 
 function isPermittedTab(tab) {
@@ -47,9 +44,9 @@ export function setSelection(tabs, selected, options = {}) {
   //console.log('setSelection ', ids, `${aState}=${selected}`);
   if (selected) {
     for (const tab of tabs) {
-      if (tab.id in mSelection.tabs)
+      if (tab.id in Selections.selection.tabs)
         continue;
-      mSelection.tabs[tab.id] = tab;
+      Selections.selection.tabs[tab.id] = tab;
       if (shouldHighlight &&
           isPermittedTab(tab) &&
           !tab.pinned)
@@ -62,9 +59,9 @@ export function setSelection(tabs, selected, options = {}) {
   }
   else {
     for (const tab of tabs) {
-      if (!(tab.id in mSelection.tabs))
+      if (!(tab.id in Selections.selection.tabs))
         continue;
-      delete mSelection.tabs[tab.id];
+      delete Selections.selection.tabs[tab.id];
       if (shouldHighlight &&
           isPermittedTab(tab) &&
           !tab.pinned)
@@ -99,8 +96,7 @@ export async function pushSelectionState(options = {}) {
   }
   await browser.runtime.sendMessage({
     type:          Constants.kCOMMAND_PUSH_SELECTION_INFO,
-    selection:     mSelection.export(),
-    dramSelection: mDragSelection.export(),
+    selections:    Selections.serialize(),
     updateMenu:    !!options.updateMenu,
     contextTab:    options.contextTab
   });
@@ -108,14 +104,14 @@ export async function pushSelectionState(options = {}) {
 
 
 export async function getAllTabs(windowId) {
-  const tabs = windowId || mSelection.targetWindow ?
-    await browser.tabs.query({ windowId: windowId || mSelection.targetWindow }) :
+  const tabs = windowId || Selections.selection.targetWindow ?
+    await browser.tabs.query({ windowId: windowId || Selections.selection.targetWindow }) :
     (await browser.windows.getCurrent({ populate: true })).tabs ;
   return tabs.map(TabIdFixer.fixTab);
 }
 
 export function getSelectedTabIds() {
-  return Object.keys(mSelection.tabs).map(id => parseInt(id));
+  return Object.keys(Selections.selection.tabs).map(id => parseInt(id));
 }
 
 export async function getAPITabSelection(params = {}) {
@@ -560,7 +556,7 @@ export async function suggestFileNameForTab(tab) {
 export async function suspendTabs(ids, _options = {}) {
   if (typeof browser.tabs.discard != 'function')
     throw new Error('Error: required API "tabs.discard()" is not available on this version of Firefox.');
-  const allTabs = await browser.tabs.query({ windowId: mSelection.targetWindow });
+  const allTabs = await browser.tabs.query({ windowId: Selections.selection.targetWindow });
   let inSelection = false;
   let selectionFound = false;
   let unselectedTabs = [];
@@ -599,7 +595,7 @@ export async function suspendTabs(ids, _options = {}) {
 }
 
 export async function resumeTabs(ids) {
-  const allTabs = (await browser.tabs.query({ windowId: mSelection.targetWindow }));
+  const allTabs = (await browser.tabs.query({ windowId: Selections.selection.targetWindow }));
   const activeTab = allTabs.filter(tab => tab.active)[0];
   const selectedTabs = allTabs.filter(tab => ids.indexOf(tab.id) > -1);
   for (const tab of selectedTabs) {

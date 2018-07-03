@@ -60,3 +60,15 @@ export const dragSelection = {
     }
   }
 };
+
+export function serialize() {
+  return {
+    selection:     selection.export(),
+    dragSelection: dragSelection.export()
+  };
+}
+
+export function apply(selections) {
+  selection.apply(selections.selection);
+  dragSelection.apply(selections.dragSelection);
+}

@@ -11,10 +11,7 @@ import {
   configs
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
-import {
-  selection as mSelection,
-  dragSelection as mDragSelection
-} from '../common/selections.js';
+import * as Selections from '../common/selections.js';
 import * as Commands from '../common/commands.js';
 import * as Permissions from '../common/permissions.js';
 import * as DragSelection from '../common/drag-selection.js';
@@ -28,7 +25,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
 
   browser.tabs.onActivated.addListener((activeInfo) => {
-    if (!mSelection.tabs[TabIdFixer.fixTabId(activeInfo.tabId)])
+    if (!Selections.selection.tabs[TabIdFixer.fixTabId(activeInfo.tabId)])
       Commands.clearSelection();
   });
   browser.tabs.onCreated.addListener(() => Commands.clearSelection());
@@ -260,7 +257,7 @@ function onMessageExternal(message, sender) {
           unselectTabs = allTabs.filter(tab => unselectTabs.indexOf(tab.id) > -1);
         }
         Commands.setSelection(unselectTabs, false, {
-          globalHighlight: !mDragSelection.activatedInVerticalTabbarOfTST
+          globalHighlight: !Selections.dragSelection.activatedInVerticalTabbarOfTST
         });
 
         let selectTabs = message.select;
@@ -273,7 +270,7 @@ function onMessageExternal(message, sender) {
           selectTabs = allTabs.filter(tab => selectTabs.indexOf(tab.id) > -1);
         }
         Commands.setSelection(selectTabs, true, {
-          globalHighlight: !mDragSelection.activatedInVerticalTabbarOfTST
+          globalHighlight: !Selections.dragSelection.activatedInVerticalTabbarOfTST
         });
 
         return true;
@@ -291,14 +288,10 @@ function onMessage(message) {
 
   switch (message.type) {
     case Constants.kCOMMAND_PULL_SELECTION_INFO:
-      return Promise.resolve({
-        selection:     mSelection.export(),
-        dragSelection: mDragSelection.export()
-      });
+      return Promise.resolve(Selections.serialize());
 
     case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      mSelection.apply(message.selection);
-      mDragSelection.apply(message.dragSelection);
+      Selections.apply(message.selections);
       break;
 
     case Constants.kCOMMAND_UNREGISTER_FROM_TST:
@@ -351,7 +344,7 @@ async function registerToTST() {
         }
       `
     });
-    mDragSelection.activatedInVerticalTabbarOfTST = true;
+    Selections.dragSelection.activatedInVerticalTabbarOfTST = true;
     // force rebuild menu
     return ContextMenu.reserveRefreshItems(null, true).then(() => true);
   }
@@ -361,7 +354,7 @@ async function registerToTST() {
 }
 
 function unregisterFromTST() {
-  mDragSelection.activatedInVerticalTabbarOfTST = false;
+  Selections.dragSelection.activatedInVerticalTabbarOfTST = false;
   try {
     browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
