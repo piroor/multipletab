@@ -12,21 +12,20 @@ import {
 } from './common.js';
 import * as Constants from './constants.js';
 
-export const Permissions = {
-  ALL_URLS:        { origins: ['<all_urls>'] },
-  BOOKMARKS:       { permissions: ['bookmarks'] },
-  CLIPBOARD_WRITE: { permissions: ['clipboardWrite'], origins: ['<all_urls>'] },
+export const ALL_URLS        = { origins: ['<all_urls>'] };
+export const BOOKMARKS       = { permissions: ['bookmarks'] };
+export const CLIPBOARD_WRITE = { permissions: ['clipboardWrite'], origins: ['<all_urls>'] };
 
-  clearRequest() {
+export function clearRequest() {
     configs.requestingPermissions = null;
-  },
+}
 
-  isGranted(aPermissions) {
+export function isGranted(aPermissions) {
     return browser.permissions.contains(aPermissions);
-  },
+}
 
-  bindToCheckbox(aPermissions, aCheckbox, aOptions = {}) {
-    this.isGranted(aPermissions).then(aGranted => {
+export function bindToCheckbox(aPermissions, aCheckbox, aOptions = {}) {
+    isGranted(aPermissions).then(aGranted => {
       aCheckbox.checked = aGranted;
     });
     aCheckbox.addEventListener('change', _event => {
@@ -65,7 +64,7 @@ export const Permissions = {
           return;
         }
 
-        const granted = await this.isGranted(aPermissions);
+        const granted = await isGranted(aPermissions);
         if (granted) {
           aOptions.onChanged(true);
           return;
@@ -96,9 +95,9 @@ export const Permissions = {
       }
       aCheckbox.checked = false;
     };
-  },
+}
 
-  requestPostProcess() {
+export function requestPostProcess() {
     if (!configs.requestingPermissions)
       return false;
 
@@ -114,5 +113,4 @@ export const Permissions = {
         });
     });
     return true;
-  }
-};
+}
