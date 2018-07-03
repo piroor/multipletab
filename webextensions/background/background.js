@@ -48,7 +48,7 @@ function onToolbarButtonClick(aTab) {
   }, 0);
 }
 
-async function onDragSelectionEnd(aMessage) {
+DragSelection.onDragSelectionEnd.addListener(async aMessage => {
   let tabId = Commands.gDragSelection.dragStartTarget.id;
   await refreshContextMenuItems(tabId, true);
   try {
@@ -63,7 +63,7 @@ async function onDragSelectionEnd(aMessage) {
   catch(e) {
     log('failed to open context menu: ', e);
   }
-}
+});
 
 async function onShortcutCommand(aCommand) {
   const activeTab = (await browser.tabs.query({

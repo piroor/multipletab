@@ -334,7 +334,7 @@ function cancelDelayedDragExit() {
   }
 }
 
-function onDragSelectionEnd(aMessage) {
+DragSelection.onDragSelectionEnd.addListener(aMessage => {
   let tab = Commands.gDragSelection.dragStartTarget.id;
   Commands.pushSelectionState({
     updateMenu: true,
@@ -342,7 +342,7 @@ function onDragSelectionEnd(aMessage) {
   }).then(() => {
     openMenu(aMessage);
   });
-}
+});
 
 
 async function rebuildTabItems() {

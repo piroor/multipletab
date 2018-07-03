@@ -225,9 +225,8 @@ export async function onTabItemDragReady(aMessage) {
 
 export async function onTabItemDragCancel(aMessage) {
   //console.log('onTabItemDragCancel', aMessage);
-  if (Object.keys(Commands.gSelection.tabs).length > 0 &&
-      window.onDragSelectionEnd) {
-    onDragSelectionEnd(aMessage);
+  if (Object.keys(Commands.gSelection.tabs).length > 0) {
+    onDragSelectionEnd.dispatch(aMessage);
     // don't clear selection state until menu command is processed.
   }
   Commands.gDragSelection.clear();
