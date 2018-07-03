@@ -10,7 +10,7 @@ import {
 } from './common.js';
 import * as Commands from './commands.js';
 import EventListenerManager from './EventListenerManager.js';
-import TabIdFixer from '../../extlib/TabIdFixer.js';
+import TabIdFixer from '../extlib/TabIdFixer.js';
 
 export const onDragSelectionEnd = new EventListenerManager();
 

@@ -13,7 +13,7 @@ import {
 } from './common.js';
 import * as Constants from './constants.js';
 import EventListenerManager from './EventListenerManager.js';
-import TabIdFixer from '../../extlib/TabIdFixer.js';
+import TabIdFixer from '../extlib/TabIdFixer.js';
 
 export const onSelectionChange = new EventListenerManager();
 

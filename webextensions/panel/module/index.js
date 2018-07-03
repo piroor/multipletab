@@ -4,11 +4,11 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
-import * as Constants from '../../common/module/constants.js';
-import * as Common from '../../common/module/common.js';
-import * as Commands from '../../common/module/commands.js';
-import * as Permissions from '../../common/module/permissions.js';
-import * as DragSelection from '../../common/module/drag-selection.js';
+import * as Constants from '../../common/constants.js';
+import * as Common from '../../common/common.js';
+import * as Commands from '../../common/commands.js';
+import * as Permissions from '../../common/permissions.js';
+import * as DragSelection from '../../common/drag-selection.js';
 import MenuUI from '../../extlib/MenuUI.js';
 import Options from '../../extlib/Options.js';
 import RichConfirm from '../../extlib/RichConfirm.js';
