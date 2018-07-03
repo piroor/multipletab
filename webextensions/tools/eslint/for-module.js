@@ -18,6 +18,29 @@ module.exports = {
   ],
 
   'rules': {
+    'no-const-assign': 'error',
+    'prefer-const': ['warn', {
+      'destructuring': 'any',
+      'ignoreReadBeforeAssign': false
+    }],
+    'no-var': 'error',
+    'no-unused-vars': ['warn', { // Not make an error for debugging.
+      'vars': 'all',
+      'args': 'after-used',
+      'argsIgnorePattern': '^_',
+      'caughtErrors': 'all',
+      'caughtErrorsIgnorePattern': '^_', // Allow `catch (_e) {...}`
+    }],
+    'no-use-before-define': ['error', { // the measure for Temporary Dead Zone
+      'functions': false, //  Function declarations are hoisted.
+      'classes': true, // Class declarations are not hoisted. We should warn it.
+    }],
+    'no-unused-expressions': 'error',
+    'no-unused-labels': 'error',
+    'no-undef': ['error', {
+      'typeof': true,
+    }],
+
     // https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/default.md
     'import/default': 'error',
     // https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/namespace.md

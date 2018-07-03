@@ -7,38 +7,7 @@
 
 import Configs from '../../extlib/Configs.js';
 
-export async function wait(aTask = 0, aTimeout = 0) {
-  if (typeof aTask != 'function') {
-    aTimeout = aTask;
-    aTask = null;
-  }
-  return new Promise((aResolve, aReject) => {
-    setTimeout(async () => {
-      if (aTask)
-        await aTask();
-      aResolve();
-    }, aTimeout);
-  });
-}
-
-export async function notify(aParams = {}) {
-  var id = await browser.notifications.create({
-    type:    'basic',
-    iconUrl: aParams.icon,
-    title:   aParams.title,
-    message: aParams.message
-  });
-
-  var timeout = aParams.timeout;
-  if (typeof timeout != 'number')
-    timeout = configs.notificationTimeout;
-  if (timeout >= 0)
-    await wait(timeout);
-
-  await browser.notifications.clear(id);
-}
-
-var defaultClipboardFormats = [];
+const defaultClipboardFormats = [];
 defaultClipboardFormats.push({
   label:  browser.i18n.getMessage('context_clipboard_url_label'),
   format: '%URL%'
@@ -128,17 +97,48 @@ export const configs = new Configs({
 });
 
 
-var gLogContext = '?';
+const gLogContext = '?';
 
 export function log(aMessage, ...aArgs)
 {
   if (!configs || !configs.debug)
     return;
 
-  var nest = (new Error()).stack.split('\n').length;
-  var indent = '';
+  const nest = (new Error()).stack.split('\n').length;
+  let indent = '';
   for (let i = 0; i < nest; i++) {
     indent += ' ';
   }
   console.log(`mth<${gLogContext}>: ${indent}${aMessage}`, ...aArgs);
+}
+
+export async function wait(aTask = 0, aTimeout = 0) {
+  if (typeof aTask != 'function') {
+    aTimeout = aTask;
+    aTask = null;
+  }
+  return new Promise((aResolve, _reject) => {
+    setTimeout(async () => {
+      if (aTask)
+        await aTask();
+      aResolve();
+    }, aTimeout);
+  });
+}
+
+export async function notify(aParams = {}) {
+  const id = await browser.notifications.create({
+    type:    'basic',
+    iconUrl: aParams.icon,
+    title:   aParams.title,
+    message: aParams.message
+  });
+
+  let timeout = aParams.timeout;
+  if (typeof timeout != 'number')
+    timeout = configs.notificationTimeout;
+  if (timeout >= 0)
+    await wait(timeout);
+
+  await browser.notifications.clear(id);
 }
