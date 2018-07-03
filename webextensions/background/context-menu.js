@@ -14,7 +14,7 @@ import * as Constants from '../common/constants.js';
 import * as Commands from '../common/commands.js';
 import * as DragSelection from '../common/drag-selection.js';
 
-const mContextMenuItems = `
+const mItems = `
   reloadTabs
   bookmarkTabs
   removeBookmarkFromTabs
@@ -54,14 +54,14 @@ const mContextMenuItems = `
   invertSelection
   -----------------
 `.trim().split(/\s+/).map(aId => `selection/${aId}`);
-mContextMenuItems.unshift('selection');
+mItems.unshift('selection');
 
-let mActiveContextMenuItems = [];
-const mExtraContextMenuItems = {};
+let mActiveItems = [];
+const mExtraItems = {};
 
 
 export function init() {
-  reserveRefreshContextMenuItems();
+  reserveRefreshItems();
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
 }
@@ -70,14 +70,14 @@ export function init() {
 let mLastSelectedTabs = '';
 
 let mLastRefreshStart = Date.now();
-export async function refreshContextMenuItems(aContextTab, aForce) {
-  log('refreshContextMenuItems');
+async function refreshItems(aContextTab, aForce) {
+  log('refreshItems');
   const currentRefreshStart = mLastRefreshStart = Date.now();
   const promisedMenuUpdated = [];
 
-  if (reserveRefreshContextMenuItems.timeout)
-    clearTimeout(reserveRefreshContextMenuItems.timeout);
-  delete reserveRefreshContextMenuItems.timeout;
+  if (reserveRefreshItems.timeout)
+    clearTimeout(reserveRefreshItems.timeout);
+  delete reserveRefreshItems.timeout;
 
   const serialized = JSON.stringify(Commands.gSelection.tabs);
   if (!aForce &&
@@ -96,7 +96,7 @@ export async function refreshContextMenuItems(aContextTab, aForce) {
   }
   if (currentRefreshStart != mLastRefreshStart)
     return;
-  mActiveContextMenuItems = [];
+  mActiveItems = [];
   mLastSelectedTabs       = serialized;
   const currentWindowId = aContextTab ? aContextTab.windowId : (await browser.windows.getLastFocused()).id;
   const otherWindows = (await browser.windows.getAll()).filter(aWindow => aWindow.id != currentWindowId);
@@ -138,7 +138,7 @@ export async function refreshContextMenuItems(aContextTab, aForce) {
         return;
       normalItemAppearedIn[parentId] = true;
       if (nextSeparatorIn[parentId]) {
-        mActiveContextMenuItems.push(nextSeparatorIn[parentId]);
+        mActiveItems.push(nextSeparatorIn[parentId]);
         promisedMenuUpdated.push(browser.contextMenus.create(nextSeparatorIn[parentId]));
         try {
           promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
@@ -171,7 +171,7 @@ export async function refreshContextMenuItems(aContextTab, aForce) {
       nextSeparatorIn[parentId] = params;
       return;
     }
-    mActiveContextMenuItems.push(params);
+    mActiveItems.push(params);
     promisedMenuUpdated.push(browser.contextMenus.create(Object.assign({}, params, {
       // Access key is not supported by WE API.
       // See also: https://bugzilla.mozilla.org/show_bug.cgi?id=1320462
@@ -187,7 +187,7 @@ export async function refreshContextMenuItems(aContextTab, aForce) {
     }
   }
 
-  for (const id of mContextMenuItems) {
+  for (const id of mItems) {
     await registerItem(id);
     if (currentRefreshStart != mLastRefreshStart)
       return;
@@ -225,8 +225,8 @@ export async function refreshContextMenuItems(aContextTab, aForce) {
   }
 
   // create additional items registered by other addons
-  for (const id of Object.keys(mExtraContextMenuItems)) {
-    await registerItem(`selection/extra:${id}`, mExtraContextMenuItems[id]);
+  for (const id of Object.keys(mExtraItems)) {
+    await registerItem(`selection/extra:${id}`, mExtraItems[id]);
     if (currentRefreshStart != mLastRefreshStart)
       return;
   }
@@ -234,15 +234,15 @@ export async function refreshContextMenuItems(aContextTab, aForce) {
   return Promise.all(promisedMenuUpdated);
 }
 
-export function reserveRefreshContextMenuItems() {
-  if (reserveRefreshContextMenuItems.timeout)
-    clearTimeout(reserveRefreshContextMenuItems.timeout);
-  reserveRefreshContextMenuItems.timeout = setTimeout(() => {
-    refreshContextMenuItems();
+export function reserveRefreshItems() {
+  if (reserveRefreshItems.timeout)
+    clearTimeout(reserveRefreshItems.timeout);
+  reserveRefreshItems.timeout = setTimeout(() => {
+    refreshItems();
   }, 150);
 }
 
-export async function getContextMenuItemVisibilities(aParams) {
+async function getContextMenuItemVisibilities(aParams) {
   const tab = aParams.tab;
   const allTabs = await Commands.getAllTabs();
   let pinnedCount = 0;
@@ -301,16 +301,16 @@ export async function getContextMenuItemVisibilities(aParams) {
 
 /*
 configs.$load().then(() => {
-  refreshContextMenuItems();
+  refreshItems();
 });
 
 configs.$addObserver(aKey => {
   if (aKey.indexOf('context_') == 0)
-    refreshContextMenuItems();
+    refreshItems();
 });
 */
 
-async function onContextMenuClick(aInfo, aTab) {
+async function onClick(aInfo, aTab) {
   //log('context menu item clicked: ', aInfo, aTab);
   const selectedTabIds = Commands.getSelectedTabIds();
   console.log('aInfo.menuItemId, selectedTabIds ', aInfo.menuItemId, selectedTabIds);
@@ -445,7 +445,7 @@ async function onContextMenuClick(aInfo, aTab) {
       break;
   }
 };
-browser.contextMenus.onClicked.addListener(onContextMenuClick);
+browser.contextMenus.onClicked.addListener(onClick);
 
 
 function onMessage(aMessage) {
@@ -458,18 +458,18 @@ function onMessage(aMessage) {
       Commands.gDragSelection.apply(aMessage.dragSelection);
       if (aMessage.updateMenu) {
         const tab = aMessage.contextTab ? { id: aMessage.contextTab } : null ;
-        return refreshContextMenuItems(tab, true);
+        return refreshItems(tab, true);
       }
       else {
-        reserveRefreshContextMenuItems();
+        reserveRefreshItems();
       }
       break;
 
     case Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO:
-      return Promise.resolve(mActiveContextMenuItems);
+      return Promise.resolve(mActiveItems);
 
     case Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK:
-      return onContextMenuClick({ menuItemId: aMessage.id });
+      return onClick({ menuItemId: aMessage.id });
   }
 }
 
@@ -497,26 +497,26 @@ function onMessageExternal(aMessage, aSender) {
       const addons = Object.assign({}, configs.cachedExternalAddons);
       addons[aSender.id] = true;
       configs.cachedExternalAddons = addons;
-      mExtraContextMenuItems[`${aSender.id}:${aMessage.id}`] = aMessage;
-      return reserveRefreshContextMenuItems(null, true).then(() => true);
+      mExtraItems[`${aSender.id}:${aMessage.id}`] = aMessage;
+      return reserveRefreshItems(null, true).then(() => true);
     };
 
     case Constants.kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
-      delete mExtraContextMenuItems[`${aSender.id}:${aMessage.id}`];
-      return reserveRefreshContextMenuItems(null, true).then(() => true);
+      delete mExtraItems[`${aSender.id}:${aMessage.id}`];
+      return reserveRefreshItems(null, true).then(() => true);
   }
 }
 
 function onTSTAPIMessage(aMessage) {
   switch (aMessage.type) {
     case Constants.kTSTAPI_CONTEXT_MENU_CLICK:
-      return onContextMenuClick(aMessage.info, aMessage.tab);
+      return onClick(aMessage.info, aMessage.tab);
   }
 }
 
 DragSelection.onDragSelectionEnd.addListener(async aMessage => {
   const tabId = Commands.gDragSelection.dragStartTarget.id;
-  await refreshContextMenuItems(tabId, true);
+  await refreshItems(tabId, true);
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
@@ -533,18 +533,18 @@ DragSelection.onDragSelectionEnd.addListener(async aMessage => {
 
 Commands.onSelectionChange.addListener((aTabs, aSelected, aOptions = {}) => {
   if (!aOptions.dontUpdateMenu)
-    reserveRefreshContextMenuItems();
+    reserveRefreshItems();
 });
 
 configs.$addObserver(aKey => {
   switch (aKey) {
     case 'copyToClipboardFormats':
-      reserveRefreshContextMenuItems(null, true);
+      reserveRefreshItems(null, true);
       break;
 
     default:
       if (aKey.indexOf('context_') == 0)
-        reserveRefreshContextMenuItems(null, true);
+        reserveRefreshItems(null, true);
       break;
   }
 });

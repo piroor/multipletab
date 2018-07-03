@@ -349,7 +349,7 @@ async function registerToTST() {
     });
     Commands.gDragSelection.activatedInVerticalTabbarOfTST = true;
     // force rebuild menu
-    return ContextMenu.reserveRefreshContextMenuItems(null, true).then(() => true);
+    return ContextMenu.reserveRefreshItems(null, true).then(() => true);
   }
   catch(_e) {
     return false;
