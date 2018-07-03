@@ -5,7 +5,7 @@
 */
 'use strict';
 
-gLogContext = 'Panel';
+log.context = 'Panel';
 
 var gTabBar;
 var gMenu;

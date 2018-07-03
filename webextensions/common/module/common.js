@@ -97,8 +97,6 @@ export const configs = new Configs({
 });
 
 
-const gLogContext = '?';
-
 export function log(aMessage, ...aArgs)
 {
   if (!configs || !configs.debug)
@@ -109,8 +107,9 @@ export function log(aMessage, ...aArgs)
   for (let i = 0; i < nest; i++) {
     indent += ' ';
   }
-  console.log(`mth<${gLogContext}>: ${indent}${aMessage}`, ...aArgs);
+  console.log(`mth<${log.context}>: ${indent}${aMessage}`, ...aArgs);
 }
+log.context = '?';
 
 export async function wait(aTask = 0, aTimeout = 0) {
   if (typeof aTask != 'function') {

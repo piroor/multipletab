@@ -5,7 +5,7 @@
 */
 'use strict';
 
-gLogContext = 'BG';
+log.context = 'BG';
 
 window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
