@@ -20,7 +20,7 @@ export const onDragSelectionEnd = new EventListenerManager();
 
 /* utilities */
 
-export function retrieveTargetTabs(aSerializedTab) {
+function retrieveTargetTabs(aSerializedTab) {
   let tabs = [aSerializedTab];
   if (aSerializedTab.children &&
       aSerializedTab.states.indexOf('subtree-collapsed') > -1) {
@@ -31,7 +31,7 @@ export function retrieveTargetTabs(aSerializedTab) {
   return tabs;
 }
 
-export function getTabsBetween(aBegin, aEnd, aAllTabs = []) {
+function getTabsBetween(aBegin, aEnd, aAllTabs = []) {
   if (aBegin.id == aEnd.id)
     return [];
   let inRange = false;
@@ -44,7 +44,7 @@ export function getTabsBetween(aBegin, aEnd, aAllTabs = []) {
   });
 }
 
-export function toggleStateOfDragOverTabs(aParams = {}) {
+function toggleStateOfDragOverTabs(aParams = {}) {
   if (mDragSelection.firstHoverTarget) {
     const oldUndeterminedRange = mDragSelection.undeterminedRange;
     mDragSelection.undeterminedRange = {};
@@ -295,7 +295,7 @@ export async function onTabItemDragExit(_message) {
   dragExitAllWithDelay.reserve();
 }
 
-export function dragExitAllWithDelay() {
+function dragExitAllWithDelay() {
   //console.log('dragExitAllWithDelay '+mDragSelection.dragEnteredCount);
   dragExitAllWithDelay.cancel();
   if (mDragSelection.dragEnteredCount <= 0) {

@@ -30,7 +30,7 @@ export function clearSelection(aOptions = {}) {
   mSelection.clear();
 }
 
-export function isPermittedTab(aTab) {
+function isPermittedTab(aTab) {
   if (aTab.discarded)
     return false;
   return /^about:blank($|\?|#)/.test(aTab.url) ||
