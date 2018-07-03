@@ -196,31 +196,31 @@ function onTSTAPIMessage(aMessage) {
       return Promise.resolve(true);
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN:
-      return onTabItemClick(aMessage);
+      return DragSelection.onTabItemClick(aMessage);
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP:
-      return onTabItemMouseUp(aMessage);
+      return DragSelection.onTabItemMouseUp(aMessage);
 
     case Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED:
-      return onNonTabAreaClick(aMessage);
+      return DragSelection.onNonTabAreaClick(aMessage);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
-      return onTabItemDragReady(aMessage);
+      return DragSelection.onTabItemDragReady(aMessage);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
-      return onTabItemDragCancel(aMessage);
+      return DragSelection.onTabItemDragCancel(aMessage);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART:
-      return onTabItemDragStart(aMessage);
+      return DragSelection.onTabItemDragStart(aMessage);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER:
-      return onTabItemDragEnter(aMessage);
+      return DragSelection.onTabItemDragEnter(aMessage);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT:
-      return onTabItemDragExit(aMessage);
+      return DragSelection.onTabItemDragExit(aMessage);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEND:
-      return onTabItemDragEnd(aMessage);
+      return DragSelection.onTabItemDragEnd(aMessage);
 
     case Constants.kTSTAPI_CONTEXT_MENU_CLICK:
       return contextMenuClickListener(aMessage.info, aMessage.tab);

@@ -211,7 +211,7 @@ function onClick(aEvent) {
     return;
   var item = findTabItemFromEvent(aEvent);
   if (item) {
-    onTabItemClick({
+    DragSelection.onTabItemClick({
       window:        item.tab.windowId,
       tab:           item.tab,
       lastActiveTab: gLastClickedItem.tab,
@@ -226,7 +226,7 @@ function onClick(aEvent) {
     gLastClickedItem.classList.add('last-focused');
   }
   else
-    onNonTabAreaClick({
+    DragSelection.onNonTabAreaClick({
       button: aEvent.button
     });
 }
@@ -257,7 +257,7 @@ async function onMouseMove(aEvent) {
   gDragTargetIsClosebox =  aEvent.target.classList.contains('closebox');
   gLastDragEnteredItem = item;
   gLastDragEnteredTarget = gDragTargetIsClosebox ? aEvent.target : item ;
-  onTabItemDragReady({
+  DragSelection.onTabItemDragReady({
     tab:             item.tab,
     window:          Commands.gSelection.targetWindow,
     startOnClosebox: gDragTargetIsClosebox
@@ -274,7 +274,7 @@ function onMouseUp(aEvent) {
   setTimeout(() => {
     if (gClickFired)
       return;
-    onTabItemDragEnd({
+    DragSelection.onTabItemDragEnd({
       tab:     item && item.tab,
       window:  Commands.gSelection.targetWindow,
       clientX: aEvent.clientX,
@@ -297,7 +297,7 @@ function onMouseOver(aEvent) {
   if (item &&
       (!gDragTargetIsClosebox || isClosebox)) {
     if (target != gLastDragEnteredTarget) {
-      onTabItemDragEnter({
+      DragSelection.onTabItemDragEnter({
         tab:    item.tab,
         window: Commands.gSelection.targetWindow
       });
@@ -320,7 +320,7 @@ function onMouseOut(aEvent) {
   cancelDelayedDragExit(target);
   gOnDragExitTimeout = setTimeout(() => {
     gOnDragExitTimeout = null;
-    onTabItemDragExit({
+    DragSelection.onTabItemDragExit({
       tab:    item.tab,
       window: Commands.gSelection.targetWindow
     });
