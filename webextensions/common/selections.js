@@ -31,7 +31,7 @@ export async function getActive() {
   return get((await browser.windows.getLastFocused()).id);
 }
 
-browser.windows.onRemoved(windowId => {
+browser.windows.onRemoved.addListener(windowId => {
   if (!mSelections.has(windowId))
     return;
   const selection = mSelections.get(windowId);
