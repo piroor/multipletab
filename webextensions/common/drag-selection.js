@@ -55,8 +55,20 @@ export function apply(dragSelection) {
   return mDragSelection.apply(dragSelection);
 }
 
-export function getSelection() {
-  return mDragSelection;
+export function getDragStartTargetId() {
+  return mDragSelection.dragStartTarget && mDragSelection.dragStartTarget.id;
+}
+
+export function activateInVerticalTabbarOfTST() {
+  mDragSelection.activatedInVerticalTabbarOfTST = true;
+}
+
+export function deactivateInVerticalTabbarOfTST() {
+  mDragSelection.activatedInVerticalTabbarOfTST = false;
+}
+
+export function isActivatedInVerticalTabbarOfTST() {
+  return !!mDragSelection.activatedInVerticalTabbarOfTST;
 }
 
 /* utilities */

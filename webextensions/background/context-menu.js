@@ -514,7 +514,7 @@ function onTSTAPIMessage(message) {
 }
 
 DragSelection.onDragSelectionEnd.addListener(async message => {
-  const tabId = DragSelection.getSelection().dragStartTarget.id;
+  const tabId = DragSelection.getDragStartTargetId();
   await refreshItems(tabId, true);
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {

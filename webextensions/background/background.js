@@ -259,7 +259,7 @@ function onMessageExternal(message, sender) {
           unselectTabs = allTabs.filter(tab => unselectTabs.indexOf(tab.id) > -1);
         }
         Commands.setSelection(unselectTabs, false, {
-          globalHighlight: !DragSelection.getSelection().activatedInVerticalTabbarOfTST
+          globalHighlight: !DragSelection.isActivatedInVerticalTabbarOfTST()
         });
 
         let selectTabs = message.select;
@@ -272,7 +272,7 @@ function onMessageExternal(message, sender) {
           selectTabs = allTabs.filter(tab => selectTabs.indexOf(tab.id) > -1);
         }
         Commands.setSelection(selectTabs, true, {
-          globalHighlight: !DragSelection.getSelection().activatedInVerticalTabbarOfTST
+          globalHighlight: !DragSelection.isActivatedInVerticalTabbarOfTST()
         });
 
         return true;
@@ -335,7 +335,7 @@ async function registerToTST() {
         }
       `
     });
-    DragSelection.getSelection().activatedInVerticalTabbarOfTST = true;
+    DragSelection.activateInVerticalTabbarOfTST();
     // force rebuild menu
     return ContextMenu.reserveRefreshItems(null, true).then(() => true);
   }
@@ -345,7 +345,7 @@ async function registerToTST() {
 }
 
 function unregisterFromTST() {
-  DragSelection.getSelection().activatedInVerticalTabbarOfTST = false;
+  DragSelection.deactivateInVerticalTabbarOfTST();
   try {
     browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL

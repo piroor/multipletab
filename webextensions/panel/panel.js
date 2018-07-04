@@ -330,10 +330,9 @@ function cancelDelayedDragExit() {
 }
 
 DragSelection.onDragSelectionEnd.addListener(message => {
-  const tab = DragSelection.getSelection().dragStartTarget.id;
   SharedState.push({
     updateMenu: true,
-    contextTab: tab.id
+    contextTab: DragSelection.getDragStartTargetId()
   }).then(() => {
     openMenu(message);
   });
