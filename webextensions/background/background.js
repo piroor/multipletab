@@ -11,7 +11,7 @@ import {
   configs
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
-import * as Selections from '../common/selections.js';
+import * as Selection from '../common/selection.js';
 import * as Commands from '../common/commands.js';
 import * as Permissions from '../common/permissions.js';
 import * as DragSelection from '../common/drag-selection.js';
@@ -26,11 +26,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
 
   browser.tabs.onActivated.addListener((activeInfo) => {
-    if (!Selections.selection.tabs[TabIdFixer.fixTabId(activeInfo.tabId)])
-      Selections.clear();
+    if (!Selection.selection.tabs[TabIdFixer.fixTabId(activeInfo.tabId)])
+      Selection.clear();
   });
-  browser.tabs.onCreated.addListener(() => Selections.clear());
-  browser.tabs.onRemoved.addListener(() => Selections.clear());
+  browser.tabs.onCreated.addListener(() => Selection.clear());
+  browser.tabs.onRemoved.addListener(() => Selection.clear());
 
   ContextMenu.init();
   SharedState.initAsMaster();
@@ -68,7 +68,7 @@ async function onShortcutCommand(command) {
     active:        true,
     currentWindow: true
   }))[0];
-  const selectedTabIds = Selections.getSelectedTabIds();
+  const selectedTabIds = Selection.getSelectedTabIds();
 
   if (selectedTabIds.length <= 0)
     return;
@@ -140,22 +140,22 @@ async function onShortcutCommand(command) {
         buttons: formats.map(format => format.label)
       });
       if (result.buttonIndex > -1) {
-        await Selections.clear();
+        await Selection.clear();
         await wait(100); // to wait tab titles are updated
         await Commands.copyToClipboard(selectedTabIds, formats[result.buttonIndex].format);
-        const tabs = await Selections.getAllTabs(activeTab.windowId);
+        const tabs = await Selection.getAllTabs(activeTab.windowId);
         tabs.filter(tab => selectedTabIds.indexOf(tab.id) > -1)
-          .forEach(tab => Selections.set(tab, true));
+          .forEach(tab => Selection.set(tab, true));
       }
     } break;
 
     case 'saveSelectedTabs':
-      await Selections.clear();
+      await Selection.clear();
       await wait(100); // to wait tab titles are updated
       await Commands.saveTabs(selectedTabIds);
-      const tabs = await Selections.getAllTabs(activeTab.windowId);
+      const tabs = await Selection.getAllTabs(activeTab.windowId);
       tabs.filter(tab => selectedTabIds.indexOf(tab.id) > -1)
-        .forEach(tab => Selections.set(tab, true));
+        .forEach(tab => Selection.set(tab, true));
       break;
 
     case 'printSelectedTabs':
@@ -176,13 +176,13 @@ async function onShortcutCommand(command) {
       break;
 
     case 'toggleSelection':
-      Selections.set(activeTab, selectedTabIds.indexOf(activeTab.id) < 0);
+      Selection.set(activeTab, selectedTabIds.indexOf(activeTab.id) < 0);
       break;
     case 'selectAll':
-      Selections.setAll(true);
+      Selection.setAll(true);
       break;
     case 'invertSelection':
-      Selections.invert();
+      Selection.invert();
       break;
   }
 }
@@ -243,11 +243,11 @@ function onMessageExternal(message, sender) {
 
   switch (message.type) {
     case Constants.kMTHAPI_GET_TAB_SELECTION:
-      return Selections.getAPITabSelection();
+      return Selection.getAPITabSelection();
 
     case Constants.kMTHAPI_SET_TAB_SELECTION:
       return (async () => {
-        const allTabs = await Selections.getAllTabs(message.window || message.windowId);
+        const allTabs = await Selection.getAllTabs(message.window || message.windowId);
 
         let unselectTabs = message.unselect;
         if (unselectTabs == '*') {
@@ -258,7 +258,7 @@ function onMessageExternal(message, sender) {
             unselectTabs = [unselectTabs];
           unselectTabs = allTabs.filter(tab => unselectTabs.indexOf(tab.id) > -1);
         }
-        Selections.set(unselectTabs, false, {
+        Selection.set(unselectTabs, false, {
           globalHighlight: !DragSelection.isActivatedInVerticalTabbarOfTST()
         });
 
@@ -271,7 +271,7 @@ function onMessageExternal(message, sender) {
             selectTabs = [selectTabs];
           selectTabs = allTabs.filter(tab => selectTabs.indexOf(tab.id) > -1);
         }
-        Selections.set(selectTabs, true, {
+        Selection.set(selectTabs, true, {
           globalHighlight: !DragSelection.isActivatedInVerticalTabbarOfTST()
         });
 
@@ -279,7 +279,7 @@ function onMessageExternal(message, sender) {
       })();
 
     case Constants.kMTHAPI_CLEAR_TAB_SELECTION:
-      Selections.clear();
+      Selection.clear();
       return Promise.resolve(true);
   }
 }

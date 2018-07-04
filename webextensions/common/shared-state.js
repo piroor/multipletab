@@ -5,7 +5,7 @@
 */
 'use strict';
 
-import * as Selections from './selections.js';
+import * as Selection from './selection.js';
 import * as DragSelection from './drag-selection.js';
 
 import EventListenerManager from '../extlib/EventListenerManager.js';
@@ -56,13 +56,13 @@ export async function push(extraInfo = {}) {
 
 function serialize() {
   return {
-    selection: Selections.selection.export(),
+    selection: Selection.selection.export(),
     dragSelection: DragSelection.serialize()
   };
 }
 
 function apply(selections, extraInfo = {}) {
-  Selections.selection.apply(selections.selection);
+  Selection.selection.apply(selections.selection);
   DragSelection.apply(selections.dragSelection);
   onUpdated.dispatch(extraInfo);
 }
@@ -82,6 +82,6 @@ browser.runtime.onMessage.addListener((message, _sender) => {
   }
 });
 
-Selections.onChange.addListener((_tabs, _selected, _options = {}) => {
+Selection.onChange.addListener((_tabs, _selected, _options = {}) => {
   reservePush();
 });

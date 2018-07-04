@@ -12,7 +12,7 @@ import {
   configs
 } from './common.js';
 import * as Constants from './constants.js';
-import * as Selections from './selections.js';
+import * as Selection from './selection.js';
 import * as Permissions from './permissions.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
 
@@ -168,14 +168,14 @@ export async function safeMoveApiTabsAcrossWindows(aTabIds, moveOptions) {
 }
 
 export async function removeTabs(removeIds) {
-  const tabs = await Selections.getAllTabs(); // because given ids are possibly unsorted.
+  const tabs = await Selection.getAllTabs(); // because given ids are possibly unsorted.
   // close down to top, to keep tree structure of Tree Style Tab
   const ids = tabs.reverse().filter(tab => removeIds.indexOf(tab.id) > -1).map(tab => tab.id);
   await browser.tabs.remove(ids);
 }
 
 export async function removeOtherTabs(keepIds) {
-  const tabs = await Selections.getAllTabs(); // because given ids are possibly unsorted.
+  const tabs = await Selection.getAllTabs(); // because given ids are possibly unsorted.
   // close down to top, to keep tree structure of Tree Style Tab
   const ids = tabs.reverse().filter(tab => keepIds.indexOf(tab.id) < 0 && !tab.pinned).map(tab => tab.id);
   await browser.tabs.remove(ids);
@@ -193,7 +193,7 @@ export async function copyToClipboard(ids, format) {
     return;
   }
 
-  const allTabs = await Selections.getAllTabs();
+  const allTabs = await Selection.getAllTabs();
   const tabs = allTabs.filter(tab => ids.indexOf(tab.id) > -1);
 
   let indentLevels = [];
@@ -379,7 +379,7 @@ export function sanitizeHtmlText(text) {
 }
 
 export async function saveTabs(ids) {
-  const tabs = await Selections.getAllTabs();
+  const tabs = await Selection.getAllTabs();
   let prefix = configs.saveTabsPrefix;
   prefix = `${prefix.replace(/\/$/, '')}/`;
   for (const tab of tabs) {
@@ -443,7 +443,7 @@ export async function suggestFileNameForTab(tab) {
 export async function suspendTabs(ids, _options = {}) {
   if (typeof browser.tabs.discard != 'function')
     throw new Error('Error: required API "tabs.discard()" is not available on this version of Firefox.');
-  const allTabs = await browser.tabs.query({ windowId: Selections.selection.targetWindow });
+  const allTabs = await browser.tabs.query({ windowId: Selection.selection.targetWindow });
   let inSelection = false;
   let selectionFound = false;
   let unselectedTabs = [];
@@ -482,7 +482,7 @@ export async function suspendTabs(ids, _options = {}) {
 }
 
 export async function resumeTabs(ids) {
-  const allTabs = (await browser.tabs.query({ windowId: Selections.selection.targetWindow }));
+  const allTabs = (await browser.tabs.query({ windowId: Selection.selection.targetWindow }));
   const activeTab = allTabs.filter(tab => tab.active)[0];
   const selectedTabs = allTabs.filter(tab => ids.indexOf(tab.id) > -1);
   for (const tab of selectedTabs) {

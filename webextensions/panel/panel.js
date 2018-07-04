@@ -11,7 +11,7 @@ import {
   configs
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
-import * as Selections from '../common/selections.js';
+import * as Selection from '../common/selection.js';
 import * as DragSelection from '../common/drag-selection.js';
 import * as SharedState from '../common/shared-state.js';
 import MenuUI from '../extlib/MenuUI.js';
@@ -115,7 +115,7 @@ function reserveClearSelection() {
     clearTimeout(reserveClearSelection.reserved);
   reserveClearSelection.reserved = setTimeout(() => {
     delete reserveClearSelection.reserved;
-    Selections.clear();
+    Selection.clear();
   }, 100);
 }
 
@@ -123,7 +123,7 @@ SharedState.onUpdated.addListener(() => {
   rebuildTabItems();
 });
 
-Selections.onChange.addListener((tabs, selected, _options = {}) => {
+Selection.onChange.addListener((tabs, selected, _options = {}) => {
   if (!tabs.length)
     return;
   if (gDragTargetIsClosebox) {
@@ -249,12 +249,12 @@ async function onMouseMove(event) {
   const item = findTabItemFromEvent(event);
   if (!item)
     return;
-  Selections.selection.targetWindow = (await browser.windows.getCurrent()).id
+  Selection.selection.targetWindow = (await browser.windows.getCurrent()).id
   gDragTargetIsClosebox =  event.target.classList.contains('closebox');
   gLastDragEnteredTarget = gDragTargetIsClosebox ? event.target : item ;
   DragSelection.onTabItemDragReady({
     tab:             item.tab,
-    window:          Selections.selection.targetWindow,
+    window:          Selection.selection.targetWindow,
     startOnClosebox: gDragTargetIsClosebox
   })
   gTabBar.addEventListener('mouseover', onMouseOver);
@@ -271,7 +271,7 @@ function onMouseUp(event) {
       return;
     DragSelection.onTabItemDragEnd({
       tab:     item && item.tab,
-      window:  Selections.selection.targetWindow,
+      window:  Selection.selection.targetWindow,
       clientX: event.clientX,
       clientY: event.clientY
     });
@@ -294,7 +294,7 @@ function onMouseOver(event) {
     if (target != gLastDragEnteredTarget) {
       DragSelection.onTabItemDragEnter({
         tab:    item.tab,
-        window: Selections.selection.targetWindow
+        window: Selection.selection.targetWindow
       });
     }
   }
@@ -316,7 +316,7 @@ function onMouseOut(event) {
     gOnDragExitTimeout = null;
     DragSelection.onTabItemDragExit({
       tab:    item.tab,
-      window: Selections.selection.targetWindow
+      window: Selection.selection.targetWindow
     });
   }, 10);
 }
@@ -359,11 +359,11 @@ function buildTabItem(tab) {
   const label    = document.createElement('label');
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
-  if (tab.id in Selections.selection.tabs)
+  if (tab.id in Selection.selection.tabs)
     checkbox.setAttribute('checked', true);
   checkbox.addEventListener('change', () => {
     item.classList.toggle('selected');
-    Selections.set(tab, item.classList.contains('selected'), { globalHighlight: false });
+    Selection.set(tab, item.classList.contains('selected'), { globalHighlight: false });
   });
   label.appendChild(checkbox);
   const favicon = document.createElement('img');
@@ -387,7 +387,7 @@ function buildTabItem(tab) {
     gLastClickedItem = item;
     item.classList.add('last-focused');
   }
-  if (tab.id in Selections.selection.tabs)
+  if (tab.id in Selection.selection.tabs)
     item.classList.add('selected');
   item.appendChild(label);
   item.tab = tab;

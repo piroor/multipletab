@@ -11,7 +11,7 @@ import {
   configs
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
-import * as Selections from '../common/selections.js';
+import * as Selection from '../common/selection.js';
 import * as Commands from '../common/commands.js';
 import * as DragSelection from '../common/drag-selection.js';
 import * as SharedState from '../common/shared-state.js';
@@ -90,7 +90,7 @@ async function refreshItems(contextTab, force) {
     clearTimeout(reserveRefreshItems.timeout);
   delete reserveRefreshItems.timeout;
 
-  const serialized = JSON.stringify(Selections.selection.tabs);
+  const serialized = JSON.stringify(Selection.selection.tabs);
   if (!force &&
       serialized == mLastSelectedTabs) {
     log(' => no change, skip');
@@ -119,7 +119,7 @@ async function refreshItems(contextTab, force) {
     return;
   log('visibilities: ', visibilities);
 
-  const hasSelection         = Selections.getSelectedTabIds().length > 0;
+  const hasSelection         = Selection.getSelectedTabIds().length > 0;
   let separatorsCount      = 0;
   const normalItemAppearedIn = {};
   const createdItems         = {};
@@ -255,16 +255,16 @@ export function reserveRefreshItems() {
 
 async function getContextMenuItemVisibilities(params) {
   const tab = params.tab;
-  const allTabs = await Selections.getAllTabs();
+  const allTabs = await Selection.getAllTabs();
   let pinnedCount = 0;
   let mutedCount = 0;
   let suspendedCount = 0;
   let lockedCount = 0;
   let protectedCount = 0;
   let frozenCount = 0;
-  const tabIds = Selections.getSelectedTabIds();
+  const tabIds = Selection.getSelectedTabIds();
   for (const id of tabIds) {
-    const tab = Selections.selection.tabs[id];
+    const tab = Selection.selection.tabs[id];
     if (tab.pinned)
       pinnedCount++;
     if (tab.mutedInfo.muted)
@@ -323,12 +323,12 @@ configs.$addObserver(key => {
 
 async function onClick(info, tab) {
   //log('context menu item clicked: ', info, tab);
-  const selectedTabIds = Selections.getSelectedTabIds();
+  const selectedTabIds = Selection.getSelectedTabIds();
   console.log('info.menuItemId, selectedTabIds ', info.menuItemId, selectedTabIds);
   switch (info.menuItemId) {
     case 'reloadTabs':
       await Commands.reloadTabs(selectedTabIds);
-      Selections.clear();
+      Selection.clear();
       break;
     case 'bookmarkTabs':
       await Commands.bookmarkTabs(selectedTabIds);
@@ -339,24 +339,24 @@ async function onClick(info, tab) {
 
     case 'duplicateTabs':
       await Commands.duplicateTabs(selectedTabIds);
-      Selections.clear();
+      Selection.clear();
       break;
 
     case 'pinTabs':
       await Commands.pinTabs(selectedTabIds);
-      Selections.clear();
+      Selection.clear();
       break;
     case 'unpinTabs':
       await Commands.unpinTabs(selectedTabIds);
-      Selections.clear();
+      Selection.clear();
       break;
     case 'muteTabs':
       await Commands.muteTabs(selectedTabIds);
-      Selections.clear();
+      Selection.clear();
       break;
     case 'unmuteTabs':
       await Commands.unmuteTabs(selectedTabIds);
-      Selections.clear();
+      Selection.clear();
       break;
 
     case 'moveToNewWindow':
@@ -365,18 +365,18 @@ async function onClick(info, tab) {
 
     case 'removeTabs':
       await Commands.removeTabs(selectedTabIds);
-      Selections.clear();
+      Selection.clear();
       break;
     case 'removeOther':
       await Commands.removeOtherTabs(selectedTabIds);
-      Selections.clear();
+      Selection.clear();
       break;
 
     case 'clipboard':
-      Selections.clear();
+      Selection.clear();
       break;
     case 'saveTabs':
-      await Selections.clear();
+      await Selection.clear();
       await wait(100); // to wait tab titles are updated
       await Commands.saveTabs(selectedTabIds);
       break;
@@ -407,16 +407,16 @@ async function onClick(info, tab) {
       break;
 
     case 'selectAll':
-      Selections.setAll(true);
+      Selection.setAll(true);
       break;
     case 'select':
-      Selections.set(tab, true);
+      Selection.set(tab, true);
       break;
     case 'unselect':
-      Selections.set(tab, false);
+      Selection.set(tab, false);
       break;
     case 'invertSelection':
-      Selections.invert();
+      Selection.invert();
       break;
 
     default:
@@ -432,20 +432,20 @@ async function onClick(info, tab) {
         else {
           format = configs.copyToClipboardFormats[id.replace(/^[0-9]+:/, '')];
         }
-        await Selections.clear();
+        await Selection.clear();
         await wait(100); // to wait tab titles are updated
         await Commands.copyToClipboard(selectedTabIds, format);
       }
       else if (info.menuItemId.indexOf('moveToOtherWindow:') == 0) {
         const id = parseInt(info.menuItemId.replace(/^moveToOtherWindow:/, ''));
         await Commands.moveToWindow(selectedTabIds, id);
-        await Selections.clear();
+        await Selection.clear();
       }
       else if (info.menuItemId.indexOf('extra:') == 0) {
         const idMatch   = info.menuItemId.match(/^extra:([^:]+):(.+)$/);
         const owner     = idMatch[1];
         const id        = idMatch[2];
-        const selection = await Selections.getAPITabSelection({
+        const selection = await Selection.getAPITabSelection({
           selectedIds: selectedTabIds
         });
         browser.runtime.sendMessage(owner, {
@@ -519,7 +519,7 @@ DragSelection.onDragSelectionEnd.addListener(async message => {
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
-      window: Selections.selection.targetWindow,
+      window: Selection.selection.targetWindow,
       tab:  tabId,
       left: message.clientX,
       top:  message.clientY
@@ -530,7 +530,7 @@ DragSelection.onDragSelectionEnd.addListener(async message => {
   }
 });
 
-Selections.onChange.addListener((tabs, selected, options = {}) => {
+Selection.onChange.addListener((tabs, selected, options = {}) => {
   if (!options.dontUpdateMenu)
     reserveRefreshItems();
 });
