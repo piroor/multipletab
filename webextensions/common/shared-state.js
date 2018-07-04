@@ -5,7 +5,7 @@
 */
 'use strict';
 
-import * as Selection from './selection.js';
+import * as Selections from './selections.js';
 import * as DragSelection from './drag-selection.js';
 
 import EventListenerManager from '../extlib/EventListenerManager.js';
@@ -22,14 +22,15 @@ export function initAsMaster() {
 
     switch (message.type) {
       case kCOMMAND_PULL:
-        return Promise.resolve(serialize());
+        return Promise.resolve(serialize(message.windowId));
     }
   });
 }
 
-export async function initAsSlave() {
+export async function initAsSlave(windowId) {
   const state = await browser.runtime.sendMessage({
-    type: kCOMMAND_PULL
+    type: kCOMMAND_PULL,
+    windowId
   });
   apply(state);
 }
@@ -42,27 +43,27 @@ function reservePush() {
   }, 150);
 }
 
-export async function push(extraInfo = {}) {
+export async function push(windowId, extraInfo = {}) {
   if (reservePush.reserved) {
     clearTimeout(reservePush.reserved);
     delete reservePush.reserved;
   }
   await browser.runtime.sendMessage({
     type:  kCOMMAND_PUSH,
-    state: serialize(),
+    state: serialize(windowId),
     extraInfo
   });
 }
 
-function serialize() {
+function serialize(windowId) {
   return {
-    selection: Selection.serialize(),
+    selection: Selections.get(windowId).serialize(),
     dragSelection: DragSelection.serialize()
   };
 }
 
-function apply(selections, extraInfo = {}) {
-  Selection.apply(selections.selection);
+function apply(windowId, selections, extraInfo = {}) {
+  Selections.get(windowId).apply(selections.selection);
   DragSelection.apply(selections.dragSelection);
   onUpdated.dispatch(extraInfo);
 }
@@ -82,6 +83,8 @@ browser.runtime.onMessage.addListener((message, _sender) => {
   }
 });
 
-Selection.onChange.addListener((_tabs, _selected, _options = {}) => {
-  reservePush();
+Selections.onCreated.addListener(selection => {
+  selection.onChange.addListener((_tabs, _selected, _options = {}) => {
+    reservePush();
+  });
 });

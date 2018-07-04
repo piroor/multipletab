@@ -11,30 +11,33 @@ import * as Permissions from './permissions.js';
 import EventListenerManager from '../extlib/EventListenerManager.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
 
-export const onChange = new EventListenerManager();
+export default class Selection {
+  constructor(windowId) {
+    this.mTabs = {};
+    this.mTargetWindow = windowId;
+    this.mLastClickedTab = null;
 
-let mTabs = {};
-let mTargetWindow = null;
-let mLastClickedTab = null;
+    this.onChange = new EventListenerManager();
+  }
 
-export function serialize() {
+serialize() {
   return {
-    tabs: mTabs,
-    targetWindow: mTargetWindow,
-    lastClickedTab: mLastClickedTab
+    tabs: this.mTabs,
+    targetWindow: this.mTargetWindow,
+    lastClickedTab: this.mLastClickedTab
   };
 }
 
-export function apply(foreignSelection) {
-  if ('tabs' in foreignSelection)
-    mTabs = foreignSelection.tabs;
-  if ('targetWindow' in foreignSelection)
-    mTargetWindow = foreignSelection.targetWindow;
-  if ('lastClickedTab' in foreignSelection)
-    mLastClickedTab = foreignSelection.lastClickedTab;
+apply(foreignSelection) {
+    if ('tabs' in foreignSelection)
+      this.mTabs = foreignSelection.tabs;
+    if ('targetWindow' in foreignSelection)
+      this.mTargetWindow = foreignSelection.targetWindow;
+    if ('lastClickedTab' in foreignSelection)
+      this.mLastClickedTab = foreignSelection.lastClickedTab;
 }
 
-export function set(tabs, selected, options = {}) {
+set(tabs, selected, options = {}) {
   if (!Array.isArray(tabs))
     tabs = [tabs];
 
@@ -43,9 +46,9 @@ export function set(tabs, selected, options = {}) {
   //console.log('setSelection ', ids, `${aState}=${selected}`);
   if (selected) {
     for (const tab of tabs) {
-      if (tab.id in mTabs)
+      if (tab.id in this.mTabs)
         continue;
-      mTabs[tab.id] = tab;
+      this.mTabs[tab.id] = tab;
       if (shouldHighlight &&
           Permissions.isPermittedTab(tab) &&
           !tab.pinned)
@@ -58,9 +61,9 @@ export function set(tabs, selected, options = {}) {
   }
   else {
     for (const tab of tabs) {
-      if (!(tab.id in mTabs))
+      if (!(tab.id in this.mTabs))
         continue;
-      delete mTabs[tab.id];
+      delete this.mTabs[tab.id];
       if (shouldHighlight &&
           Permissions.isPermittedTab(tab) &&
           !tab.pinned)
@@ -76,34 +79,37 @@ export function set(tabs, selected, options = {}) {
     tabs:  tabs.map(tab => tab.id),
     state: options.states || options.state || 'selected'
   }).catch(_e => {}); // TST is not available
-  onChange.dispatch(tabs, selected, options);
+  this.onChange.dispatch(tabs, selected, options);
 }
 
-export function contains(tabOrTabId) {
+async setAll(selected = true) {
+  const tabs = await this.getAllTabs();
+  this.set(tabs, selected);
+}
+
+contains(tabOrTabId) {
   const id = TabIdFixer.fixTabId(typeof tabOrTabId == 'number' ? tabOrTabId : tabOrTabId.id);
-  return id in mTabs;
+  return id in this.mTabs;
 }
 
-export function has() {
-  return count() > 0;
+has() {
+  return this.count() > 0;
 }
 
-export function count() {
-  return Object.keys(mTabs).length;
+count() {
+  return Object.keys(this.mTabs).length;
 }
 
-export async function getAllTabs(windowId) {
-  const tabs = windowId || mTargetWindow ?
-    await browser.tabs.query({ windowId: windowId || mTargetWindow }) :
-    (await browser.windows.getCurrent({ populate: true })).tabs ;
+async getAllTabs() {
+  const tabs = await browser.tabs.query({ windowId: this.mTargetWindow });
   return tabs.map(TabIdFixer.fixTab);
 }
 
-export async function getAPITabSelection(params = {}) {
-  const ids        = params.selectedIds || getSelectedTabIds();
+async getAPITabSelection(params = {}) {
+  const ids        = params.selectedIds || this.getSelectedTabIds();
   const selected   = [];
   const unselected = [];
-  const tabs       = params.allTabs || await getAllTabs();
+  const tabs       = params.allTabs || await this.getAllTabs();
   for (const tab of tabs) {
     if (ids.indexOf(tab.id) < 0)
       unselected.push(tab);
@@ -113,38 +119,25 @@ export async function getAPITabSelection(params = {}) {
   return { selected, unselected };
 }
 
-export function getSelectedTabs() {
-  return Object.values(mTabs);
+getSelectedTabs() {
+  return Object.values(this.mTabs);
 }
 
-export function getSelectedTabIds() {
-  return Object.keys(mTabs).map(id => parseInt(id));
+getSelectedTabIds() {
+  return Object.keys(this.mTabs).map(id => parseInt(id));
 }
 
-export async function setAll(selected = true) {
-  const tabs = await getAllTabs();
-  set(tabs, selected);
+setLastClickedTab(tab) {
+  return this.mLastClickedTab = tab;
 }
 
-export function setTargetWindow(windowId) {
-  return mTargetWindow = windowId;
+getLastClickedTab() {
+  return this.mLastClickedTab;
 }
 
-export function getTargetWindow() {
-  return mTargetWindow;
-}
-
-export function setLastClickedTab(tab) {
-  return mLastClickedTab = tab;
-}
-
-export function getLastClickedTab() {
-  return mLastClickedTab;
-}
-
-export async function invert() {
-  const tabs = await getAllTabs();
-  const selectedIds = getSelectedTabIds();
+async invert() {
+  const tabs = await this.getAllTabs();
+  const selectedIds = this.getSelectedTabIds();
   const newSelected = [];
   const oldSelected = [];
   for (const tab of tabs) {
@@ -154,16 +147,18 @@ export async function invert() {
     else
       oldSelected.push(tab);
   }
-  set(oldSelected, false);
-  set(newSelected, true);
+  this.set(oldSelected, false);
+  this.set(newSelected, true);
 }
 
-export function clear(options = {}) {
+clear(options = {}) {
   const tabs = [];
-  for (const id of Object.keys(mTabs)) {
-    tabs.push(mTabs[id]);
+  for (const id of Object.keys(this.mTabs)) {
+    tabs.push(this.mTabs[id]);
   }
-  set(tabs, false, options);
-  mTabs = {};
-  mTargetWindow = mLastClickedTab = null;
+  this.set(tabs, false, options);
+  this.mTabs = {};
+  this.mLastClickedTab = null;
+}
+
 }

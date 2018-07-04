@@ -12,9 +12,13 @@ import {
   configs
 } from './common.js';
 import * as Constants from './constants.js';
-import * as Selection from './selection.js';
 import * as Permissions from './permissions.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
+
+async function getTabsByIds(ids) {
+  const tabs = await Promise.all(ids.map(id => browser.tabs.get(id).catch(_e => {})));
+  return tabs.filter(tab => !!tab).sort((a, b) => a.index - b.index);
+}
 
 export async function reloadTabs(ids) {
   for (const id of ids) {
@@ -168,16 +172,17 @@ export async function safeMoveApiTabsAcrossWindows(aTabIds, moveOptions) {
 }
 
 export async function removeTabs(removeIds) {
-  const tabs = await Selection.getAllTabs(); // because given ids are possibly unsorted.
+  const tabs = await getTabsByIds(removeIds);
   // close down to top, to keep tree structure of Tree Style Tab
-  const ids = tabs.reverse().filter(tab => removeIds.indexOf(tab.id) > -1).map(tab => tab.id);
+  const ids = tabs.reverse().map(tab => tab.id);
   await browser.tabs.remove(ids);
 }
 
 export async function removeOtherTabs(keepIds) {
-  const tabs = await Selection.getAllTabs(); // because given ids are possibly unsorted.
+  const keepTabs = await getTabsByIds(keepIds);
+  const allTabs = await browser.tabs.query({ windowId: keepTabs[0].windowId });
   // close down to top, to keep tree structure of Tree Style Tab
-  const ids = tabs.reverse().filter(tab => keepIds.indexOf(tab.id) < 0 && !tab.pinned).map(tab => tab.id);
+  const ids = allTabs.reverse().filter(tab => keepIds.indexOf(tab.id) < 0 && !tab.pinned).map(tab => tab.id);
   await browser.tabs.remove(ids);
 }
 
@@ -193,8 +198,8 @@ export async function copyToClipboard(ids, format) {
     return;
   }
 
-  const allTabs = await Selection.getAllTabs();
-  const tabs = allTabs.filter(tab => ids.indexOf(tab.id) > -1);
+  const tabs = await getTabsByIds(ids);
+  const allTabs = await browser.tabs.query({ windowId: tabs[0].windowId });
 
   let indentLevels = [];
   if (kFORMAT_MATCHER_TST_INDENT.test(format)) {
@@ -379,7 +384,7 @@ export function sanitizeHtmlText(text) {
 }
 
 export async function saveTabs(ids) {
-  const tabs = await Selection.getAllTabs();
+  const tabs = await getTabsByIds(ids);
   let prefix = configs.saveTabsPrefix;
   prefix = `${prefix.replace(/\/$/, '')}/`;
   for (const tab of tabs) {
@@ -443,7 +448,8 @@ export async function suggestFileNameForTab(tab) {
 export async function suspendTabs(ids, _options = {}) {
   if (typeof browser.tabs.discard != 'function')
     throw new Error('Error: required API "tabs.discard()" is not available on this version of Firefox.');
-  const allTabs = await browser.tabs.query({ windowId: Selection.getTargetWindow() });
+  const tabs = await getTabsByIds(ids);
+  const allTabs = await browser.tabs.query({ windowId: tabs[0].windowId });
   let inSelection = false;
   let selectionFound = false;
   let unselectedTabs = [];
@@ -482,9 +488,9 @@ export async function suspendTabs(ids, _options = {}) {
 }
 
 export async function resumeTabs(ids) {
-  const allTabs = (await browser.tabs.query({ windowId: Selection.getTargetWindow() }));
+  const selectedTabs = await getTabsByIds(ids);
+  const allTabs = await browser.tabs.query({ windowId: selectedTabs[0].windowId });
   const activeTab = allTabs.filter(tab => tab.active)[0];
-  const selectedTabs = allTabs.filter(tab => ids.indexOf(tab.id) > -1);
   for (const tab of selectedTabs) {
     //if (tab.discarded)
     await browser.tabs.update(tab.id, { active: true });
