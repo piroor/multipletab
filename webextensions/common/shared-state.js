@@ -5,7 +5,6 @@
 */
 'use strict';
 
-import * as Constants from './constants.js';
 import * as Selections from './selections.js';
 import * as Commands from './commands.js';
 import * as DragSelection from './drag-selection.js';
