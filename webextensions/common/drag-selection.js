@@ -15,6 +15,7 @@ import TabIdFixer from '../extlib/TabIdFixer.js';
 export const onDragSelectionEnd = new EventListenerManager();
 
 export const mDragSelection = {
+  selection:             null,
   willCloseSelectedTabs: false,
   allTabsOnDragReady:    [],
   pendingTabs:           null,
@@ -29,6 +30,7 @@ export const mDragSelection = {
     this.willCloseSelectedTabs = false;
     this.dragEnteredCount = 0;
     this.allTabsOnDragReady = [];
+    this.selection = null;
   },
   export() {
     const exported = {};
@@ -152,6 +154,8 @@ let gInSelectionSession = false;
 export async function onClick(message) {
   if (message.button != 0)
     return false;
+
+  mDragSelection.selection = Selections.get(message.window);
 
   let selected = false;
   {
