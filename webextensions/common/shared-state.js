@@ -14,13 +14,16 @@ import EventListenerManager from '../extlib/EventListenerManager.js';
 
 export const onUpdated = new EventListenerManager();
 
+const kCOMMAND_PULL = 'multipletab:shared-state:pull';
+const kCOMMAND_PUSH = 'multipletab:shared-state:push';
+
 export function initAsMaster() {
   browser.runtime.onMessage.addListener((message, _sender) => {
     if (!message || !message.type)
       return;
 
     switch (message.type) {
-      case Constants.kCOMMAND_PULL_SELECTION_INFO:
+      case kCOMMAND_PULL:
         return Promise.resolve(serialize());
     }
   });
@@ -28,7 +31,7 @@ export function initAsMaster() {
 
 export async function initAsSlave() {
   const state = await browser.runtime.sendMessage({
-    type: Constants.kCOMMAND_PULL_SELECTION_INFO
+    type: kCOMMAND_PULL
   });
   apply(state);
 }
@@ -47,7 +50,7 @@ export async function push(extraInfo = {}) {
     delete reservePush.reserved;
   }
   await browser.runtime.sendMessage({
-    type:  Constants.kCOMMAND_PUSH_SELECTION_INFO,
+    type:  kCOMMAND_PUSH,
     state: serialize(),
     extraInfo
   });
@@ -72,7 +75,7 @@ browser.runtime.onMessage.addListener((message, _sender) => {
     return;
 
   switch (message.type) {
-    case Constants.kCOMMAND_PUSH_SELECTION_INFO:
+    case kCOMMAND_PUSH:
       apply(message.state, message.extraInfo);
       break;
 
