@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+   * Behave like tab selection on Google Chrome and lately Firefox. (One of rest selected tabs is activated when the active tab is unselected, Ctrl-Shift-Click adds tabs between two last clicked tabs to the selection.)
+   * Support per-window selection.
  - 2.0.13 (2018.5.30)
    * Add ability to switch color scheme to Dark theme.
    * Make configuration categories collapsible.
