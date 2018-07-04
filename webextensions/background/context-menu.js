@@ -11,9 +11,10 @@ import {
   configs
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
-import * as Selections from '../common/selections.js';
+import * as Selection from '../common/selection.js';
 import * as Commands from '../common/commands.js';
 import * as DragSelection from '../common/drag-selection.js';
+import * as SharedState from '../common/shared-state.js';
 
 const mItems = `
   reloadTabs
@@ -65,6 +66,15 @@ export function init() {
   reserveRefreshItems();
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
+  SharedState.onUpdated.addListener(extraInfo => {
+    if (extraInfo.updateMenu) {
+      const tab = extraInfo.contextTab ? { id: extraInfo.contextTab } : null ;
+      return refreshItems(tab, true);
+    }
+    else {
+      reserveRefreshItems();
+    }
+  });
 }
 
 
@@ -80,7 +90,7 @@ async function refreshItems(contextTab, force) {
     clearTimeout(reserveRefreshItems.timeout);
   delete reserveRefreshItems.timeout;
 
-  const serialized = JSON.stringify(Selections.selection.tabs);
+  const serialized = JSON.stringify(Selection.getSelectedTabs());
   if (!force &&
       serialized == mLastSelectedTabs) {
     log(' => no change, skip');
@@ -109,7 +119,7 @@ async function refreshItems(contextTab, force) {
     return;
   log('visibilities: ', visibilities);
 
-  const hasSelection         = Commands.getSelectedTabIds().length > 0;
+  const hasSelection         = Selection.getSelectedTabIds().length > 0;
   let separatorsCount      = 0;
   const normalItemAppearedIn = {};
   const createdItems         = {};
@@ -245,16 +255,15 @@ export function reserveRefreshItems() {
 
 async function getContextMenuItemVisibilities(params) {
   const tab = params.tab;
-  const allTabs = await Commands.getAllTabs();
+  const allTabs = await Selection.getAllTabs();
   let pinnedCount = 0;
   let mutedCount = 0;
   let suspendedCount = 0;
   let lockedCount = 0;
   let protectedCount = 0;
   let frozenCount = 0;
-  const tabIds = Commands.getSelectedTabIds();
-  for (const id of tabIds) {
-    const tab = Selections.selection.tabs[id];
+  const tabs = Selection.getSelectedTabs();
+  for (const tab of tabs) {
     if (tab.pinned)
       pinnedCount++;
     if (tab.mutedInfo.muted)
@@ -269,34 +278,34 @@ async function getContextMenuItemVisibilities(params) {
       frozenCount++;
   }
   return {
-    reloadTabs:    tabIds.length > 0,
-    bookmarkTabs:  tabIds.length > 0,
-    removeBookmarkFromTabs: tabIds.length > 0,
-    duplicateTabs: tabIds.length > 0,
-    pinTabs:       tabIds.length > 0 && pinnedCount < tabIds.length,
-    unpinTabs:     tabIds.length > 0 && pinnedCount > 0,
-    muteTabs:      tabIds.length > 0 && mutedCount < tabIds.length,
-    unmuteTabs:    tabIds.length > 0 && mutedCount > 0,
-    moveToNewWindow: tabIds.length > 0,
-    moveToOtherWindow: tabIds.length > 0 && params.otherWindows.length > 0,
-    removeTabs:    tabIds.length > 0,
-    removeOther:   tabIds.length > 0 && tabIds.length < allTabs.length,
-    clipboard:     tabIds.length > 0,
-    saveTabs:      tabIds.length > 0,
-    printTabs:     tabIds.length > 0,
-    freezeTabs:    tabIds.length > 0 && frozenCount < tabIds.length,
-    unfreezeTabs:  tabIds.length > 0 && frozenCount > 0,
-    protectTabs:   tabIds.length > 0 && protectedCount < tabIds.length,
-    unprotectTabs: tabIds.length > 0 && protectedCount > 0,
-    lockTabs:      tabIds.length > 0 && lockedCount < tabIds.length,
-    unlockTabs:    tabIds.length > 0 && lockedCount > 0,
-    groupTabs:     tabIds.length > 1,
-    suspendTabs:   tabIds.length > 0 && suspendedCount < tabIds.length,
-    resumeTabs:    tabIds.length > 0 && suspendedCount > 0,
-    selectAll:     tabIds.length < allTabs.length,
-    select:        !tab || tabIds.indexOf(tab.id) < 0,
-    unselect:      !tab || tabIds.indexOf(tab.id) > -1,
-    invertSelection: tabIds.length > 0
+    reloadTabs:    tabs.length > 0,
+    bookmarkTabs:  tabs.length > 0,
+    removeBookmarkFromTabs: tabs.length > 0,
+    duplicateTabs: tabs.length > 0,
+    pinTabs:       tabs.length > 0 && pinnedCount < tabs.length,
+    unpinTabs:     tabs.length > 0 && pinnedCount > 0,
+    muteTabs:      tabs.length > 0 && mutedCount < tabs.length,
+    unmuteTabs:    tabs.length > 0 && mutedCount > 0,
+    moveToNewWindow: tabs.length > 0,
+    moveToOtherWindow: tabs.length > 0 && params.otherWindows.length > 0,
+    removeTabs:    tabs.length > 0,
+    removeOther:   tabs.length > 0 && tabs.length < allTabs.length,
+    clipboard:     tabs.length > 0,
+    saveTabs:      tabs.length > 0,
+    printTabs:     tabs.length > 0,
+    freezeTabs:    tabs.length > 0 && frozenCount < tabs.length,
+    unfreezeTabs:  tabs.length > 0 && frozenCount > 0,
+    protectTabs:   tabs.length > 0 && protectedCount < tabs.length,
+    unprotectTabs: tabs.length > 0 && protectedCount > 0,
+    lockTabs:      tabs.length > 0 && lockedCount < tabs.length,
+    unlockTabs:    tabs.length > 0 && lockedCount > 0,
+    groupTabs:     tabs.length > 1,
+    suspendTabs:   tabs.length > 0 && suspendedCount < tabs.length,
+    resumeTabs:    tabs.length > 0 && suspendedCount > 0,
+    selectAll:     tabs.length < allTabs.length,
+    select:        !tab || tabs.indexOf(tab.id) < 0,
+    unselect:      !tab || tabs.indexOf(tab.id) > -1,
+    invertSelection: tabs.length > 0
   };
 }
 
@@ -313,12 +322,12 @@ configs.$addObserver(key => {
 
 async function onClick(info, tab) {
   //log('context menu item clicked: ', info, tab);
-  const selectedTabIds = Commands.getSelectedTabIds();
+  const selectedTabIds = Selection.getSelectedTabIds();
   console.log('info.menuItemId, selectedTabIds ', info.menuItemId, selectedTabIds);
   switch (info.menuItemId) {
     case 'reloadTabs':
       await Commands.reloadTabs(selectedTabIds);
-      Commands.clearSelection();
+      Selection.clear();
       break;
     case 'bookmarkTabs':
       await Commands.bookmarkTabs(selectedTabIds);
@@ -329,24 +338,24 @@ async function onClick(info, tab) {
 
     case 'duplicateTabs':
       await Commands.duplicateTabs(selectedTabIds);
-      Commands.clearSelection();
+      Selection.clear();
       break;
 
     case 'pinTabs':
       await Commands.pinTabs(selectedTabIds);
-      Commands.clearSelection();
+      Selection.clear();
       break;
     case 'unpinTabs':
       await Commands.unpinTabs(selectedTabIds);
-      Commands.clearSelection();
+      Selection.clear();
       break;
     case 'muteTabs':
       await Commands.muteTabs(selectedTabIds);
-      Commands.clearSelection();
+      Selection.clear();
       break;
     case 'unmuteTabs':
       await Commands.unmuteTabs(selectedTabIds);
-      Commands.clearSelection();
+      Selection.clear();
       break;
 
     case 'moveToNewWindow':
@@ -355,18 +364,18 @@ async function onClick(info, tab) {
 
     case 'removeTabs':
       await Commands.removeTabs(selectedTabIds);
-      Commands.clearSelection();
+      Selection.clear();
       break;
     case 'removeOther':
       await Commands.removeOtherTabs(selectedTabIds);
-      Commands.clearSelection();
+      Selection.clear();
       break;
 
     case 'clipboard':
-      Commands.clearSelection();
+      Selection.clear();
       break;
     case 'saveTabs':
-      await Commands.clearSelection();
+      await Selection.clear();
       await wait(100); // to wait tab titles are updated
       await Commands.saveTabs(selectedTabIds);
       break;
@@ -397,16 +406,16 @@ async function onClick(info, tab) {
       break;
 
     case 'selectAll':
-      Commands.selectAllTabs();
+      Selection.setAll(true);
       break;
     case 'select':
-      Commands.setSelection(tab, true);
+      Selection.set(tab, true);
       break;
     case 'unselect':
-      Commands.setSelection(tab, false);
+      Selection.set(tab, false);
       break;
     case 'invertSelection':
-      Commands.invertSelection();
+      Selection.invert();
       break;
 
     default:
@@ -422,20 +431,20 @@ async function onClick(info, tab) {
         else {
           format = configs.copyToClipboardFormats[id.replace(/^[0-9]+:/, '')];
         }
-        await Commands.clearSelection();
+        await Selection.clear();
         await wait(100); // to wait tab titles are updated
         await Commands.copyToClipboard(selectedTabIds, format);
       }
       else if (info.menuItemId.indexOf('moveToOtherWindow:') == 0) {
         const id = parseInt(info.menuItemId.replace(/^moveToOtherWindow:/, ''));
         await Commands.moveToWindow(selectedTabIds, id);
-        await Commands.clearSelection();
+        await Selection.clear();
       }
       else if (info.menuItemId.indexOf('extra:') == 0) {
         const idMatch   = info.menuItemId.match(/^extra:([^:]+):(.+)$/);
         const owner     = idMatch[1];
         const id        = idMatch[2];
-        const selection = await Commands.getAPITabSelection({
+        const selection = await Selection.getAPITabSelection({
           selectedIds: selectedTabIds
         });
         browser.runtime.sendMessage(owner, {
@@ -454,17 +463,6 @@ function onMessage(message) {
     return;
 
   switch (message.type) {
-    case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      Selections.apply(message.selections);
-      if (message.updateMenu) {
-        const tab = message.contextTab ? { id: message.contextTab } : null ;
-        return refreshItems(tab, true);
-      }
-      else {
-        reserveRefreshItems();
-      }
-      break;
-
     case Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO:
       return Promise.resolve(mActiveItems);
 
@@ -515,12 +513,12 @@ function onTSTAPIMessage(message) {
 }
 
 DragSelection.onDragSelectionEnd.addListener(async message => {
-  const tabId = Selections.dragSelection.dragStartTarget.id;
+  const tabId = DragSelection.getDragStartTargetId();
   await refreshItems(tabId, true);
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
-      window: Selections.selection.targetWindow,
+      window: Selection.getTargetWindow(),
       tab:  tabId,
       left: message.clientX,
       top:  message.clientY
@@ -531,7 +529,7 @@ DragSelection.onDragSelectionEnd.addListener(async message => {
   }
 });
 
-Commands.onSelectionChange.addListener((tabs, selected, options = {}) => {
+Selection.onChange.addListener((tabs, selected, options = {}) => {
   if (!options.dontUpdateMenu)
     reserveRefreshItems();
 });

@@ -11,9 +11,9 @@ import {
   configs
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
-import * as Selections from '../common/selections.js';
-import * as Commands from '../common/commands.js';
+import * as Selection from '../common/selection.js';
 import * as DragSelection from '../common/drag-selection.js';
+import * as SharedState from '../common/shared-state.js';
 import MenuUI from '../extlib/MenuUI.js';
 import TabFavIconHelper from '../extlib/TabFavIconHelper.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
@@ -40,10 +40,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   await configs.$loaded;
   document.documentElement.dataset.theme = configs.theme;
-  const serializedSelections = await browser.runtime.sendMessage({
-    type: Constants.kCOMMAND_PULL_SELECTION_INFO
-  });
-  Selections.apply(serializedSelections);
+  SharedState.initAsSlave();
 
   gLastClickedItem = null;
 
@@ -52,7 +49,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.tabs.onActivated.addListener(onTabModified);
   browser.tabs.onCreated.addListener(onTabModified);
   browser.tabs.onRemoved.addListener(onTabModified);
-  browser.runtime.onMessage.addListener(onMessage);
 
   window.addEventListener('contextmenu', onContextMenu, { capture: true });
   window.addEventListener('click', onClick);
@@ -82,7 +78,6 @@ window.addEventListener('pagehide', () => {
   browser.tabs.onActivated.removeListener(onTabModified);
   browser.tabs.onCreated.removeListener(onTabModified);
   browser.tabs.onRemoved.removeListener(onTabModified);
-  browser.runtime.onMessage.removeListener(onMessage);
 }, { once: true });
 
 function onTabModified() {
@@ -120,23 +115,15 @@ function reserveClearSelection() {
     clearTimeout(reserveClearSelection.reserved);
   reserveClearSelection.reserved = setTimeout(() => {
     delete reserveClearSelection.reserved;
-    Commands.clearSelection();
+    Selection.clear();
   }, 100);
 }
 
-function onMessage(message) {
-  if (!message || !message.type)
-    return;
+SharedState.onUpdated.addListener(() => {
+  rebuildTabItems();
+});
 
-  switch (message.type) {
-    case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      Selections.apply(message.selections);
-      rebuildTabItems();
-      break;
-  }
-}
-
-Commands.onSelectionChange.addListener((tabs, selected, _options = {}) => {
+Selection.onChange.addListener((tabs, selected, _options = {}) => {
   if (!tabs.length)
     return;
   if (gDragTargetIsClosebox) {
@@ -161,7 +148,6 @@ Commands.onSelectionChange.addListener((tabs, selected, _options = {}) => {
         item.classList.remove('selected');
     }
   }
-  Commands.reservePushSelectionState();
 });
 
 function findTabItemFromEvent(event) {
@@ -263,12 +249,12 @@ async function onMouseMove(event) {
   const item = findTabItemFromEvent(event);
   if (!item)
     return;
-  Selections.selection.targetWindow = (await browser.windows.getCurrent()).id
+  Selection.setTargetWindow((await browser.windows.getCurrent()).id);
   gDragTargetIsClosebox =  event.target.classList.contains('closebox');
   gLastDragEnteredTarget = gDragTargetIsClosebox ? event.target : item ;
   DragSelection.onDragReady({
     tab:             item.tab,
-    window:          Selections.selection.targetWindow,
+    window:          Selection.getTargetWindow(),
     startOnClosebox: gDragTargetIsClosebox
   })
   gTabBar.addEventListener('mouseover', onMouseOver);
@@ -285,7 +271,7 @@ function onMouseUp(event) {
       return;
     DragSelection.onDragEnd({
       tab:     item && item.tab,
-      window:  Selections.selection.targetWindow,
+      window:  Selection.getTargetWindow(),
       clientX: event.clientX,
       clientY: event.clientY
     });
@@ -308,7 +294,7 @@ function onMouseOver(event) {
     if (target != gLastDragEnteredTarget) {
       DragSelection.onDragEnter({
         tab:    item.tab,
-        window: Selections.selection.targetWindow
+        window: Selection.getTargetWindow()
       });
     }
   }
@@ -330,7 +316,7 @@ function onMouseOut(event) {
     gOnDragExitTimeout = null;
     DragSelection.onDragExit({
       tab:    item.tab,
-      window: Selections.selection.targetWindow
+      window: Selection.getTargetWindow()
     });
   }, 10);
 }
@@ -343,10 +329,9 @@ function cancelDelayedDragExit() {
 }
 
 DragSelection.onDragSelectionEnd.addListener(message => {
-  const tab = Selections.dragSelection.dragStartTarget.id;
-  Commands.pushSelectionState({
+  SharedState.push({
     updateMenu: true,
-    contextTab: tab.id
+    contextTab: DragSelection.getDragStartTargetId()
   }).then(() => {
     openMenu(message);
   });
@@ -374,11 +359,11 @@ function buildTabItem(tab) {
   const label    = document.createElement('label');
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
-  if (tab.id in Selections.selection.tabs)
+  if (Selection.contains(tab))
     checkbox.setAttribute('checked', true);
   checkbox.addEventListener('change', () => {
     item.classList.toggle('selected');
-    Commands.setSelection(tab, item.classList.contains('selected'), { globalHighlight: false });
+    Selection.set(tab, item.classList.contains('selected'), { globalHighlight: false });
   });
   label.appendChild(checkbox);
   const favicon = document.createElement('img');
@@ -402,7 +387,7 @@ function buildTabItem(tab) {
     gLastClickedItem = item;
     item.classList.add('last-focused');
   }
-  if (tab.id in Selections.selection.tabs)
+  if (Selection.contains(tab))
     item.classList.add('selected');
   item.appendChild(label);
   item.tab = tab;

@@ -5,8 +5,6 @@
 */
 'use strict';
 
-export const kCOMMAND_PULL_SELECTION_INFO           = 'multipletab:pull-selection-info';
-export const kCOMMAND_PUSH_SELECTION_INFO           = 'multipletab:push-selection-info';
 export const kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO = 'multipletab:pull-active-context-menu-info';
 export const kCOMMAND_SELECTION_MENU_ITEM_CLICK     = 'multipletab:selection-menu-item-click';
 export const kCOMMAND_UNREGISTER_FROM_TST           = 'multipletab:unregister-from-tst';

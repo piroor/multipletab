@@ -12,122 +12,9 @@ import {
   configs
 } from './common.js';
 import * as Constants from './constants.js';
-import * as Selections from './selections.js';
+import * as Selection from './selection.js';
 import * as Permissions from './permissions.js';
-import EventListenerManager from '../extlib/EventListenerManager.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
-
-export const onSelectionChange = new EventListenerManager();
-
-export function clearSelection(options = {}) {
-  const tabs = [];
-  for (const id of Object.keys(Selections.selection.tabs)) {
-    tabs.push(Selections.selection.tabs[id]);
-  }
-  setSelection(tabs, false, options);
-  Selections.selection.clear();
-}
-
-function isPermittedTab(tab) {
-  if (tab.discarded)
-    return false;
-  return /^about:blank($|\?|#)/.test(tab.url) ||
-         !/^(about|resource|chrome|file|view-source):/.test(tab.url);
-}
-
-export function setSelection(tabs, selected, options = {}) {
-  if (!Array.isArray(tabs))
-    tabs = [tabs];
-
-  const shouldHighlight = options.globalHighlight !== false;
-
-  //console.log('setSelection ', ids, `${aState}=${selected}`);
-  if (selected) {
-    for (const tab of tabs) {
-      if (tab.id in Selections.selection.tabs)
-        continue;
-      Selections.selection.tabs[tab.id] = tab;
-      if (shouldHighlight &&
-          isPermittedTab(tab) &&
-          !tab.pinned)
-        Permissions.isGranted(Permissions.ALL_URLS).then(() => {
-          browser.tabs.executeScript(tab.id, {
-            code: `document.title = '✔' + document.title;`
-          });
-        });
-    }
-  }
-  else {
-    for (const tab of tabs) {
-      if (!(tab.id in Selections.selection.tabs))
-        continue;
-      delete Selections.selection.tabs[tab.id];
-      if (shouldHighlight &&
-          isPermittedTab(tab) &&
-          !tab.pinned)
-        Permissions.isGranted(Permissions.ALL_URLS).then(() => {
-          browser.tabs.executeScript(tab.id, {
-            code: `document.title = document.title.replace(/^✔/, '');`
-          });
-        });
-    }
-  }
-  browser.runtime.sendMessage(Constants.kTST_ID, {
-    type:  selected ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
-    tabs:  tabs.map(tab => tab.id),
-    state: options.states || options.state || 'selected'
-  }).catch(_e => {}); // TST is not available
-  onSelectionChange.dispatch(tabs, selected, options);
-}
-
-
-export function reservePushSelectionState() {
-  if (reservePushSelectionState.reserved)
-    clearTimeout(reservePushSelectionState.reserved);
-  reservePushSelectionState.reserved = setTimeout(() => {
-    pushSelectionState();
-  }, 150);
-}
-
-export async function pushSelectionState(options = {}) {
-  if (reservePushSelectionState.reserved) {
-    clearTimeout(reservePushSelectionState.reserved);
-    delete reservePushSelectionState.reserved;
-  }
-  await browser.runtime.sendMessage({
-    type:          Constants.kCOMMAND_PUSH_SELECTION_INFO,
-    selections:    Selections.serialize(),
-    updateMenu:    !!options.updateMenu,
-    contextTab:    options.contextTab
-  });
-}
-
-
-export async function getAllTabs(windowId) {
-  const tabs = windowId || Selections.selection.targetWindow ?
-    await browser.tabs.query({ windowId: windowId || Selections.selection.targetWindow }) :
-    (await browser.windows.getCurrent({ populate: true })).tabs ;
-  return tabs.map(TabIdFixer.fixTab);
-}
-
-export function getSelectedTabIds() {
-  return Object.keys(Selections.selection.tabs).map(id => parseInt(id));
-}
-
-export async function getAPITabSelection(params = {}) {
-  const ids        = params.selectedIds || getSelectedTabIds();
-  const selected   = [];
-  const unselected = [];
-  const tabs       = params.allTabs || await getAllTabs();
-  for (const tab of tabs) {
-    if (ids.indexOf(tab.id) < 0)
-      unselected.push(tab);
-    else
-      selected.push(tab);
-  }
-  return { selected, unselected };
-}
-
 
 export async function reloadTabs(ids) {
   for (const id of ids) {
@@ -281,14 +168,14 @@ export async function safeMoveApiTabsAcrossWindows(aTabIds, moveOptions) {
 }
 
 export async function removeTabs(removeIds) {
-  const tabs = await getAllTabs(); // because given ids are possibly unsorted.
+  const tabs = await Selection.getAllTabs(); // because given ids are possibly unsorted.
   // close down to top, to keep tree structure of Tree Style Tab
   const ids = tabs.reverse().filter(tab => removeIds.indexOf(tab.id) > -1).map(tab => tab.id);
   await browser.tabs.remove(ids);
 }
 
 export async function removeOtherTabs(keepIds) {
-  const tabs = await getAllTabs(); // because given ids are possibly unsorted.
+  const tabs = await Selection.getAllTabs(); // because given ids are possibly unsorted.
   // close down to top, to keep tree structure of Tree Style Tab
   const ids = tabs.reverse().filter(tab => keepIds.indexOf(tab.id) < 0 && !tab.pinned).map(tab => tab.id);
   await browser.tabs.remove(ids);
@@ -306,7 +193,7 @@ export async function copyToClipboard(ids, format) {
     return;
   }
 
-  const allTabs = await getAllTabs();
+  const allTabs = await Selection.getAllTabs();
   const tabs = allTabs.filter(tab => ids.indexOf(tab.id) > -1);
 
   let indentLevels = [];
@@ -388,9 +275,9 @@ export async function copyToClipboard(ids, format) {
     return;
   }
 
-  let permittedTabs = tabs.filter(isPermittedTab);
+  let permittedTabs = tabs.filter(Permissions.isPermittedTab);
   if (permittedTabs.length == 0) {
-    permittedTabs = allTabs.filter(isPermittedTab);
+    permittedTabs = allTabs.filter(Permissions.isPermittedTab);
     if (permittedTabs.length == 0)
       throw new Error('no permitted tab to copy data to the clipboard');
   }
@@ -420,7 +307,7 @@ export async function fillPlaceHolders(format, tab, indentLevel) {
   const lineFeed = configs.useCRLF ? '\r\n' : '\n' ;
   let contentsData = {};
   if (!tab.discarded &&
-      isPermittedTab(tab) &&
+      Permissions.isPermittedTab(tab) &&
       /%(AUTHOR|DESC(?:RIPTION)?|KEYWORDS)(?:_HTML(?:IFIED)?)?%/i.test(format)) {
     log('trying to get data from content ', tab.id);
     contentsData = await browser.tabs.executeScript(tab.id, {
@@ -492,7 +379,7 @@ export function sanitizeHtmlText(text) {
 }
 
 export async function saveTabs(ids) {
-  const tabs = await getAllTabs();
+  const tabs = await Selection.getAllTabs();
   let prefix = configs.saveTabsPrefix;
   prefix = `${prefix.replace(/\/$/, '')}/`;
   for (const tab of tabs) {
@@ -521,7 +408,7 @@ export async function suggestFileNameForTab(tab) {
 
   let suggestedExtension = '';
   if (!tab.discarded &&
-      isPermittedTab(tab)) {
+      Permissions.isPermittedTab(tab)) {
     log(`getting content type of ${tab.id}`);
     if (!(await Permissions.isGranted(Permissions.ALL_URLS))) {
       notify({
@@ -556,7 +443,7 @@ export async function suggestFileNameForTab(tab) {
 export async function suspendTabs(ids, _options = {}) {
   if (typeof browser.tabs.discard != 'function')
     throw new Error('Error: required API "tabs.discard()" is not available on this version of Firefox.');
-  const allTabs = await browser.tabs.query({ windowId: Selections.selection.targetWindow });
+  const allTabs = await browser.tabs.query({ windowId: Selection.getTargetWindow() });
   let inSelection = false;
   let selectionFound = false;
   let unselectedTabs = [];
@@ -595,7 +482,7 @@ export async function suspendTabs(ids, _options = {}) {
 }
 
 export async function resumeTabs(ids) {
-  const allTabs = (await browser.tabs.query({ windowId: Selections.selection.targetWindow }));
+  const allTabs = (await browser.tabs.query({ windowId: Selection.getTargetWindow() }));
   const activeTab = allTabs.filter(tab => tab.active)[0];
   const selectedTabs = allTabs.filter(tab => ids.indexOf(tab.id) > -1);
   for (const tab of selectedTabs) {
@@ -603,25 +490,4 @@ export async function resumeTabs(ids) {
     await browser.tabs.update(tab.id, { active: true });
   }
   return browser.tabs.update(activeTab.id, { active: true });
-}
-
-export async function selectAllTabs() {
-  const tabs = await getAllTabs();
-  setSelection(tabs, true);
-}
-
-export async function invertSelection() {
-  const tabs = await getAllTabs();
-  const selectedIds = getSelectedTabIds();
-  const newSelected = [];
-  const oldSelected = [];
-  for (const tab of tabs) {
-    const toBeSelected = selectedIds.indexOf(tab.id) < 0;
-    if (toBeSelected)
-      newSelected.push(tab);
-    else
-      oldSelected.push(tab);
-  }
-  setSelection(oldSelected, false);
-  setSelection(newSelected, true);
 }

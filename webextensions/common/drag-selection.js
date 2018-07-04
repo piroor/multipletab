@@ -8,12 +8,67 @@
 import {
   configs
 } from './common.js';
-import * as Commands from './commands.js';
-import * as Selections from './selections.js';
+import * as Selection from './selection.js';
 import EventListenerManager from '../extlib/EventListenerManager.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
 
 export const onDragSelectionEnd = new EventListenerManager();
+
+export const mDragSelection = {
+  willCloseSelectedTabs: false,
+  allTabsOnDragReady:    [],
+  pendingTabs:           null,
+  dragStartTarget:       null,
+  lastHoverTarget:       null,
+  firstHoverTarget:      null,
+  undeterminedRange:     {},
+  dragEnteredCount:      0,
+  clear() {
+    this.dragStartTarget = this.firstHoverTarget = this.lastHoverTarget = null;
+    this.undeterminedRange = {};
+    this.willCloseSelectedTabs = false;
+    this.dragEnteredCount = 0;
+    this.allTabsOnDragReady = [];
+  },
+  export() {
+    const exported = {};
+    for (const key of Object.keys(this)) {
+      if (typeof this[key] != 'function')
+        exported[key] = this[key];
+    }
+    return exported;
+  },
+  apply(foreignSession) {
+    for (const key of Object.keys(foreignSession)) {
+      if (typeof this[key] != 'function')
+        this[key] = foreignSession[key];
+    }
+  }
+};
+
+export function serialize() {
+  return mDragSelection.export();
+}
+
+export function apply(dragSelection) {
+  return mDragSelection.apply(dragSelection);
+}
+
+export function getDragStartTargetId() {
+  return mDragSelection.dragStartTarget && mDragSelection.dragStartTarget.id;
+}
+
+export function activateInVerticalTabbarOfTST() {
+  mDragSelection.activatedInVerticalTabbarOfTST = true;
+}
+
+export function deactivateInVerticalTabbarOfTST() {
+  mDragSelection.activatedInVerticalTabbarOfTST = false;
+}
+
+export function isActivatedInVerticalTabbarOfTST() {
+  return !!mDragSelection.activatedInVerticalTabbarOfTST;
+}
 
 /* utilities */
 
@@ -42,22 +97,22 @@ function getTabsBetween(aBegin, end, allTabs = []) {
 }
 
 function toggleStateOfDragOverTabs(params = {}) {
-  if (Selections.dragSelection.firstHoverTarget) {
-    const oldUndeterminedRange = Selections.dragSelection.undeterminedRange;
-    Selections.dragSelection.undeterminedRange = {};
+  if (mDragSelection.firstHoverTarget) {
+    const oldUndeterminedRange = mDragSelection.undeterminedRange;
+    mDragSelection.undeterminedRange = {};
 
     let newUndeterminedRange = params.allTargets;
-    if (newUndeterminedRange.every(tab => tab.id != Selections.dragSelection.firstHoverTarget.id))
-      newUndeterminedRange.push(Selections.dragSelection.firstHoverTarget);
+    if (newUndeterminedRange.every(tab => tab.id != mDragSelection.firstHoverTarget.id))
+      newUndeterminedRange.push(mDragSelection.firstHoverTarget);
 
-    const betweenTabs = getTabsBetween(Selections.dragSelection.firstHoverTarget, params.target, Selections.dragSelection.allTabsOnDragReady);
+    const betweenTabs = getTabsBetween(mDragSelection.firstHoverTarget, params.target, mDragSelection.allTabsOnDragReady);
     newUndeterminedRange = newUndeterminedRange.concat(betweenTabs);
 
     const oldUndeterminedRangeIds = Object.keys(oldUndeterminedRange).map(id => parseInt(id));
     const newUndeterminedRangeIds = newUndeterminedRange.map(tab => tab.id);
     const outOfRangeTabIds = oldUndeterminedRangeIds.filter(id => newUndeterminedRangeIds.indexOf(id) < 0);
     for (const id of outOfRangeTabIds) {
-      Commands.setSelection(oldUndeterminedRange[id], !(id in Selections.selection.tabs), {
+      Selection.set(oldUndeterminedRange[id], !Selection.contains(id), {
         globalHighlight: false,
         dontUpdateMenu: true,
         state: params.state
@@ -65,12 +120,12 @@ function toggleStateOfDragOverTabs(params = {}) {
     }
 
     for (const tab of newUndeterminedRange) {
-      if (tab.id in Selections.dragSelection.undeterminedRange)
+      if (tab.id in mDragSelection.undeterminedRange)
         continue;
-      Selections.dragSelection.undeterminedRange[tab.id] = tab;
+      mDragSelection.undeterminedRange[tab.id] = tab;
       if (oldUndeterminedRangeIds.indexOf(tab.id) > -1)
         continue;
-      Commands.setSelection(tab, !(tab.id in Selections.selection.tabs), {
+      Selection.set(tab, !Selection.contains(tab), {
         globalHighlight: false,
         dontUpdateMenu: true,
         state: params.state
@@ -79,9 +134,9 @@ function toggleStateOfDragOverTabs(params = {}) {
   }
   else {
     for (const tab of params.allTargets) {
-      Selections.dragSelection.undeterminedRange[tab.id] = tab;
+      mDragSelection.undeterminedRange[tab.id] = tab;
     }
-    Commands.setSelection(params.allTargets, !(params.target.id in Selections.selection.tabs), {
+    Selection.set(params.allTargets, !Selection.contains(params.target.id), {
       globalHighlight: false,
       dontUpdateMenu: true,
       state: params.state
@@ -103,19 +158,18 @@ export async function onClick(message) {
     if (message.tab.states)
       selected = message.tab.states.indexOf('selected') > -1;
     else
-      selected = !!Selections.selection.tabs[message.tab.id];
+      selected = !!Selection.contains(message.tab.id);
   }
 
   const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
   if (!ctrlKeyPressed && !message.shiftKey) {
     if (!selected) {
-      Commands.clearSelection({
+      Selection.clear({
         states: ['selected', 'ready-to-close']
       });
-      Selections.selection.clear();
     }
     gInSelectionSession = false;
-    Selections.selection.lastClickedTab = null;
+    Selection.setLastClickedTab(null);
     return;
   }
 
@@ -130,41 +184,41 @@ export async function onClick(message) {
   if (message.shiftKey) {
     // select the clicked tab and tabs between last activated tab
     const window = await browser.windows.get(message.window, { populate: true });
-    const betweenTabs = getTabsBetween(Selections.selection.lastClickedTab || lastActiveTab, message.tab, window.tabs);
+    const betweenTabs = getTabsBetween(Selection.getLastClickedTab() || lastActiveTab, message.tab, window.tabs);
     tabs = tabs.concat(betweenTabs);
-    tabs.push(Selections.selection.lastClickedTab || lastActiveTab);
+    tabs.push(Selection.getLastClickedTab() || lastActiveTab);
     const selectedTabIds = tabs.map(tab => tab.id);
     if (!ctrlKeyPressed)
-      Commands.setSelection(window.tabs.filter(tab => selectedTabIds.indexOf(tab.id) < 0), false, {
+      Selection.set(window.tabs.filter(tab => selectedTabIds.indexOf(tab.id) < 0), false, {
         globalHighlight: false
       });
-    Commands.setSelection(tabs, true, {
+    Selection.set(tabs, true, {
       globalHighlight: false
     });
     gInSelectionSession = true;
     // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
-    const newSelectedTabIds = Commands.getSelectedTabIds();
+    const newSelectedTabIds = Selection.getSelectedTabIds();
     if (newSelectedTabIds.length > 0 && !newSelectedTabIds.includes(lastActiveTab.id))
-      browser.tabs.update(Selections.selection.lastClickedTab ? Selections.selection.lastClickedTab.id : newSelectedTabIds[0], { active: true });
+      browser.tabs.update(Selection.getLastClickedTab() ? Selection.getLastClickedTab().id : newSelectedTabIds[0], { active: true });
     return true;
   }
   else if (ctrlKeyPressed) {
     // toggle selection of the tab and all collapsed descendants
     if (message.tab.id != lastActiveTab.id &&
         !gInSelectionSession) {
-      Commands.setSelection(lastActiveTab, true, {
+      Selection.set(lastActiveTab, true, {
         globalHighlight: false
       });
     }
-    Commands.setSelection(tabs, !selected, {
+    Selection.set(tabs, !selected, {
       globalHighlight: false
     });
     // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
-    const selectedTabIds = Commands.getSelectedTabIds();
+    const selectedTabIds = Selection.getSelectedTabIds();
     if (selectedTabIds.length > 0 && !selectedTabIds.includes(lastActiveTab.id))
       browser.tabs.update(selectedTabIds[0], { active: true });
     gInSelectionSession = true;
-    Selections.selection.lastClickedTab = message.tab;
+    Selection.setLastClickedTab(message.tab);
     return true;
   }
   return false;
@@ -177,21 +231,19 @@ export async function onMouseUp(message) {
   const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
   if (!ctrlKeyPressed &&
       !message.shiftKey &&
-      !Selections.dragSelection.dragStartTarget) {
-    Commands.clearSelection({
+      !mDragSelection.dragStartTarget) {
+    Selection.clear({
       states: ['selected', 'ready-to-close']
     });
-    Selections.selection.clear();;
   }
 }
 
 export async function onNonTabAreaClick(message) {
   if (message.button != 0)
     return;
-  Commands.clearSelection({
+  Selection.clear({
     states: ['selected', 'ready-to-close']
   });
-  Selections.selection.clear();;
 }
 
 
@@ -199,38 +251,38 @@ export async function onNonTabAreaClick(message) {
 
 export async function onDragReady(message) {
   //console.log('onDragReady', message);
-  Selections.dragSelection.undeterminedRange = {};
-  Selections.selection.targetWindow = message.window;
-  Selections.dragSelection.dragEnteredCount = 1;
-  Selections.dragSelection.willCloseSelectedTabs = message.startOnClosebox;
-  Selections.dragSelection.pendingTabs = null;
-  Selections.dragSelection.dragStartTarget = Selections.dragSelection.firstHoverTarget = Selections.dragSelection.lastHoverTarget = message.tab;
-  Selections.dragSelection.allTabsOnDragReady = (await browser.tabs.query({ windowId: message.window })).map(TabIdFixer.fixTab);
+  mDragSelection.undeterminedRange = {};
+  Selection.setTargetWindow(message.window);
+  mDragSelection.dragEnteredCount = 1;
+  mDragSelection.willCloseSelectedTabs = message.startOnClosebox;
+  mDragSelection.pendingTabs = null;
+  mDragSelection.dragStartTarget = mDragSelection.firstHoverTarget = mDragSelection.lastHoverTarget = message.tab;
+  mDragSelection.allTabsOnDragReady = (await browser.tabs.query({ windowId: message.window })).map(TabIdFixer.fixTab);
 
-  Commands.clearSelection({
+  Selection.clear({
     states: ['selected', 'ready-to-close'],
     dontUpdateMenu: true
   });
 
   const startTabs = retrieveTargetTabs(message.tab);
-  Commands.setSelection(startTabs, true, {
+  Selection.set(startTabs, true, {
     globalHighlight: false,
     dontUpdateMenu: true,
-    state: Selections.dragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected'
+    state: mDragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected'
   });
 
   for (const tab of startTabs) {
-    Selections.dragSelection.undeterminedRange[tab.id] = tab;
+    mDragSelection.undeterminedRange[tab.id] = tab;
   }
 }
 
 export async function onDragCancel(message) {
   //console.log('onDragCancel', message);
-  if (Object.keys(Selections.selection.tabs).length > 0) {
+  if (Selection.has()) {
     onDragSelectionEnd.dispatch(message);
     // don't clear selection state until menu command is processed.
   }
-  Selections.dragSelection.clear();
+  mDragSelection.clear();
 }
 
 export async function onDragStart(_message) {
@@ -238,25 +290,25 @@ export async function onDragStart(_message) {
 }
 
 export async function onDragEnter(message) {
-  //console.log('onDragEnter', message, message.tab == Selections.dragSelection.lastHoverTarget);
-  Selections.dragSelection.dragEnteredCount++;
+  //console.log('onDragEnter', message, message.tab == mDragSelection.lastHoverTarget);
+  mDragSelection.dragEnteredCount++;
   // processAutoScroll(event);
 
-  if (Selections.dragSelection.lastHoverTarget &&
-      message.tab.id == Selections.dragSelection.lastHoverTarget.id)
+  if (mDragSelection.lastHoverTarget &&
+      message.tab.id == mDragSelection.lastHoverTarget.id)
     return;
 
-  const state = Selections.dragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
-  if (Selections.dragSelection.pendingTabs) {
-    Commands.setSelection(Selections.dragSelection.pendingTabs, true, {
+  const state = mDragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
+  if (mDragSelection.pendingTabs) {
+    Selection.set(mDragSelection.pendingTabs, true, {
       globalHighlight: false,
       dontUpdateMenu: true,
       state: state
     });
-    Selections.dragSelection.pendingTabs = null;
+    mDragSelection.pendingTabs = null;
   }
   /*
-  if (Selections.dragSelection.willCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
+  if (mDragSelection.willCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
   */
   const targetTabs = retrieveTargetTabs(message.tab);
   toggleStateOfDragOverTabs({
@@ -264,17 +316,17 @@ export async function onDragEnter(message) {
     allTargets: targetTabs,
     state:      state
   });
-  if (message.tab.id == Selections.dragSelection.dragStartTarget.id &&
-      Object.keys(Selections.selection.tabs).length == targetTabs.length) {
-    Commands.setSelection(targetTabs, false, {
+  if (message.tab.id == mDragSelection.dragStartTarget.id &&
+      Selection.count() == targetTabs.length) {
+    Selection.set(targetTabs, false, {
       globalHighlight: false,
       dontUpdateMenu: true,
       state: state
     });
     for (const tab of targetTabs) {
-      Selections.dragSelection.undeterminedRange[tab.id] = tab;
+      mDragSelection.undeterminedRange[tab.id] = tab;
     }
-    Selections.dragSelection.pendingTabs = targetTabs;
+    mDragSelection.pendingTabs = targetTabs;
   }
   /*
   }
@@ -282,22 +334,22 @@ export async function onDragEnter(message) {
     browser.tabs.update(message.tab.id, { active: true });
   }
   */
-  Selections.dragSelection.lastHoverTarget = message.tab;
-  if (!Selections.dragSelection.firstHoverTarget)
-    Selections.dragSelection.firstHoverTarget = Selections.dragSelection.lastHoverTarget;
+  mDragSelection.lastHoverTarget = message.tab;
+  if (!mDragSelection.firstHoverTarget)
+    mDragSelection.firstHoverTarget = mDragSelection.lastHoverTarget;
 }
 
 export async function onDragExit(_message) {
-  Selections.dragSelection.dragEnteredCount--;
+  mDragSelection.dragEnteredCount--;
   dragExitAllWithDelay.reserve();
 }
 
 function dragExitAllWithDelay() {
-  //console.log('dragExitAllWithDelay '+Selections.dragSelection.dragEnteredCount);
+  //console.log('dragExitAllWithDelay '+mDragSelection.dragEnteredCount);
   dragExitAllWithDelay.cancel();
-  if (Selections.dragSelection.dragEnteredCount <= 0) {
-    Selections.dragSelection.firstHoverTarget = Selections.dragSelection.lastHoverTarget = null;
-    Selections.dragSelection.undeterminedRange = {};
+  if (mDragSelection.dragEnteredCount <= 0) {
+    mDragSelection.firstHoverTarget = mDragSelection.lastHoverTarget = null;
+    mDragSelection.undeterminedRange = {};
   }
 }
 dragExitAllWithDelay.reserve = () => {
@@ -317,20 +369,19 @@ export async function onDragEnd(message) {
   //console.log('onDragEnd', message);
   if (!configs.autoOpenMenuOnDragEnd)
     return;
-  if (Selections.dragSelection.willCloseSelectedTabs) {
-    const allTabs = Selections.dragSelection.allTabsOnDragReady.slice(0);
+  if (mDragSelection.willCloseSelectedTabs) {
+    const allTabs = mDragSelection.allTabsOnDragReady.slice(0);
     allTabs.reverse();
-    const toBeClosedIds = Commands.getSelectedTabIds();
+    const toBeClosedIds = Selection.getSelectedTabIds();
     for (const tab of allTabs) {
       if (tab && toBeClosedIds.indexOf(tab.id) > -1)
         await browser.tabs.remove(tab.id);
     }
-    Commands.clearSelection();
-    Selections.selection.clear();
+    Selection.clear();
   }
-  else if (Object.keys(Selections.selection.tabs).length > 0) {
+  else if (Selection.has()) {
     onDragSelectionEnd.dispatch(message);
     // don't clear selection state until menu command is processed.
   }
-  Selections.dragSelection.clear();
+  mDragSelection.clear();
 }
