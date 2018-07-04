@@ -530,7 +530,7 @@ DragSelection.onDragSelectionEnd.addListener(async message => {
   }
 });
 
-Commands.onSelectionChange.addListener((tabs, selected, options = {}) => {
+Selections.onChange.addListener((tabs, selected, options = {}) => {
   if (!options.dontUpdateMenu)
     reserveRefreshItems();
 });

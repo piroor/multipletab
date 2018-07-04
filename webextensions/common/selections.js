@@ -5,6 +5,10 @@
 */
 'use strict';
 
+import EventListenerManager from '../extlib/EventListenerManager.js';
+
+export const onChange = new EventListenerManager();
+
 export const selection = {
   tabs:         {},
   targetWindow: null,

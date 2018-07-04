@@ -6,7 +6,6 @@
 'use strict';
 
 import * as Selections from './selections.js';
-import * as Commands from './commands.js';
 import * as DragSelection from './drag-selection.js';
 
 import EventListenerManager from '../extlib/EventListenerManager.js';
@@ -83,6 +82,6 @@ browser.runtime.onMessage.addListener((message, _sender) => {
   }
 });
 
-Commands.onSelectionChange.addListener((_tabs, _selected, _options = {}) => {
+Selections.onChange.addListener((_tabs, _selected, _options = {}) => {
   reservePush();
 });

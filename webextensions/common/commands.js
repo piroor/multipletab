@@ -14,10 +14,7 @@ import {
 import * as Constants from './constants.js';
 import * as Selections from './selections.js';
 import * as Permissions from './permissions.js';
-import EventListenerManager from '../extlib/EventListenerManager.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
-
-export const onSelectionChange = new EventListenerManager();
 
 export function clearSelection(options = {}) {
   const tabs = [];
@@ -77,7 +74,7 @@ export function setSelection(tabs, selected, options = {}) {
     tabs:  tabs.map(tab => tab.id),
     state: options.states || options.state || 'selected'
   }).catch(_e => {}); // TST is not available
-  onSelectionChange.dispatch(tabs, selected, options);
+  Selections.onChange.dispatch(tabs, selected, options);
 }
 
 

@@ -124,7 +124,7 @@ SharedState.onUpdated.addListener(() => {
   rebuildTabItems();
 });
 
-Commands.onSelectionChange.addListener((tabs, selected, _options = {}) => {
+Selections.onChange.addListener((tabs, selected, _options = {}) => {
   if (!tabs.length)
     return;
   if (gDragTargetIsClosebox) {
