@@ -8,7 +8,6 @@
 import {
   configs
 } from './common.js';
-import * as Commands from './commands.js';
 import * as Selections from './selections.js';
 import EventListenerManager from '../extlib/EventListenerManager.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
@@ -113,7 +112,7 @@ function toggleStateOfDragOverTabs(params = {}) {
     const newUndeterminedRangeIds = newUndeterminedRange.map(tab => tab.id);
     const outOfRangeTabIds = oldUndeterminedRangeIds.filter(id => newUndeterminedRangeIds.indexOf(id) < 0);
     for (const id of outOfRangeTabIds) {
-      Commands.setSelection(oldUndeterminedRange[id], !(id in Selections.selection.tabs), {
+      Selections.set(oldUndeterminedRange[id], !(id in Selections.selection.tabs), {
         globalHighlight: false,
         dontUpdateMenu: true,
         state: params.state
@@ -126,7 +125,7 @@ function toggleStateOfDragOverTabs(params = {}) {
       mDragSelection.undeterminedRange[tab.id] = tab;
       if (oldUndeterminedRangeIds.indexOf(tab.id) > -1)
         continue;
-      Commands.setSelection(tab, !(tab.id in Selections.selection.tabs), {
+      Selections.set(tab, !(tab.id in Selections.selection.tabs), {
         globalHighlight: false,
         dontUpdateMenu: true,
         state: params.state
@@ -137,7 +136,7 @@ function toggleStateOfDragOverTabs(params = {}) {
     for (const tab of params.allTargets) {
       mDragSelection.undeterminedRange[tab.id] = tab;
     }
-    Commands.setSelection(params.allTargets, !(params.target.id in Selections.selection.tabs), {
+    Selections.set(params.allTargets, !(params.target.id in Selections.selection.tabs), {
       globalHighlight: false,
       dontUpdateMenu: true,
       state: params.state
@@ -165,7 +164,7 @@ export async function onTabItemClick(message) {
   const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
   if (!ctrlKeyPressed && !message.shiftKey) {
     if (!selected) {
-      Commands.clearSelection({
+      Selections.clear({
         states: ['selected', 'ready-to-close']
       });
       Selections.selection.clear();
@@ -191,15 +190,15 @@ export async function onTabItemClick(message) {
     tabs.push(Selections.selection.lastClickedTab || lastActiveTab);
     const selectedTabIds = tabs.map(tab => tab.id);
     if (!ctrlKeyPressed)
-      Commands.setSelection(window.tabs.filter(tab => selectedTabIds.indexOf(tab.id) < 0), false, {
+      Selections.set(window.tabs.filter(tab => selectedTabIds.indexOf(tab.id) < 0), false, {
         globalHighlight: false
       });
-    Commands.setSelection(tabs, true, {
+    Selections.set(tabs, true, {
       globalHighlight: false
     });
     gInSelectionSession = true;
     // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
-    const newSelectedTabIds = Commands.getSelectedTabIds();
+    const newSelectedTabIds = Selections.getSelectedTabIds();
     if (newSelectedTabIds.length > 0 && !newSelectedTabIds.includes(lastActiveTab.id))
       browser.tabs.update(Selections.selection.lastClickedTab ? Selections.selection.lastClickedTab.id : newSelectedTabIds[0], { active: true });
     return true;
@@ -208,15 +207,15 @@ export async function onTabItemClick(message) {
     // toggle selection of the tab and all collapsed descendants
     if (message.tab.id != lastActiveTab.id &&
         !gInSelectionSession) {
-      Commands.setSelection(lastActiveTab, true, {
+      Selections.set(lastActiveTab, true, {
         globalHighlight: false
       });
     }
-    Commands.setSelection(tabs, !selected, {
+    Selections.set(tabs, !selected, {
       globalHighlight: false
     });
     // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
-    const selectedTabIds = Commands.getSelectedTabIds();
+    const selectedTabIds = Selections.getSelectedTabIds();
     if (selectedTabIds.length > 0 && !selectedTabIds.includes(lastActiveTab.id))
       browser.tabs.update(selectedTabIds[0], { active: true });
     gInSelectionSession = true;
@@ -234,7 +233,7 @@ export async function onTabItemMouseUp(message) {
   if (!ctrlKeyPressed &&
       !message.shiftKey &&
       !mDragSelection.dragStartTarget) {
-    Commands.clearSelection({
+    Selections.clear({
       states: ['selected', 'ready-to-close']
     });
     Selections.selection.clear();;
@@ -244,7 +243,7 @@ export async function onTabItemMouseUp(message) {
 export async function onNonTabAreaClick(message) {
   if (message.button != 0)
     return;
-  Commands.clearSelection({
+  Selections.clear({
     states: ['selected', 'ready-to-close']
   });
   Selections.selection.clear();;
@@ -263,13 +262,13 @@ export async function onTabItemDragReady(message) {
   mDragSelection.dragStartTarget = mDragSelection.firstHoverTarget = mDragSelection.lastHoverTarget = message.tab;
   mDragSelection.allTabsOnDragReady = (await browser.tabs.query({ windowId: message.window })).map(TabIdFixer.fixTab);
 
-  Commands.clearSelection({
+  Selections.clear({
     states: ['selected', 'ready-to-close'],
     dontUpdateMenu: true
   });
 
   const startTabs = retrieveTargetTabs(message.tab);
-  Commands.setSelection(startTabs, true, {
+  Selections.set(startTabs, true, {
     globalHighlight: false,
     dontUpdateMenu: true,
     state: mDragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected'
@@ -304,7 +303,7 @@ export async function onTabItemDragEnter(message) {
 
   const state = mDragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
   if (mDragSelection.pendingTabs) {
-    Commands.setSelection(mDragSelection.pendingTabs, true, {
+    Selections.set(mDragSelection.pendingTabs, true, {
       globalHighlight: false,
       dontUpdateMenu: true,
       state: state
@@ -322,7 +321,7 @@ export async function onTabItemDragEnter(message) {
   });
   if (message.tab.id == mDragSelection.dragStartTarget.id &&
       Object.keys(Selections.selection.tabs).length == targetTabs.length) {
-    Commands.setSelection(targetTabs, false, {
+    Selections.set(targetTabs, false, {
       globalHighlight: false,
       dontUpdateMenu: true,
       state: state
@@ -376,12 +375,12 @@ export async function onTabItemDragEnd(message) {
   if (mDragSelection.willCloseSelectedTabs) {
     const allTabs = mDragSelection.allTabsOnDragReady.slice(0);
     allTabs.reverse();
-    const toBeClosedIds = Commands.getSelectedTabIds();
+    const toBeClosedIds = Selections.getSelectedTabIds();
     for (const tab of allTabs) {
       if (tab && toBeClosedIds.indexOf(tab.id) > -1)
         await browser.tabs.remove(tab.id);
     }
-    Commands.clearSelection();
+    Selections.clear();
     Selections.selection.clear();
   }
   else if (Object.keys(Selections.selection.tabs).length > 0) {

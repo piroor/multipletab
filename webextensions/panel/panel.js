@@ -12,7 +12,6 @@ import {
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
 import * as Selections from '../common/selections.js';
-import * as Commands from '../common/commands.js';
 import * as DragSelection from '../common/drag-selection.js';
 import * as SharedState from '../common/shared-state.js';
 import MenuUI from '../extlib/MenuUI.js';
@@ -116,7 +115,7 @@ function reserveClearSelection() {
     clearTimeout(reserveClearSelection.reserved);
   reserveClearSelection.reserved = setTimeout(() => {
     delete reserveClearSelection.reserved;
-    Commands.clearSelection();
+    Selections.clear();
   }, 100);
 }
 
@@ -364,7 +363,7 @@ function buildTabItem(tab) {
     checkbox.setAttribute('checked', true);
   checkbox.addEventListener('change', () => {
     item.classList.toggle('selected');
-    Commands.setSelection(tab, item.classList.contains('selected'), { globalHighlight: false });
+    Selections.set(tab, item.classList.contains('selected'), { globalHighlight: false });
   });
   label.appendChild(checkbox);
   const favicon = document.createElement('img');

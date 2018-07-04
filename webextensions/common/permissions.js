@@ -114,3 +114,10 @@ export function requestPostProcess() {
   });
   return true;
 }
+
+export function isPermittedTab(tab) {
+  if (tab.discarded)
+    return false;
+  return /^about:blank($|\?|#)/.test(tab.url) ||
+         !/^(about|resource|chrome|file|view-source):/.test(tab.url);
+}

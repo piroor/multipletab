@@ -5,7 +5,11 @@
 */
 'use strict';
 
+import * as Constants from './constants.js';
+import * as Permissions from './permissions.js';
+
 import EventListenerManager from '../extlib/EventListenerManager.js';
+import TabIdFixer from '../extlib/TabIdFixer.js';
 
 export const onChange = new EventListenerManager();
 
@@ -32,3 +36,103 @@ export const selection = {
     }
   }
 };
+
+export function set(tabs, selected, options = {}) {
+  if (!Array.isArray(tabs))
+    tabs = [tabs];
+
+  const shouldHighlight = options.globalHighlight !== false;
+
+  //console.log('setSelection ', ids, `${aState}=${selected}`);
+  if (selected) {
+    for (const tab of tabs) {
+      if (tab.id in selection.tabs)
+        continue;
+      selection.tabs[tab.id] = tab;
+      if (shouldHighlight &&
+          Permissions.isPermittedTab(tab) &&
+          !tab.pinned)
+        Permissions.isGranted(Permissions.ALL_URLS).then(() => {
+          browser.tabs.executeScript(tab.id, {
+            code: `document.title = '✔' + document.title;`
+          });
+        });
+    }
+  }
+  else {
+    for (const tab of tabs) {
+      if (!(tab.id in selection.tabs))
+        continue;
+      delete selection.tabs[tab.id];
+      if (shouldHighlight &&
+          Permissions.isPermittedTab(tab) &&
+          !tab.pinned)
+        Permissions.isGranted(Permissions.ALL_URLS).then(() => {
+          browser.tabs.executeScript(tab.id, {
+            code: `document.title = document.title.replace(/^✔/, '');`
+          });
+        });
+    }
+  }
+  browser.runtime.sendMessage(Constants.kTST_ID, {
+    type:  selected ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
+    tabs:  tabs.map(tab => tab.id),
+    state: options.states || options.state || 'selected'
+  }).catch(_e => {}); // TST is not available
+  onChange.dispatch(tabs, selected, options);
+}
+
+export async function getAllTabs(windowId) {
+  const tabs = windowId || selection.targetWindow ?
+    await browser.tabs.query({ windowId: windowId || selection.targetWindow }) :
+    (await browser.windows.getCurrent({ populate: true })).tabs ;
+  return tabs.map(TabIdFixer.fixTab);
+}
+
+export async function getAPITabSelection(params = {}) {
+  const ids        = params.selectedIds || getSelectedTabIds();
+  const selected   = [];
+  const unselected = [];
+  const tabs       = params.allTabs || await getAllTabs();
+  for (const tab of tabs) {
+    if (ids.indexOf(tab.id) < 0)
+      unselected.push(tab);
+    else
+      selected.push(tab);
+  }
+  return { selected, unselected };
+}
+
+export function getSelectedTabIds() {
+  return Object.keys(selection.tabs).map(id => parseInt(id));
+}
+
+export async function setAll(selected = true) {
+  const tabs = await getAllTabs();
+  set(tabs, selected);
+}
+
+export async function invert() {
+  const tabs = await getAllTabs();
+  const selectedIds = getSelectedTabIds();
+  const newSelected = [];
+  const oldSelected = [];
+  for (const tab of tabs) {
+    const toBeSelected = selectedIds.indexOf(tab.id) < 0;
+    if (toBeSelected)
+      newSelected.push(tab);
+    else
+      oldSelected.push(tab);
+  }
+  set(oldSelected, false);
+  set(newSelected, true);
+}
+
+export function clear(options = {}) {
+  const tabs = [];
+  for (const id of Object.keys(selection.tabs)) {
+    tabs.push(selection.tabs[id]);
+  }
+  set(tabs, false, options);
+  selection.clear();
+}
