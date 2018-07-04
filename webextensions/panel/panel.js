@@ -249,12 +249,12 @@ async function onMouseMove(event) {
   const item = findTabItemFromEvent(event);
   if (!item)
     return;
-  Selection.selection.targetWindow = (await browser.windows.getCurrent()).id
+  Selection.setTargetWindow((await browser.windows.getCurrent()).id);
   gDragTargetIsClosebox =  event.target.classList.contains('closebox');
   gLastDragEnteredTarget = gDragTargetIsClosebox ? event.target : item ;
   DragSelection.onTabItemDragReady({
     tab:             item.tab,
-    window:          Selection.selection.targetWindow,
+    window:          Selection.getTargetWindow(),
     startOnClosebox: gDragTargetIsClosebox
   })
   gTabBar.addEventListener('mouseover', onMouseOver);
@@ -271,7 +271,7 @@ function onMouseUp(event) {
       return;
     DragSelection.onTabItemDragEnd({
       tab:     item && item.tab,
-      window:  Selection.selection.targetWindow,
+      window:  Selection.getTargetWindow(),
       clientX: event.clientX,
       clientY: event.clientY
     });
@@ -294,7 +294,7 @@ function onMouseOver(event) {
     if (target != gLastDragEnteredTarget) {
       DragSelection.onTabItemDragEnter({
         tab:    item.tab,
-        window: Selection.selection.targetWindow
+        window: Selection.getTargetWindow()
       });
     }
   }
@@ -316,7 +316,7 @@ function onMouseOut(event) {
     gOnDragExitTimeout = null;
     DragSelection.onTabItemDragExit({
       tab:    item.tab,
-      window: Selection.selection.targetWindow
+      window: Selection.getTargetWindow()
     });
   }, 10);
 }
@@ -359,7 +359,7 @@ function buildTabItem(tab) {
   const label    = document.createElement('label');
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
-  if (tab.id in Selection.selection.tabs)
+  if (Selection.contains(tab))
     checkbox.setAttribute('checked', true);
   checkbox.addEventListener('change', () => {
     item.classList.toggle('selected');
@@ -387,7 +387,7 @@ function buildTabItem(tab) {
     gLastClickedItem = item;
     item.classList.add('last-focused');
   }
-  if (tab.id in Selection.selection.tabs)
+  if (Selection.contains(tab))
     item.classList.add('selected');
   item.appendChild(label);
   item.tab = tab;

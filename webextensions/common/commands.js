@@ -443,7 +443,7 @@ export async function suggestFileNameForTab(tab) {
 export async function suspendTabs(ids, _options = {}) {
   if (typeof browser.tabs.discard != 'function')
     throw new Error('Error: required API "tabs.discard()" is not available on this version of Firefox.');
-  const allTabs = await browser.tabs.query({ windowId: Selection.selection.targetWindow });
+  const allTabs = await browser.tabs.query({ windowId: Selection.getTargetWindow() });
   let inSelection = false;
   let selectionFound = false;
   let unselectedTabs = [];
@@ -482,7 +482,7 @@ export async function suspendTabs(ids, _options = {}) {
 }
 
 export async function resumeTabs(ids) {
-  const allTabs = (await browser.tabs.query({ windowId: Selection.selection.targetWindow }));
+  const allTabs = (await browser.tabs.query({ windowId: Selection.getTargetWindow() }));
   const activeTab = allTabs.filter(tab => tab.active)[0];
   const selectedTabs = allTabs.filter(tab => ids.indexOf(tab.id) > -1);
   for (const tab of selectedTabs) {

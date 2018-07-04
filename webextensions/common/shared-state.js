@@ -56,13 +56,13 @@ export async function push(extraInfo = {}) {
 
 function serialize() {
   return {
-    selection: Selection.selection.export(),
+    selection: Selection.serialize(),
     dragSelection: DragSelection.serialize()
   };
 }
 
 function apply(selections, extraInfo = {}) {
-  Selection.selection.apply(selections.selection);
+  Selection.apply(selections.selection);
   DragSelection.apply(selections.dragSelection);
   onUpdated.dispatch(extraInfo);
 }

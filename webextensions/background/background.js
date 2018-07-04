@@ -17,7 +17,6 @@ import * as Permissions from '../common/permissions.js';
 import * as DragSelection from '../common/drag-selection.js';
 import * as SharedState from '../common/shared-state.js';
 import RichConfirm from '../extlib/RichConfirm.js';
-import TabIdFixer from '../extlib/TabIdFixer.js';
 import * as ContextMenu from './context-menu.js';
 
 log.context = 'BG';
@@ -26,7 +25,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
 
   browser.tabs.onActivated.addListener((activeInfo) => {
-    if (!Selection.selection.tabs[TabIdFixer.fixTabId(activeInfo.tabId)])
+    if (!Selection.contains(activeInfo.tabId))
       Selection.clear();
   });
   browser.tabs.onCreated.addListener(() => Selection.clear());

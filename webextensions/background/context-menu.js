@@ -90,7 +90,7 @@ async function refreshItems(contextTab, force) {
     clearTimeout(reserveRefreshItems.timeout);
   delete reserveRefreshItems.timeout;
 
-  const serialized = JSON.stringify(Selection.selection.tabs);
+  const serialized = JSON.stringify(Selection.getSelectedTabs());
   if (!force &&
       serialized == mLastSelectedTabs) {
     log(' => no change, skip');
@@ -262,9 +262,8 @@ async function getContextMenuItemVisibilities(params) {
   let lockedCount = 0;
   let protectedCount = 0;
   let frozenCount = 0;
-  const tabIds = Selection.getSelectedTabIds();
-  for (const id of tabIds) {
-    const tab = Selection.selection.tabs[id];
+  const tabs = Selection.getSelectedTabs();
+  for (const tab of tabs) {
     if (tab.pinned)
       pinnedCount++;
     if (tab.mutedInfo.muted)
@@ -279,34 +278,34 @@ async function getContextMenuItemVisibilities(params) {
       frozenCount++;
   }
   return {
-    reloadTabs:    tabIds.length > 0,
-    bookmarkTabs:  tabIds.length > 0,
-    removeBookmarkFromTabs: tabIds.length > 0,
-    duplicateTabs: tabIds.length > 0,
-    pinTabs:       tabIds.length > 0 && pinnedCount < tabIds.length,
-    unpinTabs:     tabIds.length > 0 && pinnedCount > 0,
-    muteTabs:      tabIds.length > 0 && mutedCount < tabIds.length,
-    unmuteTabs:    tabIds.length > 0 && mutedCount > 0,
-    moveToNewWindow: tabIds.length > 0,
-    moveToOtherWindow: tabIds.length > 0 && params.otherWindows.length > 0,
-    removeTabs:    tabIds.length > 0,
-    removeOther:   tabIds.length > 0 && tabIds.length < allTabs.length,
-    clipboard:     tabIds.length > 0,
-    saveTabs:      tabIds.length > 0,
-    printTabs:     tabIds.length > 0,
-    freezeTabs:    tabIds.length > 0 && frozenCount < tabIds.length,
-    unfreezeTabs:  tabIds.length > 0 && frozenCount > 0,
-    protectTabs:   tabIds.length > 0 && protectedCount < tabIds.length,
-    unprotectTabs: tabIds.length > 0 && protectedCount > 0,
-    lockTabs:      tabIds.length > 0 && lockedCount < tabIds.length,
-    unlockTabs:    tabIds.length > 0 && lockedCount > 0,
-    groupTabs:     tabIds.length > 1,
-    suspendTabs:   tabIds.length > 0 && suspendedCount < tabIds.length,
-    resumeTabs:    tabIds.length > 0 && suspendedCount > 0,
-    selectAll:     tabIds.length < allTabs.length,
-    select:        !tab || tabIds.indexOf(tab.id) < 0,
-    unselect:      !tab || tabIds.indexOf(tab.id) > -1,
-    invertSelection: tabIds.length > 0
+    reloadTabs:    tabs.length > 0,
+    bookmarkTabs:  tabs.length > 0,
+    removeBookmarkFromTabs: tabs.length > 0,
+    duplicateTabs: tabs.length > 0,
+    pinTabs:       tabs.length > 0 && pinnedCount < tabs.length,
+    unpinTabs:     tabs.length > 0 && pinnedCount > 0,
+    muteTabs:      tabs.length > 0 && mutedCount < tabs.length,
+    unmuteTabs:    tabs.length > 0 && mutedCount > 0,
+    moveToNewWindow: tabs.length > 0,
+    moveToOtherWindow: tabs.length > 0 && params.otherWindows.length > 0,
+    removeTabs:    tabs.length > 0,
+    removeOther:   tabs.length > 0 && tabs.length < allTabs.length,
+    clipboard:     tabs.length > 0,
+    saveTabs:      tabs.length > 0,
+    printTabs:     tabs.length > 0,
+    freezeTabs:    tabs.length > 0 && frozenCount < tabs.length,
+    unfreezeTabs:  tabs.length > 0 && frozenCount > 0,
+    protectTabs:   tabs.length > 0 && protectedCount < tabs.length,
+    unprotectTabs: tabs.length > 0 && protectedCount > 0,
+    lockTabs:      tabs.length > 0 && lockedCount < tabs.length,
+    unlockTabs:    tabs.length > 0 && lockedCount > 0,
+    groupTabs:     tabs.length > 1,
+    suspendTabs:   tabs.length > 0 && suspendedCount < tabs.length,
+    resumeTabs:    tabs.length > 0 && suspendedCount > 0,
+    selectAll:     tabs.length < allTabs.length,
+    select:        !tab || tabs.indexOf(tab.id) < 0,
+    unselect:      !tab || tabs.indexOf(tab.id) > -1,
+    invertSelection: tabs.length > 0
   };
 }
 
@@ -519,7 +518,7 @@ DragSelection.onDragSelectionEnd.addListener(async message => {
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
-      window: Selection.selection.targetWindow,
+      window: Selection.getTargetWindow(),
       tab:  tabId,
       left: message.clientX,
       top:  message.clientY

@@ -112,7 +112,7 @@ function toggleStateOfDragOverTabs(params = {}) {
     const newUndeterminedRangeIds = newUndeterminedRange.map(tab => tab.id);
     const outOfRangeTabIds = oldUndeterminedRangeIds.filter(id => newUndeterminedRangeIds.indexOf(id) < 0);
     for (const id of outOfRangeTabIds) {
-      Selection.set(oldUndeterminedRange[id], !(id in Selection.selection.tabs), {
+      Selection.set(oldUndeterminedRange[id], !Selection.contains(id), {
         globalHighlight: false,
         dontUpdateMenu: true,
         state: params.state
@@ -125,7 +125,7 @@ function toggleStateOfDragOverTabs(params = {}) {
       mDragSelection.undeterminedRange[tab.id] = tab;
       if (oldUndeterminedRangeIds.indexOf(tab.id) > -1)
         continue;
-      Selection.set(tab, !(tab.id in Selection.selection.tabs), {
+      Selection.set(tab, !Selection.contains(tab), {
         globalHighlight: false,
         dontUpdateMenu: true,
         state: params.state
@@ -136,7 +136,7 @@ function toggleStateOfDragOverTabs(params = {}) {
     for (const tab of params.allTargets) {
       mDragSelection.undeterminedRange[tab.id] = tab;
     }
-    Selection.set(params.allTargets, !(params.target.id in Selection.selection.tabs), {
+    Selection.set(params.allTargets, !Selection.contains(params.target.id), {
       globalHighlight: false,
       dontUpdateMenu: true,
       state: params.state
@@ -158,7 +158,7 @@ export async function onTabItemClick(message) {
     if (message.tab.states)
       selected = message.tab.states.indexOf('selected') > -1;
     else
-      selected = !!Selection.selection.tabs[message.tab.id];
+      selected = !!Selection.contains(message.tab.id);
   }
 
   const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
@@ -255,7 +255,7 @@ export async function onNonTabAreaClick(message) {
 export async function onTabItemDragReady(message) {
   //console.log('onTabItemDragReady', message);
   mDragSelection.undeterminedRange = {};
-  Selection.selection.targetWindow = message.window;
+  Selection.setTargetWindow(message.window);
   mDragSelection.dragEnteredCount = 1;
   mDragSelection.willCloseSelectedTabs = message.startOnClosebox;
   mDragSelection.pendingTabs = null;
@@ -281,7 +281,7 @@ export async function onTabItemDragReady(message) {
 
 export async function onTabItemDragCancel(message) {
   //console.log('onTabItemDragCancel', message);
-  if (Object.keys(Selection.selection.tabs).length > 0) {
+  if (Selection.has()) {
     onDragSelectionEnd.dispatch(message);
     // don't clear selection state until menu command is processed.
   }
@@ -320,7 +320,7 @@ export async function onTabItemDragEnter(message) {
     state:      state
   });
   if (message.tab.id == mDragSelection.dragStartTarget.id &&
-      Object.keys(Selection.selection.tabs).length == targetTabs.length) {
+      Selection.count() == targetTabs.length) {
     Selection.set(targetTabs, false, {
       globalHighlight: false,
       dontUpdateMenu: true,
@@ -383,7 +383,7 @@ export async function onTabItemDragEnd(message) {
     Selection.clear();
     Selection.selection.clear();
   }
-  else if (Object.keys(Selection.selection.tabs).length > 0) {
+  else if (Selection.has()) {
     onDragSelectionEnd.dispatch(message);
     // don't clear selection state until menu command is processed.
   }

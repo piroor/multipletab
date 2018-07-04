@@ -37,6 +37,14 @@ export const selection = {
   }
 };
 
+export function serialize() {
+  return selection.export();
+}
+
+export function apply(foreignSelection) {
+  return selection.apply(foreignSelection);
+}
+
 export function set(tabs, selected, options = {}) {
   if (!Array.isArray(tabs))
     tabs = [tabs];
@@ -82,6 +90,19 @@ export function set(tabs, selected, options = {}) {
   onChange.dispatch(tabs, selected, options);
 }
 
+export function contains(tabOrTabId) {
+  const id = TabIdFixer.fixTabId(typeof tabOrTabId == 'number' ? tabOrTabId : tabOrTabId.id);
+  return id in selection.tabs;
+}
+
+export function has() {
+  return count() > 0;
+}
+
+export function count() {
+  return Object.keys(selection.tabs).length;
+}
+
 export async function getAllTabs(windowId) {
   const tabs = windowId || selection.targetWindow ?
     await browser.tabs.query({ windowId: windowId || selection.targetWindow }) :
@@ -103,6 +124,10 @@ export async function getAPITabSelection(params = {}) {
   return { selected, unselected };
 }
 
+export function getSelectedTabs() {
+  return Object.values(selection.tabs);
+}
+
 export function getSelectedTabIds() {
   return Object.keys(selection.tabs).map(id => parseInt(id));
 }
@@ -110,6 +135,14 @@ export function getSelectedTabIds() {
 export async function setAll(selected = true) {
   const tabs = await getAllTabs();
   set(tabs, selected);
+}
+
+export function setTargetWindow(windowId) {
+  return selection.targetWindow = windowId;
+}
+
+export function getTargetWindow() {
+  return selection.targetWindow;
 }
 
 export async function invert() {
