@@ -14,6 +14,7 @@ import * as Constants from '../common/constants.js';
 import * as Selections from '../common/selections.js';
 import * as Commands from '../common/commands.js';
 import * as DragSelection from '../common/drag-selection.js';
+import * as SharedState from '../common/shared-state.js';
 
 const mItems = `
   reloadTabs
@@ -65,6 +66,15 @@ export function init() {
   reserveRefreshItems();
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
+  SharedState.onUpdated.addListener(extraInfo => {
+    if (extraInfo.updateMenu) {
+      const tab = extraInfo.contextTab ? { id: extraInfo.contextTab } : null ;
+      return refreshItems(tab, true);
+    }
+    else {
+      reserveRefreshItems();
+    }
+  });
 }
 
 
@@ -454,17 +464,6 @@ function onMessage(message) {
     return;
 
   switch (message.type) {
-    case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      Selections.apply(message.selections);
-      if (message.updateMenu) {
-        const tab = message.contextTab ? { id: message.contextTab } : null ;
-        return refreshItems(tab, true);
-      }
-      else {
-        reserveRefreshItems();
-      }
-      break;
-
     case Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO:
       return Promise.resolve(mActiveItems);
 
@@ -515,7 +514,7 @@ function onTSTAPIMessage(message) {
 }
 
 DragSelection.onDragSelectionEnd.addListener(async message => {
-  const tabId = Selections.dragSelection.dragStartTarget.id;
+  const tabId = DragSelection.getSelection().dragStartTarget.id;
   await refreshItems(tabId, true);
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {

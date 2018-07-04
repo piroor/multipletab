@@ -14,6 +14,7 @@ import * as Constants from '../common/constants.js';
 import * as Selections from '../common/selections.js';
 import * as Commands from '../common/commands.js';
 import * as DragSelection from '../common/drag-selection.js';
+import * as SharedState from '../common/shared-state.js';
 import MenuUI from '../extlib/MenuUI.js';
 import TabFavIconHelper from '../extlib/TabFavIconHelper.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
@@ -40,10 +41,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   await configs.$loaded;
   document.documentElement.dataset.theme = configs.theme;
-  const serializedSelections = await browser.runtime.sendMessage({
-    type: Constants.kCOMMAND_PULL_SELECTION_INFO
-  });
-  Selections.apply(serializedSelections);
+  SharedState.initAsSlave();
 
   gLastClickedItem = null;
 
@@ -52,7 +50,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.tabs.onActivated.addListener(onTabModified);
   browser.tabs.onCreated.addListener(onTabModified);
   browser.tabs.onRemoved.addListener(onTabModified);
-  browser.runtime.onMessage.addListener(onMessage);
 
   window.addEventListener('contextmenu', onContextMenu, { capture: true });
   window.addEventListener('click', onClick);
@@ -82,7 +79,6 @@ window.addEventListener('pagehide', () => {
   browser.tabs.onActivated.removeListener(onTabModified);
   browser.tabs.onCreated.removeListener(onTabModified);
   browser.tabs.onRemoved.removeListener(onTabModified);
-  browser.runtime.onMessage.removeListener(onMessage);
 }, { once: true });
 
 function onTabModified() {
@@ -124,17 +120,9 @@ function reserveClearSelection() {
   }, 100);
 }
 
-function onMessage(message) {
-  if (!message || !message.type)
-    return;
-
-  switch (message.type) {
-    case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      Selections.apply(message.selections);
-      rebuildTabItems();
-      break;
-  }
-}
+SharedState.onUpdated.addListener(() => {
+  rebuildTabItems();
+});
 
 Commands.onSelectionChange.addListener((tabs, selected, _options = {}) => {
   if (!tabs.length)
@@ -161,7 +149,6 @@ Commands.onSelectionChange.addListener((tabs, selected, _options = {}) => {
         item.classList.remove('selected');
     }
   }
-  Commands.reservePushSelectionState();
 });
 
 function findTabItemFromEvent(event) {
@@ -343,8 +330,8 @@ function cancelDelayedDragExit() {
 }
 
 DragSelection.onDragSelectionEnd.addListener(message => {
-  const tab = Selections.dragSelection.dragStartTarget.id;
-  Commands.pushSelectionState({
+  const tab = DragSelection.getSelection().dragStartTarget.id;
+  SharedState.push({
     updateMenu: true,
     contextTab: tab.id
   }).then(() => {

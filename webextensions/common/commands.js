@@ -81,28 +81,6 @@ export function setSelection(tabs, selected, options = {}) {
 }
 
 
-export function reservePushSelectionState() {
-  if (reservePushSelectionState.reserved)
-    clearTimeout(reservePushSelectionState.reserved);
-  reservePushSelectionState.reserved = setTimeout(() => {
-    pushSelectionState();
-  }, 150);
-}
-
-export async function pushSelectionState(options = {}) {
-  if (reservePushSelectionState.reserved) {
-    clearTimeout(reservePushSelectionState.reserved);
-    delete reservePushSelectionState.reserved;
-  }
-  await browser.runtime.sendMessage({
-    type:          Constants.kCOMMAND_PUSH_SELECTION_INFO,
-    selections:    Selections.serialize(),
-    updateMenu:    !!options.updateMenu,
-    contextTab:    options.contextTab
-  });
-}
-
-
 export async function getAllTabs(windowId) {
   const tabs = windowId || Selections.selection.targetWindow ?
     await browser.tabs.query({ windowId: windowId || Selections.selection.targetWindow }) :

@@ -15,6 +15,7 @@ import * as Selections from '../common/selections.js';
 import * as Commands from '../common/commands.js';
 import * as Permissions from '../common/permissions.js';
 import * as DragSelection from '../common/drag-selection.js';
+import * as SharedState from '../common/shared-state.js';
 import RichConfirm from '../extlib/RichConfirm.js';
 import TabIdFixer from '../extlib/TabIdFixer.js';
 import * as ContextMenu from './context-menu.js';
@@ -32,6 +33,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.tabs.onRemoved.addListener(() => Commands.clearSelection());
 
   ContextMenu.init();
+  SharedState.initAsMaster();
 
   browser.browserAction.onClicked.addListener(onToolbarButtonClick);
   browser.browserAction.setPopup({ popup: Constants.kPOPUP_URL });
@@ -257,7 +259,7 @@ function onMessageExternal(message, sender) {
           unselectTabs = allTabs.filter(tab => unselectTabs.indexOf(tab.id) > -1);
         }
         Commands.setSelection(unselectTabs, false, {
-          globalHighlight: !Selections.dragSelection.activatedInVerticalTabbarOfTST
+          globalHighlight: !DragSelection.getSelection().activatedInVerticalTabbarOfTST
         });
 
         let selectTabs = message.select;
@@ -270,7 +272,7 @@ function onMessageExternal(message, sender) {
           selectTabs = allTabs.filter(tab => selectTabs.indexOf(tab.id) > -1);
         }
         Commands.setSelection(selectTabs, true, {
-          globalHighlight: !Selections.dragSelection.activatedInVerticalTabbarOfTST
+          globalHighlight: !DragSelection.getSelection().activatedInVerticalTabbarOfTST
         });
 
         return true;
@@ -287,22 +289,11 @@ function onMessage(message) {
     return;
 
   switch (message.type) {
-    case Constants.kCOMMAND_PULL_SELECTION_INFO:
-      return Promise.resolve(Selections.serialize());
-
-    case Constants.kCOMMAND_PUSH_SELECTION_INFO:
-      Selections.apply(message.selections);
-      break;
-
     case Constants.kCOMMAND_UNREGISTER_FROM_TST:
       unregisterFromTST();
       break;
   }
 }
-
-Commands.onSelectionChange.addListener((tabs, selected, _options = {}) => {
-  Commands.reservePushSelectionState();
-});
 
 
 async function registerToTST() {
@@ -344,7 +335,7 @@ async function registerToTST() {
         }
       `
     });
-    Selections.dragSelection.activatedInVerticalTabbarOfTST = true;
+    DragSelection.getSelection().activatedInVerticalTabbarOfTST = true;
     // force rebuild menu
     return ContextMenu.reserveRefreshItems(null, true).then(() => true);
   }
@@ -354,7 +345,7 @@ async function registerToTST() {
 }
 
 function unregisterFromTST() {
-  Selections.dragSelection.activatedInVerticalTabbarOfTST = false;
+  DragSelection.getSelection().activatedInVerticalTabbarOfTST = false;
   try {
     browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
