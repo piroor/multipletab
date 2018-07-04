@@ -167,10 +167,9 @@ export async function onTabItemClick(message) {
       Selection.clear({
         states: ['selected', 'ready-to-close']
       });
-      Selection.selection.clear();
     }
     gInSelectionSession = false;
-    Selection.selection.lastClickedTab = null;
+    Selection.setLastClickedTab(null);
     return;
   }
 
@@ -185,9 +184,9 @@ export async function onTabItemClick(message) {
   if (message.shiftKey) {
     // select the clicked tab and tabs between last activated tab
     const window = await browser.windows.get(message.window, { populate: true });
-    const betweenTabs = getTabsBetween(Selection.selection.lastClickedTab || lastActiveTab, message.tab, window.tabs);
+    const betweenTabs = getTabsBetween(Selection.getLastClickedTab() || lastActiveTab, message.tab, window.tabs);
     tabs = tabs.concat(betweenTabs);
-    tabs.push(Selection.selection.lastClickedTab || lastActiveTab);
+    tabs.push(Selection.getLastClickedTab() || lastActiveTab);
     const selectedTabIds = tabs.map(tab => tab.id);
     if (!ctrlKeyPressed)
       Selection.set(window.tabs.filter(tab => selectedTabIds.indexOf(tab.id) < 0), false, {
@@ -200,7 +199,7 @@ export async function onTabItemClick(message) {
     // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
     const newSelectedTabIds = Selection.getSelectedTabIds();
     if (newSelectedTabIds.length > 0 && !newSelectedTabIds.includes(lastActiveTab.id))
-      browser.tabs.update(Selection.selection.lastClickedTab ? Selection.selection.lastClickedTab.id : newSelectedTabIds[0], { active: true });
+      browser.tabs.update(Selection.getLastClickedTab() ? Selection.getLastClickedTab().id : newSelectedTabIds[0], { active: true });
     return true;
   }
   else if (ctrlKeyPressed) {
@@ -219,7 +218,7 @@ export async function onTabItemClick(message) {
     if (selectedTabIds.length > 0 && !selectedTabIds.includes(lastActiveTab.id))
       browser.tabs.update(selectedTabIds[0], { active: true });
     gInSelectionSession = true;
-    Selection.selection.lastClickedTab = message.tab;
+    Selection.setLastClickedTab(message.tab);
     return true;
   }
   return false;
@@ -236,7 +235,6 @@ export async function onTabItemMouseUp(message) {
     Selection.clear({
       states: ['selected', 'ready-to-close']
     });
-    Selection.selection.clear();;
   }
 }
 
@@ -246,7 +244,6 @@ export async function onNonTabAreaClick(message) {
   Selection.clear({
     states: ['selected', 'ready-to-close']
   });
-  Selection.selection.clear();;
 }
 
 
@@ -381,7 +378,6 @@ export async function onTabItemDragEnd(message) {
         await browser.tabs.remove(tab.id);
     }
     Selection.clear();
-    Selection.selection.clear();
   }
   else if (Selection.has()) {
     onDragSelectionEnd.dispatch(message);

@@ -13,36 +13,25 @@ import TabIdFixer from '../extlib/TabIdFixer.js';
 
 export const onChange = new EventListenerManager();
 
-export const selection = {
-  tabs:         {},
-  targetWindow: null,
-  lastClickedTab: null,
-  clear() {
-    this.tabs = {};
-    this.targetWindow = this.lastClickedTab = null;
-  },
-  export() {
-    const exported = {};
-    for (const key of Object.keys(this)) {
-      if (typeof this[key] != 'function')
-        exported[key] = this[key];
-    }
-    return exported;
-  },
-  apply(foreignSession) {
-    for (const key of Object.keys(foreignSession)) {
-      if (typeof this[key] != 'function')
-        this[key] = foreignSession[key];
-    }
-  }
-};
+let mTabs = {};
+let mTargetWindow = null;
+let mLastClickedTab = null;
 
 export function serialize() {
-  return selection.export();
+  return {
+    tabs: mTabs,
+    targetWindow: mTargetWindow,
+    lastClickedTab: mLastClickedTab
+  };
 }
 
 export function apply(foreignSelection) {
-  return selection.apply(foreignSelection);
+  if ('tabs' in foreignSelection)
+    mTabs = foreignSelection.tabs;
+  if ('targetWindow' in foreignSelection)
+    mTargetWindow = foreignSelection.targetWindow;
+  if ('lastClickedTab' in foreignSelection)
+    mLastClickedTab = foreignSelection.lastClickedTab;
 }
 
 export function set(tabs, selected, options = {}) {
@@ -54,9 +43,9 @@ export function set(tabs, selected, options = {}) {
   //console.log('setSelection ', ids, `${aState}=${selected}`);
   if (selected) {
     for (const tab of tabs) {
-      if (tab.id in selection.tabs)
+      if (tab.id in mTabs)
         continue;
-      selection.tabs[tab.id] = tab;
+      mTabs[tab.id] = tab;
       if (shouldHighlight &&
           Permissions.isPermittedTab(tab) &&
           !tab.pinned)
@@ -69,9 +58,9 @@ export function set(tabs, selected, options = {}) {
   }
   else {
     for (const tab of tabs) {
-      if (!(tab.id in selection.tabs))
+      if (!(tab.id in mTabs))
         continue;
-      delete selection.tabs[tab.id];
+      delete mTabs[tab.id];
       if (shouldHighlight &&
           Permissions.isPermittedTab(tab) &&
           !tab.pinned)
@@ -92,7 +81,7 @@ export function set(tabs, selected, options = {}) {
 
 export function contains(tabOrTabId) {
   const id = TabIdFixer.fixTabId(typeof tabOrTabId == 'number' ? tabOrTabId : tabOrTabId.id);
-  return id in selection.tabs;
+  return id in mTabs;
 }
 
 export function has() {
@@ -100,12 +89,12 @@ export function has() {
 }
 
 export function count() {
-  return Object.keys(selection.tabs).length;
+  return Object.keys(mTabs).length;
 }
 
 export async function getAllTabs(windowId) {
-  const tabs = windowId || selection.targetWindow ?
-    await browser.tabs.query({ windowId: windowId || selection.targetWindow }) :
+  const tabs = windowId || mTargetWindow ?
+    await browser.tabs.query({ windowId: windowId || mTargetWindow }) :
     (await browser.windows.getCurrent({ populate: true })).tabs ;
   return tabs.map(TabIdFixer.fixTab);
 }
@@ -125,11 +114,11 @@ export async function getAPITabSelection(params = {}) {
 }
 
 export function getSelectedTabs() {
-  return Object.values(selection.tabs);
+  return Object.values(mTabs);
 }
 
 export function getSelectedTabIds() {
-  return Object.keys(selection.tabs).map(id => parseInt(id));
+  return Object.keys(mTabs).map(id => parseInt(id));
 }
 
 export async function setAll(selected = true) {
@@ -138,11 +127,19 @@ export async function setAll(selected = true) {
 }
 
 export function setTargetWindow(windowId) {
-  return selection.targetWindow = windowId;
+  return mTargetWindow = windowId;
 }
 
 export function getTargetWindow() {
-  return selection.targetWindow;
+  return mTargetWindow;
+}
+
+export function setLastClickedTab(tab) {
+  return mLastClickedTab = tab;
+}
+
+export function getLastClickedTab() {
+  return mLastClickedTab;
 }
 
 export async function invert() {
@@ -163,9 +160,10 @@ export async function invert() {
 
 export function clear(options = {}) {
   const tabs = [];
-  for (const id of Object.keys(selection.tabs)) {
-    tabs.push(selection.tabs[id]);
+  for (const id of Object.keys(mTabs)) {
+    tabs.push(mTabs[id]);
   }
   set(tabs, false, options);
-  selection.clear();
+  mTabs = {};
+  mTargetWindow = mLastClickedTab = null;
 }
