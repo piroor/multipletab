@@ -335,10 +335,10 @@ function cancelDelayedDragExit() {
   }
 }
 
-DragSelection.onDragSelectionEnd.addListener(message => {
+DragSelection.onDragSelectionEnd.addListener((message, selectionInfo) => {
   SharedState.push(gWindowId, {
     updateMenu: true,
-    contextTab: DragSelection.getDragStartTargetId()
+    contextTab: selectionInfo.dragStartTab.id
   }).then(() => {
     openMenu(message);
   });

@@ -283,7 +283,10 @@ export async function onDragReady(message) {
 export async function onDragCancel(message) {
   //console.log('onDragCancel', message);
   if (mDragSelection.selection.has()) {
-    onDragSelectionEnd.dispatch(message);
+    onDragSelectionEnd.dispatch(message, {
+      dragStartTab: mDragSelection.dragStartTarget,
+      selection:    mDragSelection.selection
+    });
     // don't clear selection state until menu command is processed.
   }
   mDragSelection.clear();
@@ -384,7 +387,10 @@ export async function onDragEnd(message) {
     mDragSelection.selection.clear();
   }
   else if (mDragSelection.selection.has()) {
-    onDragSelectionEnd.dispatch(message);
+    onDragSelectionEnd.dispatch(message, {
+      dragStartTab: mDragSelection.dragStartTarget,
+      selection:    mDragSelection.selection
+    });
     // don't clear selection state until menu command is processed.
   }
   mDragSelection.clear();

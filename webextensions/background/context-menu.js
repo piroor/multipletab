@@ -517,14 +517,13 @@ function onTSTAPIMessage(message) {
   }
 }
 
-DragSelection.onDragSelectionEnd.addListener(async message => {
-  const tabId = DragSelection.getDragStartTargetId();
-  await refreshItems(tabId, true);
+DragSelection.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
+  await refreshItems(selectionInfo.dragStartTab, true);
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
       window: (await browser.windows.getLastFocused()).id,
-      tab:  tabId,
+      tab:  selectionInfo.dragStartTab.id,
       left: message.clientX,
       top:  message.clientY
     });
