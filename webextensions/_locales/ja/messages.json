@@ -104,6 +104,21 @@
   "config_theme_default": { "message": "既定" },
   "config_theme_dark":    { "message": "Dark" },
 
+  "config_panelSize_description": { "message": "※CSSの長さを指定する任意の値を使用可能です" },
+  "config_minSize_caption":       { "message": "パネルの最小サイズ:" },
+  "config_minSize_width_before":  { "message": "幅" },
+  "config_minSize_width_after":   { "message": "×" },
+  "config_minSize_height_before": { "message": "高さ" },
+  "config_minSize_height_after":  { "message": "\u200b" },
+  "config_maxSize_caption":       { "message": "パネルの最大サイズ:" },
+  "config_maxSize_width_before":  { "message": "幅" },
+  "config_maxSize_width_after":   { "message": "×" },
+  "config_maxSize_height_before": { "message": "高さ" },
+  "config_maxSize_height_after":  { "message": "\u200b" },
+
+  "config_fontSize_label": { "message": "パネルの文字サイズ:" },
+  "config_fontSize_description": { "message": "※CSSの文字サイズを指定する任意の値を使用可能です" },
+
 
   "config_dragSelection_caption": { "message": "長押しからのドラッグによるタブの選択操作" },
 

@@ -73,6 +73,12 @@ export const configs = new Configs({
   useCRLF: false,
   useWorkaroundForBug1272869: true,
 
+  panelMinWidth: '25em',
+  panelMaxWidth: '30em',
+  panelMinHeight: '20em',
+  panelMaxHeight: '25em',
+  panelFontSize: 'medium',
+
   saveTabsPrefix: browser.i18n.getMessage('saveTabsPrefix_defaultValue'),
 
   disablePanelWhenAlternativeTabBarIsAvailable: true,

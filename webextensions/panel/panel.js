@@ -65,6 +65,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     :root {
       --menu-max-width: ${window.innerWidth - 32}px;
       --menu-max-height: ${window.innerHeight - 32}px;
+      --panel-min-width: ${configs.panelMinWidth};
+      --panel-max-width: ${configs.panelMaxWidth};
+      --panel-min-height: ${configs.panelMinHeight};
+      --panel-max-height: ${configs.panelMaxHeight};
+      --panel-font-size: ${configs.panelFontSize};
     }
   `;
 

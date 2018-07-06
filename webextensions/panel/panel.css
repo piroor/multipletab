@@ -31,6 +31,7 @@
 body {
   background: var(--toolbar-non-lwt-bgcolor);
   color: var(--toolbar-non-lwt-textcolor);
+  font-size: var(--panel-font-size, medium);
 }
 
 
@@ -40,9 +41,9 @@ body {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
-  max-width: 30em;
-  min-height: 20em;
-  min-width: 25em;
+  max-width: var(--panel-max-width, 30em);
+  min-height: var(--panel-min-height, 20em);
+  min-width: var(--panel-min-width, 25em);
 }
 
 .caption {
@@ -67,7 +68,7 @@ body {
 #tabs {
   list-style: none;
   margin: 0;
-  max-height: 25em;
+  max-height: var(--panel-max-height, 25em);
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0;

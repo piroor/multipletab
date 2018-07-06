@@ -105,6 +105,21 @@
   "config_theme_default": { "message": "Default" },
   "config_theme_dark":    { "message": "Dark" },
 
+  "config_panelSize_description": { "message": "*You can use any CSS length value." },
+  "config_minSize_caption":       { "message": "Minimum Panel Size:" },
+  "config_minSize_width_before":  { "message": "\u200b" },
+  "config_minSize_width_after":   { "message": "width *" },
+  "config_minSize_height_before": { "message": "\u200b" },
+  "config_minSize_height_after":  { "message": "height" },
+  "config_maxSize_caption":       { "message": "Maximum Panel Size:" },
+  "config_maxSize_width_before":  { "message": "\u200b" },
+  "config_maxSize_width_after":   { "message": "width *" },
+  "config_maxSize_height_before": { "message": "\u200b" },
+  "config_maxSize_height_after":  { "message": "height" },
+
+  "config_fontSize_label": { "message": "Panel Font Size:" },
+  "config_fontSize_description": { "message": "*You can use any CSS font-size value." },
+
 
   "config_dragSelection_caption": { "message": "Tab Selection from dragging after long-press" },
 
