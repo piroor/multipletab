@@ -1,0 +1,13 @@
+language: node_js
+node_js:
+  - "10"
+  - "8"
+notifications:
+  recipients:
+    - piro.outsider.reflex@gmail.com
+before_script:
+  - cd webextensions
+  - npm install
+script:
+  - make lint
+
