@@ -5,6 +5,9 @@
 */
 'use strict';
 
+import {
+  configs
+} from './common.js';
 import * as Constants from './constants.js';
 import * as Permissions from './permissions.js';
 
@@ -74,6 +77,7 @@ export default class Selection {
           });
       }
     }
+    if (configs.enableIntegrationWithTST)
     browser.runtime.sendMessage(Constants.kTST_ID, {
       type:  selected ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
       tabs:  tabs.map(tab => tab.id),

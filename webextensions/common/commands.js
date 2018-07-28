@@ -101,10 +101,12 @@ export async function unmuteTabs(ids) {
 }
 
 export async function moveToWindow(ids, windowId) {
-  const structure = await browser.runtime.sendMessage(Constants.kTST_ID, {
-    type: Constants.kTSTAPI_GET_TREE_STRUCTURE,
-    tabs: ids
-  }).catch(_e => {}); // TST is not available
+  const structure = !configs.enableIntegrationWithTST ?
+    null :
+    await browser.runtime.sendMessage(Constants.kTST_ID, {
+      type: Constants.kTSTAPI_GET_TREE_STRUCTURE,
+      tabs: ids
+    }).catch(_e => {}); // TST is not available
   log('structure ', structure);
   const firstTab = ids[0];
   let window;
@@ -117,6 +119,7 @@ export async function moveToWindow(ids, windowId) {
     });
     ids = ids.slice(1);
   }
+  if (configs.enableIntegrationWithTST)
   await browser.runtime.sendMessage(Constants.kTST_ID, {
     type:   Constants.kTSTAPI_BLOCK_GROUPING,
     window: window.id
@@ -148,6 +151,7 @@ export async function moveToWindow(ids, windowId) {
       structure
     }).catch(_e => {}); // TST is not available
   }
+  if (configs.enableIntegrationWithTST)
   await browser.runtime.sendMessage(Constants.kTST_ID, {
     type:   Constants.kTSTAPI_UNBLOCK_GROUPING,
     window: window.id
@@ -202,7 +206,8 @@ export async function copyToClipboard(ids, format) {
   const allTabs = await browser.tabs.query({ windowId: tabs[0].windowId });
 
   let indentLevels = [];
-  if (kFORMAT_MATCHER_TST_INDENT.test(format)) {
+  if (kFORMAT_MATCHER_TST_INDENT.test(format) &&
+      configs.enableIntegrationWithTST) {
     try {
       const tabsWithChildren = await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: 'get-tree',

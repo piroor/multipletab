@@ -85,6 +85,8 @@ export const configs = new Configs({
 
   cachedExternalAddons: {},
 
+  enableIntegrationWithTST: true,
+
   requestingPermissions: null,
 
   shouldNotifyUpdatedFromLegacyVersion: false,

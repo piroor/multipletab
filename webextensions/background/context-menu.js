@@ -101,6 +101,7 @@ async function refreshItems(contextTab, force) {
 
   promisedMenuUpdated.push(browser.contextMenus.removeAll());
   try {
+    if (configs.enableIntegrationWithTST)
     promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
     }));
@@ -154,6 +155,7 @@ async function refreshItems(contextTab, force) {
         mActiveItems.push(nextSeparatorIn[parentId]);
         promisedMenuUpdated.push(browser.contextMenus.create(nextSeparatorIn[parentId]));
         try {
+          if (configs.enableIntegrationWithTST)
           promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
             type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
             params: nextSeparatorIn[parentId]
@@ -191,6 +193,7 @@ async function refreshItems(contextTab, force) {
       title: params.title && params.title.replace(/\(&[a-z]\)|&([a-z])/i, '$1')
     })));
     try {
+      if (configs.enableIntegrationWithTST)
       promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
         params
