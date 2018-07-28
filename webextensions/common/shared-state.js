@@ -32,7 +32,7 @@ export async function initAsSlave(windowId) {
     type: kCOMMAND_PULL,
     windowId
   });
-  apply(state);
+  apply(windowId, state);
 }
 
 function reservePush() {
@@ -51,6 +51,7 @@ export async function push(windowId, extraInfo = {}) {
   await browser.runtime.sendMessage({
     type:  kCOMMAND_PUSH,
     state: serialize(windowId),
+    windowId,
     extraInfo
   });
 }
@@ -75,7 +76,7 @@ browser.runtime.onMessage.addListener((message, _sender) => {
 
   switch (message.type) {
     case kCOMMAND_PUSH:
-      apply(message.state, message.extraInfo);
+      apply(message.windowId, message.state, message.extraInfo);
       break;
 
     default:
