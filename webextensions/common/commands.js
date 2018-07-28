@@ -120,10 +120,10 @@ export async function moveToWindow(ids, windowId) {
     ids = ids.slice(1);
   }
   if (configs.enableIntegrationWithTST)
-  await browser.runtime.sendMessage(Constants.kTST_ID, {
-    type:   Constants.kTSTAPI_BLOCK_GROUPING,
-    window: window.id
-  }).catch(_e => {}); // TST is not available
+    await browser.runtime.sendMessage(Constants.kTST_ID, {
+      type:   Constants.kTSTAPI_BLOCK_GROUPING,
+      window: window.id
+    }).catch(_e => {}); // TST is not available
   const waitUntilCompletelyMoved = new Promise((resolve, _reject) => {
     let restTabs = ids.length - 1;
     const listener = (_tabId, _attachInfo) => {
@@ -152,10 +152,10 @@ export async function moveToWindow(ids, windowId) {
     }).catch(_e => {}); // TST is not available
   }
   if (configs.enableIntegrationWithTST)
-  await browser.runtime.sendMessage(Constants.kTST_ID, {
-    type:   Constants.kTSTAPI_UNBLOCK_GROUPING,
-    window: window.id
-  }).catch(_e => {}); // TST is not available
+    await browser.runtime.sendMessage(Constants.kTST_ID, {
+      type:   Constants.kTSTAPI_UNBLOCK_GROUPING,
+      window: window.id
+    }).catch(_e => {}); // TST is not available
 }
 
 // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1394477

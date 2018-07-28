@@ -78,11 +78,11 @@ export default class Selection {
       }
     }
     if (configs.enableIntegrationWithTST)
-    browser.runtime.sendMessage(Constants.kTST_ID, {
-      type:  selected ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
-      tabs:  tabs.map(tab => tab.id),
-      state: options.states || options.state || 'selected'
-    }).catch(_e => {}); // TST is not available
+      browser.runtime.sendMessage(Constants.kTST_ID, {
+        type:  selected ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
+        tabs:  tabs.map(tab => tab.id),
+        state: options.states || options.state || 'selected'
+      }).catch(_e => {}); // TST is not available
     this.onChange.dispatch(tabs, selected, options);
   }
 

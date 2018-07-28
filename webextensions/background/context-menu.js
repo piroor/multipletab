@@ -102,9 +102,9 @@ async function refreshItems(contextTab, force) {
   promisedMenuUpdated.push(browser.contextMenus.removeAll());
   try {
     if (configs.enableIntegrationWithTST)
-    promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
-      type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
-    }));
+      promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
+        type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
+      }));
   }
   catch(_e) {
   }
@@ -156,10 +156,10 @@ async function refreshItems(contextTab, force) {
         promisedMenuUpdated.push(browser.contextMenus.create(nextSeparatorIn[parentId]));
         try {
           if (configs.enableIntegrationWithTST)
-          promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
-            type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
-            params: nextSeparatorIn[parentId]
-          }));
+            promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
+              type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
+              params: nextSeparatorIn[parentId]
+            }));
         }
         catch(_e) {
         }
@@ -194,10 +194,10 @@ async function refreshItems(contextTab, force) {
     })));
     try {
       if (configs.enableIntegrationWithTST)
-      promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
-        type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
-        params
-      }));
+        promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
+          type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
+          params
+        }));
     }
     catch(_e) {
     }
