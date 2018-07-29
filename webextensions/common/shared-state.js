@@ -15,6 +15,8 @@ export const onUpdated = new EventListenerManager();
 const kCOMMAND_PULL = 'multipletab:shared-state:pull';
 const kCOMMAND_PUSH = 'multipletab:shared-state:push';
 
+let mWindowId = null;
+
 export function initAsMaster() {
   browser.runtime.onMessage.addListener((message, _sender) => {
     if (!message || !message.type)
@@ -28,6 +30,7 @@ export function initAsMaster() {
 }
 
 export async function initAsSlave(windowId) {
+  mWindowId = windowId;
   const state = await browser.runtime.sendMessage({
     type: kCOMMAND_PULL,
     windowId
@@ -44,6 +47,8 @@ function reservePush() {
 }
 
 export async function push(windowId, extraInfo = {}) {
+  if (!windowId)
+    windowId = mWindowId;
   if (reservePush.reserved) {
     clearTimeout(reservePush.reserved);
     delete reservePush.reserved;
@@ -57,6 +62,8 @@ export async function push(windowId, extraInfo = {}) {
 }
 
 function serialize(windowId) {
+  if (!windowId)
+    windowId = mWindowId;
   return {
     selection: Selections.get(windowId).serialize(),
     dragSelection: DragSelection.serialize()
@@ -64,6 +71,8 @@ function serialize(windowId) {
 }
 
 function apply(windowId, selections, extraInfo = {}) {
+  if (!windowId)
+    windowId = mWindowId;
   Selections.get(windowId).apply(selections.selection);
   DragSelection.apply(selections.dragSelection);
   onUpdated.dispatch(extraInfo);
