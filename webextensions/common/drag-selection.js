@@ -24,12 +24,15 @@ export const mDragSelection = {
   firstHoverTarget:      null,
   undeterminedRange:     {},
   dragEnteredCount:      0,
-  clear() {
+  cancel() {
     this.dragStartTarget = this.firstHoverTarget = this.lastHoverTarget = null;
     this.undeterminedRange = {};
     this.willCloseSelectedTabs = false;
     this.dragEnteredCount = 0;
     this.allTabsOnDragReady = [];
+  },
+  clear() {
+    this.cancel();
     this.selection = null;
   },
   export() {
@@ -248,6 +251,7 @@ export async function onNonTabAreaClick(message) {
   mDragSelection.selection.clear({
     states: ['selected', 'ready-to-close']
   });
+  mDragSelection.clear();
 }
 
 
@@ -289,7 +293,7 @@ export async function onDragCancel(message) {
     });
     // don't clear selection state until menu command is processed.
   }
-  mDragSelection.clear();
+  mDragSelection.cancel();
 }
 
 export async function onDragStart(_message) {
@@ -393,5 +397,5 @@ export async function onDragEnd(message) {
     });
     // don't clear selection state until menu command is processed.
   }
-  mDragSelection.clear();
+  mDragSelection.cancel();
 }
