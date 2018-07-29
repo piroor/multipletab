@@ -210,21 +210,33 @@ function onTSTAPIMessage(message) {
       return DragSelection.onNonTabAreaClick(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
+      if (!configs.enableDragSelection)
+        return;
       return DragSelection.onDragReady(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
+      if (!configs.enableDragSelection)
+        return;
       return DragSelection.onDragCancel(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART:
+      if (!configs.enableDragSelection)
+        return;
       return DragSelection.onDragStart(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER:
+      if (!configs.enableDragSelection)
+        return;
       return DragSelection.onDragEnter(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT:
+      if (!configs.enableDragSelection)
+        return;
       return DragSelection.onDragExit(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEND:
+      if (!configs.enableDragSelection)
+        return;
       return DragSelection.onDragEnd(message);
   }
 }
@@ -305,25 +317,40 @@ function onMessage(message) {
   }
 }
 
+configs.$addObserver(key => {
+  switch (key) {
+    case 'enableDragSelection':
+      unregisterFromTST();
+      registerToTST();
+      break;
+  }
+});
+
 
 async function registerToTST() {
+  const baseListeningTypes = [
+    Constants.kTSTAPI_NOTIFY_READY,
+    Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN,
+    Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP,
+    Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED
+  ];
+  const dragSelectionListeningTypes = [
+    Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY,
+    Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL,
+    Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART,
+    Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER,
+    Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT,
+    Constants.kTSTAPI_NOTIFY_TAB_DRAGEND
+  ];
+  const listeningTypes = configs.enableDragSelection ?
+    baseListeningTypes.concat(dragSelectionListeningTypes) :
+    baseListeningTypes;
   try {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type:  Constants.kTSTAPI_REGISTER_SELF,
       name:  browser.i18n.getMessage('extensionName'),
       icons: browser.runtime.getManifest().icons,
-      listeningTypes: [
-        Constants.kTSTAPI_NOTIFY_READY,
-        Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN,
-        Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP,
-        Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED,
-        Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY,
-        Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL,
-        Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART,
-        Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER,
-        Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT,
-        Constants.kTSTAPI_NOTIFY_TAB_DRAGEND
-      ],
+      listeningTypes,
       style: `
         .tab.selected::after {
           background: Highlight;

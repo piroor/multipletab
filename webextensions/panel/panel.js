@@ -261,7 +261,8 @@ async function onMouseDown(event) {
 
 async function onMouseMove(event) {
   gTabBar.removeEventListener('mousemove', onMouseMove);
-  if (gClickFired)
+  if (gClickFired ||
+      !configs.enableDragSelection)
     return;
   const item = findTabItemFromEvent(event);
   if (!item)
@@ -279,7 +280,8 @@ async function onMouseMove(event) {
 }
 
 function onMouseUp(event) {
-  if (gMenu.classList.contains('open'))
+  if (gMenu.classList.contains('open') ||
+      !configs.enableDragSelection)
     return;
   const item = findTabItemFromEvent(event);
   setTimeout(() => {
@@ -299,6 +301,8 @@ function onMouseUp(event) {
 }
 
 function onMouseOver(event) {
+  if (!configs.enableDragSelection)
+    return;
   const item       = findTabItemFromEvent(event);
   let target     = item;
   const isClosebox = event.target.classList.contains('closebox');
@@ -322,7 +326,8 @@ function onMouseOut(event) {
   if (gDragTargetIsClosebox && !isClosebox)
     return;
   const item = findTabItemFromEvent(event);
-  if (!item)
+  if (!item ||
+      !configs.enableDragSelection)
     return;
   let target = item;
   if (gDragTargetIsClosebox && isClosebox)
