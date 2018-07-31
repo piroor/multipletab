@@ -14,7 +14,7 @@ import {
 } from './common.js';
 import * as Constants from './constants.js';
 import * as Permissions from './permissions.js';
-import TabIdFixer from '../extlib/TabIdFixer.js';
+import TabIdFixer from '/extlib/TabIdFixer.js';
 
 async function getTabsByIds(ids) {
   const tabs = await Promise.all(ids.map(id => browser.tabs.get(id).catch(_e => {})));

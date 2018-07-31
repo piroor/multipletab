@@ -7,7 +7,7 @@
 
 import Selection from './selection.js';
 
-import EventListenerManager from '../extlib/EventListenerManager.js';
+import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export const onCreated = new EventListenerManager();
 

@@ -5,7 +5,7 @@
 */
 'use strict';
 
-import Configs from '../extlib/Configs.js';
+import Configs from '/extlib/Configs.js';
 
 const defaultClipboardFormats = [];
 defaultClipboardFormats.push({

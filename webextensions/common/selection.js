@@ -12,8 +12,8 @@ import {
 import * as Constants from './constants.js';
 import * as Permissions from './permissions.js';
 
-import EventListenerManager from '../extlib/EventListenerManager.js';
-import TabIdFixer from '../extlib/TabIdFixer.js';
+import EventListenerManager from '/extlib/EventListenerManager.js';
+import TabIdFixer from '/extlib/TabIdFixer.js';
 
 export default class Selection {
   constructor(windowId) {

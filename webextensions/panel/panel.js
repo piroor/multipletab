@@ -10,14 +10,14 @@ import {
   wait,
   configs,
   handleMissingReceiverError
-} from '../common/common.js';
-import * as Constants from '../common/constants.js';
-import * as Selections from '../common/selections.js';
-import * as DragSelection from '../common/drag-selection.js';
-import * as SharedState from '../common/shared-state.js';
-import MenuUI from '../extlib/MenuUI.js';
-import TabFavIconHelper from '../extlib/TabFavIconHelper.js';
-import TabIdFixer from '../extlib/TabIdFixer.js';
+} from '/common/common.js';
+import * as Constants from '/common/constants.js';
+import * as Selections from '/common/selections.js';
+import * as DragSelection from '/common/drag-selection.js';
+import * as SharedState from '/common/shared-state.js';
+import MenuUI from '/extlib/MenuUI.js';
+import TabFavIconHelper from '/extlib/TabFavIconHelper.js';
+import TabIdFixer from '/extlib/TabIdFixer.js';
 import '../extlib/l10n.js';
 
 log.context = 'Panel';

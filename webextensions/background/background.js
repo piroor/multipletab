@@ -10,14 +10,14 @@ import {
   wait,
   configs,
   handleMissingReceiverError
-} from '../common/common.js';
-import * as Constants from '../common/constants.js';
-import * as Selections from '../common/selections.js';
-import * as Commands from '../common/commands.js';
-import * as Permissions from '../common/permissions.js';
-import * as DragSelection from '../common/drag-selection.js';
-import * as SharedState from '../common/shared-state.js';
-import RichConfirm from '../extlib/RichConfirm.js';
+} from '/common/common.js';
+import * as Constants from '/common/constants.js';
+import * as Selections from '/common/selections.js';
+import * as Commands from '/common/commands.js';
+import * as Permissions from '/common/permissions.js';
+import * as DragSelection from '/common/drag-selection.js';
+import * as SharedState from '/common/shared-state.js';
+import RichConfirm from '/extlib/RichConfirm.js';
 import * as ContextMenu from './context-menu.js';
 
 log.context = 'BG';

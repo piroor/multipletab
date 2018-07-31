@@ -8,10 +8,10 @@
 import {
   log,
   configs
-} from '../common/common.js';
-import * as Permissions from '../common/permissions.js';
-import Options from '../extlib/Options.js';
-import ShortcutCustomizeUI from '../extlib/ShortcutCustomizeUI.js';
+} from '/common/common.js';
+import * as Permissions from '/common/permissions.js';
+import Options from '/extlib/Options.js';
+import ShortcutCustomizeUI from '/extlib/ShortcutCustomizeUI.js';
 import '../extlib/l10n.js';
 
 log.context = 'Options';

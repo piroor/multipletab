@@ -10,12 +10,12 @@ import {
   wait,
   configs,
   handleMissingReceiverError
-} from '../common/common.js';
-import * as Constants from '../common/constants.js';
-import * as Selections from '../common/selections.js';
-import * as Commands from '../common/commands.js';
-import * as DragSelection from '../common/drag-selection.js';
-import * as SharedState from '../common/shared-state.js';
+} from '/common/common.js';
+import * as Constants from '/common/constants.js';
+import * as Selections from '/common/selections.js';
+import * as Commands from '/common/commands.js';
+import * as DragSelection from '/common/drag-selection.js';
+import * as SharedState from '/common/shared-state.js';
 
 const mItems = `
   reloadTabs

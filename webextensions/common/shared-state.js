@@ -8,7 +8,7 @@
 import * as Selections from './selections.js';
 import * as DragSelection from './drag-selection.js';
 
-import EventListenerManager from '../extlib/EventListenerManager.js';
+import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export const onUpdated = new EventListenerManager();
 
