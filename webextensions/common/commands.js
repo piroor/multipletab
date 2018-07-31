@@ -9,7 +9,8 @@ import {
   log,
   wait,
   notify,
-  configs
+  configs,
+  handleMissingReceiverError
 } from './common.js';
 import * as Constants from './constants.js';
 import * as Permissions from './permissions.js';
@@ -106,7 +107,7 @@ export async function moveToWindow(ids, windowId) {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_GET_TREE_STRUCTURE,
       tabs: ids
-    }).catch(_e => {}); // TST is not available
+    }).catch(handleMissingReceiverError);
   log('structure ', structure);
   const firstTab = ids[0];
   let window;
@@ -123,7 +124,7 @@ export async function moveToWindow(ids, windowId) {
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type:   Constants.kTSTAPI_BLOCK_GROUPING,
       window: window.id
-    }).catch(_e => {}); // TST is not available
+    }).catch(handleMissingReceiverError);
   const waitUntilCompletelyMoved = new Promise((resolve, _reject) => {
     let restTabs = ids.length - 1;
     const listener = (_tabId, _attachInfo) => {
@@ -149,13 +150,13 @@ export async function moveToWindow(ids, windowId) {
       type: Constants.kTSTAPI_SET_TREE_STRUCTURE,
       tabs: ids,
       structure
-    }).catch(_e => {}); // TST is not available
+    }).catch(handleMissingReceiverError);
   }
   if (configs.enableIntegrationWithTST)
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type:   Constants.kTSTAPI_UNBLOCK_GROUPING,
       window: window.id
-    }).catch(_e => {}); // TST is not available
+    }).catch(handleMissingReceiverError);
 }
 
 // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1394477
@@ -212,7 +213,7 @@ export async function copyToClipboard(ids, format) {
       const tabsWithChildren = await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: 'get-tree',
         tabs: tabs.map(tab => tab.id)
-      });
+      }).catch(handleMissingReceiverError);
       const ancestorsOf = {};
       const collectAncestors = (tab) => {
         ancestorsOf[tab.id] = ancestorsOf[tab.id] || [];

@@ -8,7 +8,8 @@
 import {
   log,
   wait,
-  configs
+  configs,
+  handleMissingReceiverError
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
 import * as Selections from '../common/selections.js';
@@ -172,7 +173,7 @@ async function onShortcutCommand(command) {
       browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_GROUP_TABS,
         tabs: selectedTabIds
-      }).catch(_e => {});
+      }).catch(handleMissingReceiverError);
       break;
 
     case 'suspendSelectedTabs':
@@ -371,7 +372,7 @@ async function registerToTST() {
           background: Highlight;
         }
       `
-    });
+    }).catch(handleMissingReceiverError);
     DragSelection.activateInVerticalTabbarOfTST();
     // force rebuild menu
     return ContextMenu.reserveRefreshItems(null, true).then(() => true);
@@ -386,10 +387,10 @@ function unregisterFromTST() {
   try {
     browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
-    });
+    }).catch(handleMissingReceiverError);
     browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_UNREGISTER_SELF
-    });
+    }).catch(handleMissingReceiverError);
   }
   catch(_e) {
   }

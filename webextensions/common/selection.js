@@ -6,7 +6,8 @@
 'use strict';
 
 import {
-  configs
+  configs,
+  handleMissingReceiverError
 } from './common.js';
 import * as Constants from './constants.js';
 import * as Permissions from './permissions.js';
@@ -82,7 +83,7 @@ export default class Selection {
         type:  selected ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
         tabs:  tabs.map(tab => tab.id),
         state: options.states || options.state || 'selected'
-      }).catch(_e => {}); // TST is not available
+      }).catch(handleMissingReceiverError);
     this.onChange.dispatch(tabs, selected, options);
   }
 

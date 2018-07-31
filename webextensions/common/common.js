@@ -150,3 +150,12 @@ export async function notify(params = {}) {
 
   await browser.notifications.clear(id);
 }
+
+export function handleMissingReceiverError(error) {
+  if (!error ||
+      !error.message ||
+      error.message.indexOf('Could not establish connection. Receiving end does not exist.') == -1)
+    throw error;
+  // otherwise, this error is caused from missing receiver.
+  // we just ignore it.
+}

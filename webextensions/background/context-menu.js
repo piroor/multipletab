@@ -8,7 +8,8 @@
 import {
   log,
   wait,
-  configs
+  configs,
+  handleMissingReceiverError
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
 import * as Selections from '../common/selections.js';
@@ -104,7 +105,7 @@ async function refreshItems(contextTab, force) {
     if (configs.enableIntegrationWithTST)
       promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
-      }));
+      }).catch(handleMissingReceiverError));
   }
   catch(_e) {
   }
@@ -159,7 +160,7 @@ async function refreshItems(contextTab, force) {
             promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
               type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
               params: nextSeparatorIn[parentId]
-            }));
+            }).catch(handleMissingReceiverError));
         }
         catch(_e) {
         }
@@ -197,7 +198,7 @@ async function refreshItems(contextTab, force) {
         promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
           type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
           params
-        }));
+        }).catch(handleMissingReceiverError));
     }
     catch(_e) {
     }
@@ -402,7 +403,7 @@ async function onClick(info, tab) {
       await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_GROUP_TABS,
         tabs: selectedTabIds
-      }).catch(_e => {});
+      }).catch(handleMissingReceiverError);
       break;
 
     case 'suspendTabs':
@@ -529,7 +530,7 @@ DragSelection.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
       tab:  selectionInfo.dragStartTab.id,
       left: message.clientX,
       top:  message.clientY
-    });
+    }).catch(handleMissingReceiverError);
   }
   catch(e) {
     log('failed to open context menu: ', e);

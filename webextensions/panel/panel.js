@@ -8,7 +8,8 @@
 import {
   log,
   wait,
-  configs
+  configs,
+  handleMissingReceiverError
 } from '../common/common.js';
 import * as Constants from '../common/constants.js';
 import * as Selections from '../common/selections.js';
@@ -108,7 +109,7 @@ async function updateUIForTST() {
     try {
       const responded = await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_PING
-      });
+      }).catch(handleMissingReceiverError);
       if (responded) {
         disabledMessage.style.display = 'block';
         return;
