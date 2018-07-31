@@ -14,6 +14,14 @@ module.exports = {
     'webextensions': true,
   },
 
+  'settings': {
+    'import/resolver': {
+      'babel-module': {
+        'root': ['./'],
+      }
+    }
+  },
+
   'rules': {
     // stylisitc problem
     'indent': ['warn', 2, {
