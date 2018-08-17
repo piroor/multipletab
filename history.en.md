@@ -3,7 +3,12 @@
  - master/HEAD
    * Totally reconstructed as ES modules, for better maintainability.
    * Behave like tab selection on Google Chrome and lately Firefox. (One of rest selected tabs is activated when the active tab is unselected, Ctrl-Shift-Click adds tabs between two last clicked tabs to the selection.)
+   * Add ability to change size of the panel and font.
+   * Add ability to deactivate drag-selection after long press on Tree Style Tab's sidebar.
+   * Add ability to deactivate integration with Tree Style Tab.
    * Support per-window selection.
+   * Suppress errors for unavailable Tree Style Tab addon.
+   * Show toolbar button icons with opacity
  - 2.0.13 (2018.5.30)
    * Add ability to switch color scheme to Dark theme.
    * Make configuration categories collapsible.
