@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Fix unexpected recursion around loading of favicons.
  - 2.1.0 (2018.8.17)
    * Totally reconstructed as ES modules, for better maintainability.
    * Behave like tab selection on Google Chrome and lately Firefox. (One of rest selected tabs is activated when the active tab is unselected, Ctrl-Shift-Click adds tabs between two last clicked tabs to the selection.)
