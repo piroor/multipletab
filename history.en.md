@@ -1,7 +1,8 @@
 # History
 
  - master/HEAD
-   * Fix unexpected recursion around loading of favicons.
+ - 2.1.1 (2018.8.20)
+   * Fix unexpected recursion around loading of favicons. (regression on 2.1.0)
    * Fix misordernig of input fields to define keyboard shortcuts. (regression on 2.1.0)
  - 2.1.0 (2018.8.17)
    * Totally reconstructed as ES modules, for better maintainability.
