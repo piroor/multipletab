@@ -38,7 +38,8 @@ export const mDragSelection = {
   export() {
     const exported = {};
     for (const key of Object.keys(this)) {
-      if (typeof this[key] != 'function')
+      if (key != 'selection' &&
+          typeof this[key] != 'function')
         exported[key] = this[key];
     }
     return exported;
