@@ -237,7 +237,7 @@ function onClick(event) {
       ctrlKey:       event.ctrlKey,
       metaKey:       event.metaKey,
       shiftKey:      event.shiftKey
-    });
+    }).catch(console.log);
     gLastClickedItem.classList.remove('last-focused');
     gLastClickedItem = item;
     gLastClickedItem.classList.add('last-focused');
@@ -245,7 +245,7 @@ function onClick(event) {
   else
     DragSelection.onNonTabAreaClick({
       button: event.button
-    });
+    }).catch(console.log);
 }
 
 let gLastDragEnteredTarget;
@@ -274,7 +274,7 @@ async function onMouseMove(event) {
     tab:             item.tab,
     window:          gWindowId,
     startOnClosebox: gDragTargetIsClosebox
-  })
+  }).catch(console.log);
   gTabBar.addEventListener('mouseover', onMouseOver);
   gTabBar.addEventListener('mouseout', onMouseOut);
   gTabBar.setCapture(false);
@@ -293,7 +293,7 @@ function onMouseUp(event) {
       window:  gWindowId,
       clientX: event.clientX,
       clientY: event.clientY
-    });
+    }).catch(console.log);
   }, 10);
   gTabBar.removeEventListener('mousemove', onMouseMove);
   gTabBar.removeEventListener('mouseover', onMouseOver);
@@ -316,7 +316,7 @@ function onMouseOver(event) {
       DragSelection.onDragEnter({
         tab:    item.tab,
         window: gWindowId
-      });
+      }).catch(console.log);
     }
   }
   gLastDragEnteredTarget = target;
@@ -339,7 +339,7 @@ function onMouseOut(event) {
     DragSelection.onDragExit({
       tab:    item.tab,
       window: gWindowId
-    });
+    }).catch(console.log);
   }, 10);
 }
 
@@ -356,7 +356,7 @@ DragSelection.onDragSelectionEnd.addListener((message, selectionInfo) => {
     contextTab: selectionInfo.dragStartTab && selectionInfo.dragStartTab.id
   }).then(() => {
     openMenu(message);
-  });
+  }).catch(console.log);
 });
 
 
