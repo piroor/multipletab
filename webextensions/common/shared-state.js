@@ -70,12 +70,12 @@ function serialize(windowId) {
   };
 }
 
-function apply(windowId, selections, extraInfo = {}) {
+async function apply(windowId, selections, extraInfo = {}) {
   if (!windowId)
     windowId = mWindowId;
   Selections.get(windowId).apply(selections.selection);
   DragSelection.apply(selections.dragSelection);
-  onUpdated.dispatch(extraInfo);
+  await onUpdated.dispatch(windowId, extraInfo);
 }
 
 
@@ -85,8 +85,7 @@ browser.runtime.onMessage.addListener((message, _sender) => {
 
   switch (message.type) {
     case kCOMMAND_PUSH:
-      apply(message.windowId, message.state, message.extraInfo);
-      break;
+      return apply(message.windowId, message.state, message.extraInfo);
 
     default:
       break;

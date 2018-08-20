@@ -67,9 +67,9 @@ export function init() {
   reserveRefreshItems();
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
-  SharedState.onUpdated.addListener(extraInfo => {
+  SharedState.onUpdated.addListener((windowId, extraInfo) => {
     if (extraInfo.updateMenu) {
-      const tab = extraInfo.contextTab ? { id: extraInfo.contextTab } : null ;
+      const tab = extraInfo.contextTab ? { id: extraInfo.contextTab, windowId } : null ;
       return refreshItems(tab, true);
     }
     else {

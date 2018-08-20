@@ -392,7 +392,7 @@ export async function onDragEnd(message) {
     mDragSelection.selection.clear();
   }
   else if (mDragSelection.selection.has()) {
-    onDragSelectionEnd.dispatch(message, {
+    await onDragSelectionEnd.dispatch(message, {
       dragStartTab: mDragSelection.dragStartTarget,
       selection:    mDragSelection.selection
     });
