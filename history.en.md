@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Open selection menu correctly on the selection panel. (Now the menu is opened after items are completely updated.)
  - 2.1.1 (2018.8.20)
    * Fix unexpected recursion around loading of favicons. (regression on 2.1.0)
    * Fix misordernig of input fields to define keyboard shortcuts. (regression on 2.1.0)
