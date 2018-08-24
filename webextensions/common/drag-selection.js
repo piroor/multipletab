@@ -233,7 +233,7 @@ export async function onClick(message) {
     if (selectedTabIds.length > 0 && !selectedTabIds.includes(lastActiveTab.id)) {
       browser.tabs.update(selectedTabIds[0], { active: true });
     }
-    else {
+    else if (!selected) {
       // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1486050
       mDragSelection.selection.set(lastActiveTab, false, {
         globalHighlight: false
@@ -362,7 +362,11 @@ export async function onDragEnter(message) {
     mDragSelection.pendingTabs = targetTabs;
   }
   // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1486050
-  promisedLastActiveTab.then(lastActiveTab => {
+  promisedLastActiveTab.then(async lastActiveTab => {
+    lastActiveTab = lastActiveTab[0];
+    const tab = await browser.tabs.get(lastActiveTab.id);
+    if (tab.active)
+      return;
     mDragSelection.selection.set(lastActiveTab, false, {
       globalHighlight: false
     });
