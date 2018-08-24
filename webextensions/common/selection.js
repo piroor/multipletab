@@ -54,7 +54,8 @@ export default class Selection {
           continue;
         this.mTabs[tab.id] = tab;
         try {
-          browser.tabs.update(tab.id, { highlighted: true });
+          if (!tab.highlighted)
+            browser.tabs.update(tab.id, { highlighted: true });
         }
         catch(_e) {
           // Firefox 62 and older versions doesn't support changing of "highlighted"
@@ -75,7 +76,8 @@ export default class Selection {
           continue;
         delete this.mTabs[tab.id];
         try {
-          browser.tabs.update(tab.id, { highlighted: false });
+          if (!tab.highlighted)
+            browser.tabs.update(tab.id, { highlighted: false });
         }
         catch(_e) {
           // Firefox 62 and older versions doesn't support changing of "highlighted"
