@@ -45,7 +45,13 @@ export default class Selection {
     if (!Array.isArray(tabs))
       tabs = [tabs];
 
-    const shouldHighlight = options.globalHighlight !== false;
+    if (options.state)
+      options.states = [options.state];
+    else if (!options.states)
+      options.states = ['selected'];
+
+    const shouldHighlight   = options.states.includes('selected');
+    const shouldChangeTitle = options.globalHighlight !== false;
 
     //console.log('setSelection ', ids, `${aState}=${selected}`);
     if (selected) {
@@ -54,13 +60,16 @@ export default class Selection {
           continue;
         this.mTabs[tab.id] = tab;
         try {
-          if (!tab.highlighted)
+          if (shouldHighlight &&
+              !tab.highlighted) {
             browser.tabs.update(tab.id, { highlighted: true });
+          }
         }
         catch(_e) {
           // Firefox 62 and older versions doesn't support changing of "highlighted"
         }
         if (shouldHighlight &&
+            shouldChangeTitle &&
             Permissions.isPermittedTab(tab) &&
             !tab.pinned)
           Permissions.isGranted(Permissions.ALL_URLS).then(() => {
@@ -76,13 +85,16 @@ export default class Selection {
           continue;
         delete this.mTabs[tab.id];
         try {
-          if (!tab.highlighted)
+          if (shouldHighlight &&
+              tab.highlighted) {
             browser.tabs.update(tab.id, { highlighted: false });
+          }
         }
         catch(_e) {
           // Firefox 62 and older versions doesn't support changing of "highlighted"
         }
         if (shouldHighlight &&
+            shouldChangeTitle &&
             Permissions.isPermittedTab(tab) &&
             !tab.pinned)
           Permissions.isGranted(Permissions.ALL_URLS).then(() => {
@@ -96,7 +108,7 @@ export default class Selection {
       browser.runtime.sendMessage(Constants.kTST_ID, {
         type:  selected ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
         tabs:  tabs.map(tab => tab.id),
-        state: options.states || options.state || 'selected'
+        state: options.states
       }).catch(handleMissingReceiverError);
     this.onChange.dispatch(tabs, selected, options);
   }
