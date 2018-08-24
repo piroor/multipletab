@@ -327,10 +327,10 @@ export async function onDragEnter(message) {
       message.tab.id == mDragSelection.lastHoverTarget.id)
     return;
 
-  const promisedLastActiveTab = browser.tabs.query({
+  const lastActiveTab = (await browser.tabs.query({
     active:   true,
     windowId: message.tab.windowId
-  });
+  }))[0];
   const state = mDragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
   if (mDragSelection.pendingTabs) {
     mDragSelection.selection.set(mDragSelection.pendingTabs, true, {
@@ -362,18 +362,14 @@ export async function onDragEnter(message) {
     mDragSelection.pendingTabs = targetTabs;
   }
   // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1486050
-  promisedLastActiveTab.then(async lastActiveTab => {
-    lastActiveTab = lastActiveTab[0];
-    const tab = await browser.tabs.get(lastActiveTab.id);
-    if (tab.active)
-      return;
+  if (mDragSelection.selection.contains(lastActiveTab.id)) {
     mDragSelection.selection.set(lastActiveTab, false, {
       globalHighlight: false
     });
     mDragSelection.selection.set(lastActiveTab, true, {
       globalHighlight: false
     });
-  });
+  }
   /*
   }
   else { // TAB_DRAG_MODE_SWITCH:

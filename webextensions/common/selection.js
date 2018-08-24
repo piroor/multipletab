@@ -60,8 +60,7 @@ export default class Selection {
           continue;
         this.mTabs[tab.id] = tab;
         try {
-          if (shouldHighlight &&
-              !tab.highlighted) {
+          if (shouldHighlight) {
             browser.tabs.update(tab.id, { highlighted: true });
             tab.highlighted = true;
           }
@@ -86,8 +85,7 @@ export default class Selection {
           continue;
         delete this.mTabs[tab.id];
         try {
-          if (shouldHighlight &&
-              tab.highlighted) {
+          if (shouldHighlight) {
             browser.tabs.update(tab.id, { highlighted: false });
             tab.highlighted = false;
           }
