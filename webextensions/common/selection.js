@@ -63,6 +63,7 @@ export default class Selection {
           if (shouldHighlight &&
               !tab.highlighted) {
             browser.tabs.update(tab.id, { highlighted: true });
+            tab.highlighted = true;
           }
         }
         catch(_e) {
@@ -88,6 +89,7 @@ export default class Selection {
           if (shouldHighlight &&
               tab.highlighted) {
             browser.tabs.update(tab.id, { highlighted: false });
+            tab.highlighted = false;
           }
         }
         catch(_e) {

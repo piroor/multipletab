@@ -208,6 +208,13 @@ export async function onClick(message) {
     const newSelectedTabIds = mDragSelection.selection.getSelectedTabIds();
     if (newSelectedTabIds.length > 0 && !newSelectedTabIds.includes(lastActiveTab.id))
       browser.tabs.update(mDragSelection.selection.getLastClickedTab() ? mDragSelection.selection.getLastClickedTab().id : newSelectedTabIds[0], { active: true });
+    // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1486050
+    mDragSelection.selection.set(lastActiveTab, false, {
+      globalHighlight: false
+    });
+    mDragSelection.selection.set(lastActiveTab, true, {
+      globalHighlight: false
+    });
     return true;
   }
   else if (ctrlKeyPressed) {
@@ -223,8 +230,18 @@ export async function onClick(message) {
     });
     // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
     const selectedTabIds = mDragSelection.selection.getSelectedTabIds();
-    if (selectedTabIds.length > 0 && !selectedTabIds.includes(lastActiveTab.id))
+    if (selectedTabIds.length > 0 && !selectedTabIds.includes(lastActiveTab.id)) {
       browser.tabs.update(selectedTabIds[0], { active: true });
+    }
+    else {
+      // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1486050
+      mDragSelection.selection.set(lastActiveTab, false, {
+        globalHighlight: false
+      });
+      mDragSelection.selection.set(lastActiveTab, true, {
+        globalHighlight: false
+      });
+    }
     gInSelectionSession = true;
     mDragSelection.selection.setLastClickedTab(message.tab);
     return true;
@@ -310,6 +327,10 @@ export async function onDragEnter(message) {
       message.tab.id == mDragSelection.lastHoverTarget.id)
     return;
 
+  const promisedLastActiveTab = browser.tabs.query({
+    active:   true,
+    windowId: message.tab.windowId
+  });
   const state = mDragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
   if (mDragSelection.pendingTabs) {
     mDragSelection.selection.set(mDragSelection.pendingTabs, true, {
@@ -340,6 +361,15 @@ export async function onDragEnter(message) {
     }
     mDragSelection.pendingTabs = targetTabs;
   }
+  // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1486050
+  promisedLastActiveTab.then(lastActiveTab => {
+    mDragSelection.selection.set(lastActiveTab, false, {
+      globalHighlight: false
+    });
+    mDragSelection.selection.set(lastActiveTab, true, {
+      globalHighlight: false
+    });
+  });
   /*
   }
   else { // TAB_DRAG_MODE_SWITCH:
