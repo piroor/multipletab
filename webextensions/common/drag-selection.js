@@ -362,7 +362,8 @@ export async function onDragEnter(message) {
     mDragSelection.pendingTabs = targetTabs;
   }
   // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1486050
-  if (mDragSelection.selection.contains(lastActiveTab.id)) {
+  if (state == 'selected' &&
+      mDragSelection.selection.contains(lastActiveTab.id)) {
     mDragSelection.selection.set(lastActiveTab, false, {
       globalHighlight: false
     });
