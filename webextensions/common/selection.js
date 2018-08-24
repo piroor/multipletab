@@ -53,6 +53,12 @@ export default class Selection {
         if (tab.id in this.mTabs)
           continue;
         this.mTabs[tab.id] = tab;
+        try {
+          browser.tabs.update(tab.id, { highlighted: true });
+        }
+        catch(_e) {
+          // Firefox 62 and older versions doesn't support changing of "highlighted"
+        }
         if (shouldHighlight &&
             Permissions.isPermittedTab(tab) &&
             !tab.pinned)
@@ -68,6 +74,12 @@ export default class Selection {
         if (!(tab.id in this.mTabs))
           continue;
         delete this.mTabs[tab.id];
+        try {
+          browser.tabs.update(tab.id, { highlighted: false });
+        }
+        catch(_e) {
+          // Firefox 62 and older versions doesn't support changing of "highlighted"
+        }
         if (shouldHighlight &&
             Permissions.isPermittedTab(tab) &&
             !tab.pinned)
