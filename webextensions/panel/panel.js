@@ -135,10 +135,6 @@ function reserveClearSelection() {
   }, 100);
 }
 
-SharedState.onUpdated.addListener(() => {
-  rebuildTabItems();
-});
-
 function onSelectionChange(tabs, selected, _options = {}) {
   if (!tabs.length)
     return;
