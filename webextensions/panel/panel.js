@@ -44,7 +44,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
   document.documentElement.dataset.theme = configs.theme;
   gWindowId = (await browser.windows.getLastFocused()).id;
-  SharedState.initAsSlave(gWindowId);
+  await SharedState.initAsSlave(gWindowId);
   gSelection = Selections.get(gWindowId);
   gSelection.onChange.addListener(onSelectionChange);
 

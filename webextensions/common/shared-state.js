@@ -35,7 +35,7 @@ export async function initAsSlave(windowId) {
     type: kCOMMAND_PULL,
     windowId
   });
-  apply(windowId, state);
+  await apply(windowId, state);
 }
 
 function reservePush(windowId) {
