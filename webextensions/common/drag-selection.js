@@ -344,10 +344,6 @@ export async function onDragEnter(message) {
       message.tab.id == mDragSelection.lastHoverTarget.id)
     return;
 
-  const lastActiveTab = (await browser.tabs.query({
-    active:   true,
-    windowId: message.tab.windowId
-  }))[0];
   const state = mDragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
   if (mDragSelection.pendingTabs) {
     mDragSelection.selection.set(mDragSelection.pendingTabs, true, {
