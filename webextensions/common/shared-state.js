@@ -38,20 +38,24 @@ export async function initAsSlave(windowId) {
   apply(windowId, state);
 }
 
-function reservePush() {
-  if (reservePush.reserved)
-    clearTimeout(reservePush.reserved);
-  reservePush.reserved = setTimeout(() => {
-    push();
+function reservePush(windowId) {
+  let timer = reservePush.reserved.get(windowId);
+  if (timer)
+    clearTimeout(timer);
+  timer = setTimeout(() => {
+    push(windowId);
   }, 150);
+  reservePush.reserved.set(windowId, timer)
 }
+reservePush.reserved = new Map();
 
 export async function push(windowId, extraInfo = {}) {
   if (!windowId)
     windowId = mWindowId;
-  if (reservePush.reserved) {
-    clearTimeout(reservePush.reserved);
-    delete reservePush.reserved;
+  const timer = reservePush.reserved.get(windowId);
+  if (timer) {
+    clearTimeout(timer);
+    reservePush.reserved.delete(windowId)
   }
   await browser.runtime.sendMessage({
     type:  kCOMMAND_PUSH,
@@ -94,6 +98,6 @@ browser.runtime.onMessage.addListener((message, _sender) => {
 
 Selections.onCreated.addListener(selection => {
   selection.onChange.addListener((_tabs, _selected, _options = {}) => {
-    reservePush();
+    reservePush(selection.windowId);
   });
 });

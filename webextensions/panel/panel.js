@@ -155,11 +155,11 @@ function onSelectionChange(tabs, selected, _options = {}) {
     }
   }
   else {
-    const selectors = tabs.map(tab => `#tab-${tab.id} input[type="checkbox"]`);
-    const checkboxes = document.querySelectorAll(selectors.join(', '));
-    for (const checkbox of checkboxes) {
-      checkbox.checked = !!selected;
-      const item = checkbox.parentNode.parentNode;
+    const selectedIds = gSelection.getSelectedTabIds();
+    for (const item of gTabBar.querySelectorAll('li')) {
+      const selected = selectedIds.includes(item.tab.id);
+      const checkbox = item.querySelector('input[type="checkbox"]');
+      checkbox.checked = selected;
       if (selected)
         item.classList.add('selected');
       else

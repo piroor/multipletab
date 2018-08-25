@@ -17,11 +17,17 @@ import TabIdFixer from '/extlib/TabIdFixer.js';
 
 export default class Selection {
   constructor(windowId) {
+    if (!windowId)
+      throw new Error('Selection must have a window ID');
     this.mTabs = {};
     this.mTargetWindow = windowId;
     this.mLastClickedTab = null;
 
     this.onChange = new EventListenerManager();
+  }
+
+  get windowId() {
+    return this.mTargetWindow;
   }
 
   serialize() {
@@ -33,17 +39,22 @@ export default class Selection {
   }
 
   apply(foreignSelection) {
+    const oldTabs = this.mTabs;
     if ('tabs' in foreignSelection)
       this.mTabs = foreignSelection.tabs;
-    if ('targetWindow' in foreignSelection)
-      this.mTargetWindow = foreignSelection.targetWindow;
     if ('lastClickedTab' in foreignSelection)
       this.mLastClickedTab = foreignSelection.lastClickedTab;
+    const newlySelected   = Object.values(this.mTabs).filter(tab => !(tab.id in oldTabs));
+    const deselected      = Object.values(oldTabs).filter(tab => !(tab.id in this.mTabs));
+    this.set(newlySelected, true, { globalHighlight: false, applying: true });
+    this.set(deselected, false, { globalHighlight: false, applying: true });
   }
 
   set(tabs, selected, options = {}) {
     if (!Array.isArray(tabs))
       tabs = [tabs];
+    if (tabs.length == 0)
+      return;
 
     if (options.state)
       options.states = [options.state];
@@ -53,13 +64,14 @@ export default class Selection {
     const shouldHighlight   = options.states.includes('selected');
     const shouldChangeTitle = options.globalHighlight !== false;
 
-    //console.log('setSelection ', ids, `${aState}=${selected}`);
+    //console.log(new Error(`setSelection ${options.states.join(',')}=${selected} tabs=${tabs.map(tab => tab.id).join(',')}`));
     if (selected) {
       for (const tab of tabs) {
         if (tab.id in this.mTabs)
           continue;
         this.mTabs[tab.id] = tab;
-        if (shouldHighlight &&
+        if (!options.applying &&
+            shouldHighlight &&
             shouldChangeTitle &&
             Permissions.isPermittedTab(tab) &&
             !tab.pinned)
@@ -75,7 +87,8 @@ export default class Selection {
         if (!(tab.id in this.mTabs))
           continue;
         delete this.mTabs[tab.id];
-        if (shouldHighlight &&
+        if (!options.applying &&
+            shouldHighlight &&
             shouldChangeTitle &&
             Permissions.isPermittedTab(tab) &&
             !tab.pinned)
@@ -86,14 +99,17 @@ export default class Selection {
           });
       }
     }
-    if (configs.enableIntegrationWithTST)
+    if (configs.enableIntegrationWithTST &&
+        tabs.length > 0)
       browser.runtime.sendMessage(Constants.kTST_ID, {
         type:  selected ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
         tabs:  tabs.map(tab => tab.id),
         state: options.states
       }).catch(handleMissingReceiverError);
+    if (!options.applying) {
     this.onChange.dispatch(tabs, selected, options);
     this.reserveToSyncSelectedToHighlighted();
+    }
   }
 
   reserveToSyncSelectedToHighlighted() {
