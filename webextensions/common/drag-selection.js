@@ -117,25 +117,59 @@ function toggleStateOfDragOverTabs(params = {}) {
     const oldUndeterminedRangeIds = Object.keys(oldUndeterminedRange).map(id => parseInt(id));
     const newUndeterminedRangeIds = newUndeterminedRange.map(tab => tab.id);
     const outOfRangeTabIds = oldUndeterminedRangeIds.filter(id => newUndeterminedRangeIds.indexOf(id) < 0);
-    for (const id of outOfRangeTabIds) {
-      mDragSelection.selection.set(oldUndeterminedRange[id], !mDragSelection.selection.contains(id), {
-        globalHighlight: false,
-        dontUpdateMenu: true,
-        state: params.state
-      });
+    {
+      const toBeSelected   = [];
+      const toBeDeselected = [];
+      for (const id of outOfRangeTabIds) {
+        if (mDragSelection.selection.contains(id))
+          toBeDeselected.push(oldUndeterminedRange[id]);
+        else
+          toBeSelected.push(oldUndeterminedRange[id]);
+      }
+      if (toBeSelected.length > 0) {
+        mDragSelection.selection.set(toBeSelected, true, {
+          globalHighlight: false,
+          dontUpdateMenu: true,
+          state: params.state
+        });
+      }
+      if (toBeDeselected.length > 0) {
+        mDragSelection.selection.set(toBeDeselected, false, {
+          globalHighlight: false,
+          dontUpdateMenu: true,
+          state: params.state
+        });
+      }
     }
 
-    for (const tab of newUndeterminedRange) {
-      if (tab.id in mDragSelection.undeterminedRange)
-        continue;
-      mDragSelection.undeterminedRange[tab.id] = tab;
-      if (oldUndeterminedRangeIds.indexOf(tab.id) > -1)
-        continue;
-      mDragSelection.selection.set(tab, !mDragSelection.selection.contains(tab), {
-        globalHighlight: false,
-        dontUpdateMenu: true,
-        state: params.state
-      });
+    {
+      const toBeSelected   = [];
+      const toBeDeselected = [];
+      for (const tab of newUndeterminedRange) {
+        if (tab.id in mDragSelection.undeterminedRange)
+          continue;
+        mDragSelection.undeterminedRange[tab.id] = tab;
+        if (oldUndeterminedRangeIds.indexOf(tab.id) > -1)
+          continue;
+        if (mDragSelection.selection.contains(tab))
+          toBeDeselected.push(tab);
+        else
+          toBeSelected.push(tab);
+      }
+      if (toBeSelected.length > 0) {
+        mDragSelection.selection.set(toBeSelected, true, {
+          globalHighlight: false,
+          dontUpdateMenu: true,
+          state: params.state
+        });
+      }
+      if (toBeDeselected.length > 0) {
+        mDragSelection.selection.set(toBeDeselected, false, {
+          globalHighlight: false,
+          dontUpdateMenu: true,
+          state: params.state
+        });
+      }
     }
   }
   else {
