@@ -59,15 +59,6 @@ export default class Selection {
         if (tab.id in this.mTabs)
           continue;
         this.mTabs[tab.id] = tab;
-        try {
-          if (shouldHighlight) {
-            browser.tabs.update(tab.id, { highlighted: true });
-            tab.highlighted = true;
-          }
-        }
-        catch(_e) {
-          // Firefox 62 and older versions doesn't support changing of "highlighted"
-        }
         if (shouldHighlight &&
             shouldChangeTitle &&
             Permissions.isPermittedTab(tab) &&
@@ -84,15 +75,6 @@ export default class Selection {
         if (!(tab.id in this.mTabs))
           continue;
         delete this.mTabs[tab.id];
-        try {
-          if (shouldHighlight) {
-            browser.tabs.update(tab.id, { highlighted: false });
-            tab.highlighted = false;
-          }
-        }
-        catch(_e) {
-          // Firefox 62 and older versions doesn't support changing of "highlighted"
-        }
         if (shouldHighlight &&
             shouldChangeTitle &&
             Permissions.isPermittedTab(tab) &&
@@ -111,6 +93,69 @@ export default class Selection {
         state: options.states
       }).catch(handleMissingReceiverError);
     this.onChange.dispatch(tabs, selected, options);
+    this.reserveToSyncSelectedToHighlighted();
+  }
+
+  reserveToSyncSelectedToHighlighted() {
+    if (this.reserveToSyncSelectedToHighlighted.timer)
+      clearTimeout(this.reserveToSyncSelectedToHighlighted.timer);
+    this.reserveToSyncSelectedToHighlighted.timer = setTimeout(() => {
+      this.reserveToSyncSelectedToHighlighted.timer = null;
+      this.syncSelectedToHighlighted();
+    }, 100);
+  }
+  async syncSelectedToHighlighted() {
+    if (typeof browser.tabs.highlight != 'function')
+      return;
+
+    const tabs        = await this.getAllTabs();
+    const selected    = this.getSelectedTabIds();
+    const highlighted = tabs.filter(tab => selected.includes(tab.id));
+
+    const highlightedIndices = highlighted.filter(tab => !tab.active).map(tab => tab.index);
+    // Active tab must be highlighted.
+    // browser.tabs.highlight() doesn't accept "no highlighted" state.
+    const activeIndices = tabs.filter(tab => tab.active).map(tab => tab.index);
+    // Set active tab highlighted at first, to suppress focus change.
+    // See also: https://bugzilla.mozilla.org/show_bug.cgi?id=1486050
+    browser.tabs.highlight({
+      tabs: activeIndices.concat(highlightedIndices)
+    });
+
+    setTimeout(() => { // prevent inifinite recursion
+      if (!this.reserveToSyncHighlightedToSelected.timer)
+        return;
+      clearTimeout(this.reserveToSyncHighlightedToSelected.timer);
+      this.reserveToSyncHighlightedToSelected.timer = true;
+    }, 10);
+  }
+
+  reserveToSyncHighlightedToSelected() {
+    if (this.reserveToSyncHighlightedToSelected.timer)
+      clearTimeout(this.reserveToSyncHighlightedToSelected.timer);
+    this.reserveToSyncHighlightedToSelected.timer = setTimeout(() => {
+      this.reserveToSyncHighlightedToSelected.timer = null;
+      this.syncHighlightedToSelected();
+    }, 100);
+  }
+  async syncHighlightedToSelected() {
+    const tabs = await this.getAllTabs();
+    if (tabs.filter(tab => tab.highlighted).length == 1) {
+      this.clear();
+      return;
+    }
+    const alreadySelected = this.getSelectedTabIds();
+    const newlySelected   = tabs.filter(tab => tab.highlighted && !alreadySelected.includes(tab.id));
+    const deselected      = tabs.filter(tab => !tab.highlighted && alreadySelected.includes(tab.id));
+    this.set(newlySelected, true, { globalHighlight: false });
+    this.set(deselected, false, { globalHighlight: false });
+
+    setTimeout(() => { // prevent inifinite recursion
+      if (!this.reserveToSyncSelectedToHighlighted.timer)
+        return;
+      clearTimeout(this.reserveToSyncSelectedToHighlighted.timer);
+      this.reserveToSyncSelectedToHighlighted.timer = true;
+    }, 10);
   }
 
   async setAll(selected = true) {

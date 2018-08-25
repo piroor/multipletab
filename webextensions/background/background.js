@@ -39,26 +39,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     selection.clear();
   });
 
-  const updateHighlightedTimers = new Map();
   browser.tabs.onHighlighted.addListener(highlightInfo => {
-    let timer = updateHighlightedTimers.get(highlightInfo.windowId);
-    if (timer)
-      clearTimeout(timer);
-    timer = setTimeout(async () => {
-      updateHighlightedTimers.delete(highlightInfo.windowId);
-      const selection = Selections.get(highlightInfo.windowId);
-      const allTabs   = await selection.getAllTabs();
-      if (allTabs.filter(tab => tab.highlighted).length == 1) {
-        selection.clear();
-        return;
-      }
-      const alreadySelected = selection.getSelectedTabIds();
-      const newlySelected   = allTabs.filter(tab => tab.highlighted && !alreadySelected.includes(tab.id));
-      const deselected      = allTabs.filter(tab => !tab.highlighted && alreadySelected.includes(tab.id));
-      selection.set(newlySelected, true, { globalHighlight: false });
-      selection.set(deselected, false, { globalHighlight: false });
-    }, 100);
-    updateHighlightedTimers.set(highlightInfo.windowId, timer);
+    const selection = Selections.get(highlightInfo.windowId);
+    selection.reserveToSyncHighlightedToSelected();
   });
 
   ContextMenu.init();
