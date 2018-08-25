@@ -167,7 +167,7 @@ async function refreshItems(contextTab, force) {
       }
       delete nextSeparatorIn[parentId];
     }
-    log('build ', id, parentId);
+    //log('build ', id, parentId);
     createdItems[id] = true;
     const type = isSeparator ? 'separator' : 'normal';
     let title = null;
