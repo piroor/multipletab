@@ -52,7 +52,6 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   await updateUIForTST();
 
-  browser.tabs.onActivated.addListener(onTabModified);
   browser.tabs.onCreated.addListener(onTabModified);
   browser.tabs.onRemoved.addListener(onTabModified);
 
@@ -86,7 +85,6 @@ window.addEventListener('pagehide', () => {
   gTabBar.removeEventListener('mouseup', onMouseUp);
   gTabBar.removeEventListener('mouseover', onMouseOver);
   gTabBar.removeEventListener('mouseout', onMouseOut);
-  browser.tabs.onActivated.removeListener(onTabModified);
   browser.tabs.onCreated.removeListener(onTabModified);
   browser.tabs.onRemoved.removeListener(onTabModified);
   gSelection.onChange.removeListener(onSelectionChange);

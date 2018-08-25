@@ -25,7 +25,8 @@ log.context = 'BG';
 window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
 
-  browser.tabs.onActivated.addListener(activeInfo => {
+  browser.tabs.onActivated.addListener(async activeInfo => {
+    await wait(100);
     const selection = Selections.get(activeInfo.windowId);
     if (!selection.contains(activeInfo.tabId))
       selection.clear();
