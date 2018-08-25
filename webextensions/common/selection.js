@@ -107,8 +107,8 @@ export default class Selection {
         state: options.states
       }).catch(handleMissingReceiverError);
     if (!options.applying) {
-    this.onChange.dispatch(tabs, selected, options);
-    this.reserveToSyncSelectedToHighlighted();
+      this.onChange.dispatch(tabs, selected, options);
+      this.reserveToSyncSelectedToHighlighted();
     }
   }
 
