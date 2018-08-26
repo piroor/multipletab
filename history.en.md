@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+   * Support multiselection of tabs on Firefox 63 and later. Tabs selected by this addon are treated as selected on the native multiselection feature.
+   * The "zh-CN" locale is added by yfdyh000. Thanks!
  - 2.1.2 (2018.8.20)
    * Open selection menu correctly on the selection panel. (Now the menu is opened after items are completely updated.)
  - 2.1.1 (2018.8.20)
