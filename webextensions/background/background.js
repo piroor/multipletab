@@ -208,9 +208,13 @@ function onTSTAPIMessage(message) {
       return Promise.resolve(true);
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN:
+      if (message.soundButton)
+        return;
       return DragSelection.onClick(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP:
+      if (message.soundButton)
+        return;
       return DragSelection.onMouseUp(message);
 
     case Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED:
