@@ -5,9 +5,6 @@
 */
 'use strict';
 
-import {
-  configs
-} from './common.js';
 import * as Selections from './selections.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 import TabIdFixer from '/extlib/TabIdFixer.js';
