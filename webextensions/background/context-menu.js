@@ -332,10 +332,10 @@ async function onClick(info, tab) {
   const selection = tab ? Selections.get(tab.windowId) : await Selections.getActive();
   const selectedTabIds = selection.getSelectedTabIds();
   console.log('info.menuItemId, selectedTabIds ', info.menuItemId, selectedTabIds);
+  let shouldClearSelection = configs.clearSelectionAfterCommandInvoked;
   switch (info.menuItemId) {
     case 'reloadTabs':
       await Commands.reloadTabs(selectedTabIds);
-      selection.clear();
       break;
     case 'bookmarkTabs':
       await Commands.bookmarkTabs(selectedTabIds);
@@ -346,45 +346,40 @@ async function onClick(info, tab) {
 
     case 'duplicateTabs':
       await Commands.duplicateTabs(selectedTabIds);
-      selection.clear();
       break;
 
     case 'pinTabs':
       await Commands.pinTabs(selectedTabIds);
-      selection.clear();
       break;
     case 'unpinTabs':
       await Commands.unpinTabs(selectedTabIds);
-      selection.clear();
       break;
     case 'muteTabs':
       await Commands.muteTabs(selectedTabIds);
-      selection.clear();
       break;
     case 'unmuteTabs':
       await Commands.unmuteTabs(selectedTabIds);
-      selection.clear();
       break;
 
     case 'moveToNewWindow':
       await Commands.moveToWindow(selectedTabIds);
+      shouldClearSelection = false;
       break;
 
     case 'removeTabs':
       await Commands.removeTabs(selectedTabIds);
-      selection.clear();
       break;
     case 'removeOther':
       await Commands.removeOtherTabs(selectedTabIds);
-      selection.clear();
       break;
 
     case 'clipboard':
-      selection.clear();
       break;
     case 'saveTabs':
+      if (shouldClearSelection) {
       await selection.clear();
       await wait(100); // to wait tab titles are updated
+      }
       await Commands.saveTabs(selectedTabIds);
       break;
 
@@ -415,15 +410,19 @@ async function onClick(info, tab) {
 
     case 'selectAll':
       selection.setAll(true);
+      shouldClearSelection = false;
       break;
     case 'select':
       selection.set(tab, true);
+      shouldClearSelection = false;
       break;
     case 'unselect':
       selection.set(tab, false);
+      shouldClearSelection = false;
       break;
     case 'invertSelection':
       selection.invert();
+      shouldClearSelection = false;
       break;
 
     default:
@@ -439,14 +438,15 @@ async function onClick(info, tab) {
         else {
           format = configs.copyToClipboardFormats[id.replace(/^[0-9]+:/, '')];
         }
+        if (shouldClearSelection) {
         await selection.clear();
         await wait(100); // to wait tab titles are updated
+        }
         await Commands.copyToClipboard(selectedTabIds, format);
       }
       else if (info.menuItemId.indexOf('moveToOtherWindow:') == 0) {
         const id = parseInt(info.menuItemId.replace(/^moveToOtherWindow:/, ''));
         await Commands.moveToWindow(selectedTabIds, id);
-        await selection.clear();
       }
       else if (info.menuItemId.indexOf('extra:') == 0) {
         const idMatch   = info.menuItemId.match(/^extra:([^:]+):(.+)$/);
@@ -463,6 +463,9 @@ async function onClick(info, tab) {
       }
       break;
   }
+
+  if (shouldClearSelection)
+    selection.clear();
 };
 browser.contextMenus.onClicked.addListener(onClick);
 

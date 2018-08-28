@@ -152,6 +152,8 @@
   "config_dependsOn_treestyletab_name": { "message": "ツリー型タブ" },
   "config_dependsOn_treestyletab_uri":  { "message": "https://addons.mozilla.org/firefox/addon/tree-style-tab/" },
 
+  "config_clearSelectionAfterCommandInvoked_label": { "message": "コマンドの実行後にタブの選択を解除する" },
+
 
   "config_shortcuts_caption": { "message": "キーボードショートカット" },
 

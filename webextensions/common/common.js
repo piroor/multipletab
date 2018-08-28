@@ -67,6 +67,7 @@ export const configs = new Configs({
   context_unselect: true,
   context_invertSelection: true,
 
+  clearSelectionAfterCommandInvoked: false,
   autoOpenMenuOnDragEnd: true,
   copyToClipboardFormats: defaultClipboardFormats,
   theme: 'default',
