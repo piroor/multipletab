@@ -91,8 +91,8 @@ async function refreshItems(contextTab, force) {
     clearTimeout(reserveRefreshItems.timeout);
   delete reserveRefreshItems.timeout;
 
-  const currentWindowId = contextTab ? contextTab.windowId : (await browser.windows.getLastFocused()).id;
-  const selection = Selections.get(currentWindowId);
+  const currentWindow = await (contextTab ? browser.windows.get(contextTab.windowId) : browser.windows.getLastFocused());
+  const selection = Selections.get(currentWindow.id);
   const serialized = JSON.stringify(selection.getSelectedTabs());
   if (!force &&
       serialized == mLastSelectedTabs) {
@@ -113,10 +113,11 @@ async function refreshItems(contextTab, force) {
     return;
   mActiveItems = [];
   mLastSelectedTabs       = serialized;
-  const otherWindows = (await browser.windows.getAll()).filter(window => window.id != currentWindowId);
+  const otherWindows = (await browser.windows.getAll())
+                         .filter(window => window.id != currentWindow.id && window.incognito == currentWindow.incognito);
   const visibilities = await getContextMenuItemVisibilities({
     tab:          contextTab,
-    windowId:     currentWindowId,
+    windowId:     currentWindow.id,
     otherWindows: otherWindows
   });
   if (currentRefreshStart != mLastRefreshStart)
