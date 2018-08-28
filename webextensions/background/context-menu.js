@@ -114,7 +114,7 @@ async function refreshItems(contextTab, force) {
   mActiveItems = [];
   mLastSelectedTabs       = serialized;
   const otherWindows = (await browser.windows.getAll())
-                         .filter(window => window.id != currentWindow.id && window.incognito == currentWindow.incognito);
+    .filter(window => window.id != currentWindow.id && window.incognito == currentWindow.incognito);
   const visibilities = await getContextMenuItemVisibilities({
     tab:          contextTab,
     windowId:     currentWindow.id,
