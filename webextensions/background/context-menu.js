@@ -525,13 +525,13 @@ DragSelection.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
   await refreshItems(selectionInfo.dragStartTab, true);
   try {
     if (configs.autoOpenMenuOnDragEnd)
-    await browser.runtime.sendMessage(Constants.kTST_ID, {
-      type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
-      window: (await browser.windows.getLastFocused()).id,
-      tab:  selectionInfo.dragStartTab.id,
-      left: message.clientX,
-      top:  message.clientY
-    }).catch(handleMissingReceiverError);
+      await browser.runtime.sendMessage(Constants.kTST_ID, {
+        type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
+        window: (await browser.windows.getLastFocused()).id,
+        tab:  selectionInfo.dragStartTab.id,
+        left: message.clientX,
+        top:  message.clientY
+      }).catch(handleMissingReceiverError);
   }
   catch(e) {
     log('failed to open context menu: ', e);
