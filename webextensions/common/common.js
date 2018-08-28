@@ -89,6 +89,7 @@ export const configs = new Configs({
   enableIntegrationWithTST: true,
 
   requestingPermissions: null,
+  requestingPermissionsNatively: null,
 
   shouldNotifyUpdatedFromLegacyVersion: false,
   debug: false
@@ -100,6 +101,7 @@ export const configs = new Configs({
     useWorkaroundForBug1272869
     cachedExternalAddons
     requestingPermissions
+    requestingPermissionsNatively
     shouldNotifyUpdatedFromLegacyVersion
     debug
   `.trim().split('\n').map(key => key.trim()).filter(key => key && key.indexOf('//') != 0)
