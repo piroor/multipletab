@@ -1,6 +1,7 @@
 # 更新履歴
 
  - master/HEAD
+   * [ツールバーボタン無しで権限を設定できるようにした（by Lej77m thanks!)](https://github.com/piroor/treestyletab/pull/2011)
  - 2.1.3 (2018.8.26)
    * Firefox 63以降の複数タブ選択機能に対応し、このアドオンでのタブの選択状態がネイティブの複数タブ選択の状態と同期するようにした
    * zh-CNロケール追加（by yfdyh000, thanks!）

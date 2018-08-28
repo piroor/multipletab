@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * [Allow to get permission without toolbar button, by Lej77. Thanks!](https://github.com/piroor/treestyletab/pull/2011)
  - 2.1.3 (2018.8.26)
    * Support multiselection of tabs on Firefox 63 and later. Tabs selected by this addon are treated as selected on the native multiselection feature.
    * The "zh-CN" locale is added by yfdyh000. Thanks!
