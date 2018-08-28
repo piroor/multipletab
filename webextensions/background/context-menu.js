@@ -377,8 +377,8 @@ async function onClick(info, tab) {
       break;
     case 'saveTabs':
       if (shouldClearSelection) {
-      await selection.clear();
-      await wait(100); // to wait tab titles are updated
+        await selection.clear();
+        await wait(100); // to wait tab titles are updated
       }
       await Commands.saveTabs(selectedTabIds);
       break;
@@ -439,8 +439,8 @@ async function onClick(info, tab) {
           format = configs.copyToClipboardFormats[id.replace(/^[0-9]+:/, '')];
         }
         if (shouldClearSelection) {
-        await selection.clear();
-        await wait(100); // to wait tab titles are updated
+          await selection.clear();
+          await wait(100); // to wait tab titles are updated
         }
         await Commands.copyToClipboard(selectedTabIds, format);
       }
