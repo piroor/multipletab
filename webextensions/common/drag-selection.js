@@ -413,8 +413,6 @@ dragExitAllWithDelay.cancel = () => {
 
 export async function onDragEnd(message) {
   //console.log('onDragEnd', message);
-  if (!configs.autoOpenMenuOnDragEnd)
-    return;
   if (mDragSelection.willCloseSelectedTabs) {
     const allTabs = mDragSelection.allTabsOnDragReady.slice(0);
     allTabs.reverse();
