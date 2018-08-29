@@ -2,6 +2,11 @@
 
  - master/HEAD
    * [Allow to get permission without toolbar button, by Lej77. Thanks!](https://github.com/piroor/treestyletab/pull/2011)
+   * Keep selection after a context menu command is invoked, by default.
+   * Don't show different type window to the list of "Move to Other Window".
+   * Update context menu items correctly, even if "auto open after drag selection" behavior is disabled.
+   * Allow to click sound button in Tree Style Tab sidebar without clearing selection.
+   * Select collapsed descendants (Tree Style Tab) of the active tab also, when any other tab is selected by ctrl-click.
  - 2.1.3 (2018.8.26)
    * Support multiselection of tabs on Firefox 63 and later. Tabs selected by this addon are treated as selected on the native multiselection feature.
    * The "zh-CN" locale is added by yfdyh000. Thanks!
