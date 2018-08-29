@@ -45,6 +45,7 @@ export const kTSTAPI_NOTIFY_TAB_DRAGEND      = 'tab-dragend';
 export const kTSTAPI_GROUP_TABS              = 'group-tabs';
 export const kTSTAPI_ADD_TAB_STATE           = 'add-tab-state';
 export const kTSTAPI_REMOVE_TAB_STATE        = 'remove-tab-state';
+export const kTSTAPI_GET_TREE                = 'get-tree';
 export const kTSTAPI_GET_TREE_STRUCTURE      = 'get-tree-structure';
 export const kTSTAPI_SET_TREE_STRUCTURE      = 'set-tree-structure';
 export const kTSTAPI_BLOCK_GROUPING          = 'block-grouping';

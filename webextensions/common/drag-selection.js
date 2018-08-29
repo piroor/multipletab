@@ -5,6 +5,11 @@
 */
 'use strict';
 
+import {
+  configs,
+  handleMissingReceiverError
+} from './common.js';
+import * as Constants from './constants.js';
 import * as Selections from './selections.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 import TabIdFixer from '/extlib/TabIdFixer.js';
@@ -248,6 +253,8 @@ export async function onClick(message) {
       mDragSelection.selection.set(lastActiveTab, true, {
         globalHighlight: false
       });
+      if (configs.enableIntegrationWithTST)
+        await setSelectedStateToCollapsedDescendants(lastActiveTab, true);
     }
     mDragSelection.selection.set(tabs, !selected, {
       globalHighlight: false
@@ -261,6 +268,28 @@ export async function onClick(message) {
     return true;
   }
   return false;
+}
+
+async function setSelectedStateToCollapsedDescendants(tab, selected) {
+  const tree = await browser.runtime.sendMessage(Constants.kTST_ID, {
+    type: Constants.kTSTAPI_GET_TREE,
+    tab:  tab.id
+  }).catch(handleMissingReceiverError);
+  if (!tree || !tree.states.includes('subtree-collapsed'))
+    return;
+  const treeTabs = collectTabsRecursively(tree);
+  mDragSelection.selection.set(treeTabs, selected, {
+    globalHighlight: false
+  });
+}
+function collectTabsRecursively(tab) {
+  let tabs = [tab];
+  if (tab.children) {
+    for (const child of tab.children) {
+      tabs = tabs.concat(collectTabsRecursively(child));
+    }
+  }
+  return tabs;
 }
 
 export async function onMouseUp(message) {
