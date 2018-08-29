@@ -62,7 +62,7 @@ export async function push(windowId, extraInfo = {}) {
     state: serialize(windowId),
     windowId,
     extraInfo
-  });
+  }).catch(_error => { /* ignore error from no opening panel */ });
 }
 
 function serialize(windowId) {
