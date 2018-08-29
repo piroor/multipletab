@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 2.1.4 (2018.8.30)
    * [Allow to get permission without toolbar button, by Lej77. Thanks!](https://github.com/piroor/treestyletab/pull/2011)
    * Keep selection after a context menu command is invoked, by default.
    * Don't show different type window to the list of "Move to Other Window".
