@@ -393,19 +393,43 @@ export async function saveTabs(ids) {
   const tabs = await getTabsByIds(ids);
   let prefix = configs.saveTabsPrefix;
   prefix = `${prefix.replace(/\/$/, '')}/`;
+  const alreadyUsedNames = new Set();
   for (const tab of tabs) {
     if (ids.indexOf(tab.id) > -1)
       browser.downloads.download({
         url:      tab.url,
-        filename: `${prefix}${await suggestFileNameForTab(tab)}`
+        filename: `${prefix}${await suggestUniqueFileNameForTab(tab, alreadyUsedNames)}`
       });
+  }
+}
+
+async function suggestUniqueFileNameForTab(tab, alreadyUsedNames) {
+  let name = await suggestFileNameForTab(tab);
+  if (!alreadyUsedNames.has(name)) {
+    alreadyUsedNames.add(name);
+    return name;
+  }
+  const WITH_SUFFIX_MATCHER = /(-(\d+)(\.?[^\.]+))$/;
+  let matched = name.match(WITH_SUFFIX_MATCHER);
+  if (!matched) {
+    name = name.replace(/(\.?[^\.]+)$/, '-0$1');
+    matched = name.match(WITH_SUFFIX_MATCHER);
+  }
+  let count = parseInt(matched[2]);
+  while (true) {
+    count++;
+    const newName = name.replace(matched[1], `-${count}${matched[3]}`);
+    if (alreadyUsedNames.has(newName))
+      continue;
+    alreadyUsedNames.add(newName);
+    return newName;
   }
 }
 
 const kMAYBE_IMAGE_PATTERN    = /\.(jpe?g|png|gif|bmp|svg)/i;
 const kMAYBE_RAW_FILE_PATTERN = /\.(te?xt|md)/i;
 
-export async function suggestFileNameForTab(tab) {
+async function suggestFileNameForTab(tab) {
   const fileNameMatch = tab.url
     .replace(/^\w+:\/\/[^\/]+\//, '') // remove origin part
     .replace(/#.*$/, '') // remove fragment
