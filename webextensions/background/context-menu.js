@@ -156,7 +156,20 @@ async function refreshItems(contextTab, force) {
       normalItemAppearedIn[parentId] = true;
       if (nextSeparatorIn[parentId]) {
         mActiveItems.push(nextSeparatorIn[parentId]);
-        promisedMenuUpdated.push(browser.menus.create(nextSeparatorIn[parentId]));
+        if (mUseNativeContextMenu) {
+          const params = nextSeparatorIn[parentId];
+          promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
+            id:        `panel_${params.id}`,
+            parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
+            viewTypes: ['popup']
+          })));
+          promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
+            viewTypes: ['tab', 'sidebar']
+          })));
+        }
+        else {
+          promisedMenuUpdated.push(browser.menus.create(nextSeparatorIn[parentId]));
+        }
         try {
           if (configs.enableIntegrationWithTST)
             promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
