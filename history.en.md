@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Better clipboard support on Firefox 63. When the data is only plain text, "copy to clipboard" command will be done safely and successfully even if there is only unprivileged tabs, e.g. addons.mozilla.org or `about:` pages.
  - 2.1.4 (2018.8.30)
    * [Allow to get permission without toolbar button, by Lej77. Thanks!](https://github.com/piroor/treestyletab/pull/2011)
    * Keep selection after a context menu command is invoked, by default.
