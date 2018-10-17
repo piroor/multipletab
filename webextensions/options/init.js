@@ -111,7 +111,7 @@ function onFormatInput(event) {
   field.throttleInputTimer = setTimeout(() => {
     delete field.throttleInputTimer;
     const row = field.parentNode;
-    const formats = configs.copyToClipboardFormats;
+    const formats = JSON.parse(JSON.stringify(configs.copyToClipboardFormats));
     const item = formats[row.itemIndex];
     if (field.classList.contains('label'))
       item.label = field.value;
