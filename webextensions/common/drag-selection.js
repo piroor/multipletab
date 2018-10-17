@@ -248,8 +248,7 @@ export async function onClick(message) {
   }
   else if (ctrlKeyPressed) {
     // toggle selection of the tab and all collapsed descendants
-    if ((message.tab.id != lastActiveTab.id ||
-         mDragSelection.selection.getSelectedTabIds().length == 0 /* clicking on the active tab itself */) &&
+    if (message.tab.id != lastActiveTab.id ||
         !gInSelectionSession) {
       mDragSelection.selection.set(lastActiveTab, true, {
         globalHighlight: false
