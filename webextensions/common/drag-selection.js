@@ -80,12 +80,12 @@ export function isActivatedInVerticalTabbarOfTST() {
 
 /* utilities */
 
-function retrieveTargetTabs(serializedTab) {
+function retrieveTargetTabs(serializedTab, force = false) {
   let tabs = [serializedTab];
   if (serializedTab.children &&
-      serializedTab.states.indexOf('subtree-collapsed') > -1) {
+      (force || serializedTab.states.indexOf('subtree-collapsed') > -1)) {
     for (const tab of serializedTab.children) {
-      tabs = tabs.concat(retrieveTargetTabs(tab))
+      tabs = tabs.concat(retrieveTargetTabs(tab, true))
     }
   }
   return tabs;
