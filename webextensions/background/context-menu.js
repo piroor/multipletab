@@ -82,6 +82,7 @@ export function init() {
 let mLastSelectedTabs = '';
 
 let mLastRefreshStart = Date.now();
+const mUseNativeContextMenu = typeof browser.menus.overrideContext == 'function';
 async function refreshItems(contextTab, force) {
   log('refreshItems');
   const currentRefreshStart = mLastRefreshStart = Date.now();
@@ -100,7 +101,7 @@ async function refreshItems(contextTab, force) {
     return;
   }
 
-  promisedMenuUpdated.push(browser.contextMenus.removeAll());
+  promisedMenuUpdated.push(browser.menus.removeAll());
   try {
     if (configs.enableIntegrationWithTST)
       promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
@@ -155,7 +156,7 @@ async function refreshItems(contextTab, force) {
       normalItemAppearedIn[parentId] = true;
       if (nextSeparatorIn[parentId]) {
         mActiveItems.push(nextSeparatorIn[parentId]);
-        promisedMenuUpdated.push(browser.contextMenus.create(nextSeparatorIn[parentId]));
+        promisedMenuUpdated.push(browser.menus.create(nextSeparatorIn[parentId]));
         try {
           if (configs.enableIntegrationWithTST)
             promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
@@ -189,11 +190,25 @@ async function refreshItems(contextTab, force) {
       return;
     }
     mActiveItems.push(params);
-    promisedMenuUpdated.push(browser.contextMenus.create(Object.assign({}, params, {
-      // Access key is not supported by WE API.
-      // See also: https://bugzilla.mozilla.org/show_bug.cgi?id=1320462
-      title: params.title && params.title.replace(/\(&[a-z]\)|&([a-z])/i, '$1')
-    })));
+    if (mUseNativeContextMenu) {
+      if (params.id != 'selection') {
+        promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
+          id:        `panel_${params.id}`,
+          parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
+          viewTypes: ['popup']
+        })));
+      }
+      promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
+        viewTypes: ['tab', 'sidebar']
+      })));
+    }
+    else {
+      promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
+        // Access key is not supported by WE API.
+        // See also: https://bugzilla.mozilla.org/show_bug.cgi?id=1320462
+        title: params.title && params.title.replace(/\(&[a-z]\)|&([a-z])/i, '$1')
+      })));
+    }
     try {
       if (configs.enableIntegrationWithTST)
         promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
@@ -334,7 +349,8 @@ async function onClick(info, tab) {
   const selectedTabIds = selection.getSelectedTabIds();
   console.log('info.menuItemId, selectedTabIds ', info.menuItemId, selectedTabIds);
   let shouldClearSelection = configs.clearSelectionAfterCommandInvoked;
-  switch (info.menuItemId) {
+  const itemId = info.menuItemId.replace(/^panel_/, '');
+  switch (itemId) {
     case 'reloadTabs':
       await Commands.reloadTabs(selectedTabIds);
       break;
@@ -427,8 +443,8 @@ async function onClick(info, tab) {
       break;
 
     default:
-      if (info.menuItemId.indexOf('clipboard:') == 0) {
-        const id = info.menuItemId.replace(/^clipboard:/, '');
+      if (itemId.indexOf('clipboard:') == 0) {
+        const id = itemId.replace(/^clipboard:/, '');
         let format;
         if (Array.isArray(configs.copyToClipboardFormats)) {
           let index = id.match(/^([0-9]+):/);
@@ -445,12 +461,12 @@ async function onClick(info, tab) {
         }
         await Commands.copyToClipboard(selectedTabIds, format);
       }
-      else if (info.menuItemId.indexOf('moveToOtherWindow:') == 0) {
-        const id = parseInt(info.menuItemId.replace(/^moveToOtherWindow:/, ''));
+      else if (itemId.indexOf('moveToOtherWindow:') == 0) {
+        const id = parseInt(itemId.replace(/^moveToOtherWindow:/, ''));
         await Commands.moveToWindow(selectedTabIds, id);
       }
-      else if (info.menuItemId.indexOf('extra:') == 0) {
-        const idMatch   = info.menuItemId.match(/^extra:([^:]+):(.+)$/);
+      else if (itemId.indexOf('extra:') == 0) {
+        const idMatch   = itemId.match(/^extra:([^:]+):(.+)$/);
         const owner     = idMatch[1];
         const id        = idMatch[2];
         const apiTabSelection = await selection.getAPITabSelection({
@@ -468,7 +484,7 @@ async function onClick(info, tab) {
   if (shouldClearSelection)
     selection.clear();
 };
-browser.contextMenus.onClicked.addListener(onClick);
+browser.menus.onClicked.addListener(onClick);
 
 
 function onMessage(message) {

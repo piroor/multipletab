@@ -6,8 +6,9 @@
   "description": "__MSG_extensionDescription__",
   "permissions": [
     "activeTab",
-    "contextMenus",
     "downloads",
+    "menus",
+    "menus.overrideContext",
     "notifications",
     "storage",
     "tabs"

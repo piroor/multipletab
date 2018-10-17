@@ -31,6 +31,9 @@ let gClickFired = false;
 let gWindowId = null;
 let gSelection = null;
 
+const gUseNativeContextMenu = typeof browser.menus.overrideContext == 'function';
+let gContextMenuIsOpened = false;
+
 window.addEventListener('DOMContentLoaded', async () => {
   gTabBar = document.querySelector('#tabs');
   gMenu = document.querySelector('#menu');
@@ -54,6 +57,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   browser.tabs.onCreated.addListener(onTabModified);
   browser.tabs.onRemoved.addListener(onTabModified);
+
+  browser.menus.onHidden.addListener(onMenuHidden);
 
   window.addEventListener('contextmenu', onContextMenu, { capture: true });
   window.addEventListener('click', onClick);
@@ -87,6 +92,7 @@ window.addEventListener('pagehide', () => {
   gTabBar.removeEventListener('mouseout', onMouseOut);
   browser.tabs.onCreated.removeListener(onTabModified);
   browser.tabs.onRemoved.removeListener(onTabModified);
+  browser.menus.onHidden.removeListener(onMenuHidden);
   gSelection.onChange.removeListener(onSelectionChange);
   gSelection = null;
   gWindowId = null;
@@ -94,6 +100,10 @@ window.addEventListener('pagehide', () => {
 
 function onTabModified() {
   reserveClearSelection();
+}
+
+function onMenuHidden() {
+  gContextMenuIsOpened = false;
 }
 
 async function updateUIForTST() {
@@ -196,6 +206,16 @@ function findBottomCaptionFromEvent(event) {
 }
 
 function onContextMenu(event) {
+  const tabItem = findTabItemFromEvent(event);
+  if (tabItem &&
+      gUseNativeContextMenu) {
+    browser.menus.overrideContext({
+      context: 'tab',
+      tabId:   tabItem.tab.id
+    });
+    gContextMenuIsOpened = true;
+    return;
+  }
   event.stopPropagation();
   event.preventDefault();
   openMenu(event);
@@ -349,6 +369,9 @@ DragSelection.onDragSelectionEnd.addListener((message, selectionInfo) => {
     updateMenu: true,
     contextTab: selectionInfo.dragStartTab && selectionInfo.dragStartTab.id
   }).then(() => {
+    if (gUseNativeContextMenu &&
+        gContextMenuIsOpened)
+      return;
     openMenu(message);
   }).catch(console.log);
 });
@@ -371,6 +394,7 @@ async function rebuildTabItems() {
 
 function buildTabItem(tab) {
   const item = document.createElement('li');
+  item.classList.toggle('tab');
 
   const label    = document.createElement('label');
   const checkbox = document.createElement('input');
