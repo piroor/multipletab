@@ -245,6 +245,33 @@ export async function copyToClipboard(ids, format) {
   log('richText: ', richText);
   log('plainText: ', plainText);
 
+  // available on Firefox 63 and later
+  if (navigator.clipboard) {
+    if (!richText &&
+        typeof navigator.clipboard.writeText == 'function') {
+      log('trying to write text to clipboard via Clipboard API');
+      try {
+        return navigator.clipboard.writeText(plainText);
+      }
+      catch(e) {
+        log('failed to write text to clipboard: ', e);
+      }
+    }
+    else if (richText &&
+             typeof navigator.clipboard.write == 'function') {
+      log('trying to write data to clipboard via Clipboard API');
+      try {
+        const dt = new DataTransfer();
+        dt.items.add('text/plain', plainText);
+        dt.items.add('text/html',  richText);
+        return navigator.clipboard.write(dt);
+      }
+      catch(e) {
+        log('failed to write data to clipboard: ', e);
+      }
+    }
+  }
+
   const doCopy = function() {
     if (richText) {
       // This block won't work if dom.event.clipboardevents.enabled=false.
@@ -282,10 +309,12 @@ export async function copyToClipboard(ids, format) {
   };
 
   if (!configs.useWorkaroundForBug1272869) {
+    log('trying to write data to clipboard via execCommand from current page');
     doCopy();
     return;
   }
 
+  log('trying to write data to clipboard via execCommand from content page');
   let permittedTabs = tabs.filter(Permissions.isPermittedTab);
   if (permittedTabs.length == 0) {
     permittedTabs = allTabs.filter(Permissions.isPermittedTab);
