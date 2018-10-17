@@ -76,6 +76,10 @@ export function init() {
       reserveRefreshItems();
     }
   });
+  configs.$addObserver(key => {
+    if (/^(context_|copyToClipboardFormats)/.test(key))
+      reserveRefreshItems();
+  });
 }
 
 
