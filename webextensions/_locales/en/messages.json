@@ -119,6 +119,7 @@
 
   "config_fontSize_label": { "message": "Panel Font Size:" },
   "config_fontSize_description": { "message": "*You can use any CSS font-size value." },
+  "config_applyThemeColorToIcon_label": { "message": "Apply theme color to the toolbar button (*You need to set \"svg.context-properties.content.enabled\" to \"true\" via \"about:config\" on Firefox 62 or later)" },
 
 
   "config_dragSelection_caption": { "message": "Tab Selection from dragging after long-press" },

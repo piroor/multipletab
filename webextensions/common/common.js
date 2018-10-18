@@ -92,6 +92,8 @@ export const configs = new Configs({
   requestingPermissions: null,
   requestingPermissionsNatively: null,
 
+  applyThemeColorToIcon: false,
+
   shouldNotifyUpdatedFromLegacyVersion: false,
   debug: false
 }, {

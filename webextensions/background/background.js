@@ -468,7 +468,14 @@ async function notifyUpdatedFromLegacy() {
 // This section should be removed and define those context-fill icons
 // statically on manifest.json after Firefox ESR66 (or 67) is released.
 // See also: https://github.com/piroor/multipletab/issues/215
-browser.runtime.getBrowserInfo().then(browserInfo => {
-  if (parseInt(browserInfo.version.split('.')[0]) >= 62)
+async function applyThemeColorToIcon() {
+  const browserInfo = await browser.runtime.getBrowserInfo();
+  if (configs.applyThemeColorToIcon &&
+      parseInt(browserInfo.version.split('.')[0]) >= 62)
     browser.browserAction.setIcon({ path: browser.runtime.getManifest().icons });
+}
+configs.$addObserver(key => {
+  if (key == 'applyThemeColorToIcon')
+    applyThemeColorToIcon();
 });
+configs.$loaded.then(applyThemeColorToIcon);
