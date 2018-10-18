@@ -470,11 +470,5 @@ async function notifyUpdatedFromLegacy() {
 // See also: https://github.com/piroor/multipletab/issues/215
 browser.runtime.getBrowserInfo().then(browserInfo => {
   if (parseInt(browserInfo.version.split('.')[0]) >= 62)
-    browser.browserAction.setIcon({
-      path: {
-        16: '/resources/16x16.svg',
-        20: '/resources/20x20.svg',
-        24: '/resources/24x24.svg'
-      }
-    });
+    browser.browserAction.setIcon({ path: browser.runtime.getManifest().icons });
 });
