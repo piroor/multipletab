@@ -19,35 +19,35 @@
     "clipboardWrite"
   ],
   "icons": {
-    "16": "resources/16x16.svg",
-    "20": "resources/20x20.svg",
-    "24": "resources/24x24.svg"
+    "16": "/resources/16x16.svg",
+    "20": "/resources/20x20.svg",
+    "24": "/resources/24x24.svg"
   },
   "background": {
-    "page": "background/background.html"
+    "page": "/background/background.html"
   },
   "browser_action": {
     "default_title": "__MSG_panelTitle__",
     "default_icon": {
-      "16": "resources/16x16.svg",
-      "20": "resources/20x20.svg",
-      "24": "resources/24x24.svg"
+      "16": "/resources/16x16.svg",
+      "20": "/resources/20x20.svg",
+      "24": "/resources/24x24.svg"
     },
     "browser_style": true,
     "theme_icons": [
       {
-        "light": "resources/16x16-dark.svg#toolbar",
-        "dark":  "resources/16x16-light.svg#toolbar",
+        "light": "/resources/16x16-dark.svg#toolbar",
+        "dark":  "/resources/16x16-light.svg#toolbar",
         "size": 16
       },
       {
-        "light": "resources/20x20-dark.svg#toolbar",
-        "dark":  "resources/20x20-light.svg#toolbar",
+        "light": "/resources/20x20-dark.svg#toolbar",
+        "dark":  "/resources/20x20-light.svg#toolbar",
         "size": 20
       },
       {
-        "light": "resources/24x24-dark.svg#toolbar",
-        "dark":  "resources/24x24-light.svg#toolbar",
+        "light": "/resources/24x24-dark.svg#toolbar",
+        "dark":  "/resources/24x24-light.svg#toolbar",
         "size": 24
       }
     ]
@@ -115,7 +115,7 @@
     }
   },
   "options_ui": {
-    "page": "options/options.html",
+    "page": "/options/options.html",
     "browser_style": true
   },
   "default_locale": "en",
