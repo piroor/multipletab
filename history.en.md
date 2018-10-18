@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Apply theme color to toolbar button icon only when it is intentionally activated with `svg.context-properties.content.enabled` = `true`.
  - 2.2.1 (2018.10.18)
    * Match color of toolbar button icon to the current theme on Firefox 62 and later.
  - 2.2.0 (2018.10.18)
