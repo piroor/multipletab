@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Match color of toolbar button icon to the current theme on Firefox 62 and later.
  - 2.2.0 (2018.10.18)
    * Better clipboard support on Firefox 63. When the data is only plain text, "copy to clipboard" command will be done safely and successfully even if there is only unprivileged tabs, e.g. addons.mozilla.org or `about:` pages.
    * Download tabs with unique file names.
