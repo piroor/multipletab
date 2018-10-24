@@ -78,6 +78,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   `;
 
+  browser.runtime.connect({
+    name: `${Constants.kCOMMAND_REQUEST_CONNECT_PREFIX}${Date.now()}`
+  });
+
   browser.runtime.sendMessage({
     type: Constants.kCOMMAND_NOTIFY_PANEL_SHOWN
   });

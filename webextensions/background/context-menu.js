@@ -62,6 +62,7 @@ mItems.unshift('selection');
 let mActiveItems = [];
 const mExtraItems = {};
 
+let mLastSubmenuVisible = false;
 
 export function init() {
   reserveRefreshItems();
@@ -82,6 +83,8 @@ export function init() {
   });
 }
 
+
+const POPUP_URL_PATTERN = `moz-extension://${location.host}/*`;
 
 let mLastSelectedTabs = '';
 
@@ -165,11 +168,10 @@ async function refreshItems(contextTab, force) {
           promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
             id:        `panel_${params.id}`,
             parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
-            viewTypes: ['popup']
+            viewTypes: ['popup'],
+            documentUrlPatterns: [POPUP_URL_PATTERN]
           })));
-          promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
-            viewTypes: ['tab', 'sidebar']
-          })));
+          promisedMenuUpdated.push(browser.menus.create(params));
         }
         else {
           promisedMenuUpdated.push(browser.menus.create(nextSeparatorIn[parentId]));
@@ -208,16 +210,19 @@ async function refreshItems(contextTab, force) {
     }
     mActiveItems.push(params);
     if (mUseNativeContextMenu) {
-      if (params.id != 'selection') {
+      if (params.id == 'selection') {
+        params.visible = false;
+        mLastSubmenuVisible = false;
+      }
+      else {
         promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
           id:        `panel_${params.id}`,
           parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
-          viewTypes: ['popup']
+          viewTypes: ['popup'],
+          documentUrlPatterns: [POPUP_URL_PATTERN]
         })));
       }
-      promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
-        viewTypes: ['tab', 'sidebar']
-      })));
+      promisedMenuUpdated.push(browser.menus.create(params));
     }
     else {
       promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
@@ -557,6 +562,35 @@ function onTSTAPIMessage(message) {
       return onClick(message.info, message.tab);
   }
 }
+
+
+// hide submenu for self panel
+
+let mIsPanelOpen = false;
+const mPanelConnectionMatcher = new RegExp(`^${Constants.kCOMMAND_REQUEST_CONNECT_PREFIX}`);
+browser.runtime.onConnect.addListener(port => {
+  if (!mPanelConnectionMatcher.test(port.name))
+    return;
+  mIsPanelOpen = true;
+  port.onDisconnect.addListener(_message => {
+    mIsPanelOpen = false;
+  });
+});
+
+if (mUseNativeContextMenu) {
+  browser.menus.onShown.addListener((info, _tab) => {
+    const visible = !mIsPanelOpen || info.viewType != 'popup';
+    if (mLastSubmenuVisible == visible)
+      return;
+    browser.menus.update('selection', { visible })
+      .then(() => {
+        mLastSubmenuVisible = visible;
+        browser.menus.refresh();
+      })
+      .catch(_e => {});
+  });
+}
+
 
 DragSelection.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
   await refreshItems(selectionInfo.dragStartTab, true);

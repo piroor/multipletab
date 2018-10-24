@@ -10,6 +10,7 @@ export const kCOMMAND_SELECTION_MENU_ITEM_CLICK     = 'multipletab:selection-men
 export const kCOMMAND_UNREGISTER_FROM_TST           = 'multipletab:unregister-from-tst';
 export const kCOMMAND_NOTIFY_PANEL_SHOWN            = 'multipletab:notify-panel-shown';
 export const kCOMMAND_NOTIFY_PERMISSIONS_GRANTED    = 'multipletab:notify-permissions-granted';
+export const kCOMMAND_REQUEST_CONNECT_PREFIX        = 'multipletab:request-connect-from:';
 
 
 export const kMTHAPI_READY                       = 'ready';
