@@ -84,7 +84,7 @@ export function init() {
 }
 
 
-const POPUP_URL_PATTERN = `moz-extension://${location.host}/*`;
+const POPUP_URL_PATTERN = [`moz-extension://${location.host}/*`];
 
 let mLastSelectedTabs = '';
 
@@ -169,7 +169,7 @@ async function refreshItems(contextTab, force) {
             id:        `panel_${params.id}`,
             parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
             viewTypes: ['popup'],
-            documentUrlPatterns: [POPUP_URL_PATTERN]
+            documentUrlPatterns: POPUP_URL_PATTERN
           })));
           promisedMenuUpdated.push(browser.menus.create(params));
         }
@@ -219,7 +219,7 @@ async function refreshItems(contextTab, force) {
           id:        `panel_${params.id}`,
           parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
           viewTypes: ['popup'],
-          documentUrlPatterns: [POPUP_URL_PATTERN]
+          documentUrlPatterns: POPUP_URL_PATTERN
         })));
       }
       promisedMenuUpdated.push(browser.menus.create(params));
