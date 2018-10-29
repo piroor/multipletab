@@ -508,7 +508,6 @@ async function onClick(info, tab) {
 };
 browser.menus.onClicked.addListener(onClick);
 
-
 function onMessage(message) {
   if (!message || !message.type)
     return;
