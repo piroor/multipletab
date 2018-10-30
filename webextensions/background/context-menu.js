@@ -559,6 +559,8 @@ function onTSTAPIMessage(message) {
   switch (message.type) {
     case Constants.kTSTAPI_CONTEXT_MENU_CLICK:
       return onClick(message.info, message.tab);
+    case Constants.kTSTAPI_CONTEXT_MENU_SHOWN:
+      return onShown(message.info, message.tab);
   }
 }
 
@@ -576,18 +578,28 @@ browser.runtime.onConnect.addListener(port => {
   });
 });
 
-if (mUseNativeContextMenu) {
-  browser.menus.onShown.addListener((info, _tab) => {
-    const visible = !mIsPanelOpen || info.viewType != 'popup';
-    if (mLastSubmenuVisible == visible)
-      return;
+async function onShown(info, _tab) {
+  const visible = !mIsPanelOpen || info.viewType != 'popup';
+  if (mLastSubmenuVisible == visible)
+    return;
+
+  if (mUseNativeContextMenu)
     browser.menus.update('selection', { visible })
       .then(() => {
-        mLastSubmenuVisible = visible;
         browser.menus.refresh();
       })
       .catch(_e => {});
-  });
+
+  browser.runtime.sendMessage(Constants.kTST_ID, {
+    type:   Constants.kTSTAPI_CONTEXT_MENU_UPDATE,
+    params: ['selection', { visible }]
+  }).catch(handleMissingReceiverError)
+
+  mLastSubmenuVisible = visible;
+}
+
+if (mUseNativeContextMenu) {
+  browser.menus.onShown.addListener(onShown);
 }
 
 

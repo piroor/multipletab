@@ -343,7 +343,9 @@ async function registerToTST() {
     Constants.kTSTAPI_NOTIFY_READY,
     Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN,
     Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP,
-    Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED
+    Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED,
+    Constants.kTSTAPI_CONTEXT_MENU_CLICK,
+    Constants.kTSTAPI_CONTEXT_MENU_SHOWN
   ];
   const dragSelectionListeningTypes = [
     Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY,

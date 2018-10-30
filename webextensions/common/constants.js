@@ -57,3 +57,4 @@ export const kTSTAPI_CONTEXT_MENU_UPDATE     = 'fake-contextMenu-update';
 export const kTSTAPI_CONTEXT_MENU_REMOVE     = 'fake-contextMenu-remove';
 export const kTSTAPI_CONTEXT_MENU_REMOVE_ALL = 'fake-contextMenu-remove-all';
 export const kTSTAPI_CONTEXT_MENU_CLICK      = 'fake-contextMenu-click';
+export const kTSTAPI_CONTEXT_MENU_SHOWN      = 'fake-contextMenu-shown';
