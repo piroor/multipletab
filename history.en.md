@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Fix inaccessible context menu item in TST's sidebar.
  - 2.2.2 (2018.10.19)
    * Apply theme color to toolbar button icon only when it is intentionally activated with `svg.context-properties.content.enabled` = `true`.
  - 2.2.1 (2018.10.18)
