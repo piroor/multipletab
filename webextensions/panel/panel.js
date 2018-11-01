@@ -40,6 +40,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   gMenu.ui = new MenuUI({
     root:              gMenu,
     onCommand:         onMenuCommand,
+    onShown:           onMenuShown,
     animationDuration: 150
   });
   gSizeDefinitions = document.getElementById('size-definitions');
@@ -303,9 +304,10 @@ function onMouseUp(event) {
       !configs.enableDragSelection)
     return;
   const item = findTabItemFromEvent(event);
-  setTimeout(() => {
+  setTimeout(async () => {
     if (gClickFired)
       return;
+    await buildMenu();
     DragSelection.onDragEnd({
       tab:     item && item.tab,
       window:  gWindowId,
@@ -469,9 +471,13 @@ function onMenuCommand(item, event) {
   }
 }
 
+function onMenuShown() {
+}
+
 async function buildMenu() {
   const items = await browser.runtime.sendMessage({
-    type: Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO
+    type:   Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO,
+    tabIds: gSelection.getSelectedTabIds()
   });
   items.shift(); // delete toplevel "selection" menu
 

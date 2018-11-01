@@ -63,50 +63,34 @@ let mActiveItems = [];
 const mExtraItems = {};
 
 let mLastSubmenuVisible = false;
+let mDirty = true;
 
 export function init() {
-  reserveRefreshItems();
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
-  SharedState.onUpdated.addListener((windowId, extraInfo) => {
-    if (extraInfo.updateMenu) {
-      const tab = extraInfo.contextTab ? { id: extraInfo.contextTab, windowId } : null ;
-      return refreshItems(tab, true);
-    }
-    else {
-      reserveRefreshItems();
-    }
+  SharedState.onUpdated.addListener((_windowId, _extraInfo) => {
+    mDirty = true;
   });
   configs.$addObserver(key => {
     if (/^(context_|copyToClipboardFormats)/.test(key))
-      reserveRefreshItems();
+      mDirty = true;
   });
 }
 
 
 const POPUP_URL_PATTERN = [`moz-extension://${location.host}/*`];
 
-let mLastSelectedTabs = '';
-
-let mLastRefreshStart = Date.now();
 const mUseNativeContextMenu = typeof browser.menus.overrideContext == 'function';
-async function refreshItems(contextTab, force) {
+async function refreshItems(contextTab) {
   log('refreshItems');
-  const currentRefreshStart = mLastRefreshStart = Date.now();
-  const promisedMenuUpdated = [];
-
-  if (reserveRefreshItems.timeout)
-    clearTimeout(reserveRefreshItems.timeout);
-  delete reserveRefreshItems.timeout;
-
-  const currentWindow = await (contextTab ? browser.windows.get(contextTab.windowId) : browser.windows.getLastFocused());
-  const selection = Selections.get(currentWindow.id);
-  const serialized = JSON.stringify(selection.getSelectedTabs());
-  if (!force &&
-      serialized == mLastSelectedTabs) {
+  if (!mDirty) {
     log(' => no change, skip');
     return;
   }
+
+  const promisedMenuUpdated = [];
+  const currentWindow = await (contextTab ? browser.windows.get(contextTab.windowId) : browser.windows.getLastFocused());
+  const selection = Selections.get(currentWindow.id);
 
   promisedMenuUpdated.push(browser.menus.removeAll());
   try {
@@ -117,10 +101,7 @@ async function refreshItems(contextTab, force) {
   }
   catch(_e) {
   }
-  if (currentRefreshStart != mLastRefreshStart)
-    return;
   mActiveItems = [];
-  mLastSelectedTabs       = serialized;
   const otherWindows = (await browser.windows.getAll())
     .filter(window => window.id != currentWindow.id && window.incognito == currentWindow.incognito);
   const visibilities = await getContextMenuItemVisibilities({
@@ -128,8 +109,6 @@ async function refreshItems(contextTab, force) {
     windowId:     currentWindow.id,
     otherWindows: otherWindows
   });
-  if (currentRefreshStart != mLastRefreshStart)
-    return;
   log('visibilities: ', visibilities);
 
   const hasSelection         = selection.getSelectedTabIds().length > 0;
@@ -244,8 +223,6 @@ async function refreshItems(contextTab, force) {
 
   for (const id of mItems) {
     await registerItem(id);
-    if (currentRefreshStart != mLastRefreshStart)
-      return;
   }
 
   // create submenu items for "copy to clipboard"
@@ -266,8 +243,6 @@ async function refreshItems(contextTab, force) {
     await registerItem(id, {
       title: id.replace(/^clipboard\/clipboard:[0-9]+:/, '')
     });
-    if (currentRefreshStart != mLastRefreshStart)
-      return;
   }
 
   // create submenu items for "move to other window"
@@ -275,26 +250,34 @@ async function refreshItems(contextTab, force) {
     await registerItem(`moveToOtherWindow/moveToOtherWindow:${window.id}`, {
       title: window.title
     });
-    if (currentRefreshStart != mLastRefreshStart)
-      return;
   }
 
   // create additional items registered by other addons
   for (const id of Object.keys(mExtraItems)) {
     await registerItem(`selection/extra:${id}`, mExtraItems[id]);
-    if (currentRefreshStart != mLastRefreshStart)
-      return;
   }
 
-  return Promise.all(promisedMenuUpdated);
-}
+  if (mActiveItems.length == 1 &&
+      mActiveItems[0].id == 'selection') {
+    const item = mActiveItems[0];
+    mActiveItems = [];
+    browser.menus.remove(item.id);
+    try {
+      if (configs.enableIntegrationWithTST)
+        promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
+          type:   Constants.kTSTAPI_CONTEXT_MENU_REMOVE,
+          params: [item.id]
+        }).catch(handleMissingReceiverError));
+    }
+    catch(_e) {
+    }
+  }
+  else {
+    browser.menus.refresh();
+  }
 
-export function reserveRefreshItems() {
-  if (reserveRefreshItems.timeout)
-    clearTimeout(reserveRefreshItems.timeout);
-  reserveRefreshItems.timeout = setTimeout(() => {
-    refreshItems();
-  }, 150);
+  mDirty = false;
+  return Promise.all(promisedMenuUpdated);
 }
 
 async function getContextMenuItemVisibilities(params) {
@@ -353,17 +336,6 @@ async function getContextMenuItemVisibilities(params) {
     invertSelection: tabs.length > 0
   };
 }
-
-/*
-configs.$load().then(() => {
-  refreshItems();
-});
-
-configs.$addObserver(key => {
-  if (key.indexOf('context_') == 0)
-    refreshItems();
-});
-*/
 
 async function onClick(info, tab) {
   //log('context menu item clicked: ', info, tab);
@@ -513,8 +485,11 @@ function onMessage(message) {
     return;
 
   switch (message.type) {
-    case Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO:
-      return Promise.resolve(mActiveItems);
+    case Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO: return (async () => {
+      const tab = message.tabIds.length > 0 ? (await browser.tabs.get(message.tabIds[0])) : null;
+      await refreshItems(tab);
+      return mActiveItems;
+    })();
 
     case Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK:
       return onClick({ menuItemId: message.id });
@@ -546,12 +521,14 @@ function onMessageExternal(message, sender) {
       addons[sender.id] = true;
       configs.cachedExternalAddons = addons;
       mExtraItems[`${sender.id}:${message.id}`] = message;
-      return reserveRefreshItems(null, true).then(() => true);
+      mDirty = true;
+      return Promise.resolve(true);
     };
 
     case Constants.kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
       delete mExtraItems[`${sender.id}:${message.id}`];
-      return reserveRefreshItems(null, true).then(() => true);
+      mDirty = true;
+      return Promise.resolve(true);
   }
 }
 
@@ -578,7 +555,9 @@ browser.runtime.onConnect.addListener(port => {
   });
 });
 
-async function onShown(info, _tab) {
+async function onShown(info, tab) {
+  await refreshItems(tab);
+
   const visible = !mIsPanelOpen || info.viewType != 'popup';
   if (mLastSubmenuVisible == visible)
     return;
@@ -604,7 +583,7 @@ if (mUseNativeContextMenu) {
 
 
 DragSelection.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
-  await refreshItems(selectionInfo.dragStartTab, true);
+  await refreshItems(selectionInfo.dragStartTab);
   try {
     if (configs.autoOpenMenuOnDragEnd)
       await browser.runtime.sendMessage(Constants.kTST_ID, {
@@ -623,19 +602,19 @@ DragSelection.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
 Selections.onCreated.addListener(selection => {
   selection.onChange.addListener((tabs, selected, options = {}) => {
     if (!options.dontUpdateMenu)
-      reserveRefreshItems();
+      mDirty = true;
   });
 });
 
 configs.$addObserver(key => {
   switch (key) {
     case 'copyToClipboardFormats':
-      reserveRefreshItems(null, true);
+      mDirty = true;
       break;
 
     default:
       if (key.indexOf('context_') == 0)
-        reserveRefreshItems(null, true);
+        mDirty = true;
       break;
   }
 });

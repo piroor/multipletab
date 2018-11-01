@@ -386,8 +386,6 @@ async function registerToTST() {
       `
     }).catch(handleMissingReceiverError);
     DragSelection.activateInVerticalTabbarOfTST();
-    // force rebuild menu
-    return ContextMenu.reserveRefreshItems(null, true).then(() => true);
   }
   catch(_e) {
     return false;
