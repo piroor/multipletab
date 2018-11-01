@@ -19,6 +19,7 @@ export const kMTHAPI_SET_TAB_SELECTION           = 'set-tab-selection';
 export const kMTHAPI_CLEAR_TAB_SELECTION         = 'clear-tab-selection';
 export const kMTHAPI_ADD_SELECTED_TAB_COMMAND    = 'add-selected-tab-command';
 export const kMTHAPI_REMOVE_SELECTED_TAB_COMMAND = 'remove-selected-tab-command';
+export const kMTHAPI_REMOVE_ALL_SELECTED_TAB_COMMANDS = 'remove-all-selected-tab-commands';
 export const kMTHAPI_INVOKE_SELECTED_TAB_COMMAND = 'selected-tab-command';
 
 export const kNOTIFICATION_DEFAULT_ICON = '/resources/24x24-light.svg';

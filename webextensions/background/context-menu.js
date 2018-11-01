@@ -529,6 +529,14 @@ function onMessageExternal(message, sender) {
       delete mExtraItems[`${sender.id}:${message.id}`];
       mDirty = true;
       return Promise.resolve(true);
+
+    case Constants.kMTHAPI_REMOVE_ALL_SELECTED_TAB_COMMANDS:
+      for (const key of Object.keys(mExtraItems)) {
+        if (key.indexOf(`${sender.id}:`) == 0)
+          delete mExtraItems[key];
+      }
+      mDirty = true;
+      return Promise.resolve(true);
   }
 }
 
