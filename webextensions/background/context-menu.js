@@ -142,6 +142,7 @@ async function refreshItems(contextTab) {
       normalItemAppearedIn[parentId] = true;
       if (nextSeparatorIn[parentId]) {
         mActiveItems.push(nextSeparatorIn[parentId]);
+        if (!options.onlyFakeMenu) {
         if (mUseNativeContextMenu) {
           const params = nextSeparatorIn[parentId];
           promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
@@ -163,6 +164,7 @@ async function refreshItems(contextTab) {
             }).catch(handleMissingReceiverError));
         }
         catch(_e) {
+        }
         }
       }
       delete nextSeparatorIn[parentId];
@@ -188,6 +190,7 @@ async function refreshItems(contextTab) {
       return;
     }
     mActiveItems.push(params);
+    if (!options.onlyFakeMenu) {
     if (mUseNativeContextMenu) {
       if (params.id == 'selection') {
         params.visible = false;
@@ -218,6 +221,7 @@ async function refreshItems(contextTab) {
         }).catch(handleMissingReceiverError));
     }
     catch(_e) {
+    }
     }
   }
 
@@ -254,7 +258,9 @@ async function refreshItems(contextTab) {
 
   // create additional items registered by other addons
   for (const id of Object.keys(mExtraItems)) {
-    await registerItem(`selection/extra:${id}`, mExtraItems[id]);
+    await registerItem(`selection/extra:${id}`, Object.assign({}, mExtraItems[id], {
+      onlyFakeMenu: true
+    }));
   }
 
   if (mActiveItems.length == 1 &&
