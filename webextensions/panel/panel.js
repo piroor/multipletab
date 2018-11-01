@@ -279,6 +279,8 @@ async function onMouseDown(event) {
   }
 }
 
+let mIsCapturing = false;
+
 async function onMouseMove(event) {
   gTabBar.removeEventListener('mousemove', onMouseMove);
   if (gClickFired ||
@@ -297,9 +299,16 @@ async function onMouseMove(event) {
   gTabBar.addEventListener('mouseover', onMouseOver);
   gTabBar.addEventListener('mouseout', onMouseOut);
   gTabBar.setCapture(false);
+  mIsCapturing = true;
 }
 
 function onMouseUp(event) {
+  if (mIsCapturing) {
+    gTabBar.removeEventListener('mousemove', onMouseMove);
+    gTabBar.removeEventListener('mouseover', onMouseOver);
+    gTabBar.removeEventListener('mouseout', onMouseOut);
+  }
+  document.releaseCapture();
   if (event.button != 0 ||
       gMenu.classList.contains('open') ||
       !configs.enableDragSelection)
@@ -316,10 +325,6 @@ function onMouseUp(event) {
       clientY: event.clientY
     }).catch(console.log);
   }, 10);
-  gTabBar.removeEventListener('mousemove', onMouseMove);
-  gTabBar.removeEventListener('mouseover', onMouseOver);
-  gTabBar.removeEventListener('mouseout', onMouseOut);
-  document.releaseCapture();
 }
 
 function onMouseOver(event) {
