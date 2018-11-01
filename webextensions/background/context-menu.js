@@ -143,28 +143,28 @@ async function refreshItems(contextTab) {
       if (nextSeparatorIn[parentId]) {
         mActiveItems.push(nextSeparatorIn[parentId]);
         if (!options.onlyFakeMenu) {
-        if (mUseNativeContextMenu) {
-          const params = nextSeparatorIn[parentId];
-          promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
-            id:        `panel_${params.id}`,
-            parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
-            viewTypes: ['popup'],
-            documentUrlPatterns: POPUP_URL_PATTERN
-          })));
-          promisedMenuUpdated.push(browser.menus.create(params));
-        }
-        else {
-          promisedMenuUpdated.push(browser.menus.create(nextSeparatorIn[parentId]));
-        }
-        try {
-          if (configs.enableIntegrationWithTST)
-            promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
-              type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
-              params: nextSeparatorIn[parentId]
-            }).catch(handleMissingReceiverError));
-        }
-        catch(_e) {
-        }
+          if (mUseNativeContextMenu) {
+            const params = nextSeparatorIn[parentId];
+            promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
+              id:        `panel_${params.id}`,
+              parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
+              viewTypes: ['popup'],
+              documentUrlPatterns: POPUP_URL_PATTERN
+            })));
+            promisedMenuUpdated.push(browser.menus.create(params));
+          }
+          else {
+            promisedMenuUpdated.push(browser.menus.create(nextSeparatorIn[parentId]));
+          }
+          try {
+            if (configs.enableIntegrationWithTST)
+              promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
+                type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
+                params: nextSeparatorIn[parentId]
+              }).catch(handleMissingReceiverError));
+          }
+          catch(_e) {
+          }
         }
       }
       delete nextSeparatorIn[parentId];
@@ -191,37 +191,37 @@ async function refreshItems(contextTab) {
     }
     mActiveItems.push(params);
     if (!options.onlyFakeMenu) {
-    if (mUseNativeContextMenu) {
-      if (params.id == 'selection') {
-        params.visible = false;
-        mLastSubmenuVisible = false;
+      if (mUseNativeContextMenu) {
+        if (params.id == 'selection') {
+          params.visible = false;
+          mLastSubmenuVisible = false;
+        }
+        else {
+          promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
+            id:        `panel_${params.id}`,
+            parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
+            viewTypes: ['popup'],
+            documentUrlPatterns: POPUP_URL_PATTERN
+          })));
+        }
+        promisedMenuUpdated.push(browser.menus.create(params));
       }
       else {
         promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
-          id:        `panel_${params.id}`,
-          parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
-          viewTypes: ['popup'],
-          documentUrlPatterns: POPUP_URL_PATTERN
+          // Access key is not supported by WE API.
+          // See also: https://bugzilla.mozilla.org/show_bug.cgi?id=1320462
+          title: params.title && params.title.replace(/\(&[a-z]\)|&([a-z])/i, '$1')
         })));
       }
-      promisedMenuUpdated.push(browser.menus.create(params));
-    }
-    else {
-      promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
-        // Access key is not supported by WE API.
-        // See also: https://bugzilla.mozilla.org/show_bug.cgi?id=1320462
-        title: params.title && params.title.replace(/\(&[a-z]\)|&([a-z])/i, '$1')
-      })));
-    }
-    try {
-      if (configs.enableIntegrationWithTST)
-        promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
-          type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
-          params
-        }).catch(handleMissingReceiverError));
-    }
-    catch(_e) {
-    }
+      try {
+        if (configs.enableIntegrationWithTST)
+          promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
+            type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
+            params
+          }).catch(handleMissingReceiverError));
+      }
+      catch(_e) {
+      }
     }
   }
 
