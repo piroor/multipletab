@@ -300,7 +300,8 @@ async function onMouseMove(event) {
 }
 
 function onMouseUp(event) {
-  if (gMenu.classList.contains('open') ||
+  if (event.button != 0 ||
+      gMenu.classList.contains('open') ||
       !configs.enableDragSelection)
     return;
   const item = findTabItemFromEvent(event);
