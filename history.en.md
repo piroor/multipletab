@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 2.2.4 (2018.11.3)
+   * Initialize and update context menu certainly just before it is opened.
+   * Introduce new API `remove-all-selected-tab-commands` for other addons.
  - 2.2.3 (2018.10.31)
    * Fix inaccessible context menu item in TST's sidebar.
  - 2.2.2 (2018.10.19)
