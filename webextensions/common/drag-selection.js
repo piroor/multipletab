@@ -6,6 +6,7 @@
 'use strict';
 
 import {
+  log,
   configs,
   handleMissingReceiverError
 } from './common.js';
@@ -105,9 +106,12 @@ function getTabsBetween(aBegin, end, allTabs = []) {
 }
 
 function toggleStateOfDragOverTabs(params = {}) {
+  log('toggleStateOfDragOverTabs ', params);
   if (mDragSelection.firstHoverTarget) {
+    log('  firstHoverTarget ', mDragSelection.firstHoverTarget);
     const oldUndeterminedRange = mDragSelection.undeterminedRange;
     mDragSelection.undeterminedRange = {};
+    log('  oldUndeterminedRange ', oldUndeterminedRange);
 
     let newUndeterminedRange = params.allTargets;
     if (newUndeterminedRange.every(tab => tab.id != mDragSelection.firstHoverTarget.id))
@@ -115,6 +119,7 @@ function toggleStateOfDragOverTabs(params = {}) {
 
     const betweenTabs = getTabsBetween(mDragSelection.firstHoverTarget, params.target, mDragSelection.allTabsOnDragReady);
     newUndeterminedRange = newUndeterminedRange.concat(betweenTabs);
+    log('  newUndeterminedRange ', newUndeterminedRange);
 
     const oldUndeterminedRangeIds = Object.keys(oldUndeterminedRange).map(id => parseInt(id));
     const newUndeterminedRangeIds = newUndeterminedRange.map(tab => tab.id);
