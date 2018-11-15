@@ -109,7 +109,7 @@ export default class Selection {
     if (!options.applying) {
       this.onChange.dispatch(tabs, selected, options);
       if (shouldHighlight)
-      this.reserveToSyncSelectedToHighlighted();
+        this.reserveToSyncSelectedToHighlighted();
     }
   }
 
