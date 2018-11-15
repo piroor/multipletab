@@ -108,6 +108,7 @@ export default class Selection {
       }).catch(handleMissingReceiverError);
     if (!options.applying) {
       this.onChange.dispatch(tabs, selected, options);
+      if (shouldHighlight)
       this.reserveToSyncSelectedToHighlighted();
     }
   }
