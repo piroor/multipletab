@@ -50,16 +50,25 @@ ul p.sub {
 
 .grid .column {
   display: inline-flex;
-  flex-grow: 1;
-}
-.grid .column.label {
-  flex-grow: 3;
-}
-.grid .column.format {
-  flex-grow: 6;
+  white-space: nowrap;
 }
 
-.grid .column.remove {
+.grid .column.fields {
+  flex-grow: 1;
+}
+
+.grid .fields .label {
+  width: 35%;
+}
+.grid .fields .format {
+  width: 65%;
+}
+
+.grid button {
+  min-width: 0;
+}
+
+.grid .remove {
   margin-left: 1em;
 }
 
