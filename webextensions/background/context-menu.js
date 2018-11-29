@@ -101,6 +101,10 @@ async function refreshItems(contextTab) {
   }
   catch(_e) {
   }
+
+  const nativeMenuParams = [];
+  const fakeMenuParams   = [];
+
   mActiveItems = [];
   const otherWindows = (await browser.windows.getAll())
     .filter(window => window.id != currentWindow.id && window.incognito == currentWindow.incognito);
@@ -143,28 +147,17 @@ async function refreshItems(contextTab) {
       if (nextSeparatorIn[parentId]) {
         mActiveItems.push(nextSeparatorIn[parentId]);
         if (!options.onlyFakeMenu) {
-          if (mUseNativeContextMenu) {
-            const params = nextSeparatorIn[parentId];
-            promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
+          const params = nextSeparatorIn[parentId];
+          nativeMenuParams.push(params);
+          if (mUseNativeContextMenu)
+            nativeMenuParams.push(Object.assign({}, params, {
               id:        `panel_${params.id}`,
               parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
               viewTypes: ['popup'],
               documentUrlPatterns: POPUP_URL_PATTERN
-            })));
-            promisedMenuUpdated.push(browser.menus.create(params));
-          }
-          else {
-            promisedMenuUpdated.push(browser.menus.create(nextSeparatorIn[parentId]));
-          }
-          try {
-            if (configs.enableIntegrationWithTST)
-              promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
-                type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
-                params: nextSeparatorIn[parentId]
-              }).catch(handleMissingReceiverError));
-          }
-          catch(_e) {
-          }
+            }));
+          if (configs.enableIntegrationWithTST)
+            fakeMenuParams.push(nextSeparatorIn[parentId]);
         }
       }
       delete nextSeparatorIn[parentId];
@@ -197,31 +190,24 @@ async function refreshItems(contextTab) {
           mLastSubmenuVisible = false;
         }
         else {
-          promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
+          nativeMenuParams.push(Object.assign({}, params, {
             id:        `panel_${params.id}`,
             parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
             viewTypes: ['popup'],
             documentUrlPatterns: POPUP_URL_PATTERN
-          })));
+          }));
         }
-        promisedMenuUpdated.push(browser.menus.create(params));
+        nativeMenuParams.push(params);
       }
       else {
-        promisedMenuUpdated.push(browser.menus.create(Object.assign({}, params, {
+        nativeMenuParams.push(Object.assign({}, params, {
           // Access key is not supported by WE API.
           // See also: https://bugzilla.mozilla.org/show_bug.cgi?id=1320462
           title: params.title && params.title.replace(/\(&[a-z]\)|&([a-z])/i, '$1')
-        })));
+        }));
       }
-      try {
-        if (configs.enableIntegrationWithTST)
-          promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
-            type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
-            params
-          }).catch(handleMissingReceiverError));
-      }
-      catch(_e) {
-      }
+      if (configs.enableIntegrationWithTST)
+        fakeMenuParams.push(params);
     }
   }
 
@@ -263,27 +249,23 @@ async function refreshItems(contextTab) {
     }));
   }
 
-  if (mActiveItems.length == 1 &&
-      mActiveItems[0].id == 'selection') {
-    const item = mActiveItems[0];
-    mActiveItems = [];
-    browser.menus.remove(item.id);
-    try {
-      if (configs.enableIntegrationWithTST)
-        promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
-          type:   Constants.kTSTAPI_CONTEXT_MENU_REMOVE,
-          params: [item.id]
-        }).catch(handleMissingReceiverError));
+  log('nativeMenuParams: ', nativeMenuParams);
+  log('fakeMenuParams: ', fakeMenuParams);
+  if (nativeMenuParams.length > 1 ||
+      nativeMenuParams[0].id != 'selection') {
+    for (const params of nativeMenuParams) {
+      promisedMenuUpdated.push(browser.menus.create(params));
     }
-    catch(_e) {
+    for (const params of fakeMenuParams) {
+      promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
+        type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
+        params
+      }).catch(handleMissingReceiverError));
     }
-  }
-  else {
-    browser.menus.refresh();
   }
 
   mDirty = false;
-  return Promise.all(promisedMenuUpdated);
+  return Promise.all(promisedMenuUpdated).then(() => browser.menus.refresh());
 }
 
 async function getContextMenuItemVisibilities(params) {
@@ -347,7 +329,7 @@ async function onClick(info, tab) {
   //log('context menu item clicked: ', info, tab);
   const selection = tab ? Selections.get(tab.windowId) : await Selections.getActive();
   const selectedTabIds = selection.getSelectedTabIds();
-  console.log('info.menuItemId, selectedTabIds ', info.menuItemId, selectedTabIds);
+  log('info.menuItemId, selectedTabIds ', info.menuItemId, selectedTabIds);
   let shouldClearSelection = configs.clearSelectionAfterCommandInvoked;
   const itemId = info.menuItemId.replace(/^panel_/, '');
   switch (itemId) {
@@ -503,8 +485,7 @@ function onMessage(message) {
 }
 
 function onMessageExternal(message, sender) {
-  if (configs.debug)
-    console.log('onMessageExternal: ', message, sender);
+  log('onMessageExternal: ', message, sender);
 
   if (!message ||
       typeof message.type != 'string')
@@ -591,9 +572,7 @@ async function onShown(info, tab) {
   mLastSubmenuVisible = visible;
 }
 
-if (mUseNativeContextMenu) {
-  browser.menus.onShown.addListener(onShown);
-}
+browser.menus.onShown.addListener(onShown);
 
 
 DragSelection.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
