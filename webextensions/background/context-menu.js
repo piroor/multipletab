@@ -68,12 +68,15 @@ let mDirty = true;
 export function init() {
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
-  SharedState.onUpdated.addListener((_windowId, _extraInfo) => {
+  SharedState.onUpdated.addListener((windowId, _extraInfo) => {
+    log('menu becomes dirty by updated shared state: ', windowId);
     mDirty = true;
   });
   configs.$addObserver(key => {
-    if (/^(context_|copyToClipboardFormats)/.test(key))
+    if (/^(context_|copyToClipboardFormats)/.test(key)) {
+      log('menu becomes dirty by changed config: ', key);
       mDirty = true;
+    }
   });
 }
 
@@ -264,6 +267,7 @@ async function refreshItems(contextTab) {
     }
   }
 
+  log('menu becomes undirty');
   mDirty = false;
   return Promise.all(promisedMenuUpdated).then(() => browser.menus.refresh());
 }
@@ -508,21 +512,26 @@ function onMessageExternal(message, sender) {
       addons[sender.id] = true;
       configs.cachedExternalAddons = addons;
       mExtraItems[`${sender.id}:${message.id}`] = message;
+      log('menu becomes dirty by added command from other addon');
       mDirty = true;
       return Promise.resolve(true);
     };
 
     case Constants.kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
       delete mExtraItems[`${sender.id}:${message.id}`];
+      log('menu becomes dirty by removed command from other addon');
       mDirty = true;
       return Promise.resolve(true);
 
     case Constants.kMTHAPI_REMOVE_ALL_SELECTED_TAB_COMMANDS:
       for (const key of Object.keys(mExtraItems)) {
-        if (key.indexOf(`${sender.id}:`) == 0)
+        if (key.indexOf(`${sender.id}:`) == 0) {
           delete mExtraItems[key];
+          mDirty = true;
+        }
       }
-      mDirty = true;
+      if (mDirty)
+        log('menu becomes dirty by removed commands from other addon');
       return Promise.resolve(true);
   }
 }
@@ -594,8 +603,10 @@ DragSelection.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
 
 Selections.onCreated.addListener(selection => {
   selection.onChange.addListener((tabs, selected, options = {}) => {
-    if (!options.dontUpdateMenu)
+    if (!options.dontUpdateMenu) {
+      log('menu becomes dirty by changed selection');
       mDirty = true;
+    }
   });
 });
 
