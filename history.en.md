@@ -1,6 +1,10 @@
 # History
 
  - master/HEAD
+   * Update visibility of context menu items more certainly.
+   * Save removal of "copy to clipboard" formats correctly.
+   * Don't show horizontal scrollbar for options.
+   * Don't set global "highlighted" status for "to be closed" tabs, for better compatibility with other addons.
  - 2.2.4 (2018.11.3)
    * Initialize and update context menu certainly just before it is opened.
    * Introduce new API `remove-all-selected-tab-commands` for other addons.
