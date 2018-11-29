@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 2.2.5 (2018.11.30)
    * Update visibility of context menu items more certainly.
    * Save removal of "copy to clipboard" formats correctly.
    * Don't show horizontal scrollbar for options.
