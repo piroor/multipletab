@@ -610,16 +610,3 @@ Selections.onCreated.addListener(selection => {
     }
   });
 });
-
-configs.$addObserver(key => {
-  switch (key) {
-    case 'copyToClipboardFormats':
-      mDirty = true;
-      break;
-
-    default:
-      if (key.indexOf('context_') == 0)
-        mDirty = true;
-      break;
-  }
-});
