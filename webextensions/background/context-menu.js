@@ -255,7 +255,8 @@ async function refreshItems(contextTab) {
   log('nativeMenuParams: ', nativeMenuParams);
   log('fakeMenuParams: ', fakeMenuParams);
   if (nativeMenuParams.length > 1 ||
-      nativeMenuParams[0].id != 'selection') {
+      (nativeMenuParams.length == 1 &&
+       nativeMenuParams[0].id != 'selection')) {
     for (const params of nativeMenuParams) {
       promisedMenuUpdated.push(browser.menus.create(params));
     }
