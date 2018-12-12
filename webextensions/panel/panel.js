@@ -12,7 +12,6 @@ import {
   handleMissingReceiverError
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
-import * as Selection from '/common/selection.js';
 import DragSelection from '/common/drag-selection.js';
 import MenuUI from '/extlib/MenuUI.js';
 import TabFavIconHelper from '/extlib/TabFavIconHelper.js';
@@ -153,7 +152,7 @@ function reserveClearSelection() {
   }, 100);
 }
 
-function onDragSelectionEnd(message, selectionInfo) {
+function onDragSelectionEnd(message, _selectionInfo) {
   gDragSelection.syncToHighlighted().then(() => {
     if (gUseNativeContextMenu &&
         gContextMenuIsOpened)
