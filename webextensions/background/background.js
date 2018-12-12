@@ -203,32 +203,32 @@ function onTSTAPIMessage(message) {
       return DragSelectionManager.onNonTabAreaClick(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
-      if (!configs.enableDragSelectionManager)
+      if (!configs.enableDragSelection)
         return;
       return DragSelectionManager.onDragReady(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
-      if (!configs.enableDragSelectionManager)
+      if (!configs.enableDragSelection)
         return;
       return DragSelectionManager.onDragCancel(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART:
-      if (!configs.enableDragSelectionManager)
+      if (!configs.enableDragSelection)
         return;
       return DragSelectionManager.onDragStart(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER:
-      if (!configs.enableDragSelectionManager)
+      if (!configs.enableDragSelection)
         return;
       return DragSelectionManager.onDragEnter(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT:
-      if (!configs.enableDragSelectionManager)
+      if (!configs.enableDragSelection)
         return;
       return DragSelectionManager.onDragExit(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEND:
-      if (!configs.enableDragSelectionManager)
+      if (!configs.enableDragSelection)
         return;
       return DragSelectionManager.onDragEnd(message);
   }
@@ -315,7 +315,7 @@ function onMessage(message) {
 
 configs.$addObserver(key => {
   switch (key) {
-    case 'enableDragSelectionManager':
+    case 'enableDragSelection':
       unregisterFromTST();
       registerToTST();
       break;
@@ -340,7 +340,7 @@ async function registerToTST() {
     Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT,
     Constants.kTSTAPI_NOTIFY_TAB_DRAGEND
   ];
-  const listeningTypes = configs.enableDragSelectionManager ?
+  const listeningTypes = configs.enableDragSelection ?
     baseListeningTypes.concat(dragSelectionListeningTypes) :
     baseListeningTypes;
   try {
