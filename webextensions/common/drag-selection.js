@@ -336,17 +336,10 @@ export async function onDragReady(message) {
   const startTabs = retrieveTargetTabs(message.tab);
   for (const tab of startTabs) {
     mDragSelection.selection.set(tab.id, tab);
-    if (mDragSelection.willCloseSelectedTabs)
-      Selection.notifyTabStateToTST(tab.id, Constants.kREADY_TO_CLOSE, true);
-  }
-
-  if (!mDragSelection.willCloseSelectedTabs &&
-      mDragSelection.selection.size > 0)
-    Selection.select(Array.from(mDragSelection.selection.values()));
-
-  for (const tab of startTabs) {
     mDragSelection.undeterminedRange.set(tab.id, tab);
   }
+  const state = mDragSelection.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;
+  Selection.notifyTabStateToTST(startTabs.map(tab => tab.id), state, true);
 }
 
 export async function onDragCancel(message) {
