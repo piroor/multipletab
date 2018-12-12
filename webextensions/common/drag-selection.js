@@ -193,7 +193,11 @@ export async function onClick(message) {
   const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
   if (!ctrlKeyPressed && !message.shiftKey) {
     if (!selected) {
-      Selection.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
+      Selection.notifyTabStateToTST(
+        Array.from(mDragSelection.selection.keys()),
+        [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+        false
+      );
       mDragSelection.selection.clear();
     }
     gInSelectionSession = false;
@@ -289,7 +293,11 @@ export async function onMouseUp(message) {
   if (!ctrlKeyPressed &&
       !message.shiftKey &&
       !mDragSelection.dragStartTarget) {
-    Selection.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
+    Selection.notifyTabStateToTST(
+      Array.from(mDragSelection.selection.keys()),
+      [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+      false
+    );
     mDragSelection.selection.clear();
   }
 }
@@ -297,7 +305,11 @@ export async function onMouseUp(message) {
 export async function onNonTabAreaClick(message) {
   if (message.button != 0)
     return;
-  Selection.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
+  Selection.notifyTabStateToTST(
+    Array.from(mDragSelection.selection.keys()),
+    [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+    false
+  );
   mDragSelection.selection.clear();
   mDragSelection.clear();
 }
