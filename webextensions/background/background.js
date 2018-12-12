@@ -15,7 +15,7 @@ import * as Constants from '/common/constants.js';
 import * as Selection from '/common/selection.js';
 import * as Commands from '/common/commands.js';
 import * as Permissions from '/common/permissions.js';
-import * as DragSelection from '/common/drag-selection.js';
+import * as DragSelectionManager from '/common/drag-selection-manager.js';
 import RichConfirm from '/extlib/RichConfirm.js';
 import * as ContextMenu from './context-menu.js';
 
@@ -192,45 +192,45 @@ function onTSTAPIMessage(message) {
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN:
       if (message.soundButton)
         return;
-      return DragSelection.onClick(message);
+      return DragSelectionManager.onClick(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP:
       if (message.soundButton)
         return;
-      return DragSelection.onMouseUp(message);
+      return DragSelectionManager.onMouseUp(message);
 
     case Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED:
-      return DragSelection.onNonTabAreaClick(message);
+      return DragSelectionManager.onNonTabAreaClick(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionManager)
         return;
-      return DragSelection.onDragReady(message);
+      return DragSelectionManager.onDragReady(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionManager)
         return;
-      return DragSelection.onDragCancel(message);
+      return DragSelectionManager.onDragCancel(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionManager)
         return;
-      return DragSelection.onDragStart(message);
+      return DragSelectionManager.onDragStart(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionManager)
         return;
-      return DragSelection.onDragEnter(message);
+      return DragSelectionManager.onDragEnter(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionManager)
         return;
-      return DragSelection.onDragExit(message);
+      return DragSelectionManager.onDragExit(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEND:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionManager)
         return;
-      return DragSelection.onDragEnd(message);
+      return DragSelectionManager.onDragEnd(message);
   }
 }
 
@@ -315,7 +315,7 @@ function onMessage(message) {
 
 configs.$addObserver(key => {
   switch (key) {
-    case 'enableDragSelection':
+    case 'enableDragSelectionManager':
       unregisterFromTST();
       registerToTST();
       break;
@@ -340,7 +340,7 @@ async function registerToTST() {
     Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT,
     Constants.kTSTAPI_NOTIFY_TAB_DRAGEND
   ];
-  const listeningTypes = configs.enableDragSelection ?
+  const listeningTypes = configs.enableDragSelectionManager ?
     baseListeningTypes.concat(dragSelectionListeningTypes) :
     baseListeningTypes;
   try {
@@ -371,7 +371,7 @@ async function registerToTST() {
         }
       `
     }).catch(handleMissingReceiverError);
-    DragSelection.activateInVerticalTabbarOfTST();
+    DragSelectionManager.activateInVerticalTabbarOfTST();
   }
   catch(_e) {
     return false;
@@ -379,7 +379,7 @@ async function registerToTST() {
 }
 
 function unregisterFromTST() {
-  DragSelection.deactivateInVerticalTabbarOfTST();
+  DragSelectionManager.deactivateInVerticalTabbarOfTST();
   try {
     browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL

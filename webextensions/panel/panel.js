@@ -13,7 +13,7 @@ import {
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import * as Selection from '/common/selection.js';
-import * as DragSelection from '/common/drag-selection.js';
+import * as DragSelectionManager from '/common/drag-selection-manager.js';
 import MenuUI from '/extlib/MenuUI.js';
 import TabFavIconHelper from '/extlib/TabFavIconHelper.js';
 import '../extlib/l10n.js';
@@ -247,7 +247,7 @@ function onClick(event) {
     return;
   const item = findTabItemFromEvent(event);
   if (item) {
-    DragSelection.onClick({
+    DragSelectionManager.onClick({
       window:        item.tab.windowId,
       tab:           item.tab,
       lastActiveTab: gLastClickedItem.tab,
@@ -262,7 +262,7 @@ function onClick(event) {
     gLastClickedItem.classList.add('last-focused');
   }
   else
-    DragSelection.onNonTabAreaClick({
+    DragSelectionManager.onNonTabAreaClick({
       button: event.button
     }).catch(console.log);
 }
@@ -284,14 +284,14 @@ let mIsCapturing = false;
 async function onMouseMove(event) {
   gTabBar.removeEventListener('mousemove', onMouseMove);
   if (gClickFired ||
-      !configs.enableDragSelection)
+      !configs.enableDragSelectionManager)
     return;
   const item = findTabItemFromEvent(event);
   if (!item)
     return;
   gDragTargetIsClosebox =  event.target.classList.contains('closebox');
   gLastDragEnteredTarget = gDragTargetIsClosebox ? event.target : item ;
-  DragSelection.onDragReady({
+  DragSelectionManager.onDragReady({
     tab:             item.tab,
     window:          gWindowId,
     startOnClosebox: gDragTargetIsClosebox
@@ -311,14 +311,14 @@ function onMouseUp(event) {
   document.releaseCapture();
   if (event.button != 0 ||
       gMenu.classList.contains('open') ||
-      !configs.enableDragSelection)
+      !configs.enableDragSelectionManager)
     return;
   const item = findTabItemFromEvent(event);
   setTimeout(async () => {
     if (gClickFired)
       return;
     await buildMenu();
-    DragSelection.onDragEnd({
+    DragSelectionManager.onDragEnd({
       tab:     item && item.tab,
       window:  gWindowId,
       clientX: event.clientX,
@@ -328,7 +328,7 @@ function onMouseUp(event) {
 }
 
 function onMouseOver(event) {
-  if (!configs.enableDragSelection)
+  if (!configs.enableDragSelectionManager)
     return;
   const item       = findTabItemFromEvent(event);
   let target     = item;
@@ -339,7 +339,7 @@ function onMouseOver(event) {
   if (item &&
       (!gDragTargetIsClosebox || isClosebox)) {
     if (target != gLastDragEnteredTarget) {
-      DragSelection.onDragEnter({
+      DragSelectionManager.onDragEnter({
         tab:    item.tab,
         window: gWindowId
       }).catch(console.log);
@@ -354,7 +354,7 @@ function onMouseOut(event) {
     return;
   const item = findTabItemFromEvent(event);
   if (!item ||
-      !configs.enableDragSelection)
+      !configs.enableDragSelectionManager)
     return;
   let target = item;
   if (gDragTargetIsClosebox && isClosebox)
@@ -362,7 +362,7 @@ function onMouseOut(event) {
   cancelDelayedDragExit(target);
   gOnDragExitTimeout = setTimeout(() => {
     gOnDragExitTimeout = null;
-    DragSelection.onDragExit({
+    DragSelectionManager.onDragExit({
       tab:    item.tab,
       window: gWindowId
     }).catch(console.log);
@@ -376,7 +376,7 @@ function cancelDelayedDragExit() {
   }
 }
 
-DragSelection.onDragSelectionEnd.addListener((message, selectionInfo) => {
+DragSelectionManager.onDragSelectionManagerEnd.addListener((message, selectionInfo) => {
   Selection.select(selectionInfo.selection).then(() => {
     if (gUseNativeContextMenu &&
         gContextMenuIsOpened)

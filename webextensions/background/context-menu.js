@@ -13,7 +13,7 @@ import {
 import * as Constants from '/common/constants.js';
 import * as Selection from '/common/selection.js';
 import * as Commands from '/common/commands.js';
-import * as DragSelection from '/common/drag-selection.js';
+import * as DragSelectionManager from '/common/drag-selection-manager.js';
 
 const mItems = `
   reloadTabs
@@ -578,7 +578,7 @@ async function onShown(info, tab) {
 browser.menus.onShown.addListener(onShown);
 
 
-DragSelection.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
+DragSelectionManager.onDragSelectionManagerEnd.addListener(async (message, selectionInfo) => {
   await refreshItems(selectionInfo.dragStartTab);
   try {
     if (configs.autoOpenMenuOnDragEnd)

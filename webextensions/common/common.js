@@ -86,7 +86,7 @@ export const configs = new Configs({
 
   cachedExternalAddons: {},
 
-  enableDragSelection: true,
+  enableDragSelectionManager: true,
   enableIntegrationWithTST: true,
 
   requestingPermissions: null,
