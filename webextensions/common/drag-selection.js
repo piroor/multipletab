@@ -172,9 +172,18 @@ function toggleStateOfDragOverTabs(params = {}) {
   }
   else {
     for (const tab of params.allTargets) {
-      mDragSelection.undeterminedRange.set(tab.id, tab);
-      mDragSelection.selection.set(tab.id, tab);
-      toBeSelected.add(tab.id);
+      if (mDragSelection.undeterminedRange.has(tab.id))
+        mDragSelection.undeterminedRange.delete(tab.id);
+      else
+        mDragSelection.undeterminedRange.set(tab.id, tab);
+      if (mDragSelection.selection.has(tab.id)) {
+        mDragSelection.selection.delete(tab.id);
+        toBeUnselected.add(tab.id);
+      }
+      else {
+        mDragSelection.selection.set(tab.id, tab);
+        toBeSelected.add(tab.id);
+      }
     }
   }
   Selection.notifyTabStateToTST(Array.from(toBeSelected), params.state, true);
