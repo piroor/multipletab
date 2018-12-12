@@ -14,7 +14,7 @@ import * as Constants from './constants.js';
 import * as Selection from './selection.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
-export const onDragSelectionManagerEnd = new EventListenerManager();
+export const onDragSelectionEnd = new EventListenerManager();
 
 const mDragSelectionManager = {
   selection:             new Map(),
@@ -326,7 +326,7 @@ export async function onDragReady(message) {
 export async function onDragCancel(message) {
   //console.log('onDragCancel', message);
   if (mDragSelectionManager.selection.size > 1) {
-    onDragSelectionManagerEnd.dispatch(message, {
+    onDragSelectionEnd.dispatch(message, {
       dragStartTab: mDragSelectionManager.dragStartTarget,
       selection:    Array.from(mDragSelectionManager.selection.values())
     });
@@ -430,7 +430,7 @@ export async function onDragEnd(message) {
     mDragSelectionManager.clear();
   }
   else if (mDragSelectionManager.selection.size > 1) {
-    await onDragSelectionManagerEnd.dispatch(message, {
+    await onDragSelectionEnd.dispatch(message, {
       dragStartTab: mDragSelectionManager.dragStartTarget,
       selection:    Array.from(mDragSelectionManager.selection.values())
     });

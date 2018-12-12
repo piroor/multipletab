@@ -578,7 +578,7 @@ async function onShown(info, tab) {
 browser.menus.onShown.addListener(onShown);
 
 
-DragSelectionManager.onDragSelectionManagerEnd.addListener(async (message, selectionInfo) => {
+DragSelectionManager.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
   await refreshItems(selectionInfo.dragStartTab);
   try {
     if (configs.autoOpenMenuOnDragEnd)

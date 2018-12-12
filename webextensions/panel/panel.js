@@ -376,7 +376,7 @@ function cancelDelayedDragExit() {
   }
 }
 
-DragSelectionManager.onDragSelectionManagerEnd.addListener((message, selectionInfo) => {
+DragSelectionManager.onDragSelectionEnd.addListener((message, selectionInfo) => {
   Selection.select(selectionInfo.selection).then(() => {
     if (gUseNativeContextMenu &&
         gContextMenuIsOpened)
