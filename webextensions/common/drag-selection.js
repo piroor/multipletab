@@ -233,7 +233,7 @@ export async function onClick(message) {
       if (selected)
         mDragSelection.selection.delete(tab.id);
       else
-        mDragSelection.selection.set(tab.id, tabs);
+        mDragSelection.selection.set(tab.id, tab);
     }
     // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
     const selectedTabIds = Array.from(mDragSelection.selection.keys());
