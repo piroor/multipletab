@@ -183,13 +183,12 @@ function toggleStateOfDragOverTabs(params = {}) {
 
 let gInSelectionSession = false;
 
-export async function onClick(message, options = {}) {
+export async function onClick(message) {
   log('onClick ', message);
   if (message.button != 0)
     return false;
 
   const windowId = message.window || message.windowId || (message.tab && message.tab.windowId);
-
   /*
   mDragSelection.selection.clear();
   const selectedTabs = await Selection.getSelection(windowId);
