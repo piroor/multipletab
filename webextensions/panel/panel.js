@@ -153,7 +153,9 @@ function reserveClearSelection() {
 }
 
 function onDragSelectionEnd(message, _selectionInfo) {
+  log('onDragSelectionEnd ', message);
   gDragSelection.syncToHighlighted().then(() => {
+    log('ready to open');
     if (gUseNativeContextMenu &&
         gContextMenuIsOpened)
       return;
@@ -457,6 +459,7 @@ function buildTabItem(tab) {
 
 async function openMenu(event) {
   const hasItems = await buildMenu();
+  log('openMenu: hasItems ', hasItems);
   if (!hasItems)
     return;
   gMenu.ui.open({
@@ -489,6 +492,7 @@ async function buildMenu() {
     tabIds: gDragSelection.selectedTabIds
   });
   items.shift(); // delete toplevel "selection" menu
+  log('buildMenu for ', items);
 
   const range = document.createRange();
   range.selectNodeContents(gMenu);

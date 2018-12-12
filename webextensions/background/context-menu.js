@@ -78,16 +78,16 @@ export function init() {
 const POPUP_URL_PATTERN = [`moz-extension://${location.host}/*`];
 
 const mUseNativeContextMenu = typeof browser.menus.overrideContext == 'function';
-async function refreshItems(contextTab) {
+async function refreshItems(contextTab, tabs = null) {
   log('refreshItems');
-  if (!mDirty) {
+  if (!mDirty && !tabs) {
     log(' => no change, skip');
     return;
   }
 
   const promisedMenuUpdated = [];
   const currentWindow = await (contextTab ? browser.windows.get(contextTab.windowId) : browser.windows.getLastFocused());
-  const selectedTabs = await Selection.getSelection(currentWindow.id);
+  const selectedTabs = tabs || await Selection.getSelection(currentWindow.id);
 
   promisedMenuUpdated.push(browser.menus.removeAll());
   try {
@@ -107,6 +107,7 @@ async function refreshItems(contextTab) {
     .filter(window => window.id != currentWindow.id && window.incognito == currentWindow.incognito);
   const visibilities = await getContextMenuItemVisibilities({
     tab:          contextTab,
+    tabs,
     windowId:     currentWindow.id,
     otherWindows: otherWindows
   });
@@ -122,24 +123,34 @@ async function refreshItems(contextTab) {
     id = parts.pop();
 
     const parentId = parts.pop() || '';
-    if (parentId && !(parentId in createdItems))
+    if (parentId && !(parentId in createdItems)) {
+      log(`no parent ${parentId} for ${id}`);
       return;
+    }
 
     const isSeparator = id.charAt(0) == '-';
     if (isSeparator) {
-      if (!normalItemAppearedIn[parentId])
+      if (!normalItemAppearedIn[parentId]) {
+        log(`no normal item before separator ${id}`);
         return;
+      }
       normalItemAppearedIn[parentId] = false;
       id = `separator${separatorsCount++}`;
     }
     else {
-      if (id in visibilities && !visibilities[id])
+      if (id in visibilities && !visibilities[id]) {
+        log(`${id} is hidden by condition`);
         return;
-      if (!options.always && !hasSelection)
+      }
+      if (!options.always && !hasSelection) {
+        log(`${id} is hidden for no selection`);
         return;
+      }
       const key = `context_${id}`;
-      if (configs[key] === false)
+      if (configs[key] === false) {
+        log(`${id} is hidden by config`);
         return;
+      }
       normalItemAppearedIn[parentId] = true;
       if (nextSeparatorIn[parentId]) {
         mActiveItems.push(nextSeparatorIn[parentId]);
@@ -270,9 +281,10 @@ async function refreshItems(contextTab) {
 async function getContextMenuItemVisibilities(params) {
   const tab = params.tab;
   const [selectedTabs, allTabs] = await Promise.all([
-    Selection.getSelection(params.windowId),
+    params.tabs || Selection.getSelection(params.windowId),
     Selection.getAllTabs(params.windowId)
   ]);
+  log('getContextMenuItemVisibilities ', { params, selectedTabs, allTabs });
   const hasSelection = selectedTabs.length > 1;
   const allSelected  = selectedTabs.length == allTabs.length;
   let pinnedCount = 0;
@@ -472,8 +484,8 @@ function onMessage(message) {
 
   switch (message.type) {
     case Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO: return (async () => {
-      const tab = message.tabIds.length > 0 ? (await browser.tabs.get(message.tabIds[0])) : null;
-      await refreshItems(tab);
+      const tabs = await Promise.all(message.tabIds.map(id => browser.tabs.get(id)));
+      await refreshItems(tabs[0], tabs);
       return mActiveItems;
     })();
 
