@@ -36,14 +36,19 @@ export const mDragSelection = {
     this.allTabsOnDragReady = [];
   },
   clear() {
-    Selection.notifyTabStateToTST(
-      Array.from(this.selection.keys()),
-      [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
-      false
-    );
+    const hadSelection = this.selection.size > 0;
+    if (hadSelection) {
+      Selection.notifyTabStateToTST(
+        Array.from(this.selection.keys()),
+        [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+        false
+      );
+    }
     this.cancel();
-    this.selection.clear();
-    Selection.clear();
+    if (hadSelection) {
+      this.selection.clear();
+      Selection.clear();
+    }
   },
   export() {
     const exported = {};
@@ -328,7 +333,8 @@ export async function onDragReady(message) {
       Selection.notifyTabStateToTST(tab.id, Constants.kREADY_TO_CLOSE, true);
   }
 
-  if (!mDragSelection.willCloseSelectedTabs)
+  if (!mDragSelection.willCloseSelectedTabs &&
+      mDragSelection.selection.size > 0)
     Selection.select(Array.from(mDragSelection.selection.values()));
 
   for (const tab of startTabs) {
