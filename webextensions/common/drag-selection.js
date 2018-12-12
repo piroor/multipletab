@@ -141,12 +141,13 @@ export default class DragSelection {
       const outOfRangeTabIds = Array.from(oldUndeterminedRange.keys()).filter(id => newUndeterminedRangeIds.indexOf(id) < 0);
       {
         for (const id of outOfRangeTabIds) {
-          if (this.selection.has(id)) {
-            this.selection.delete(id);
+          const tab = oldUndeterminedRange.get(id);
+          if (this.has(tab)) {
+            this.delete(tab);
             toBeUnselected.add(id);
           }
           else {
-            this.add(oldUndeterminedRange.get(id));
+            this.add(tab);
             toBeSelected.add(id);
           }
         }
