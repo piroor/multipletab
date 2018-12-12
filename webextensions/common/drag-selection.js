@@ -36,19 +36,16 @@ export const mDragSelection = {
     this.allTabsOnDragReady = [];
   },
   clear() {
-    const hadSelection = this.selection.size > 0;
-    if (hadSelection) {
+    if (this.selection.size > 0)
       Selection.notifyTabStateToTST(
         Array.from(this.selection.keys()),
         [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
         false
       );
-    }
     this.cancel();
-    if (hadSelection) {
-      this.selection.clear();
+    if (this.selection.size > 1)
       Selection.clear();
-    }
+    this.selection.clear();
   },
   export() {
     const exported = {};
