@@ -12,7 +12,7 @@ import {
   handleMissingReceiverError
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
-import * as SelectionUtils from '/common/selection-utils.js';
+import * as Selection from '/common/selection.js';
 import * as Commands from '/common/commands.js';
 import * as Permissions from '/common/permissions.js';
 import * as DragSelection from '/common/drag-selection.js';
@@ -59,7 +59,7 @@ async function onShortcutCommand(command) {
     active:        true,
     currentWindow: true
   }))[0];
-  const selectedTabs   = await SelectionUtils.getSelection(activeTab.windowId);
+  const selectedTabs   = await Selection.getSelection(activeTab.windowId);
   const selectedTabIds = selectedTabs.map(tab => tab.id);
 
   if (selectedTabIds.length <= 0)
@@ -132,17 +132,17 @@ async function onShortcutCommand(command) {
         buttons: formats.map(format => format.label)
       });
       if (result.buttonIndex > -1) {
-        await SelectionUtils.clear(activeTab.windowId);
+        await Selection.clear(activeTab.windowId);
         await Commands.copyToClipboard(selectedTabIds, formats[result.buttonIndex].format);
-        SelectionUtils.select(selectedTabs);
+        Selection.select(selectedTabs);
       }
     } break;
 
     case 'saveSelectedTabs':
-      await SelectionUtils.clear(activeTab.windowId);
+      await Selection.clear(activeTab.windowId);
       await wait(100); // to wait tab titles are updated
       await Commands.saveTabs(selectedTabIds);
-      SelectionUtils.select(selectedTabs);
+      Selection.select(selectedTabs);
       break;
 
     case 'printSelectedTabs':
@@ -163,13 +163,13 @@ async function onShortcutCommand(command) {
       break;
 
     case 'toggleSelection':
-      SelectionUtils.toggle(activeTab);
+      Selection.toggle(activeTab);
       break;
     case 'selectAll':
-      SelectionUtils.selectAll(activeTab.windowId);
+      Selection.selectAll(activeTab.windowId);
       break;
     case 'invertSelection':
-      SelectionUtils.invert();
+      Selection.invert();
       break;
   }
 }
@@ -248,12 +248,12 @@ function onMessageExternal(message, sender) {
 
   switch (message.type) {
     case Constants.kMTHAPI_GET_TAB_SELECTION:
-      return SelectionUtils.getSelection();
+      return Selection.getSelection();
 
     case Constants.kMTHAPI_SET_TAB_SELECTION:
       return (async () => {
-        const allTabs = await SelectionUtils.getAllTabs(message.window || message.windowId)();
-        const selectedTabs = await SelectionUtils.getAllTabs(message.window || message.windowId)();
+        const allTabs = await Selection.getAllTabs(message.window || message.windowId)();
+        const selectedTabs = await Selection.getAllTabs(message.window || message.windowId)();
         const toBeSelectedTabIds = new Set(selectedTabs.map(tab => tab.id));
 
         let unselectTabs = message.unselect;
@@ -285,12 +285,12 @@ function onMessageExternal(message, sender) {
         if (toBeSelectedTabIds.size == 0)
           toBeSelectedTabIds.add(allTabs.filter(tab => tab.active)[0].id);
 
-        await SelectionUtils.select(allTabs.filter(tab => toBeSelectedTabIds.has(tab.id)));
+        await Selection.select(allTabs.filter(tab => toBeSelectedTabIds.has(tab.id)));
         return true;
       })();
 
     case Constants.kMTHAPI_CLEAR_TAB_SELECTION:
-      return SelectionUtils.clear().then(() => true);
+      return Selection.clear().then(() => true);
   }
 }
 

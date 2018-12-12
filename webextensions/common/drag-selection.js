@@ -11,7 +11,7 @@ import {
   handleMissingReceiverError
 } from './common.js';
 import * as Constants from './constants.js';
-import * as SelectionUtils from './selection-utils.js';
+import * as Selection from './selection.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 import TabIdFixer from '/extlib/TabIdFixer.js';
 
@@ -39,7 +39,7 @@ export const mDragSelection = {
   clear() {
     this.cancel();
     this.selection.clear();
-    SelectionUtils.clear();
+    Selection.clear();
   },
   export() {
     const exported = {};
@@ -132,7 +132,7 @@ function toggleStateOfDragOverTabs(params = {}) {
           mDragSelection.selection.delete(id);
         else
           mDragSelection.selection.set(id, oldUndeterminedRange.has(id));
-        SelectionUtils.notifyTabStateToTST(id, params.state, mDragSelection.selection.has(id));
+        Selection.notifyTabStateToTST(id, params.state, mDragSelection.selection.has(id));
       }
     }
 
@@ -147,7 +147,7 @@ function toggleStateOfDragOverTabs(params = {}) {
           mDragSelection.selection.delete(tab.id);
         else
           mDragSelection.selection.set(tab.id, tab);
-        SelectionUtils.notifyTabStateToTST(tab.id, params.state, mDragSelection.selection.has(tab.id));
+        Selection.notifyTabStateToTST(tab.id, params.state, mDragSelection.selection.has(tab.id));
       }
     }
   }
@@ -155,11 +155,11 @@ function toggleStateOfDragOverTabs(params = {}) {
     for (const tab of params.allTargets) {
       mDragSelection.undeterminedRange.set(tab.id, tab);
       mDragSelection.selection.set(tab.id, tab);
-      SelectionUtils.notifyTabStateToTST(tab.id, params.state, mDragSelection.selection.has(tab.id));
+      Selection.notifyTabStateToTST(tab.id, params.state, mDragSelection.selection.has(tab.id));
     }
   }
   if (params.state != Constants.kREADY_TO_CLOSE)
-    SelectionUtils.select(Array.from(mDragSelection.selection.values()));
+    Selection.select(Array.from(mDragSelection.selection.values()));
 }
 
 
@@ -182,7 +182,7 @@ export async function onClick(message) {
   const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
   if (!ctrlKeyPressed && !message.shiftKey) {
     if (!selected) {
-      SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
+      Selection.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
       mDragSelection.selection.clear();
     }
     gInSelectionSession = false;
@@ -218,7 +218,7 @@ export async function onClick(message) {
     const newSelectedTabIds = Array.from(mDragSelection.selection.keys());
     if (newSelectedTabIds.length > 0 && !newSelectedTabIds.includes(lastActiveTab.id))
       browser.tabs.update(mDragSelection.lastClickedTab ? mDragSelection.lastClickedTab.id : newSelectedTabIds[0], { active: true });
-    SelectionUtils.select(Array.from(mDragSelection.selection.values()));
+    Selection.select(Array.from(mDragSelection.selection.values()));
     return true;
   }
   else if (ctrlKeyPressed) {
@@ -241,7 +241,7 @@ export async function onClick(message) {
       browser.tabs.update(selectedTabIds[0], { active: true });
     gInSelectionSession = true;
     mDragSelection.lastClickedTab = message.tab;
-    SelectionUtils.select(Array.from(mDragSelection.selection.values()));
+    Selection.select(Array.from(mDragSelection.selection.values()));
     return true;
   }
   return false;
@@ -280,7 +280,7 @@ export async function onMouseUp(message) {
   if (!ctrlKeyPressed &&
       !message.shiftKey &&
       !mDragSelection.dragStartTarget) {
-    SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
+    Selection.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
     mDragSelection.selection.clear();
   }
 }
@@ -288,7 +288,7 @@ export async function onMouseUp(message) {
 export async function onNonTabAreaClick(message) {
   if (message.button != 0)
     return;
-  SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
+  Selection.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
   mDragSelection.selection.clear();
   mDragSelection.clear();
 }
@@ -298,7 +298,7 @@ export async function onNonTabAreaClick(message) {
 
 export async function onDragReady(message) {
   //console.log('onDragReady', message);
-  SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
+  Selection.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
 
   mDragSelection.clear();
   mDragSelection.dragEnteredCount = 1;
@@ -311,10 +311,10 @@ export async function onDragReady(message) {
   for (const tab of startTabs) {
     mDragSelection.selection.set(tab.id, tab);
     if (mDragSelection.willCloseSelectedTabs)
-      SelectionUtils.notifyTabStateToTST(tab.id, Constants.kREADY_TO_CLOSE, true);
+      Selection.notifyTabStateToTST(tab.id, Constants.kREADY_TO_CLOSE, true);
   }
 
-  SelectionUtils.select(Array.from(mDragSelection.selection.values()));
+  Selection.select(Array.from(mDragSelection.selection.values()));
 
   for (const tab of startTabs) {
     mDragSelection.undeterminedRange.set(tab.id, tab);
@@ -350,7 +350,7 @@ export async function onDragEnter(message) {
   if (mDragSelection.pendingTabs) {
     for (const tab of mDragSelection.pendingTabs) {
       mDragSelection.selection.set(tab.id, tab);
-      SelectionUtils.notifyTabStateToTST(tab.id, Constants.kREADY_TO_CLOSE, true);
+      Selection.notifyTabStateToTST(tab.id, Constants.kREADY_TO_CLOSE, true);
     }
     mDragSelection.pendingTabs = null;
   }
@@ -367,9 +367,9 @@ export async function onDragEnter(message) {
       mDragSelection.selection.size == targetTabs.length) {
     for (const tab of targetTabs) {
       mDragSelection.selection.delete(tab.id);
-      SelectionUtils.notifyTabStateToTST(tab.id, state, false);
+      Selection.notifyTabStateToTST(tab.id, state, false);
     }
-    SelectionUtils.select(Array.from(mDragSelection.selection.values()));
+    Selection.select(Array.from(mDragSelection.selection.values()));
     for (const tab of targetTabs) {
       mDragSelection.undeterminedRange.set(tab.id, tab);
     }

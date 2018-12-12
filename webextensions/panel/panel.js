@@ -12,7 +12,7 @@ import {
   handleMissingReceiverError
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
-import * as SelectionUtils from '/common/selection-utils.js';
+import * as Selection from '/common/selection.js';
 import * as DragSelection from '/common/drag-selection.js';
 import MenuUI from '/extlib/MenuUI.js';
 import TabFavIconHelper from '/extlib/TabFavIconHelper.js';
@@ -47,7 +47,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
   document.documentElement.dataset.theme = configs.theme;
   gWindowId = (await browser.windows.getLastFocused()).id;
-  const selectedTabs = await SelectionUtils.getSelection(gWindowId);
+  const selectedTabs = await Selection.getSelection(gWindowId);
   gSelection = new Map();
   for (const tab of selectedTabs) {
     gSelection.set(tab.id, tab);
@@ -146,7 +146,7 @@ function reserveClearSelection() {
     clearTimeout(reserveClearSelection.reserved);
   reserveClearSelection.reserved = setTimeout(() => {
     delete reserveClearSelection.reserved;
-    SelectionUtils.clear();
+    Selection.clear();
     gSelection.clear();
   }, 100);
 }
@@ -378,7 +378,7 @@ function cancelDelayedDragExit() {
 }
 
 DragSelection.onDragSelectionEnd.addListener((message, selectionInfo) => {
-  SelectionUtils.select(selectionInfo.selection).then(() => {
+  Selection.select(selectionInfo.selection).then(() => {
     if (gUseNativeContextMenu &&
         gContextMenuIsOpened)
       return;
@@ -415,11 +415,11 @@ function buildTabItem(tab) {
     item.classList.toggle('selected');
     if (item.classList.contains('selected')) {
       gSelection.set(tab.id, tab);
-      SelectionUtils.select(tab);
+      Selection.select(tab);
     }
     else {
       gSelection.delete(tab.id);
-      SelectionUtils.unselect(tab);
+      Selection.unselect(tab);
     }
   });
   label.appendChild(checkbox);

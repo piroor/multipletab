@@ -11,7 +11,7 @@ import {
   handleMissingReceiverError
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
-import * as SelectionUtils from '/common/selection-utils.js';
+import * as Selection from '/common/selection.js';
 import * as Commands from '/common/commands.js';
 import * as DragSelection from '/common/drag-selection.js';
 
@@ -87,7 +87,7 @@ async function refreshItems(contextTab) {
 
   const promisedMenuUpdated = [];
   const currentWindow = await (contextTab ? browser.windows.get(contextTab.windowId) : browser.windows.getLastFocused());
-  const selectedTabs = await SelectionUtils.getSelection(currentWindow.id);
+  const selectedTabs = await Selection.getSelection(currentWindow.id);
 
   promisedMenuUpdated.push(browser.menus.removeAll());
   try {
@@ -270,8 +270,8 @@ async function refreshItems(contextTab) {
 async function getContextMenuItemVisibilities(params) {
   const tab = params.tab;
   const [selectedTabs, allTabs] = await Promise.all([
-    SelectionUtils.getSelection(params.windowId),
-    SelectionUtils.getAllTabs(params.windowId)
+    Selection.getSelection(params.windowId),
+    Selection.getAllTabs(params.windowId)
   ]);
   const hasSelection = selectedTabs.length > 1;
   const allSelected  = selectedTabs.length == allTabs.length;
@@ -330,7 +330,7 @@ async function getContextMenuItemVisibilities(params) {
 async function onClick(info, tab) {
   //log('context menu item clicked: ', info, tab);
   const windowId       = tab && tab.windowId;
-  const selectedTabs   = await SelectionUtils.getSelection(windowId);
+  const selectedTabs   = await Selection.getSelection(windowId);
   const selectedTabIds = selectedTabs.map(tab => tab.id);
   log('info.menuItemId, selectedTabIds ', info.menuItemId, selectedTabIds);
   let shouldClearSelection = configs.clearSelectionAfterCommandInvoked;
@@ -379,7 +379,7 @@ async function onClick(info, tab) {
       break;
     case 'saveTabs':
       if (shouldClearSelection) {
-        await SelectionUtils.clear(windowId);
+        await Selection.clear(windowId);
       }
       await Commands.saveTabs(selectedTabIds);
       break;
@@ -410,19 +410,19 @@ async function onClick(info, tab) {
       break;
 
     case 'selectAll':
-      SelectionUtils.selectAll(windowId);
+      Selection.selectAll(windowId);
       shouldClearSelection = false;
       break;
     case 'select':
-      SelectionUtils.select(tab);
+      Selection.select(tab);
       shouldClearSelection = false;
       break;
     case 'unselect':
-      SelectionUtils.unselect(tab);
+      Selection.unselect(tab);
       shouldClearSelection = false;
       break;
     case 'invertSelection':
-      SelectionUtils.invert(windowId);
+      Selection.invert(windowId);
       shouldClearSelection = false;
       break;
 
@@ -440,7 +440,7 @@ async function onClick(info, tab) {
           format = configs.copyToClipboardFormats[id.replace(/^[0-9]+:/, '')];
         }
         if (shouldClearSelection)
-          await SelectionUtils.clear(windowId);
+          await Selection.clear(windowId);
         await Commands.copyToClipboard(selectedTabIds, format);
       }
       else if (itemId.indexOf('moveToOtherWindow:') == 0) {
@@ -451,7 +451,7 @@ async function onClick(info, tab) {
         const idMatch   = itemId.match(/^extra:([^:]+):(.+)$/);
         const owner     = idMatch[1];
         const id        = idMatch[2];
-        const selection = await SelectionUtils.getSelectionAndOthers(windowId);
+        const selection = await Selection.getSelectionAndOthers(windowId);
         browser.runtime.sendMessage(owner, {
           type: Constants.kMTHAPI_INVOKE_SELECTED_TAB_COMMAND,
           id,
@@ -462,7 +462,7 @@ async function onClick(info, tab) {
   }
 
   if (shouldClearSelection)
-    SelectionUtils.clear(windowId);
+    Selection.clear(windowId);
 };
 browser.menus.onClicked.addListener(onClick);
 
