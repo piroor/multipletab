@@ -226,8 +226,7 @@ function onTSTAPIMessage(message) {
 }
 
 function onMessageExternal(message, sender) {
-  if (configs.debug)
-    console.log('onMessageExternal: ', message, sender);
+  //log('onMessageExternal: ', message, sender);
 
   switch (sender.id) {
     case Constants.kTST_ID: { // Tree Style Tab API

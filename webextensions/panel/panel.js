@@ -16,7 +16,6 @@ import * as Selection from '/common/selection.js';
 import * as DragSelection from '/common/drag-selection.js';
 import MenuUI from '/extlib/MenuUI.js';
 import TabFavIconHelper from '/extlib/TabFavIconHelper.js';
-import TabIdFixer from '/extlib/TabIdFixer.js';
 import '../extlib/l10n.js';
 
 log.context = 'Panel';
@@ -394,7 +393,6 @@ async function rebuildTabItems() {
   const fragment = document.createDocumentFragment();
   const tabs = await browser.tabs.query({ currentWindow: true });
   for (const tab of tabs) {
-    TabIdFixer.fixTab(tab);
     const tabItem = buildTabItem(tab);
     fragment.appendChild(tabItem);
   }

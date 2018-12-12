@@ -14,7 +14,6 @@ import {
 } from './common.js';
 import * as Constants from './constants.js';
 import * as Permissions from './permissions.js';
-import TabIdFixer from '/extlib/TabIdFixer.js';
 
 async function getTabsByIds(ids) {
   const tabs = await Promise.all(ids.map(id => browser.tabs.get(id).catch(_e => {})));
@@ -37,7 +36,6 @@ export async function bookmarkTabs(ids, options = {}) {
   }
 
   const tabs = await Promise.all(ids.map(id => browser.tabs.get(id)));
-  tabs.forEach(TabIdFixer.fixTab);
   const folderParams = {
     title: browser.i18n.getMessage('bookmarkFolder_label', tabs[0].title)
   };

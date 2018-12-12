@@ -483,7 +483,7 @@ function onMessage(message) {
 }
 
 function onMessageExternal(message, sender) {
-  log('onMessageExternal: ', message, sender);
+  //log('onMessageExternal: ', message, sender);
 
   if (!message ||
       typeof message.type != 'string')
