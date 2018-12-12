@@ -132,8 +132,7 @@ function toggleStateOfDragOverTabs(params = {}) {
           mDragSelection.selection.delete(id);
         else
           mDragSelection.selection.set(id, oldUndeterminedRange.has(id));
-        if (params.state == 'ready-to-close')
-          SelectionUtils.notifyTabStateToTST(id, params.state, mDragSelection.selection.has(id));
+        SelectionUtils.notifyTabStateToTST(id, params.state, mDragSelection.selection.has(id));
       }
     }
 
@@ -148,8 +147,7 @@ function toggleStateOfDragOverTabs(params = {}) {
           mDragSelection.selection.delete(tab.id);
         else
           mDragSelection.selection.set(tab.id, tab);
-        if (params.state == 'ready-to-close')
-          SelectionUtils.notifyTabStateToTST(tab.id, params.state, mDragSelection.selection.has(tab.id));
+        SelectionUtils.notifyTabStateToTST(tab.id, params.state, mDragSelection.selection.has(tab.id));
       }
     }
   }
@@ -157,11 +155,10 @@ function toggleStateOfDragOverTabs(params = {}) {
     for (const tab of params.allTargets) {
       mDragSelection.undeterminedRange.set(tab.id, tab);
       mDragSelection.selection.set(tab.id, tab);
-      if (params.state == 'ready-to-close')
-        SelectionUtils.notifyTabStateToTST(tab.id, params.state, mDragSelection.selection.has(tab.id));
+      SelectionUtils.notifyTabStateToTST(tab.id, params.state, mDragSelection.selection.has(tab.id));
     }
   }
-  if (params.state != 'ready-to-close')
+  if (params.state != Constants.kREADY_TO_CLOSE)
     SelectionUtils.select(Array.from(mDragSelection.selection.values()));
 }
 
@@ -185,7 +182,7 @@ export async function onClick(message) {
   const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
   if (!ctrlKeyPressed && !message.shiftKey) {
     if (!selected) {
-      SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), 'ready-to-close', false);
+      SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
       mDragSelection.selection.clear();
     }
     gInSelectionSession = false;
@@ -283,7 +280,7 @@ export async function onMouseUp(message) {
   if (!ctrlKeyPressed &&
       !message.shiftKey &&
       !mDragSelection.dragStartTarget) {
-    SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), 'ready-to-close', false);
+    SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
     mDragSelection.selection.clear();
   }
 }
@@ -291,7 +288,7 @@ export async function onMouseUp(message) {
 export async function onNonTabAreaClick(message) {
   if (message.button != 0)
     return;
-  SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), 'ready-to-close', false);
+  SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
   mDragSelection.selection.clear();
   mDragSelection.clear();
 }
@@ -301,7 +298,7 @@ export async function onNonTabAreaClick(message) {
 
 export async function onDragReady(message) {
   //console.log('onDragReady', message);
-  SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), 'ready-to-close', false);
+  SelectionUtils.notifyTabStateToTST(Array.from(mDragSelection.selection.keys()), [Constants.kSELECTED, Constants.kREADY_TO_CLOSE], false);
 
   mDragSelection.clear();
   mDragSelection.dragEnteredCount = 1;
@@ -314,7 +311,7 @@ export async function onDragReady(message) {
   for (const tab of startTabs) {
     mDragSelection.selection.set(tab.id, tab);
     if (mDragSelection.willCloseSelectedTabs)
-      SelectionUtils.notifyTabStateToTST(tab.id, 'ready-to-close', true);
+      SelectionUtils.notifyTabStateToTST(tab.id, Constants.kREADY_TO_CLOSE, true);
   }
 
   SelectionUtils.select(Array.from(mDragSelection.selection.values()));
@@ -349,12 +346,11 @@ export async function onDragEnter(message) {
       message.tab.id == mDragSelection.lastHoverTarget.id)
     return;
 
-  const state = mDragSelection.willCloseSelectedTabs ? 'ready-to-close' : 'selected' ;
+  const state = mDragSelection.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;
   if (mDragSelection.pendingTabs) {
     for (const tab of mDragSelection.pendingTabs) {
       mDragSelection.selection.set(tab.id, tab);
-      if (state == 'ready-to-close')
-        SelectionUtils.notifyTabStateToTST(tab.id, 'ready-to-close', true);
+      SelectionUtils.notifyTabStateToTST(tab.id, Constants.kREADY_TO_CLOSE, true);
     }
     mDragSelection.pendingTabs = null;
   }
@@ -371,8 +367,7 @@ export async function onDragEnter(message) {
       mDragSelection.selection.size == targetTabs.length) {
     for (const tab of targetTabs) {
       mDragSelection.selection.delete(tab.id);
-      if (state == 'ready-to-close')
-        SelectionUtils.notifyTabStateToTST(tab.id, 'ready-to-close', false);
+      SelectionUtils.notifyTabStateToTST(tab.id, state, false);
     }
     SelectionUtils.select(Array.from(mDragSelection.selection.values()));
     for (const tab of targetTabs) {

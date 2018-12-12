@@ -13,6 +13,9 @@ export const kCOMMAND_NOTIFY_PERMISSIONS_GRANTED    = 'multipletab:notify-permis
 export const kCOMMAND_REQUEST_CONNECT_PREFIX        = 'multipletab:request-connect-from:';
 
 
+export const kSELECTED       = 'mht-selected';
+export const kREADY_TO_CLOSE = 'mth-ready-to-close';
+
 export const kMTHAPI_READY                       = 'ready';
 export const kMTHAPI_GET_TAB_SELECTION           = 'get-tab-selection';
 export const kMTHAPI_SET_TAB_SELECTION           = 'set-tab-selection';

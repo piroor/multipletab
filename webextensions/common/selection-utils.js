@@ -44,46 +44,73 @@ export async function getSelectionAndOthers(windowId) {
 export async function clear(windowId) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
-  const activeTabs = await browser.tabs.query({ windowId, active: true });
-  return browser.tabs.highlight({
-    windowId,
-    tabs: activeTabs.map(tab => tab.index)
-  });
+  const [activeTabs, selectedTabs] = await Promise.all([
+    browser.tabs.query({ windowId, active: true }),
+    getSelection(windowId)
+  ]);
+  await Promise.all([
+    notifyTabStateToTST(selectedTabs.map(tab => tab.id), Constants.kSELECTED, false),
+    browser.tabs.highlight({
+      windowId: windowId,
+      tabs:     activeTabs.map(tab => tab.index)
+    })
+  ]);
 }
 
 export async function select(tabsOrTab) {
   if (!tabsOrTab)
-    return Promise.resolve();
+    return;
   if (Array.isArray(tabsOrTab)) {
-    return browser.tabs.highlight({
-      windowId: tabsOrTab[0].windowId,
-      tabs:     tabsOrTab.map(tab => tab.index)
-    });
+    if (tabsOrTab.length === 0)
+      return;
+    const tabIds = tabsOrTab.map(tab => tab.id);
+    const selection = await getSelectionAndOthers(tabsOrTab[0].windowId);
+    const toBeUnselected = selection.selected.filter(tab => !tabIds.includes(tab.id));
+    const toBeSelected = selection.unselected.filter(tab => tabIds.includes(tab.id));
+    await Promise.all([
+      notifyTabStateToTST(toBeUnselected.map(tab => tab.id), Constants.kSELECTED, false),
+      notifyTabStateToTST(toBeSelected.map(tab => tab.id), Constants.kSELECTED, true),
+      browser.tabs.highlight({
+        windowId: tabsOrTab[0].windowId,
+        tabs:     tabsOrTab.map(tab => tab.index)
+      })
+    ]);
   }
   else {
-    return browser.tabs.update(tabsOrTab.id, {
-      highlighted: true,
-      active:      tabsOrTab.active
-    });
+    await Promise.all([
+      notifyTabStateToTST(tabsOrTab.id, Constants.kSELECTED, true),
+      await browser.tabs.update(tabsOrTab.id, {
+        highlighted: true,
+        active:      tabsOrTab.active
+      })
+    ]);
   }
 }
 
 export async function unselect(tabsOrTab) {
   if (!tabsOrTab)
-    return Promise.resolve();
+    return;
   if (Array.isArray(tabsOrTab)) {
+    if (tabsOrTab.length === 0)
+      return;
     const selectedTabs = await getSelection(tabsOrTab[0].windowId);
     const tabIds       = tabsOrTab.map(tab => tab.id);
-    return browser.tabs.highlight({
-      windowId: tabsOrTab[0].windowId,
-      tabs:     selectedTabs.filter(tab => !tabIds.includes(tab.id)).map(tab => tab.index)
-    });
+    await Promise.all([
+      notifyTabStateToTST(tabIds, Constants.kSELECTED, false),
+      browser.tabs.highlight({
+        windowId: tabsOrTab[0].windowId,
+        tabs:     selectedTabs.filter(tab => !tabIds.includes(tab.id)).map(tab => tab.index)
+      })
+    ]);
   }
   else {
-    return browser.tabs.update(tabsOrTab.id, {
-      highlighted: false,
-      active:      tabsOrTab.active
-    });
+    await Promise.all([
+      notifyTabStateToTST(tabsOrTab.map(tab => tab.id), Constants.kSELECTED, false),
+      browser.tabs.update(tabsOrTab.id, {
+        highlighted: false,
+        active:      tabsOrTab.active
+      })
+    ]);
   }
 }
 
@@ -91,29 +118,30 @@ export async function selectAll(windowId) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
   const tabs = await getAllTabs(windowId);
-  return browser.tabs.highlight({
-    windowId,
-    tabs: tabs.map(tab => tab.index)
-  });
+  return select(tabs);
 }
 
 export async function toggle(tab) {
   if (!tab)
-    return Promise.resolve();
-  return browser.tabs.update(tab.id, {
-    highlighted: !tab.highlighted,
-    active:      tab.active
-  });
+    return;
+  if (tab.highlighted)
+    return unselect(tab);
+  else
+    return select(tab);
 }
 
 export async function invert(windowId) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
   const selection = await getSelectionAndOthers(windowId);
-  return browser.tabs.highlight({
-    windowId,
-    tabs: selection.unselected.map(tab => tab.index)
-  });
+  await Promise.all([
+    notifyTabStateToTST(selection.selected.map(tab => tab.id), Constants.kSELECTED, false),
+    notifyTabStateToTST(selection.unselected.map(tab => tab.id), Constants.kSELECTED, true),
+    browser.tabs.highlight({
+      windowId: windowId,
+      tabs:     selection.unselected.map(tab => tab.index)
+    })
+  ]);
 }
 
 export async function notifyTabStateToTST(tabIds, state, value) {

@@ -342,6 +342,7 @@ async function registerToTST() {
       icons: browser.runtime.getManifest().icons,
       listeningTypes,
       style: `
+        .tab.mth-multiselected::after,
         .mutiple-highlighted > .tab.highlighted::after {
           background: Highlight;
           bottom: 0;
@@ -357,7 +358,7 @@ async function registerToTST() {
         }
 
         /* ::after pseudo element prevents firing of dragstart event */
-        .tab.ready-to-close .closebox {
+        .tab.mth-ready-to-close .closebox {
           background: Highlight;
         }
       `
