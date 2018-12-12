@@ -169,7 +169,7 @@ function toggleStateOfDragOverTabs(params = {}) {
   }
   Selection.notifyTabStateToTST(Array.from(toBeSelected), params.state, true);
   Selection.notifyTabStateToTST(Array.from(toBeUnselected), params.state, false);
-  if (params.state != Constants.kREADY_TO_CLOSE)
+  if (!mDragSelection.willCloseSelectedTabs)
     Selection.select(Array.from(mDragSelection.selection.values()));
 }
 
@@ -327,7 +327,8 @@ export async function onDragReady(message) {
       Selection.notifyTabStateToTST(tab.id, Constants.kREADY_TO_CLOSE, true);
   }
 
-  Selection.select(Array.from(mDragSelection.selection.values()));
+  if (!mDragSelection.willCloseSelectedTabs)
+    Selection.select(Array.from(mDragSelection.selection.values()));
 
   for (const tab of startTabs) {
     mDragSelection.undeterminedRange.set(tab.id, tab);
@@ -382,7 +383,8 @@ export async function onDragEnter(message) {
       mDragSelection.selection.delete(tab.id);
       Selection.notifyTabStateToTST(tab.id, state, false);
     }
-    Selection.select(Array.from(mDragSelection.selection.values()));
+    if (!mDragSelection.willCloseSelectedTabs)
+      Selection.select(Array.from(mDragSelection.selection.values()));
     for (const tab of targetTabs) {
       mDragSelection.undeterminedRange.set(tab.id, tab);
     }
