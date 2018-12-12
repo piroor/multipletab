@@ -36,6 +36,11 @@ export const mDragSelection = {
     this.allTabsOnDragReady = [];
   },
   clear() {
+    Selection.notifyTabStateToTST(
+      Array.from(this.selection.keys()),
+      [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+      false
+    );
     this.cancel();
     this.selection.clear();
     Selection.clear();
@@ -178,41 +183,49 @@ function toggleStateOfDragOverTabs(params = {}) {
 
 let gInSelectionSession = false;
 
-export async function onClick(message) {
+export async function onClick(message, options = {}) {
+  log('onClick ', message);
   if (message.button != 0)
     return false;
+
+  const windowId = message.window || message.windowId || (message.tab && message.tab.windowId);
+
+  /*
+  mDragSelection.selection.clear();
+  const selectedTabs = await Selection.getSelection(windowId);
+  for (const tab of selectedTabs) {
+    mDragSelection.selection.set(tab.id, tab);
+  }
+  */
 
   let selected = false;
   {
     if (message.tab.states)
-      selected = message.tab.states.indexOf('selected') > -1;
+      selected = message.tab.states.includes(Constants.kSELECTED);
     else
-      selected = !!mDragSelection.selection.has(message.tab.id);
+      selected = mDragSelection.selection.has(message.tab.id);
   }
 
-  const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
+  const ctrlKeyPressed = /^Mac/i.test(navigator.platform) ? message.metaKey : message.ctrlKey;
   if (!ctrlKeyPressed && !message.shiftKey) {
+    log('regular click');
     if (!selected) {
-      Selection.notifyTabStateToTST(
-        Array.from(mDragSelection.selection.keys()),
-        [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
-        false
-      );
-      mDragSelection.selection.clear();
+      log('clear selection');
+      mDragSelection.clear();
     }
     gInSelectionSession = false;
     mDragSelection.lastClickedTab = null;
-    return;
+    return false;
   }
 
   const lastActiveTab = message.lastActiveTab || (await browser.tabs.query({
     active:   true,
-    windowId: message.window
+    windowId: windowId
   }))[0];
 
   let tabs = retrieveTargetTabs(message.tab);
   if (message.shiftKey) {
-    // select the clicked tab and tabs between last activated tab
+    log('select the clicked tab and tabs between last activated tab');
     const window = await browser.windows.get(message.window, { populate: true });
     const betweenTabs = getTabsBetween(mDragSelection.lastClickedTab || lastActiveTab, message.tab, window.tabs);
     tabs = tabs.concat(betweenTabs);
@@ -227,15 +240,11 @@ export async function onClick(message) {
       mDragSelection.selection.set(tab.id, tab);
     }
     gInSelectionSession = true;
-    // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
-    const newSelectedTabIds = Array.from(mDragSelection.selection.keys());
-    if (newSelectedTabIds.length > 0 && !newSelectedTabIds.includes(lastActiveTab.id))
-      browser.tabs.update(mDragSelection.lastClickedTab ? mDragSelection.lastClickedTab.id : newSelectedTabIds[0], { active: true });
     Selection.select(Array.from(mDragSelection.selection.values()));
     return true;
   }
   else if (ctrlKeyPressed) {
-    // toggle selection of the tab and all collapsed descendants
+    log('toggle selection of the tab and all collapsed descendants');
     if (message.tab.id != lastActiveTab.id ||
         !gInSelectionSession) {
       mDragSelection.selection.set(lastActiveTab.id, lastActiveTab);
@@ -248,10 +257,6 @@ export async function onClick(message) {
       else
         mDragSelection.selection.set(tab.id, tab);
     }
-    // Selection must include the active tab. This is the standard behavior on Firefox 62 and later.
-    const selectedTabIds = Array.from(mDragSelection.selection.keys());
-    if (selectedTabIds.length > 0 && !selectedTabIds.includes(lastActiveTab.id))
-      browser.tabs.update(selectedTabIds[0], { active: true });
     gInSelectionSession = true;
     mDragSelection.lastClickedTab = message.tab;
     Selection.select(Array.from(mDragSelection.selection.values()));
@@ -286,6 +291,7 @@ function collectTabsRecursively(tab) {
 }
 
 export async function onMouseUp(message) {
+  log('onMouseUp ', message);
   if (message.button != 0)
     return false;
 
@@ -293,24 +299,13 @@ export async function onMouseUp(message) {
   if (!ctrlKeyPressed &&
       !message.shiftKey &&
       !mDragSelection.dragStartTarget) {
-    Selection.notifyTabStateToTST(
-      Array.from(mDragSelection.selection.keys()),
-      [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
-      false
-    );
-    mDragSelection.selection.clear();
+    mDragSelection.clear();
   }
 }
 
 export async function onNonTabAreaClick(message) {
   if (message.button != 0)
     return;
-  Selection.notifyTabStateToTST(
-    Array.from(mDragSelection.selection.keys()),
-    [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
-    false
-  );
-  mDragSelection.selection.clear();
   mDragSelection.clear();
 }
 
@@ -450,7 +445,7 @@ export async function onDragEnd(message) {
       if (tab && toBeClosedIds.indexOf(tab.id) > -1)
         await browser.tabs.remove(tab.id);
     }
-    mDragSelection.selection.clear();
+    mDragSelection.clear();
   }
   else if (mDragSelection.selection.size > 0) {
     await onDragSelectionEnd.dispatch(message, {
