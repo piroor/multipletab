@@ -312,20 +312,14 @@ export async function onNonTabAreaClick(message) {
 /* select tabs by dragging */
 
 export async function onDragReady(message) {
-  //console.log('onDragReady', message);
-  const allTabs = await Selection.getAllTabs(message.window);
-  Selection.notifyTabStateToTST(
-    allTabs,
-    [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
-    false
-  );
+  log('onDragReady', message);
 
   mDragSelection.clear();
   mDragSelection.dragEnteredCount = 1;
   mDragSelection.willCloseSelectedTabs = message.startOnClosebox;
   mDragSelection.pendingTabs = null;
   mDragSelection.dragStartTarget = mDragSelection.firstHoverTarget = mDragSelection.lastHoverTarget = message.tab;
-  mDragSelection.allTabsOnDragReady = allTabs;
+  mDragSelection.allTabsOnDragReady = await Selection.getAllTabs(message.window);
 
   const startTabs = retrieveTargetTabs(message.tab);
   for (const tab of startTabs) {

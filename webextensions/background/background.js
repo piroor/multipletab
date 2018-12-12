@@ -42,6 +42,15 @@ window.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('pagehide', async () => {
     unregisterFromTST();
   }, { once: true });
+
+  const allWindows = await browser.windows.getAll({ populate: true });
+  for (const window of allWindows) {
+    Selection.notifyTabStateToTST(
+      window.tabs,
+      [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+      false
+    );
+  }
 }, { once: true });
 
 
