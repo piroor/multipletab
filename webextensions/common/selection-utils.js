@@ -5,6 +5,12 @@
 */
 'use strict';
 
+import {
+  configs,
+  handleMissingReceiverError
+} from './common.js';
+import * as Constants from './constants.js';
+
 export async function getActiveWindow() {
   return browser.windows.getLastFocused({ populate: true });
 }
@@ -110,5 +116,16 @@ export async function invert(windowId) {
   });
 }
 
-export async function notifyTabStateToTST(tabIdOrTabIds, state, value) {
+export async function notifyTabStateToTST(tabIds, state, value) {
+  if (!Array.isArray(tabIds))
+    tabIds = [tabIds];
+  if (!configs.enableIntegrationWithTST ||
+      tabIds.length == 0)
+    return;
+
+  browser.runtime.sendMessage(Constants.kTST_ID, {
+    type:  value ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
+    tabs:  tabIds,
+    state: state
+  }).catch(handleMissingReceiverError);
 }
