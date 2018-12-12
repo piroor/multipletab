@@ -188,8 +188,6 @@ function toggleStateOfDragOverTabs(params = {}) {
   }
   Selection.notifyTabStateToTST(Array.from(toBeSelected), params.state, true);
   Selection.notifyTabStateToTST(Array.from(toBeUnselected), params.state, false);
-  if (!mDragSelection.willCloseSelectedTabs)
-    Selection.select(Array.from(mDragSelection.selection.values()));
 }
 
 
@@ -445,6 +443,9 @@ dragExitAllWithDelay.cancel = () => {
 
 export async function onDragEnd(message) {
   //console.log('onDragEnd', message);
+  if (!mDragSelection.willCloseSelectedTabs &&
+      mDragSelection.selection.size > 0)
+    Selection.select(Array.from(mDragSelection.selection.values()));
   if (mDragSelection.willCloseSelectedTabs) {
     const allTabs = mDragSelection.allTabsOnDragReady.slice(0);
     allTabs.reverse();
