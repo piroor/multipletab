@@ -12,9 +12,8 @@ import {
   handleMissingReceiverError
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
-import * as Selections from '/common/selections.js';
+import * as SelectionUtils from '/common/selection-utils.js';
 import * as DragSelection from '/common/drag-selection.js';
-import * as SharedState from '/common/shared-state.js';
 import MenuUI from '/extlib/MenuUI.js';
 import TabFavIconHelper from '/extlib/TabFavIconHelper.js';
 import TabIdFixer from '/extlib/TabIdFixer.js';
@@ -29,7 +28,7 @@ let gLastClickedItem = null;
 let gDragTargetIsClosebox;
 let gClickFired = false;
 let gWindowId = null;
-let gSelection = null;
+let gSelection = new Map();
 
 const gUseNativeContextMenu = typeof browser.menus.overrideContext == 'function';
 let gContextMenuIsOpened = false;
@@ -48,9 +47,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
   document.documentElement.dataset.theme = configs.theme;
   gWindowId = (await browser.windows.getLastFocused()).id;
-  await SharedState.initAsSlave(gWindowId);
-  gSelection = Selections.get(gWindowId);
-  gSelection.onChange.addListener(onSelectionChange);
+  const selectedTabs = await SelectionUtils.getSelection(gWindowId);
+  gSelection = new Map();
+  for (const tab of selectedTabs) {
+    gSelection.set(tab.id, tab);
+  }
 
   gLastClickedItem = null;
 
@@ -98,8 +99,7 @@ window.addEventListener('pagehide', () => {
   browser.tabs.onCreated.removeListener(onTabModified);
   browser.tabs.onRemoved.removeListener(onTabModified);
   browser.menus.onHidden.removeListener(onMenuHidden);
-  gSelection.onChange.removeListener(onSelectionChange);
-  gSelection = null;
+  gSelection.clear();
   gWindowId = null;
 }, { once: true });
 
@@ -146,6 +146,7 @@ function reserveClearSelection() {
     clearTimeout(reserveClearSelection.reserved);
   reserveClearSelection.reserved = setTimeout(() => {
     delete reserveClearSelection.reserved;
+    SelectionUtils.clear();
     gSelection.clear();
   }, 100);
 }
@@ -164,7 +165,7 @@ function onSelectionChange(tabs, selected, _options = {}) {
     }
   }
   else {
-    const selectedIds = gSelection.getSelectedTabIds();
+    const selectedIds = Array.from(gSelection.keys());
     for (const item of gTabBar.querySelectorAll('li')) {
       const selected = selectedIds.includes(item.tab.id);
       const checkbox = item.querySelector('input[type="checkbox"]');
@@ -377,10 +378,7 @@ function cancelDelayedDragExit() {
 }
 
 DragSelection.onDragSelectionEnd.addListener((message, selectionInfo) => {
-  SharedState.push(gWindowId, {
-    updateMenu: true,
-    contextTab: selectionInfo.dragStartTab && selectionInfo.dragStartTab.id
-  }).then(() => {
+  SelectionUtils.select(selectionInfo.selection).then(() => {
     if (gUseNativeContextMenu &&
         gContextMenuIsOpened)
       return;
@@ -411,11 +409,18 @@ function buildTabItem(tab) {
   const label    = document.createElement('label');
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
-  if (gSelection.contains(tab))
+  if (gSelection.has(tab.id))
     checkbox.setAttribute('checked', true);
   checkbox.addEventListener('change', () => {
     item.classList.toggle('selected');
-    gSelection.set(tab, item.classList.contains('selected'), { globalHighlight: false });
+    if (item.classList.contains('selected')) {
+      gSelection.set(tab.id, tab);
+      SelectionUtils.select(tab);
+    }
+    else {
+      gSelection.delete(tab.id);
+      SelectionUtils.unselect(tab);
+    }
   });
   label.appendChild(checkbox);
   const favicon = document.createElement('img');
@@ -439,7 +444,7 @@ function buildTabItem(tab) {
     gLastClickedItem = item;
     item.classList.add('last-focused');
   }
-  if (gSelection.contains(tab))
+  if (gSelection.has(tab.id))
     item.classList.add('selected');
   item.appendChild(label);
   item.tab = tab;
@@ -483,7 +488,7 @@ function onMenuShown() {
 async function buildMenu() {
   const items = await browser.runtime.sendMessage({
     type:   Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO,
-    tabIds: gSelection.getSelectedTabIds()
+    tabIds: Array.from(gSelection.keys())
   });
   items.shift(); // delete toplevel "selection" menu
 

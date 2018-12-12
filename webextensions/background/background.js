@@ -12,11 +12,10 @@ import {
   handleMissingReceiverError
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
-import * as Selections from '/common/selections.js';
+import * as SelectionUtils from '/common/selection-utils.js';
 import * as Commands from '/common/commands.js';
 import * as Permissions from '/common/permissions.js';
 import * as DragSelection from '/common/drag-selection.js';
-import * as SharedState from '/common/shared-state.js';
 import RichConfirm from '/extlib/RichConfirm.js';
 import * as ContextMenu from './context-menu.js';
 
@@ -25,28 +24,7 @@ log.context = 'BG';
 window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
 
-  browser.tabs.onActivated.addListener(async activeInfo => {
-    await wait(100);
-    const selection = Selections.get(activeInfo.windowId);
-    if (!selection.contains(activeInfo.tabId))
-      selection.clear();
-  });
-  browser.tabs.onCreated.addListener(tab => {
-    const selection = Selections.get(tab.windowId);
-    selection.clear();
-  });
-  browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
-    const selection = Selections.get(removeInfo.windowId);
-    selection.clear();
-  });
-
-  browser.tabs.onHighlighted.addListener(highlightInfo => {
-    const selection = Selections.get(highlightInfo.windowId);
-    selection.reserveToSyncHighlightedToSelected();
-  });
-
   ContextMenu.init();
-  SharedState.initAsMaster();
 
   browser.browserAction.onClicked.addListener(onToolbarButtonClick);
   browser.browserAction.setPopup({ popup: Constants.kPOPUP_URL });
@@ -81,8 +59,8 @@ async function onShortcutCommand(command) {
     active:        true,
     currentWindow: true
   }))[0];
-  const selection = Selections.get(activeTab.windowId);
-  const selectedTabIds = selection.getSelectedTabIds();
+  const selectedTabs   = await SelectionUtils.getSelection(activeTab.windowId);
+  const selectedTabIds = selectedTabs.map(tab => tab.id);
 
   if (selectedTabIds.length <= 0)
     return;
@@ -154,22 +132,17 @@ async function onShortcutCommand(command) {
         buttons: formats.map(format => format.label)
       });
       if (result.buttonIndex > -1) {
-        await selection.clear();
-        await wait(100); // to wait tab titles are updated
+        await SelectionUtils.clear(activeTab.windowId);
         await Commands.copyToClipboard(selectedTabIds, formats[result.buttonIndex].format);
-        const tabs = await selection.getAllTabs(activeTab.windowId);
-        tabs.filter(tab => selectedTabIds.indexOf(tab.id) > -1)
-          .forEach(tab => selection.set(tab, true));
+        SelectionUtils.select(selectedTabs);
       }
     } break;
 
     case 'saveSelectedTabs':
-      await selection.clear();
+      await SelectionUtils.clear(activeTab.windowId);
       await wait(100); // to wait tab titles are updated
       await Commands.saveTabs(selectedTabIds);
-      const tabs = await selection.getAllTabs(activeTab.windowId);
-      tabs.filter(tab => selectedTabIds.indexOf(tab.id) > -1)
-        .forEach(tab => selection.set(tab, true));
+      SelectionUtils.select(selectedTabs);
       break;
 
     case 'printSelectedTabs':
@@ -190,13 +163,13 @@ async function onShortcutCommand(command) {
       break;
 
     case 'toggleSelection':
-      selection.set(activeTab, selectedTabIds.indexOf(activeTab.id) < 0);
+      SelectionUtils.toggle(activeTab);
       break;
     case 'selectAll':
-      selection.setAll(true);
+      SelectionUtils.selectAll(activeTab.windowId);
       break;
     case 'invertSelection':
-      selection.invert();
+      SelectionUtils.invert();
       break;
   }
 }
@@ -275,11 +248,13 @@ function onMessageExternal(message, sender) {
 
   switch (message.type) {
     case Constants.kMTHAPI_GET_TAB_SELECTION:
-      return Selections.getActive().then(selection => selection.getAPITabSelection());
+      return SelectionUtils.getSelection();
 
     case Constants.kMTHAPI_SET_TAB_SELECTION:
       return (async () => {
-        const allTabs = await Selections.get(message.window || message.windowId).getAllTabs();
+        const allTabs = await SelectionUtils.getAllTabs(message.window || message.windowId)();
+        const selectedTabs = await SelectionUtils.getAllTabs(message.window || message.windowId)();
+        const toBeSelectedTabIds = new Set(selectedTabs.map(tab => tab.id));
 
         let unselectTabs = message.unselect;
         if (unselectTabs == '*') {
@@ -290,10 +265,9 @@ function onMessageExternal(message, sender) {
             unselectTabs = [unselectTabs];
           unselectTabs = allTabs.filter(tab => unselectTabs.indexOf(tab.id) > -1);
         }
-        const selection = await Selections.getActive();
-        selection.set(unselectTabs, false, {
-          globalHighlight: !DragSelection.isActivatedInVerticalTabbarOfTST()
-        });
+        for (const tab of unselectTabs) {
+          toBeSelectedTabIds.delete(tab.id);
+        }
 
         let selectTabs = message.select;
         if (selectTabs == '*') {
@@ -304,16 +278,19 @@ function onMessageExternal(message, sender) {
             selectTabs = [selectTabs];
           selectTabs = allTabs.filter(tab => selectTabs.indexOf(tab.id) > -1);
         }
-        selection.set(selectTabs, true, {
-          globalHighlight: !DragSelection.isActivatedInVerticalTabbarOfTST()
-        });
+        for (const tab of selectTabs) {
+          toBeSelectedTabIds.add(tab.id);
+        }
 
+        if (toBeSelectedTabIds.size == 0)
+          toBeSelectedTabIds.add(allTabs.filter(tab => tab.active)[0].id);
+
+        await SelectionUtils.select(allTabs.filter(tab => toBeSelectedTabIds.has(tab.id)));
         return true;
       })();
 
     case Constants.kMTHAPI_CLEAR_TAB_SELECTION:
-      Selections.getActive().then(selection => selection.clear());
-      return Promise.resolve(true);
+      return SelectionUtils.clear().then(() => true);
   }
 }
 
@@ -365,7 +342,7 @@ async function registerToTST() {
       icons: browser.runtime.getManifest().icons,
       listeningTypes,
       style: `
-        .tab.selected::after {
+        .mutiple-highlighted > .tab.highlighted::after {
           background: Highlight;
           bottom: 0;
           content: " ";

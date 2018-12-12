@@ -7,15 +7,13 @@
 
 import {
   log,
-  wait,
   configs,
   handleMissingReceiverError
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
-import * as Selections from '/common/selections.js';
+import * as SelectionUtils from '/common/selection-utils.js';
 import * as Commands from '/common/commands.js';
 import * as DragSelection from '/common/drag-selection.js';
-import * as SharedState from '/common/shared-state.js';
 
 const mItems = `
   reloadTabs
@@ -68,10 +66,6 @@ let mDirty = true;
 export function init() {
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
-  SharedState.onUpdated.addListener((windowId, _extraInfo) => {
-    log('menu becomes dirty by updated shared state: ', windowId);
-    mDirty = true;
-  });
   configs.$addObserver(key => {
     if (/^(context_|copyToClipboardFormats)/.test(key)) {
       log('menu becomes dirty by changed config: ', key);
@@ -93,7 +87,7 @@ async function refreshItems(contextTab) {
 
   const promisedMenuUpdated = [];
   const currentWindow = await (contextTab ? browser.windows.get(contextTab.windowId) : browser.windows.getLastFocused());
-  const selection = Selections.get(currentWindow.id);
+  const selectedTabs = await SelectionUtils.getSelection(currentWindow.id);
 
   promisedMenuUpdated.push(browser.menus.removeAll());
   try {
@@ -118,8 +112,8 @@ async function refreshItems(contextTab) {
   });
   log('visibilities: ', visibilities);
 
-  const hasSelection         = selection.getSelectedTabIds().length > 0;
-  let separatorsCount      = 0;
+  const hasSelection         = selectedTabs.length > 1;
+  let separatorsCount        = 0;
   const normalItemAppearedIn = {};
   const createdItems         = {};
   const nextSeparatorIn      = {};
@@ -275,16 +269,19 @@ async function refreshItems(contextTab) {
 
 async function getContextMenuItemVisibilities(params) {
   const tab = params.tab;
-  const selection = Selections.get(params.windowId);
-  const allTabs = await selection.getAllTabs();
+  const [selectedTabs, allTabs] = await Promise.all([
+    SelectionUtils.getSelection(params.windowId),
+    SelectionUtils.getAllTabs(params.windowId)
+  ]);
+  const hasSelection = selectedTabs.length > 1;
+  const allSelected  = selectedTabs.length == allTabs.length;
   let pinnedCount = 0;
   let mutedCount = 0;
   let suspendedCount = 0;
   let lockedCount = 0;
   let protectedCount = 0;
   let frozenCount = 0;
-  const tabs = selection.getSelectedTabs();
-  for (const tab of tabs) {
+  for (const tab of selectedTabs) {
     if (tab.pinned)
       pinnedCount++;
     if (tab.mutedInfo.muted)
@@ -299,41 +296,42 @@ async function getContextMenuItemVisibilities(params) {
       frozenCount++;
   }
   return {
-    reloadTabs:    tabs.length > 0,
-    bookmarkTabs:  tabs.length > 0,
-    removeBookmarkFromTabs: tabs.length > 0,
-    duplicateTabs: tabs.length > 0,
-    pinTabs:       tabs.length > 0 && pinnedCount < tabs.length,
-    unpinTabs:     tabs.length > 0 && pinnedCount > 0,
-    muteTabs:      tabs.length > 0 && mutedCount < tabs.length,
-    unmuteTabs:    tabs.length > 0 && mutedCount > 0,
-    moveToNewWindow: tabs.length > 0,
-    moveToOtherWindow: tabs.length > 0 && params.otherWindows.length > 0,
-    removeTabs:    tabs.length > 0,
-    removeOther:   tabs.length > 0 && tabs.length < allTabs.length,
-    clipboard:     tabs.length > 0,
-    saveTabs:      tabs.length > 0,
-    printTabs:     tabs.length > 0,
-    freezeTabs:    tabs.length > 0 && frozenCount < tabs.length,
-    unfreezeTabs:  tabs.length > 0 && frozenCount > 0,
-    protectTabs:   tabs.length > 0 && protectedCount < tabs.length,
-    unprotectTabs: tabs.length > 0 && protectedCount > 0,
-    lockTabs:      tabs.length > 0 && lockedCount < tabs.length,
-    unlockTabs:    tabs.length > 0 && lockedCount > 0,
-    groupTabs:     tabs.length > 1,
-    suspendTabs:   tabs.length > 0 && suspendedCount < tabs.length,
-    resumeTabs:    tabs.length > 0 && suspendedCount > 0,
-    selectAll:     tabs.length < allTabs.length,
-    select:        !tab || tabs.indexOf(tab.id) < 0,
-    unselect:      !tab || tabs.indexOf(tab.id) > -1,
-    invertSelection: tabs.length > 0
+    reloadTabs:    hasSelection,
+    bookmarkTabs:  hasSelection,
+    removeBookmarkFromTabs: hasSelection,
+    duplicateTabs: hasSelection,
+    pinTabs:       hasSelection && pinnedCount < selectedTabs.length,
+    unpinTabs:     hasSelection && pinnedCount > 0,
+    muteTabs:      hasSelection && mutedCount < selectedTabs.length,
+    unmuteTabs:    hasSelection && mutedCount > 0,
+    moveToNewWindow: hasSelection,
+    moveToOtherWindow: hasSelection && params.otherWindows.length > 0,
+    removeTabs:    hasSelection,
+    removeOther:   hasSelection && !allSelected,
+    clipboard:     hasSelection,
+    saveTabs:      hasSelection,
+    printTabs:     hasSelection,
+    freezeTabs:    hasSelection && frozenCount < selectedTabs.length,
+    unfreezeTabs:  hasSelection && frozenCount > 0,
+    protectTabs:   hasSelection && protectedCount < selectedTabs.length,
+    unprotectTabs: hasSelection && protectedCount > 0,
+    lockTabs:      hasSelection && lockedCount < selectedTabs.length,
+    unlockTabs:    hasSelection && lockedCount > 0,
+    groupTabs:     hasSelection,
+    suspendTabs:   hasSelection && suspendedCount < selectedTabs.length,
+    resumeTabs:    hasSelection && suspendedCount > 0,
+    selectAll:     !allSelected,
+    select:        !tab || !tab.highlighted,
+    unselect:      !tab || tab.highlighted,
+    invertSelection: hasSelection
   };
 }
 
 async function onClick(info, tab) {
   //log('context menu item clicked: ', info, tab);
-  const selection = tab ? Selections.get(tab.windowId) : await Selections.getActive();
-  const selectedTabIds = selection.getSelectedTabIds();
+  const windowId       = tab && tab.windowId;
+  const selectedTabs   = await SelectionUtils.getSelection(windowId);
+  const selectedTabIds = selectedTabs.map(tab => tab.id);
   log('info.menuItemId, selectedTabIds ', info.menuItemId, selectedTabIds);
   let shouldClearSelection = configs.clearSelectionAfterCommandInvoked;
   const itemId = info.menuItemId.replace(/^panel_/, '');
@@ -381,8 +379,7 @@ async function onClick(info, tab) {
       break;
     case 'saveTabs':
       if (shouldClearSelection) {
-        await selection.clear();
-        await wait(100); // to wait tab titles are updated
+        await SelectionUtils.clear(windowId);
       }
       await Commands.saveTabs(selectedTabIds);
       break;
@@ -413,19 +410,19 @@ async function onClick(info, tab) {
       break;
 
     case 'selectAll':
-      selection.setAll(true);
+      SelectionUtils.selectAll(windowId);
       shouldClearSelection = false;
       break;
     case 'select':
-      selection.set(tab, true);
+      SelectionUtils.select(tab);
       shouldClearSelection = false;
       break;
     case 'unselect':
-      selection.set(tab, false);
+      SelectionUtils.unselect(tab);
       shouldClearSelection = false;
       break;
     case 'invertSelection':
-      selection.invert();
+      SelectionUtils.invert(windowId);
       shouldClearSelection = false;
       break;
 
@@ -442,10 +439,8 @@ async function onClick(info, tab) {
         else {
           format = configs.copyToClipboardFormats[id.replace(/^[0-9]+:/, '')];
         }
-        if (shouldClearSelection) {
-          await selection.clear();
-          await wait(100); // to wait tab titles are updated
-        }
+        if (shouldClearSelection)
+          await SelectionUtils.clear(windowId);
         await Commands.copyToClipboard(selectedTabIds, format);
       }
       else if (itemId.indexOf('moveToOtherWindow:') == 0) {
@@ -456,20 +451,18 @@ async function onClick(info, tab) {
         const idMatch   = itemId.match(/^extra:([^:]+):(.+)$/);
         const owner     = idMatch[1];
         const id        = idMatch[2];
-        const apiTabSelection = await selection.getAPITabSelection({
-          selectedIds: selectedTabIds
-        });
+        const selection = await SelectionUtils.getSelectionAndOthers(windowId);
         browser.runtime.sendMessage(owner, {
           type: Constants.kMTHAPI_INVOKE_SELECTED_TAB_COMMAND,
           id,
-          selection: apiTabSelection
+          selection
         }).catch(_e => {});
       }
       break;
   }
 
   if (shouldClearSelection)
-    selection.clear();
+    SelectionUtils.clear(windowId);
 };
 browser.menus.onClicked.addListener(onClick);
 
@@ -602,11 +595,6 @@ DragSelection.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
   }
 });
 
-Selections.onCreated.addListener(selection => {
-  selection.onChange.addListener((tabs, selected, options = {}) => {
-    if (!options.dontUpdateMenu) {
-      log('menu becomes dirty by changed selection');
-      mDirty = true;
-    }
-  });
+browser.tabs.onHighlighted.addListener(_highlightInfo => {
+  mDirty = true;
 });
