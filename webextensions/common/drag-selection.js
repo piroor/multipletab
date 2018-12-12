@@ -341,14 +341,17 @@ export async function onDragReady(message) {
 
 export async function onDragCancel(message) {
   //console.log('onDragCancel', message);
-  if (mDragSelection.selection.size > 0) {
+  if (mDragSelection.selection.size > 1) {
     onDragSelectionEnd.dispatch(message, {
       dragStartTab: mDragSelection.dragStartTarget,
       selection:    Array.from(mDragSelection.selection.values())
     });
     // don't clear selection state until menu command is processed.
+    mDragSelection.cancel();
   }
-  mDragSelection.cancel();
+  else {
+    mDragSelection.clear();
+  }
 }
 
 export async function onDragStart(_message) {
@@ -432,9 +435,9 @@ dragExitAllWithDelay.cancel = () => {
 };
 
 export async function onDragEnd(message) {
-  //console.log('onDragEnd', message);
+  log('onDragEnd', message, mDragSelection.selection);
   if (!mDragSelection.willCloseSelectedTabs &&
-      mDragSelection.selection.size > 0)
+      mDragSelection.selection.size > 1)
     Selection.select(Array.from(mDragSelection.selection.values()));
   if (mDragSelection.willCloseSelectedTabs) {
     const allTabs = mDragSelection.allTabsOnDragReady.slice(0);
@@ -446,12 +449,15 @@ export async function onDragEnd(message) {
     }
     mDragSelection.clear();
   }
-  else if (mDragSelection.selection.size > 0) {
+  else if (mDragSelection.selection.size > 1) {
     await onDragSelectionEnd.dispatch(message, {
       dragStartTab: mDragSelection.dragStartTarget,
       selection:    Array.from(mDragSelection.selection.values())
     });
     // don't clear selection state until menu command is processed.
+    mDragSelection.cancel();
   }
-  mDragSelection.cancel();
+  else {
+    mDragSelection.clear();
+  }
 }
