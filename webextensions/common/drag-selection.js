@@ -16,7 +16,7 @@ import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export const onDragSelectionEnd = new EventListenerManager();
 
-export const mDragSelection = {
+const mDragSelection = {
   selection:             new Map(),
   willCloseSelectedTabs: false,
   allTabsOnDragReady:    [],
@@ -27,6 +27,7 @@ export const mDragSelection = {
   lastClickedTab:        null,
   undeterminedRange:     new Map(),
   dragEnteredCount:      0,
+  inSelectionSession:    false,
   cancel() {
     this.dragStartTarget = this.firstHoverTarget = this.lastHoverTarget = null;
     this.undeterminedRange.clear();
@@ -34,6 +35,8 @@ export const mDragSelection = {
     this.willCloseSelectedTabs = false;
     this.dragEnteredCount = 0;
     this.allTabsOnDragReady = [];
+    this.inSelectionSession = false;
+    this.state = null;
   },
   clear() {
     if (this.selection.size > 0)
@@ -47,30 +50,92 @@ export const mDragSelection = {
       Selection.clear();
     this.selection.clear();
   },
-  export() {
-    const exported = {};
-    for (const key of Object.keys(this)) {
-      if (key != 'selection' &&
-          typeof this[key] != 'function')
-        exported[key] = this[key];
-    }
-    return exported;
+  async startDrag(tab, options = {}) {
+    this.clear();
+    this.dragEnteredCount = 1;
+    this.willCloseSelectedTabs = options.closeTabs;
+    this.state = this.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;
+    this.pendingTabs = null;
+    this.dragStartTarget = this.firstHoverTarget = this.lastHoverTarget = tab;
+    this.allTabsOnDragReady = await Selection.getAllTabs(tab.windowId);
   },
-  apply(foreignSession) {
-    for (const key of Object.keys(foreignSession)) {
-      if (typeof this[key] != 'function')
-        this[key] = foreignSession[key];
+  toggleStateOfDragOverTabs(params = {}) {
+    log('toggleStateOfDragOverTabs ', params);
+    const toBeSelected = new Set();
+    const toBeUnselected = new Set();
+    if (this.firstHoverTarget) {
+      log('  firstHoverTarget ', this.firstHoverTarget);
+      const oldUndeterminedRange = this.undeterminedRange;
+      this.undeterminedRange = new Map();
+      log('  oldUndeterminedRange ', oldUndeterminedRange);
+
+      let newUndeterminedRange = params.allTargets;
+      if (newUndeterminedRange.every(tab => tab.id != this.firstHoverTarget.id))
+        newUndeterminedRange.push(this.firstHoverTarget);
+
+      const betweenTabs = getTabsBetween(this.firstHoverTarget, params.target, this.allTabsOnDragReady);
+      newUndeterminedRange = newUndeterminedRange.concat(betweenTabs);
+      log('  newUndeterminedRange ', newUndeterminedRange);
+
+      const newUndeterminedRangeIds = newUndeterminedRange.map(tab => tab.id);
+      const outOfRangeTabIds = Array.from(oldUndeterminedRange.keys()).filter(id => newUndeterminedRangeIds.indexOf(id) < 0);
+      {
+        for (const id of outOfRangeTabIds) {
+          if (this.selection.has(id)) {
+            this.selection.delete(id);
+            toBeUnselected.add(id);
+          }
+          else {
+            this.selection.set(id, oldUndeterminedRange.get(id));
+            toBeSelected.add(id);
+          }
+        }
+      }
+
+      {
+        for (const tab of newUndeterminedRange) {
+          if (this.undeterminedRange.has(tab.id))
+            continue;
+          this.undeterminedRange.set(tab.id, tab);
+          if (oldUndeterminedRange.has(tab.id))
+            continue;
+          if (this.selection.has(tab.id)) {
+            this.selection.delete(tab.id);
+            toBeUnselected.add(tab.id);
+            toBeSelected.delete(tab.id);
+          }
+          else {
+            this.selection.set(tab.id, tab);
+            toBeSelected.add(tab.id);
+            toBeUnselected.delete(tab.id);
+          }
+        }
+      }
     }
+    else {
+      for (const tab of params.allTargets) {
+        if (this.undeterminedRange.has(tab.id))
+          this.undeterminedRange.delete(tab.id);
+        else
+          this.undeterminedRange.set(tab.id, tab);
+        if (this.selection.has(tab.id)) {
+          this.selection.delete(tab.id);
+          toBeUnselected.add(tab.id);
+        }
+        else {
+          this.selection.set(tab.id, tab);
+          toBeSelected.add(tab.id);
+        }
+      }
+    }
+    Selection.notifyTabStateToTST(Array.from(toBeSelected), this.state, true);
+    Selection.notifyTabStateToTST(Array.from(toBeUnselected), this.state, false);
+  },
+  syncToHighlighted() {
+    if (!this.willCloseSelectedTabs)
+      Selection.select(Array.from(this.selection.values()));
   }
 };
-
-export function serialize() {
-  return mDragSelection.export();
-}
-
-export function apply(dragSelection) {
-  return mDragSelection.apply(dragSelection);
-}
 
 export function getDragStartTargetId() {
   return mDragSelection.dragStartTarget && mDragSelection.dragStartTarget.id;
@@ -114,83 +179,8 @@ function getTabsBetween(aBegin, end, allTabs = []) {
   });
 }
 
-function toggleStateOfDragOverTabs(params = {}) {
-  log('toggleStateOfDragOverTabs ', params);
-  const toBeSelected = new Set();
-  const toBeUnselected = new Set();
-  if (mDragSelection.firstHoverTarget) {
-    log('  firstHoverTarget ', mDragSelection.firstHoverTarget);
-    const oldUndeterminedRange = mDragSelection.undeterminedRange;
-    mDragSelection.undeterminedRange = new Map();
-    log('  oldUndeterminedRange ', oldUndeterminedRange);
-
-    let newUndeterminedRange = params.allTargets;
-    if (newUndeterminedRange.every(tab => tab.id != mDragSelection.firstHoverTarget.id))
-      newUndeterminedRange.push(mDragSelection.firstHoverTarget);
-
-    const betweenTabs = getTabsBetween(mDragSelection.firstHoverTarget, params.target, mDragSelection.allTabsOnDragReady);
-    newUndeterminedRange = newUndeterminedRange.concat(betweenTabs);
-    log('  newUndeterminedRange ', newUndeterminedRange);
-
-    const newUndeterminedRangeIds = newUndeterminedRange.map(tab => tab.id);
-    const outOfRangeTabIds = Array.from(oldUndeterminedRange.keys()).filter(id => newUndeterminedRangeIds.indexOf(id) < 0);
-    {
-      for (const id of outOfRangeTabIds) {
-        if (mDragSelection.selection.has(id)) {
-          mDragSelection.selection.delete(id);
-          toBeUnselected.add(id);
-        }
-        else {
-          mDragSelection.selection.set(id, oldUndeterminedRange.get(id));
-          toBeSelected.add(id);
-        }
-      }
-    }
-
-    {
-      for (const tab of newUndeterminedRange) {
-        if (mDragSelection.undeterminedRange.has(tab.id))
-          continue;
-        mDragSelection.undeterminedRange.set(tab.id, tab);
-        if (oldUndeterminedRange.has(tab.id))
-          continue;
-        if (mDragSelection.selection.has(tab.id)) {
-          mDragSelection.selection.delete(tab.id);
-          toBeUnselected.add(tab.id);
-          toBeSelected.delete(tab.id);
-        }
-        else {
-          mDragSelection.selection.set(tab.id, tab);
-          toBeSelected.add(tab.id);
-          toBeUnselected.delete(tab.id);
-        }
-      }
-    }
-  }
-  else {
-    for (const tab of params.allTargets) {
-      if (mDragSelection.undeterminedRange.has(tab.id))
-        mDragSelection.undeterminedRange.delete(tab.id);
-      else
-        mDragSelection.undeterminedRange.set(tab.id, tab);
-      if (mDragSelection.selection.has(tab.id)) {
-        mDragSelection.selection.delete(tab.id);
-        toBeUnselected.add(tab.id);
-      }
-      else {
-        mDragSelection.selection.set(tab.id, tab);
-        toBeSelected.add(tab.id);
-      }
-    }
-  }
-  Selection.notifyTabStateToTST(Array.from(toBeSelected), params.state, true);
-  Selection.notifyTabStateToTST(Array.from(toBeUnselected), params.state, false);
-}
-
 
 /* select tabs by clicking */
-
-let gInSelectionSession = false;
 
 export async function onClick(message) {
   log('onClick ', message);
@@ -221,7 +211,7 @@ export async function onClick(message) {
       log('clear selection');
       mDragSelection.clear();
     }
-    gInSelectionSession = false;
+    mDragSelection.inSelectionSession = false;
     mDragSelection.lastClickedTab = null;
     return false;
   }
@@ -247,14 +237,14 @@ export async function onClick(message) {
     for (const tab of tabs) {
       mDragSelection.selection.set(tab.id, tab);
     }
-    gInSelectionSession = true;
-    Selection.select(Array.from(mDragSelection.selection.values()));
+    mDragSelection.inSelectionSession = true;
+    mDragSelection.syncToHighlighted();
     return true;
   }
   else if (ctrlKeyPressed) {
     log('toggle selection of the tab and all collapsed descendants');
     if (message.tab.id != lastActiveTab.id ||
-        !gInSelectionSession) {
+        !mDragSelection.inSelectionSession) {
       mDragSelection.selection.set(lastActiveTab.id, lastActiveTab);
       if (configs.enableIntegrationWithTST)
         await setSelectedStateToCollapsedDescendants(lastActiveTab, true);
@@ -265,9 +255,9 @@ export async function onClick(message) {
       else
         mDragSelection.selection.set(tab.id, tab);
     }
-    gInSelectionSession = true;
+    mDragSelection.inSelectionSession = true;
     mDragSelection.lastClickedTab = message.tab;
-    Selection.select(Array.from(mDragSelection.selection.values()));
+    mDragSelection.syncToHighlighted();
     return true;
   }
   return false;
@@ -323,20 +313,14 @@ export async function onNonTabAreaClick(message) {
 export async function onDragReady(message) {
   log('onDragReady', message);
 
-  mDragSelection.clear();
-  mDragSelection.dragEnteredCount = 1;
-  mDragSelection.willCloseSelectedTabs = message.startOnClosebox;
-  mDragSelection.pendingTabs = null;
-  mDragSelection.dragStartTarget = mDragSelection.firstHoverTarget = mDragSelection.lastHoverTarget = message.tab;
-  mDragSelection.allTabsOnDragReady = await Selection.getAllTabs(message.window);
+  mDragSelection.startDrag(message.tab, { closeTabs: message.startOnClosebox });
 
   const startTabs = retrieveTargetTabs(message.tab);
   for (const tab of startTabs) {
     mDragSelection.selection.set(tab.id, tab);
     mDragSelection.undeterminedRange.set(tab.id, tab);
   }
-  const state = mDragSelection.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;
-  Selection.notifyTabStateToTST(startTabs.map(tab => tab.id), state, true);
+  Selection.notifyTabStateToTST(startTabs.map(tab => tab.id), mDragSelection.state, true);
 }
 
 export async function onDragCancel(message) {
@@ -367,11 +351,10 @@ export async function onDragEnter(message) {
       message.tab.id == mDragSelection.lastHoverTarget.id)
     return;
 
-  const state = mDragSelection.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;
   if (mDragSelection.pendingTabs) {
     for (const tab of mDragSelection.pendingTabs) {
       mDragSelection.selection.set(tab.id, tab);
-      Selection.notifyTabStateToTST(tab.id, state, true);
+      Selection.notifyTabStateToTST(tab.id, mDragSelection.state, true);
     }
     mDragSelection.pendingTabs = null;
   }
@@ -379,19 +362,17 @@ export async function onDragEnter(message) {
   if (mDragSelection.willCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
   */
   const targetTabs = retrieveTargetTabs(message.tab);
-  toggleStateOfDragOverTabs({
+  mDragSelection.toggleStateOfDragOverTabs({
     target:     message.tab,
-    allTargets: targetTabs,
-    state:      state
+    allTargets: targetTabs
   });
   if (message.tab.id == mDragSelection.dragStartTarget.id &&
       mDragSelection.selection.size == targetTabs.length) {
     for (const tab of targetTabs) {
       mDragSelection.selection.delete(tab.id);
-      Selection.notifyTabStateToTST(tab.id, state, false);
+      Selection.notifyTabStateToTST(tab.id, mDragSelection.state, false);
     }
-    if (!mDragSelection.willCloseSelectedTabs)
-      Selection.select(Array.from(mDragSelection.selection.values()));
+    mDragSelection.syncToHighlighted();
     for (const tab of targetTabs) {
       mDragSelection.undeterminedRange.set(tab.id, tab);
     }
@@ -436,9 +417,8 @@ dragExitAllWithDelay.cancel = () => {
 
 export async function onDragEnd(message) {
   log('onDragEnd', message, mDragSelection.selection);
-  if (!mDragSelection.willCloseSelectedTabs &&
-      mDragSelection.selection.size > 1)
-    Selection.select(Array.from(mDragSelection.selection.values()));
+  if (mDragSelection.selection.size > 1)
+    mDragSelection.syncToHighlighted();
   if (mDragSelection.willCloseSelectedTabs) {
     const allTabs = mDragSelection.allTabsOnDragReady.slice(0);
     allTabs.reverse();
