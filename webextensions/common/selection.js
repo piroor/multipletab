@@ -6,6 +6,7 @@
 'use strict';
 
 import {
+  log,
   configs,
   handleMissingReceiverError
 } from './common.js';
@@ -44,18 +45,23 @@ export async function getSelectionAndOthers(windowId) {
 
 const mToBeSelected   = new Map();
 const mToBeUnselected = new Map();
+let mClearSelection = false;
 let mDelayedUpdate = null;
 function requestUpdateHighlightedState(params = {}) {
+  if (params.clear)
+    mClearSelection = true;
   if (params.selected) {
     for (const tab of params.selected) {
       mToBeSelected.set(tab.id, tab);
       mToBeUnselected.delete(tab.id);
+      mClearSelection = false;
     }
   }
   if (params.unselected) {
     for (const tab of params.unselected) {
       mToBeUnselected.set(tab.id, tab);
       mToBeSelected.delete(tab);
+      mClearSelection = false;
     }
   }
   if (mDelayedUpdate)
@@ -64,9 +70,12 @@ function requestUpdateHighlightedState(params = {}) {
     mDelayedUpdate = null;
     const toBeSelected = Array.from(mToBeSelected.values());
     const toBeUnselected = Array.from(mToBeUnselected.values());
+    const clear = mClearSelection;
+    log('requestUpdateHighlightedState: update now ', { toBeSelected, toBeUnselected, clear });
     mToBeSelected.clear();
     mToBeUnselected.clear();
-    if (toBeSelected.length === 0 && toBeUnselected.length > 0) {
+    mClearSelection = false;
+    if (!clear && toBeSelected.length === 0 && toBeUnselected.length > 0) {
       const unselectedIds = toBeUnselected.map(tab => tab.id);
       const selectedTabs = await getSelection(toBeUnselected[0].windowId);
       browser.tabs.highlight({
@@ -74,7 +83,7 @@ function requestUpdateHighlightedState(params = {}) {
         tabs:     selectedTabs.filter(tab => !unselectedIds.includes(tab.id)).map(tab => tab.index)
       });
     }
-    else if (toBeSelected.length > 0) {
+    else if (!clear && toBeSelected.length > 0) {
       browser.tabs.highlight({
         windowId: toBeSelected[0].windowId,
         tabs:     toBeSelected.map(tab => tab.index)
@@ -99,7 +108,7 @@ export async function clear(windowId) {
     getSelection(windowId)
   ]);
   notifyTabStateToTST(selectedTabs.map(tab => tab.id), Constants.kSELECTED, false);
-  requestUpdateHighlightedState({ selected: activeTabs });
+  requestUpdateHighlightedState({ clear: true });
 }
 
 export async function select(tabsOrTab) {
