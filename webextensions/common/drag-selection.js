@@ -15,7 +15,8 @@ import * as Selection from './selection.js';
 import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export default class DragSelection {
-  constructor() {
+  constructor(windowId) {
+    this.windowId              = windowId;
     this.selection             = new Map();
     this.willCloseSelectedTabs = false;
     this.allTabsOnDragReady    = [];
@@ -28,6 +29,8 @@ export default class DragSelection {
     this.dragEnteredCount      = 0;
     this.inSelectionSession    = false;
 
+    this.onSelectionChange = new EventListenerManager();
+    this.onCloseSelectionChange = new EventListenerManager();
     this.onDragSelectionEnd = new EventListenerManager();
   }
 
@@ -43,16 +46,50 @@ export default class DragSelection {
   }
 
   clear() {
-    if (this.selection.size > 0)
+    if (this.selection.size > 0) {
       Selection.notifyTabStateToTST(
-        Array.from(this.selection.keys()),
+        this.selectedTabIds,
         [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
         false
       );
+      if (this.willCloseSelectedTabs)
+        this.onCloseSelectionChange.dispatch(this.selectedTabs, false);
+      else
+        this.onSelectionChange.dispatch(this.selectedTabs, false);
+    }
     this.cancel();
     if (this.selection.size > 1)
-      Selection.clear();
+      Selection.clear(this.windowId);
     this.selection.clear();
+  }
+
+
+  has(tab) {
+    return this.selection.has(tab.id);
+  }
+
+  add(tab) {
+    this.selection.set(tab.id, tab);
+    if (this.willCloseSelectedTabs)
+      this.onCloseSelectionChange.dispatch([tab], true);
+    else
+      this.onSelectionChange.dispatch([tab], true);
+  }
+
+  delete(tab) {
+    this.selection.delete(tab.id);
+    if (this.willCloseSelectedTabs)
+      this.onCloseSelectionChange.dispatch([tab], false);
+    else
+      this.onSelectionChange.dispatch([tab], false);
+  }
+
+  get selectedTabs() {
+    return Array.from(this.selection.values());
+  }
+
+  get selectedTabIds() {
+    return Array.from(this.selection.keys());
   }
 
 
@@ -109,7 +146,7 @@ export default class DragSelection {
             toBeUnselected.add(id);
           }
           else {
-            this.selection.set(id, oldUndeterminedRange.get(id));
+            this.add(oldUndeterminedRange.get(id));
             toBeSelected.add(id);
           }
         }
@@ -122,13 +159,13 @@ export default class DragSelection {
           this.undeterminedRange.set(tab.id, tab);
           if (oldUndeterminedRange.has(tab.id))
             continue;
-          if (this.selection.has(tab.id)) {
-            this.selection.delete(tab.id);
+          if (this.has(tab)) {
+            this.delete(tab);
             toBeUnselected.add(tab.id);
             toBeSelected.delete(tab.id);
           }
           else {
-            this.selection.set(tab.id, tab);
+            this.add(tab);
             toBeSelected.add(tab.id);
             toBeUnselected.delete(tab.id);
           }
@@ -141,12 +178,12 @@ export default class DragSelection {
           this.undeterminedRange.delete(tab.id);
         else
           this.undeterminedRange.set(tab.id, tab);
-        if (this.selection.has(tab.id)) {
-          this.selection.delete(tab.id);
+        if (this.has(tab)) {
+          this.delete(tab);
           toBeUnselected.add(tab.id);
         }
         else {
-          this.selection.set(tab.id, tab);
+          this.add(tab);
           toBeSelected.add(tab.id);
         }
       }
@@ -155,9 +192,20 @@ export default class DragSelection {
     Selection.notifyTabStateToTST(Array.from(toBeUnselected), this.state, false);
   }
 
-  syncToHighlighted() {
+  async syncToHighlighted() {
     if (!this.willCloseSelectedTabs)
-      Selection.select(Array.from(this.selection.values()));
+      await Selection.select(this.selectedTabs);
+  }
+
+  async syncFromHighlighted() {
+    this.cancel();
+    this.selection.clear();
+    const selectedTabs = await Selection.getSelection(this.windowId);
+    if (selectedTabs.length > 1) {
+      for (const tab of selectedTabs) {
+        this.add(tab);
+      }
+    }
   }
 
 
@@ -168,12 +216,11 @@ export default class DragSelection {
     if (message.button != 0)
       return false;
 
-    const windowId = message.window || message.windowId || (message.tab && message.tab.windowId);
     /*
     this.selection.clear();
-    const selectedTabs = await Selection.getSelection(windowId);
+    const selectedTabs = await Selection.getSelection(this.windowId);
     for (const tab of selectedTabs) {
-      this.selection.set(tab.id, tab);
+      this.add(tab);
     }
     */
 
@@ -182,7 +229,7 @@ export default class DragSelection {
       if (message.tab.states)
         selected = message.tab.states.includes(Constants.kSELECTED);
       else
-        selected = this.selection.has(message.tab.id);
+        selected = this.has(message.tab);
     }
 
     const ctrlKeyPressed = /^Mac/i.test(navigator.platform) ? message.metaKey : message.ctrlKey;
@@ -199,7 +246,7 @@ export default class DragSelection {
 
     const lastActiveTab = message.lastActiveTab || (await browser.tabs.query({
       active:   true,
-      windowId: windowId
+      windowId: this.windowId
     }))[0];
 
     let tabs = this.retrieveTargetTabs(message.tab);
@@ -212,11 +259,11 @@ export default class DragSelection {
       const selectedTabIds = tabs.map(tab => tab.id);
       if (!ctrlKeyPressed) {
         for (const tab of window.tabs.filter(tab => !selectedTabIds.includes(tab.id))) {
-          this.selection.delete(tab.id);
+          this.delete(tab);
         }
       }
       for (const tab of tabs) {
-        this.selection.set(tab.id, tab);
+        this.add(tab);
       }
       this.inSelectionSession = true;
       this.syncToHighlighted();
@@ -226,15 +273,15 @@ export default class DragSelection {
       log('toggle selection of the tab and all collapsed descendants');
       if (message.tab.id != lastActiveTab.id ||
           !this.inSelectionSession) {
-        this.selection.set(lastActiveTab.id, lastActiveTab);
+        this.add(lastActiveTab);
         if (configs.enableIntegrationWithTST)
           await this.setSelectedStateToCollapsedDescendants(lastActiveTab, true);
       }
       for (const tab of tabs) {
         if (selected)
-          this.selection.delete(tab.id);
+          this.delete(tab);
         else
-          this.selection.set(tab.id, tab);
+          this.add(tab);
       }
       this.inSelectionSession = true;
       this.lastClickedTab = message.tab;
@@ -253,9 +300,9 @@ export default class DragSelection {
     const treeTabs = this.collectTabsRecursively(tree);
     for (const tab of treeTabs) {
       if (selected)
-        this.selection.set(tab.id, tab);
+        this.add(tab);
       else
-        this.selection.delete(tab.id);
+        this.delete(tab);
     }
   }
   collectTabsRecursively(tab) {
@@ -299,11 +346,11 @@ export default class DragSelection {
     this.state = this.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;
     this.pendingTabs = null;
     this.dragStartTarget = this.firstHoverTarget = this.lastHoverTarget = message.tab;
-    this.allTabsOnDragReady = await Selection.getAllTabs(message.tab.windowId);
+    this.allTabsOnDragReady = await Selection.getAllTabs(this.windowId);
 
     const startTabs = this.retrieveTargetTabs(message.tab);
     for (const tab of startTabs) {
-      this.selection.set(tab.id, tab);
+      this.add(tab);
       this.undeterminedRange.set(tab.id, tab);
     }
     Selection.notifyTabStateToTST(startTabs.map(tab => tab.id), this.state, true);
@@ -314,7 +361,7 @@ export default class DragSelection {
     if (this.selection.size > 1) {
       this.onDragSelectionEnd.dispatch(message, {
         dragStartTab: this.dragStartTarget,
-        selection:    Array.from(this.selection.values())
+        selection:    this.selectedTabs
       });
       // don't clear selection state until menu command is processed.
       this.cancel();
@@ -339,7 +386,7 @@ export default class DragSelection {
 
     if (this.pendingTabs) {
       for (const tab of this.pendingTabs) {
-        this.selection.set(tab.id, tab);
+        this.add(tab);
         Selection.notifyTabStateToTST(tab.id, this.state, true);
       }
       this.pendingTabs = null;
@@ -355,7 +402,7 @@ export default class DragSelection {
     if (message.tab.id == this.dragStartTarget.id &&
         this.selection.size == targetTabs.length) {
       for (const tab of targetTabs) {
-        this.selection.delete(tab.id);
+        this.delete(tab);
         Selection.notifyTabStateToTST(tab.id, this.state, false);
       }
       this.syncToHighlighted();
@@ -407,7 +454,7 @@ export default class DragSelection {
     if (this.willCloseSelectedTabs) {
       const allTabs = this.allTabsOnDragReady.slice(0);
       allTabs.reverse();
-      const toBeClosedIds = Array.from(this.selection.keys());
+      const toBeClosedIds = this.selectedTabIds;
       for (const tab of allTabs) {
         if (tab && toBeClosedIds.indexOf(tab.id) > -1)
           await browser.tabs.remove(tab.id);
@@ -417,7 +464,7 @@ export default class DragSelection {
     else if (this.selection.size > 1) {
       await this.onDragSelectionEnd.dispatch(message, {
         dragStartTab: this.dragStartTarget,
-        selection:    Array.from(this.selection.values())
+        selection:    this.selectedTabs
       });
       // don't clear selection state until menu command is processed.
       this.cancel();

@@ -32,7 +32,7 @@ function getDragSelection(windowId) {
   if (mDragSelections.has(windowId))
     return mDragSelections.get(windowId);
 
-  const dragSelection = new DragSelection();
+  const dragSelection = new DragSelection(windowId);
   dragSelection.onDragSelectionEnd.addListener(delegateOnDragSelectionEnd);
   mDragSelections.set(windowId, dragSelection);
   return dragSelection;

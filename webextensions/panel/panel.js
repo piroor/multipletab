@@ -13,7 +13,7 @@ import {
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import * as Selection from '/common/selection.js';
-import * as DragSelectionManager from '/common/drag-selection-manager.js';
+import DragSelection from '/common/drag-selection.js';
 import MenuUI from '/extlib/MenuUI.js';
 import TabFavIconHelper from '/extlib/TabFavIconHelper.js';
 import '../extlib/l10n.js';
@@ -27,7 +27,7 @@ let gLastClickedItem = null;
 let gDragTargetIsClosebox;
 let gClickFired = false;
 let gWindowId = null;
-let gSelection = new Map();
+let gDragSelection;
 
 const gUseNativeContextMenu = typeof browser.menus.overrideContext == 'function';
 let gContextMenuIsOpened = false;
@@ -46,11 +46,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
   document.documentElement.dataset.theme = configs.theme;
   gWindowId = (await browser.windows.getLastFocused()).id;
-  const selectedTabs = await Selection.getSelection(gWindowId);
-  gSelection = new Map();
-  for (const tab of selectedTabs) {
-    gSelection.set(tab.id, tab);
-  }
+  gDragSelection = new DragSelection(gWindowId)
+  gDragSelection.syncFromHighlighted();
+  gDragSelection.onDragSelectionEnd.addListener(onDragSelectionEnd);
+  gDragSelection.onSelectionChange.addListener(onSelectionChange);
+  gDragSelection.onCloseSelectionChange.addListener(onCloseSelectionChange);
 
   gLastClickedItem = null;
 
@@ -98,12 +98,16 @@ window.addEventListener('pagehide', () => {
   browser.tabs.onCreated.removeListener(onTabModified);
   browser.tabs.onRemoved.removeListener(onTabModified);
   browser.menus.onHidden.removeListener(onMenuHidden);
-  gSelection.clear();
+  gDragSelection.onDragSelectionEnd.removeListener(onDragSelectionEnd);
+  gDragSelection.onSelectionChange.removeListener(onSelectionChange);
+  gDragSelection.onCloseSelectionChange.removeListener(onCloseSelectionChange);
+  gDragSelection.clear();
   gWindowId = null;
 }, { once: true });
 
 function onTabModified() {
   reserveClearSelection();
+  rebuildTabItems();
 }
 
 function onMenuHidden() {
@@ -145,35 +149,42 @@ function reserveClearSelection() {
     clearTimeout(reserveClearSelection.reserved);
   reserveClearSelection.reserved = setTimeout(() => {
     delete reserveClearSelection.reserved;
-    Selection.clear();
-    gSelection.clear();
+    gDragSelection.clear();
   }, 100);
 }
 
-function onSelectionChange(tabs, selected, _options = {}) {
-  if (!tabs.length)
-    return;
-  if (gDragTargetIsClosebox) {
-    const selectors = tabs.map(tab => `#tab-${tab.id}`);
-    const items = document.querySelectorAll(selectors.join(', '));
-    for (const item of items) {
-      if (selected)
-        item.classList.add('ready-to-close');
-      else
-        item.classList.remove('ready-to-close');
-    }
+function onDragSelectionEnd(message, selectionInfo) {
+  gDragSelection.syncToHighlighted().then(() => {
+    if (gUseNativeContextMenu &&
+        gContextMenuIsOpened)
+      return;
+    openMenu(message);
+  }).catch(console.log);
+}
+
+function onSelectionChange(tabs, selected) {
+  for (const tab of tabs) {
+    const item = document.getElementById(`tab-${tab.id}`);
+    if (!item)
+      continue;
+    const checkbox = item.querySelector('input[type="checkbox"]');
+    checkbox.checked = selected;
+    if (selected)
+      item.classList.add('selected');
+    else
+      item.classList.remove('selected');
   }
-  else {
-    const selectedIds = Array.from(gSelection.keys());
-    for (const item of gTabBar.querySelectorAll('li')) {
-      const selected = selectedIds.includes(item.tab.id);
-      const checkbox = item.querySelector('input[type="checkbox"]');
-      checkbox.checked = selected;
-      if (selected)
-        item.classList.add('selected');
-      else
-        item.classList.remove('selected');
-    }
+}
+
+function onCloseSelectionChange(tabs, selected) {
+  for (const tab of tabs) {
+    const item = document.getElementById(`tab-${tab.id}`);
+    if (!item)
+      continue;
+    if (selected)
+      item.classList.add('ready-to-close');
+    else
+      item.classList.remove('ready-to-close');
   }
 }
 
@@ -247,7 +258,7 @@ function onClick(event) {
     return;
   const item = findTabItemFromEvent(event);
   if (item) {
-    DragSelectionManager.onClick({
+    gDragSelection.onClick({
       window:        item.tab.windowId,
       tab:           item.tab,
       lastActiveTab: gLastClickedItem.tab,
@@ -262,7 +273,7 @@ function onClick(event) {
     gLastClickedItem.classList.add('last-focused');
   }
   else
-    DragSelectionManager.onNonTabAreaClick({
+    gDragSelection.onNonTabAreaClick({
       button: event.button
     }).catch(console.log);
 }
@@ -291,7 +302,7 @@ async function onMouseMove(event) {
     return;
   gDragTargetIsClosebox =  event.target.classList.contains('closebox');
   gLastDragEnteredTarget = gDragTargetIsClosebox ? event.target : item ;
-  DragSelectionManager.onDragReady({
+  gDragSelection.onDragReady({
     tab:             item.tab,
     window:          gWindowId,
     startOnClosebox: gDragTargetIsClosebox
@@ -318,7 +329,7 @@ function onMouseUp(event) {
     if (gClickFired)
       return;
     await buildMenu();
-    DragSelectionManager.onDragEnd({
+    gDragSelection.onDragEnd({
       tab:     item && item.tab,
       window:  gWindowId,
       clientX: event.clientX,
@@ -339,7 +350,7 @@ function onMouseOver(event) {
   if (item &&
       (!gDragTargetIsClosebox || isClosebox)) {
     if (target != gLastDragEnteredTarget) {
-      DragSelectionManager.onDragEnter({
+      gDragSelection.onDragEnter({
         tab:    item.tab,
         window: gWindowId
       }).catch(console.log);
@@ -362,7 +373,7 @@ function onMouseOut(event) {
   cancelDelayedDragExit(target);
   gOnDragExitTimeout = setTimeout(() => {
     gOnDragExitTimeout = null;
-    DragSelectionManager.onDragExit({
+    gDragSelection.onDragExit({
       tab:    item.tab,
       window: gWindowId
     }).catch(console.log);
@@ -375,15 +386,6 @@ function cancelDelayedDragExit() {
     gOnDragExitTimeout = null;
   }
 }
-
-DragSelectionManager.onDragSelectionEnd.addListener((message, selectionInfo) => {
-  Selection.select(selectionInfo.selection).then(() => {
-    if (gUseNativeContextMenu &&
-        gContextMenuIsOpened)
-      return;
-    openMenu(message);
-  }).catch(console.log);
-});
 
 
 async function rebuildTabItems() {
@@ -407,18 +409,17 @@ function buildTabItem(tab) {
   const label    = document.createElement('label');
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
-  if (gSelection.has(tab.id))
+  if (gDragSelection.has(tab))
     checkbox.setAttribute('checked', true);
   checkbox.addEventListener('change', () => {
     item.classList.toggle('selected');
     if (item.classList.contains('selected')) {
-      gSelection.set(tab.id, tab);
-      Selection.select(tab);
+      gDragSelection.add(tab);
     }
     else {
-      gSelection.delete(tab.id);
-      Selection.unselect(tab);
+      gDragSelection.delete(tab);
     }
+    gDragSelection.syncToHighlighted();
   });
   label.appendChild(checkbox);
   const favicon = document.createElement('img');
@@ -442,7 +443,7 @@ function buildTabItem(tab) {
     gLastClickedItem = item;
     item.classList.add('last-focused');
   }
-  if (gSelection.has(tab.id))
+  if (gDragSelection.has(tab))
     item.classList.add('selected');
   item.appendChild(label);
   item.tab = tab;
@@ -486,7 +487,7 @@ function onMenuShown() {
 async function buildMenu() {
   const items = await browser.runtime.sendMessage({
     type:   Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO,
-    tabIds: Array.from(gSelection.keys())
+    tabIds: gDragSelection.selectedTabIds
   });
   items.shift(); // delete toplevel "selection" menu
 
