@@ -10,61 +10,85 @@ import EventListenerManager from '/extlib/EventListenerManager.js';
 
 export const onDragSelectionEnd = new EventListenerManager();
 
-const mDragSelection = new DragSelection();
-mDragSelection.onDragSelectionEnd.addListener((...args) => {
-  return onDragSelectionEnd.dispatch(...args);
+const mDragSelections = new Map();
+
+browser.windows.onCreated.addListener(window => {
+  getDragSelection(window.id);
 });
 
-export function getDragStartTargetId() {
-  return mDragSelection.dragStartTarget && mDragSelection.dragStartTarget.id;
+browser.windows.onRemoved.addListener(windowId => {
+  const dragSelection = getDragSelection(windowId);
+  dragSelection.onDragSelectionEnd.removeListener(delegateOnDragSelectionEnd);
+  mDragSelections.delete(windowId);
+});
+
+async function getWindowId(message) {
+  return message.window || message.windowId ||
+    (message.tab && message.tab.windowId) ||
+      (await browser.windows.getLastFocused({})).id;
 }
 
-export function activateInVerticalTabbarOfTST() {
-  mDragSelection.activatedInVerticalTabbarOfTST = true;
+function getDragSelection(windowId) {
+  if (mDragSelections.has(windowId))
+    return mDragSelections.get(windowId);
+
+  const dragSelection = new DragSelection();
+  dragSelection.onDragSelectionEnd.addListener(delegateOnDragSelectionEnd);
+  mDragSelections.set(windowId, dragSelection);
+  return dragSelection;
 }
 
-export function deactivateInVerticalTabbarOfTST() {
-  mDragSelection.activatedInVerticalTabbarOfTST = false;
-}
-
-export function isActivatedInVerticalTabbarOfTST() {
-  return !!mDragSelection.activatedInVerticalTabbarOfTST;
+function delegateOnDragSelectionEnd(...args) {
+  return onDragSelectionEnd.dispatch(...args);
 }
 
 
 export async function onClick(message) {
-  return mDragSelection.onClick(message);
+  return getDragSelection(await getWindowId(message)).onClick(message);
 }
 
 export async function onMouseUp(message) {
-  return mDragSelection.onMouseUp(message);
+  return getDragSelection(await getWindowId(message)).onMouseUp(message);
 }
 
 export async function onNonTabAreaClick(message) {
-  return mDragSelection.onNonTabAreaClick(message);
+  return getDragSelection(await getWindowId(message)).onNonTabAreaClick(message);
 }
 
 
 export async function onDragReady(message) {
-  return mDragSelection.onDragReady(message);
+  return getDragSelection(await getWindowId(message)).onDragReady(message);
 }
 
 export async function onDragCancel(message) {
-  return mDragSelection.onDragCancel(message);
+  return getDragSelection(await getWindowId(message)).onDragCancel(message);
 }
 
 export async function onDragStart(message) {
-  return mDragSelection.onDragStart(message);
+  return getDragSelection(await getWindowId(message)).onDragStart(message);
 }
 
 export async function onDragEnter(message) {
-  return mDragSelection.onDragEnter(message);
+  return getDragSelection(await getWindowId(message)).onDragEnter(message);
 }
 
 export async function onDragExit(message) {
-  return mDragSelection.onDragExit(message);
+  return getDragSelection(await getWindowId(message)).onDragExit(message);
 }
 
 export async function onDragEnd(message) {
-  return mDragSelection.onDragEnd(message);
+  return getDragSelection(await getWindowId(message)).onDragEnd(message);
+}
+
+
+export function activateInVerticalTabbarOfTST() {
+  DragSelection.activatedInVerticalTabbarOfTST = true;
+}
+
+export function deactivateInVerticalTabbarOfTST() {
+  DragSelection.activatedInVerticalTabbarOfTST = false;
+}
+
+export function isActivatedInVerticalTabbarOfTST() {
+  return !!DragSelection.activatedInVerticalTabbarOfTST;
 }
