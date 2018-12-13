@@ -73,6 +73,8 @@
   "tabContextMenu_close_label_multiselected":       { "message": "Close &Selected Tabs" },
 
 
+  "context_selection_label":              { "message": "Selected Tabs" },
+
   "context_groupTabs_label":              { "message": "Create New &Group" },
   "command_groupSelectedTabs":            { "message": "Create New Group from Selected Tabs" },
 

@@ -123,6 +123,10 @@
         "message": "关闭标签页(&C)",
         "hash": "517e4cda82f826395a14d6bda5b1c7a0"
     },
+    "context_selection_label": {
+        "message": "已选中标签页",
+        "hash": "1f9c0050f1f9ab68cd3d2f0aa15c4845"
+    },
     "context_groupTabs_label": {
         "message": "创建新组(&G)",
         "hash": "e21f9144d4903adf990ecfe83b197bb0"

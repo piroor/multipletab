@@ -102,13 +102,25 @@ const mItemsById = {
   'lastSeparatorBeforeExtraItems': {
     type: 'separator'
   },
-
   'groupTabs': {
+    title: browser.i18n.getMessage('context_groupTabs_label')
+  },
+  'invertSelection': {
+    title: browser.i18n.getMessage('context_invertSelection_label')
+  },
+
+
+  'selection': {
+    title: browser.i18n.getMessage('context_selection_label'),
+    viewTypes: ['tab', 'sidebar'],
+    documentUrlPatterns: null
+  },
+  'selection_groupTabs': {
     title: browser.i18n.getMessage('context_groupTabs_label'),
     viewTypes: null,
     documentUrlPatterns: null
   },
-  'invertSelection': {
+  'selection_invertSelection': {
     title: browser.i18n.getMessage('context_invertSelection_label'),
     viewTypes: null,
     documentUrlPatterns: null
@@ -153,6 +165,8 @@ function updateItem(id, state = {}) {
     visible: 'visible' in state ? !!state.visible : true,
     enabled: 'enabled' in state ? !!state.enabled : true
   };
+  if ('parentId' in state)
+    updateInfo.parentId = state.parentId;
   const title = state.multiselected ? item.titleMultiselected || item.title : item.title;
   if (title) {
     updateInfo.title = title;
@@ -161,9 +175,13 @@ function updateItem(id, state = {}) {
   }
   if (!modified)
     modified = updateInfo.visible != item.lastVisible ||
-                 updateInfo.enabled != item.lastEnabled;
+                 updateInfo.enabled != item.lastEnabled ||
+                 ('parentId' in state &&
+                  updateInfo.parentId != item.lastParentId);
   item.lastVisible = updateInfo.visible;
   item.lastEnabled = updateInfo.enabled;
+  if ('parentId' in state)
+    item.lastParentId = updateInfo.parentId;
   browser.menus.update(id, updateInfo);
   return modified;
 }
@@ -294,11 +312,27 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
 
   visibleItemsCount = 0;
 
+  const showGroupTabs = configs.context_groupTabs && selectedTabs.length > 1 && ++visibleItemsCount;
+  const showInvertSelection = configs.context_invertSelection && selectedTabs.length > 0 && selectedTabs.length < visibleTabs.length && ++visibleItemsCount;
+
   updateItem('groupTabs', {
-    visible: configs.context_groupTabs && selectedTabs.length > 1 && ++visibleItemsCount
+    visible: showGroupTabs
   }) && modifiedItemsCount++;
+  updateItem('selection_groupTabs', {
+    visible: showGroupTabs,
+    parentId: visibleItemsCount > 1 ? 'selection' : null
+  }) && modifiedItemsCount++;
+
   updateItem('invertSelection', {
-    visible: configs.context_invertSelection && selectedTabs.length > 0 && selectedTabs.length < visibleTabs.length && ++visibleItemsCount
+    visible: showInvertSelection
+  }) && modifiedItemsCount++;
+  updateItem('selection_invertSelection', {
+    visible: showInvertSelection,
+    parentId: visibleItemsCount > 1 ? 'selection' : null
+  }) && modifiedItemsCount++;
+
+  updateItem('selection', {
+    visible: visibleItemsCount > 1,
   }) && modifiedItemsCount++;
 
   const forExtraItems = givenSelectedTabs && mExtraItems.size > 0 && Array.from(mExtraItems.values()).some(item => item.visible !== false)

@@ -73,6 +73,8 @@
   "tabContextMenu_close_label_multiselected":       { "message": "選択したタブを閉じる(&S)" },
 
 
+  "context_selection_label":              { "message": "選択したタブを操作" },
+
   "context_groupTabs_label":              { "message": "新しいグループにする(&G)" },
   "command_groupSelectedTabs":            { "message": "選択中のタブを新しいグループにする" },
 
