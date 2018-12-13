@@ -235,7 +235,9 @@ function onContextMenu(event) {
   openMenu(event);
 }
 
-function onClick(event) {
+let mLastDragSelectionClicked;
+
+async function onClick(event) {
   if (event.button != 0)
     return;
 
@@ -256,7 +258,7 @@ function onClick(event) {
     return;
   const item = findTabItemFromEvent(event);
   if (item) {
-    gDragSelection.onClick({
+    mLastDragSelectionClicked = gDragSelection.onClick({
       window:        item.tab.windowId,
       tab:           item.tab,
       lastActiveTab: gLastClickedItem.tab,
@@ -265,7 +267,7 @@ function onClick(event) {
       ctrlKey:       event.ctrlKey,
       metaKey:       event.metaKey,
       shiftKey:      event.shiftKey
-    }).catch(console.log);
+    }, true).catch(console.log);
     gLastClickedItem.classList.remove('last-focused');
     gLastClickedItem = item;
     gLastClickedItem.classList.add('last-focused');
@@ -409,7 +411,8 @@ function buildTabItem(tab) {
   checkbox.setAttribute('type', 'checkbox');
   if (gDragSelection.has(tab))
     checkbox.setAttribute('checked', true);
-  checkbox.addEventListener('change', () => {
+  checkbox.addEventListener('change', async () => {
+    await mLastDragSelectionClicked;
     item.classList.toggle('selected');
     if (item.classList.contains('selected')) {
       gDragSelection.add(tab);

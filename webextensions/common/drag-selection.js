@@ -56,19 +56,20 @@ export default class DragSelection {
   async clear(force) {
     const tabs = force ? (await Selection.getAllTabs(this.windowId)) : this.selectedTabs;
     if (tabs.length > 0) {
-      Selection.notifyTabStateToTST(
-        tabs.map(tab => tab.id),
-        [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
-        false
-      );
-      if (this.willCloseSelectedTabs)
-        this.onCloseSelectionChange.dispatch(tabs, false);
-      else
-        this.onSelectionChange.dispatch(tabs, false);
+      await Promise.all([
+        Selection.notifyTabStateToTST(
+          tabs.map(tab => tab.id),
+          [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+          false
+        ),
+        this.willCloseSelectedTabs ?
+          this.onCloseSelectionChange.dispatch(tabs, false) :
+            this.onSelectionChange.dispatch(tabs, false)
+      ]);
     }
     this.cancel();
     if (tabs.length > 1 || force)
-      Selection.clear(this.windowId, force);
+      await Selection.clear(this.windowId, force);
     this.selection.clear();
   }
 
@@ -245,7 +246,7 @@ export default class DragSelection {
     const ctrlKeyPressed = /^Mac/i.test(navigator.platform) ? message.metaKey : message.ctrlKey;
     if (!ctrlKeyPressed && !message.shiftKey) {
       log('regular click');
-      this.clear(true);
+      await this.clear(true);
       this.inSelectionSession = false;
       this.lastClickedTab = null;
       return false;
@@ -348,7 +349,7 @@ export default class DragSelection {
   async onDragReady(message) {
     log('onDragReady', message);
 
-    this.clear();
+    await this.clear(true);
     this.dragEnteredCount = 1;
     this.willCloseSelectedTabs = message.startOnClosebox;
     this.state = this.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;
@@ -407,7 +408,8 @@ export default class DragSelection {
       target:     message.tab,
       allTargets: targetTabs
     });
-    if (message.tab.id == this.dragStartTarget.id &&
+    if (this.dragStartTarget &&
+        message.tab.id == this.dragStartTarget.id &&
         this.selection.size == targetTabs.length) {
       for (const tab of targetTabs) {
         this.delete(tab);
@@ -484,12 +486,17 @@ export default class DragSelection {
 
 
   async onHighlited(highlightInfo) {
+    if (this.dragStartTarget)
+      return;
     const selectedIds = this.selectedTabIds;
     if (selectedIds.length == 0 ||
         selectedIds.sort().join(',') == highlightInfo.tabIds.sort().join(','))
       return;
-    log('DragSelection.onHighlited: selected             => ', selectedIds);
-    log('DragSelection.onHighlited: highlightInfo.tabIds => ', highlightInfo.tabIds);
+    log('DragSelection.onHighlited: ', {
+      selectedIds,
+      highlighted: highlightInfo.tabIds,
+      dragStartTarget: this.dragStartTarget
+    });
     const toBeUnselected = selectedIds.filter(id => !highlightInfo.tabIds.includes(id));
     const toBeSelected   = highlightInfo.tabIds.filter(id => !selectedIds.includes(id));
     this.onSelectionChange.dispatch(await Promise.all(toBeUnselected.map(id => browser.tabs.get(id))), false);
