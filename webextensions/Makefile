@@ -22,7 +22,7 @@ update_extlib:
 	cd .. && git submodule update --init
 
 install_extlib:
-	rm extlib/*.js
+	rm -f extlib/*.js
 	cp ../submodules/webextensions-lib-event-listener-manager/EventListenerManager.js extlib/
 	cp ../submodules/webextensions-lib-tab-favicon-helper/TabFavIconHelper.js extlib/; echo 'export default TabFavIconHelper;' >> extlib/TabFavIconHelper.js
 	cp ../submodules/webextensions-lib-rich-confirm/RichConfirm.js extlib/; echo 'export default RichConfirm;' >> extlib/RichConfirm.js
