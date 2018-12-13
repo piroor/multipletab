@@ -110,6 +110,19 @@ const mItemsById = {
   },
 
 
+  'global_groupTabs': {
+    title: browser.i18n.getMessage('context_groupTabs_label'),
+    viewTypes: ['tab', 'sidebar'],
+    documentUrlPatterns: null,
+    TST: true
+  },
+  'global_invertSelection': {
+    title: browser.i18n.getMessage('context_invertSelection_label'),
+    viewTypes: ['tab', 'sidebar'],
+    documentUrlPatterns: null,
+    TST: true
+  },
+
   'selection': {
     title: browser.i18n.getMessage('context_selection_label'),
     viewTypes: ['tab', 'sidebar'],
@@ -120,12 +133,14 @@ const mItemsById = {
     title: browser.i18n.getMessage('context_groupTabs_label'),
     viewTypes: ['tab', 'sidebar'],
     documentUrlPatterns: null,
+    parentId: 'selection',
     TST: true
   },
   'selection_invertSelection': {
     title: browser.i18n.getMessage('context_invertSelection_label'),
     viewTypes: ['tab', 'sidebar'],
     documentUrlPatterns: null,
+    parentId: 'selection',
     TST: true
   }
 };
@@ -174,8 +189,6 @@ function updateItem(id, state = {}) {
     visible: 'visible' in state ? !!state.visible : true,
     enabled: 'enabled' in state ? !!state.enabled : true
   };
-  if ('parentId' in state)
-    updateInfo.parentId = state.parentId;
   const title = state.multiselected ? item.titleMultiselected || item.title : item.title;
   if (title) {
     updateInfo.title = title;
@@ -184,20 +197,17 @@ function updateItem(id, state = {}) {
   }
   if (!modified)
     modified = updateInfo.visible != item.lastVisible ||
-                 updateInfo.enabled != item.lastEnabled ||
-                 ('parentId' in state &&
-                  updateInfo.parentId != item.lastParentId);
+                 updateInfo.enabled != item.lastEnabled;
   item.lastVisible = updateInfo.visible;
   item.lastEnabled = updateInfo.enabled;
-  if ('parentId' in state)
-    item.lastParentId = updateInfo.parentId;
-  browser.menus.update(id, updateInfo);
-
-  if (item.TST)
-    browser.runtime.sendMessage(Constants.kTST_ID, {
-      type:   Constants.kTSTAPI_CONTEXT_MENU_UPDATE,
-      params: [id, updateInfo]
-    }).catch(handleMissingReceiverError);
+  if (modified) {
+    browser.menus.update(id, updateInfo);
+    if (item.TST)
+      browser.runtime.sendMessage(Constants.kTST_ID, {
+        type:   Constants.kTSTAPI_CONTEXT_MENU_UPDATE,
+        params: [id, updateInfo]
+      }).catch(handleMissingReceiverError);
+  }
 
   return modified;
 }
@@ -334,17 +344,21 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
   updateItem('groupTabs', {
     visible: showGroupTabs
   }) && modifiedItemsCount++;
+  updateItem('global_groupTabs', {
+    visible: showGroupTabs && visibleItemsCount == 1
+  }) && modifiedItemsCount++;
   updateItem('selection_groupTabs', {
-    visible: showGroupTabs,
-    parentId: visibleItemsCount > 1 ? 'selection' : null
+    visible: showGroupTabs && visibleItemsCount > 1
   }) && modifiedItemsCount++;
 
   updateItem('invertSelection', {
     visible: showInvertSelection
   }) && modifiedItemsCount++;
+  updateItem('global_invertSelection', {
+    visible: showInvertSelection && visibleItemsCount == 1
+  }) && modifiedItemsCount++;
   updateItem('selection_invertSelection', {
-    visible: showInvertSelection,
-    parentId: visibleItemsCount > 1 ? 'selection' : null
+    visible: showInvertSelection && visibleItemsCount > 1
   }) && modifiedItemsCount++;
 
   updateItem('selection', {
