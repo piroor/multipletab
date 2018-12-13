@@ -111,7 +111,7 @@ function requestUpdateHighlightedState(params = {}) {
 export async function clear(windowId, force = false) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
-  const selectedTabs = await force ? getAllTabs(windowId) : getSelection(windowId);
+  const selectedTabs = await (force ? getAllTabs(windowId) : getSelection(windowId));
   notifyTabStateToTST(selectedTabs.map(tab => tab.id), Constants.kSELECTED, false);
   requestUpdateHighlightedState({ clear: true });
 }
