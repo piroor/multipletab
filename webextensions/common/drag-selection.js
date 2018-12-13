@@ -45,21 +45,22 @@ export default class DragSelection {
     this.state = null;
   }
 
-  clear() {
-    if (this.selection.size > 0) {
+  async clear(force) {
+    const tabs = force ? (await Selection.getAllTabs(this.windowId)) : this.selectedTabs;
+    if (tabs.length > 0) {
       Selection.notifyTabStateToTST(
-        this.selectedTabIds,
+        tabs.map(tab => tab.id),
         [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
         false
       );
       if (this.willCloseSelectedTabs)
-        this.onCloseSelectionChange.dispatch(this.selectedTabs, false);
+        this.onCloseSelectionChange.dispatch(tabs, false);
       else
-        this.onSelectionChange.dispatch(this.selectedTabs, false);
+        this.onSelectionChange.dispatch(tabs, false);
     }
     this.cancel();
-    if (this.selection.size > 1)
-      Selection.clear(this.windowId);
+    if (tabs.length > 1 || force)
+      Selection.clear(this.windowId, force);
     this.selection.clear();
   }
 
@@ -236,7 +237,7 @@ export default class DragSelection {
     const ctrlKeyPressed = /^Mac/i.test(navigator.platform) ? message.metaKey : message.ctrlKey;
     if (!ctrlKeyPressed && !message.shiftKey) {
       log('regular click');
-      this.clear();
+      this.clear(true);
       this.inSelectionSession = false;
       this.lastClickedTab = null;
       return false;

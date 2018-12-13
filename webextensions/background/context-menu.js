@@ -469,6 +469,10 @@ async function onClick(info, contextTab) {
       }
       break;
 
+    case 'invertSelection':
+      Selection.invert(contextWindowId);
+      break;
+
     default: {
       if (info.menuItemId.indexOf('extra:') == 0) {
         const idMatch   = info.menuItemId.match(/^extra:([^:]+):(.+)$/);
