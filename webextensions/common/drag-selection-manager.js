@@ -22,6 +22,15 @@ browser.windows.onRemoved.addListener(windowId => {
   mDragSelections.delete(windowId);
 });
 
+browser.tabs.onCreated.addListener(tab => {
+  getDragSelection(tab.windowId).clear();
+});
+
+browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
+  if (!removeInfo.isWindowClosing)
+    getDragSelection(removeInfo.windowId).clear();
+});
+
 async function getWindowId(message) {
   return message.window || message.windowId ||
     (message.tab && message.tab.windowId) ||
