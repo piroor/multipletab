@@ -567,7 +567,9 @@ function onMessage(message) {
       let visibleItems = [];
       for (const id of Object.keys(mItemsById)) {
         const item = mItemsById[id];
-        if (item.lastVisible)
+        if (item.lastVisible &&
+            (!item.viewTypes ||
+             item.viewTypes.includes('popup')))
           visibleItems.push(item);
       }
       visibleItems = visibleItems.concat(Array.from(mExtraItems.values()));
