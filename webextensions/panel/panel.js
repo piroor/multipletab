@@ -261,7 +261,7 @@ async function onClick(event) {
     mLastDragSelectionClicked = gDragSelection.onClick({
       window:        item.tab.windowId,
       tab:           item.tab,
-      lastActiveTab: gLastClickedItem.tab,
+      lastActiveTab: gLastClickedItem && gLastClickedItem.tab,
       button:        event.button,
       altKey:        event.altKey,
       ctrlKey:       event.ctrlKey,
@@ -314,6 +314,7 @@ async function onMouseMove(event) {
 }
 
 function onMouseUp(event) {
+  gLastClickedItem = null;
   if (mIsCapturing) {
     gTabBar.removeEventListener('mousemove', onMouseMove);
     gTabBar.removeEventListener('mouseover', onMouseOver);
