@@ -64,7 +64,7 @@ export default class DragSelection {
         ),
         this.willCloseSelectedTabs ?
           this.onCloseSelectionChange.dispatch(tabs, false) :
-            this.onSelectionChange.dispatch(tabs, false)
+          this.onSelectionChange.dispatch(tabs, false)
       ]);
     }
     this.cancel();
