@@ -80,12 +80,7 @@ body {
   flex-wrap: nowrap;
   list-style: none;
   margin: 0;
-  padding: 0.25em 0;
-}
-
-#tabs li {
-  padding-right: 1em;
-  padding-left: 0.5em;
+  padding: 0;
 }
 
 #tabs li * {
@@ -96,6 +91,7 @@ body {
 #tabs li label {
   flex-grow: 1;
   overflow: hidden;
+  padding: 0.25em 1em 0.25em 0.5em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
