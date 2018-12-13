@@ -493,8 +493,8 @@ export default class DragSelection {
         selectedIds.sort().join(',') == highlightInfo.tabIds.sort().join(','))
       return;
     log('DragSelection.onHighlited: ', {
-      selectedIds,
-      highlighted: highlightInfo.tabIds,
+      selectedIds: selectedIds.join(','),
+      highlighted: highlightInfo.tabIds.join(','),
       dragStartTarget: this.dragStartTarget
     });
     const toBeUnselected = selectedIds.filter(id => !highlightInfo.tabIds.includes(id));
