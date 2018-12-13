@@ -113,17 +113,20 @@ const mItemsById = {
   'selection': {
     title: browser.i18n.getMessage('context_selection_label'),
     viewTypes: ['tab', 'sidebar'],
-    documentUrlPatterns: null
+    documentUrlPatterns: null,
+    TST: true
   },
   'selection_groupTabs': {
     title: browser.i18n.getMessage('context_groupTabs_label'),
-    viewTypes: null,
-    documentUrlPatterns: null
+    viewTypes: ['tab', 'sidebar'],
+    documentUrlPatterns: null,
+    TST: true
   },
   'selection_invertSelection': {
     title: browser.i18n.getMessage('context_invertSelection_label'),
-    viewTypes: null,
-    documentUrlPatterns: null
+    viewTypes: ['tab', 'sidebar'],
+    documentUrlPatterns: null,
+    TST: true
   }
 };
 
@@ -151,6 +154,12 @@ export function init() {
     if (item.parentId)
       info.parentId = item.parentId;
     browser.menus.create(info);
+
+    if (item.TST)
+      browser.runtime.sendMessage(Constants.kTST_ID, {
+        type:   Constants.kTSTAPI_CONTEXT_MENU_CREATE,
+        params: info
+      }).catch(handleMissingReceiverError);
   }
 
   browser.menus.onShown.addListener(onShown);
@@ -183,6 +192,13 @@ function updateItem(id, state = {}) {
   if ('parentId' in state)
     item.lastParentId = updateInfo.parentId;
   browser.menus.update(id, updateInfo);
+
+  if (item.TST)
+    browser.runtime.sendMessage(Constants.kTST_ID, {
+      type:   Constants.kTSTAPI_CONTEXT_MENU_UPDATE,
+      params: [id, updateInfo]
+    }).catch(handleMissingReceiverError);
+
   return modified;
 }
 
@@ -606,19 +622,23 @@ function onMessageExternal(message, sender) {
   }
 }
 
+let mLastSelection;
+
 function onTSTAPIMessage(message) {
   switch (message.type) {
     case Constants.kTSTAPI_CONTEXT_MENU_CLICK:
       return onClick(message.info, message.tab);
     case Constants.kTSTAPI_CONTEXT_MENU_SHOWN:
-      return onShown(message.info, message.tab);
+      return onShown(message.info, message.tab, mLastSelection);
   }
 }
 
 
 DragSelectionManager.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
   try {
-    if (configs.autoOpenMenuOnDragEnd)
+    if (configs.autoOpenMenuOnDragEnd) {
+      mLastSelection = selectionInfo.selection;
+      await onShown({}, selectionInfo.dragStartTab, mLastSelection);
       await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
         window: (await browser.windows.getLastFocused()).id,
@@ -626,6 +646,8 @@ DragSelectionManager.onDragSelectionEnd.addListener(async (message, selectionInf
         left: message.clientX,
         top:  message.clientY
       }).catch(handleMissingReceiverError);
+      mLastSelection = null;
+    }
   }
   catch(e) {
     log('failed to open context menu: ', e);
