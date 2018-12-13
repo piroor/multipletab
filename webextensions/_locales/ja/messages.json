@@ -31,68 +31,49 @@
   "message_updatedFromLegacy_description": { "message": "Firefox 57以降のバージョンに対応するため、マルチプルタブハンドラがWebExtensionsベースに生まれ変わりました。タブバー上でのドラッグ操作に代わって、今後はツールバー上の「タブをまとめて操作」ボタンからパネルを開いてタブを選択して下さい。\n\nまた、<a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">ツリー型タブ</a>と併用すると、サイドバー内に表示されたタブバーにおいて同様のタブ選択操作を行えます（この場合は、タブの上でマウスのボタンを押してからしばらく待つとタブの選択が始まります）。" },
 
 
-  "saveTabsPrefix_defaultValue": { "message": "保存されたタブ/" },
+  "tabContextMenu_reload_label":      { "message": "タブを再読み込み(&R)" },
+  "tabContextMenu_mute_label":        { "message": "タブをミュート(&M)" },
+  "tabContextMenu_unmute_label":      { "message": "タブのミュートを解除(&M)" },
+
+  "tabContextMenu_pin_label":         { "message": "タブをピン留め(&P)" },
+  "tabContextMenu_unpin_label":       { "message": "タブのピン留めを外す(&P)" },
+  "tabContextMenu_duplicate_label":   { "message": "タブを複製(&D)" },
+  "tabContextMenu_selectAllTabs_label": { "message": "すべてのタブを選択(&S)" },
+  "tabContextMenu_bookmark_label":    { "message": "タブをブックマーク(&B)" },
+  "tabContextMenu_reopenInContainer_label":             { "message": "コンテナーを開きなおす(&E)" },
+  "tabContextMenu_reopenInContainer_noContainer_label": { "message": "コンテナーなし(&N)" },
+  "tabContextMenu_moveTab_label":     { "message": "タブを移動(&V)" },
+  "tabContextMenu_moveTabToStart_label": { "message": "先頭へ移動(&S)" },
+  "tabContextMenu_moveTabToEnd_label":   { "message": "末尾へ移動(&E)" },
+  "tabContextMenu_tearOff_label":     { "message": "新しいウィンドウへ移動(&W)" },
+
+  "tabContextMenu_reloadAll_label":   { "message": "すべてのタブを再読み込み(&A)" },
+  "tabContextMenu_bookmarkAll_label": { "message": "すべてのタブをブックマーク(&T)..." },
+
+  "tabContextMenu_closeTabsToBottom_label":  { "message": "下のタブをすべて閉じる(&B)" },
+  "tabContextMenu_closeOther_label":  { "message": "他のタブをすべて閉じる(&O)" },
+
+  "tabContextMenu_undoClose_label":   { "message": "閉じたタブを元に戻す(&U)" },
+  "tabContextMenu_close_label":       { "message": "タブを閉じる(&C)" },
+
+  "tabContextMenu_reload_label_multiselected":      { "message": "選択したタブを再読み込み(&R)" },
+  "tabContextMenu_mute_label_multiselected":        { "message": "タブをミュート(&M)" },
+  "tabContextMenu_unmute_label_multiselected":      { "message": "タブのミュートを解除(&M)" },
+
+  "tabContextMenu_duplicate_label_multiselected":   { "message": "選択したタブを複製(&D)" },
+
+  "tabContextMenu_pin_label_multiselected":         { "message": "タブをピン留め(&P)" },
+  "tabContextMenu_unpin_label_multiselected":       { "message": "タブのピン留めを外す(&P)" },
+
+  "tabContextMenu_moveTab_label_multiselected": { "message": "選択したタブを移動(&V)" },
+
+  "tabContextMenu_bookmark_label_multiselected": { "message": "タブをブックマーク(&B)…" },
+  "tabContextMenu_bookmarkSelected_label":       { "message": "選択したタブをブックマーク(&T)…" },
+
+  "tabContextMenu_close_label_multiselected":       { "message": "選択したタブを閉じる(&S)" },
 
 
-  "context_selection_label":              { "message": "選択したタブを操作" },
-
-  "context_reloadTabs_label":             { "message": "再読み込み(&R)" },
-  "context_bookmarkTabs_label":           { "message": "ブックマーク(&B)" },
-  "context_removeBookmarkFromTabs_label": { "message": "ブックマークを削除" },
-  "context_duplicateTabs_label":          { "message": "複製(&D)" },
-  "context_pinTabs_label":                { "message": "ピン留め(&P)" },
-  "context_unpinTabs_label":              { "message": "ピン留めを解除(&B)" },
-  "context_muteTabs_label":               { "message": "ミュート(&M)" },
-  "context_unmuteTabs_label":             { "message": "ミュートを解除(&N)" },
-  "context_moveToNewWindow_label":        { "message": "新しいウィンドウに移動(&W)" },
-  "context_moveToOtherWindow_label":      { "message": "他のウィンドウに移動(&I)" },
-  "context_removeTabs_label":             { "message": "閉じる(&C)" },
-  "context_removeOther_label":            { "message": "選択されていないタブを閉じる(&O)" },
-  "context_clipboard_label":              { "message": "クリップボードにコピー(&Y)" },
-  "context_clipboard_url_label":           { "message": "URI" },
-  "context_clipboard_title_and_url_label": { "message": "タイトルとURI" },
-  "context_clipboard_html_link_label":     { "message": "HTMLのリンク" },
-  "context_clipboard_markdown_label":      { "message": "Markdown" },
-  "context_clipboard_markdown_list_label": { "message": "Markdown（リスト）" },
-  "context_saveTabs_label":               { "message": "ファイルに保存(&V)" },
-  "context_printTabs_label":              { "message": "印刷(&P)" },
-  "context_freezeTabs_label":             { "message": "凍結" },
-  "context_unfreezeTabs_label":           { "message": "凍結を解除" },
-  "context_protectTabs_label":            { "message": "保護" },
-  "context_unprotectTabs_label":          { "message": "保護を解除" },
-  "context_lockTabs_label":               { "message": "固定" },
-  "context_unlockTabs_label":             { "message": "固定を解除" },
-  "context_groupTabs_label":              { "message": "新しいグループにする(&G)" },
-  "context_suspendTabs_label":            { "message": "アンロード(&D)" },
-  "context_resumeTabs_label":             { "message": "読み込み(&E)" },
-
-  "context_select_label":                 { "message": "タブを選択(&S)" },
-  "context_unselect_label":               { "message": "タブの選択を解除(&U)" },
-  "context_selectAll_label":              { "message": "すべてを選択(&A)" },
   "context_invertSelection_label":        { "message": "選択を反転(&I)" },
-
-
-  "command_reloadSelectedTabs":            { "message": "選択中のタブを再読み込み" },
-  "command_bookmarkSelectedTabs":          { "message": "選択中のタブをブックマーク" },
-  "command_duplicateSelectedTabs":         { "message": "選択中のタブを複製" },
-  "command_pinSelectedTabs":               { "message": "選択中のタブをピン留め" },
-  "command_unpinSelectedTabs":             { "message": "選択中のタブのピン留めを解除" },
-  "command_muteSelectedTabs":              { "message": "選択中のタブをミュート" },
-  "command_unmuteSelectedTabs":            { "message": "選択中のタブのミュートを解除" },
-  "command_moveSelectedTabsToNewWindow":   { "message": "選択中のタブを新しいウィンドウに移動" },
-  "command_moveSelectedTabsToOtherWindow": { "message": "選択中のタブを他のウィンドウに移動" },
-  "command_moveSelectedTabsToOtherWindow_message": { "message": "選択中のタブを移動する先のウィンドウを選んでください" },
-  "command_removeSelectedTabs":            { "message": "選択中のタブを閉じる" },
-  "command_removeUnselectedTabs":          { "message": "選択されていないタブを閉じる" },
-  "command_copySelectedTabs":              { "message": "選択中のタブをクリップボードにコピー" },
-  "command_copySelectedTabs_message":      { "message": "選択中のタブをどの形式でクリップボードにコピーするか選んでください" },
-  "command_saveSelectedTabs":              { "message": "選択中のタブをファイルに保存" },
-  "command_printSelectedTabs":             { "message": "選択中のタブを印刷" },
-  "command_groupSelectedTabs":             { "message": "選択中のタブを新しいグループにする" },
-  "command_suspendSelectedTabs":           { "message": "選択中のタブをアンロード" },
-  "command_resumeSelectedTabs":            { "message": "選択中のタブを読み込み" },
-  "command_toggleSelection":               { "message": "現在のタブを選択/選択を解除" },
-  "command_selectAll":                     { "message": "すべてのタブを選択" },
   "command_invertSelection":               { "message": "すべてのタブの選択状態を反転" },
 
 

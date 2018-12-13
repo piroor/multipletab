@@ -7,16 +7,13 @@
 
 import {
   log,
-  wait,
   configs,
   handleMissingReceiverError
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import * as Selection from '/common/selection.js';
-import * as Commands from '/common/commands.js';
 import * as Permissions from '/common/permissions.js';
 import * as DragSelectionManager from '/common/drag-selection-manager.js';
-import RichConfirm from '/extlib/RichConfirm.js';
 import * as ContextMenu from './context-menu.js';
 
 log.context = 'BG';
@@ -66,108 +63,6 @@ async function onShortcutCommand(command) {
     return;
 
   switch (command) {
-    case 'reloadSelectedTabs':
-      Commands.reloadTabs(selectedTabIds);
-      break;
-    case 'bookmarkSelectedTabs':
-      Commands.bookmarkTabs(selectedTabIds);
-      break;
-
-    case 'duplicateSelectedTabs':
-      Commands.duplicateTabs(selectedTabIds);
-      break;
-
-    case 'pinSelectedTabs':
-      Commands.pinTabs(selectedTabIds);
-      break;
-    case 'unpinSelectedTabs':
-      Commands.unpinTabs(selectedTabIds);
-      break;
-    case 'muteSelectedTabs':
-      Commands.muteTabs(selectedTabIds);
-      break;
-    case 'unmuteSelectedTabs':
-      Commands.unmuteTabs(selectedTabIds);
-      break;
-
-    case 'moveSelectedTabsToNewWindow':
-      Commands.moveToWindow(selectedTabIds);
-      break;
-
-    case 'moveSelectedTabsToOtherWindow': {
-      const otherWindows = (await browser.windows.getAll()).filter(window => window.id != activeTab.windowId);
-      if (otherWindows.length <= 0)
-        return Commands.moveToWindow(selectedTabIds);
-      const result = await RichConfirm.showInTab(activeTab.id, {
-        message: browser.i18n.getMessage('command_moveSelectedTabsToOtherWindow_message'),
-        buttons: otherWindows.map(window => window.title)
-      });
-      if (result.buttonIndex > -1)
-        Commands.moveToWindow(selectedTabIds, otherWindows[result.buttonIndex].id);
-    }; break;
-
-    case 'removeSelectedTabs':
-      Commands.removeTabs(selectedTabIds);
-      break;
-    case 'removeUnselectedTabs':
-      Commands.removeOtherTabs(selectedTabIds);
-      break;
-
-    case 'copySelectedTabs': {
-      let formats;
-      if (!Array.isArray(configs.copyToClipboardFormats)) { // migrate to array
-        formats = [];
-        for (const label of Object.keys(configs.copyToClipboardFormats)) {
-          formats.push({
-            label:  label,
-            format: configs.copyToClipboardFormats[label]
-          });
-        }
-      }
-      else {
-        formats = configs.copyToClipboardFormats;
-      }
-      const result = await RichConfirm.showInTab(activeTab.id, {
-        message: browser.i18n.getMessage('command_copySelectedTabs_message'),
-        buttons: formats.map(format => format.label)
-      });
-      if (result.buttonIndex > -1) {
-        await Selection.clear(activeTab.windowId);
-        await Commands.copyToClipboard(selectedTabIds, formats[result.buttonIndex].format);
-        Selection.select(selectedTabs);
-      }
-    } break;
-
-    case 'saveSelectedTabs':
-      await Selection.clear(activeTab.windowId);
-      await wait(100); // to wait tab titles are updated
-      await Commands.saveTabs(selectedTabIds);
-      Selection.select(selectedTabs);
-      break;
-
-    case 'printSelectedTabs':
-      break;
-
-    case 'groupSelectedTabs':
-      browser.runtime.sendMessage(Constants.kTST_ID, {
-        type: Constants.kTSTAPI_GROUP_TABS,
-        tabs: selectedTabIds
-      }).catch(handleMissingReceiverError);
-      break;
-
-    case 'suspendSelectedTabs':
-      Commands.suspendTabs(selectedTabIds);
-      break;
-    case 'resumeSelectedTabs':
-      Commands.resumeTabs(selectedTabIds);
-      break;
-
-    case 'toggleSelection':
-      Selection.toggle(activeTab);
-      break;
-    case 'selectAll':
-      Selection.selectAll(activeTab.windowId);
-      break;
     case 'invertSelection':
       Selection.invert();
       break;

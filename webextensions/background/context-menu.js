@@ -15,476 +15,474 @@ import * as Selection from '/common/selection.js';
 import * as Commands from '/common/commands.js';
 import * as DragSelectionManager from '/common/drag-selection-manager.js';
 
-const mItems = `
-  reloadTabs
-  bookmarkTabs
-  removeBookmarkFromTabs
-  -----------------
-  duplicateTabs
-  -----------------
-  pinTabs
-  unpinTabs
-  muteTabs
-  unmuteTabs
-  moveToNewWindow
-  moveToOtherWindow
-  -----------------
-  removeTabs
-  removeOther
-  -----------------
-  clipboard
-  saveTabs
-  -----------------
-  printTabs
-  -----------------
-  freezeTabs
-  unfreezeTabs
-  protectTabs
-  unprotectTabs
-  lockTabs
-  unlockTabs
-  -----------------
-  groupTabs
-  -----------------
-  suspendTabs
-  resumeTabs
-  -----------------
-  selectAll
-  select
-  unselect
-  invertSelection
-  -----------------
-`.trim().split(/\s+/).map(id => `selection/${id}`);
-mItems.unshift('selection');
+const mItemsById = {
+  'context_reloadTab': {
+    title:              browser.i18n.getMessage('tabContextMenu_reload_label'),
+    titleMultiselected: browser.i18n.getMessage('tabContextMenu_reload_label_multiselected')
+  },
+  'context_toggleMuteTab-mute': {
+    title:              browser.i18n.getMessage('tabContextMenu_mute_label'),
+    titleMultiselected: browser.i18n.getMessage('tabContextMenu_mute_label_multiselected')
+  },
+  'context_toggleMuteTab-unmute': {
+    title:              browser.i18n.getMessage('tabContextMenu_unmute_label'),
+    titleMultiselected: browser.i18n.getMessage('tabContextMenu_unmute_label_multiselected')
+  },
+  'context_pinTab': {
+    title:              browser.i18n.getMessage('tabContextMenu_pin_label'),
+    titleMultiselected: browser.i18n.getMessage('tabContextMenu_pin_label_multiselected')
+  },
+  'context_unpinTab': {
+    title:              browser.i18n.getMessage('tabContextMenu_unpin_label'),
+    titleMultiselected: browser.i18n.getMessage('tabContextMenu_unpin_label_multiselected')
+  },
+  'context_duplicateTab': {
+    title:              browser.i18n.getMessage('tabContextMenu_duplicate_label'),
+    titleMultiselected: browser.i18n.getMessage('tabContextMenu_duplicate_label_multiselected')
+  },
+  'context_separator:afterDuplicate': {
+    type: 'separator'
+  },
+  'context_bookmarkSelected': {
+    title: browser.i18n.getMessage('tabContextMenu_bookmarkSelected_label')
+  },
+  'context_selectAllTabs': {
+    title: browser.i18n.getMessage('tabContextMenu_selectAllTabs_label')
+  },
+  'context_bookmarkTab': {
+    title:              browser.i18n.getMessage('tabContextMenu_bookmark_label'),
+    titleMultiselected: browser.i18n.getMessage('tabContextMenu_bookmark_label_multiselected')
+  },
+  /*
+  'context_reopenInContainer': {
+    title: browser.i18n.getMessage('tabContextMenu_reopenInContainer_label')
+  },
+  'context_moveTab': {
+    title:              browser.i18n.getMessage('tabContextMenu_moveTab_label'),
+    titleMultiselected: browser.i18n.getMessage('tabContextMenu_moveTab_label_multiselected')
+  },
+  'context_moveTabToStart': {
+    parentId: 'context_moveTab',
+    title:    browser.i18n.getMessage('tabContextMenu_moveTabToStart_label')
+  },
+  'context_moveTabToEnd': {
+    parentId: 'context_moveTab',
+    title:    browser.i18n.getMessage('tabContextMenu_moveTabToEnd_label')
+  },
+  */
+  'context_openTabInWindow': {
+    //parentId: 'context_moveTab',
+    title:    browser.i18n.getMessage('tabContextMenu_tearOff_label')
+  },
+  'context_separator:afterSendTab': {
+    type: 'separator'
+  },
+  'context_bookmarkAllTabs': {
+    title: browser.i18n.getMessage('tabContextMenu_bookmarkAll_label')
+  },
+  'context_reloadAllTabs': {
+    title: browser.i18n.getMessage('tabContextMenu_reloadAll_label')
+  },
+  'context_separator:afterReloadAll': {
+    type: 'separator'
+  },
+  'context_closeTabsToTheEnd': {
+    title:    browser.i18n.getMessage('tabContextMenu_closeTabsToBottom_label')
+  },
+  'context_closeOtherTabs': {
+    title:    browser.i18n.getMessage('tabContextMenu_closeOther_label')
+  },
+  'context_undoCloseTab': {
+    title: browser.i18n.getMessage('tabContextMenu_undoClose_label')
+  },
+  'context_closeTab': {
+    title:              browser.i18n.getMessage('tabContextMenu_close_label'),
+    titleMultiselected: browser.i18n.getMessage('tabContextMenu_close_label_multiselected')
+  },
+  'lastSeparatorBeforeExtraItems': {
+    type: 'separator'
+  },
+  'invertSelection': {
+    title: browser.i18n.getMessage('context_invertSelection_label'),
+    viewTypes: null,
+    documentUrlPatterns: null
+  }
+};
 
-let mActiveItems = [];
-const mExtraItems = {};
+const mExtraItems = new Map();
 
-let mLastSubmenuVisible = false;
-let mDirty = true;
+const POPUP_URL_PATTERN = [`moz-extension://${location.host}/*`];
 
 export function init() {
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
-  configs.$addObserver(key => {
-    if (/^(context_|copyToClipboardFormats)/.test(key)) {
-      log('menu becomes dirty by changed config: ', key);
-      mDirty = true;
-    }
-  });
+
+  for (const id of Object.keys(mItemsById)) {
+    const item = mItemsById[id];
+    item.lastTitle   = item.title;
+    item.lastVisible = true;
+    item.lastEnabled = true;
+    const info = {
+      id,
+      title:     item.title,
+      type:      item.type || 'normal',
+      contexts:  ['tab'],
+      viewTypes: 'viewTypes' in item ? item.viewTypes : ['popup'],
+      documentUrlPatterns: 'documentUrlPatterns' in item ? item.documentUrlPatterns : POPUP_URL_PATTERN
+    };
+    if (item.parentId)
+      info.parentId = item.parentId;
+    browser.menus.create(info);
+  }
+
+  browser.menus.onShown.addListener(onShown);
+  browser.menus.onClicked.addListener(onClick);
 }
 
 
-const POPUP_URL_PATTERN = [`moz-extension://${location.host}/*`];
-
-const mUseNativeContextMenu = typeof browser.menus.overrideContext == 'function';
-async function refreshItems(contextTab, tabs = null) {
-  log('refreshItems');
-  if (!mDirty && !tabs) {
-    log(' => no change, skip');
-    return;
+function updateItem(id, state = {}) {
+  let modified = false;
+  const item = mItemsById[id];
+  const updateInfo = {
+    visible: 'visible' in state ? !!state.visible : true,
+    enabled: 'enabled' in state ? !!state.enabled : true
+  };
+  const title = state.multiselected ? item.titleMultiselected || item.title : item.title;
+  if (title) {
+    updateInfo.title = title;
+    modified = title != item.lastTitle;
+    item.lastTitle = updateInfo.title;
   }
+  if (!modified)
+    modified = updateInfo.visible != item.lastVisible ||
+                 updateInfo.enabled != item.lastEnabled;
+  item.lastVisible = updateInfo.visible;
+  item.lastEnabled = updateInfo.enabled;
+  browser.menus.update(id, updateInfo);
+  return modified;
+}
 
-  const promisedMenuUpdated = [];
-  const currentWindow = await (contextTab ? browser.windows.get(contextTab.windowId) : browser.windows.getLastFocused());
-  const selectedTabs = tabs || await Selection.getSelection(currentWindow.id);
+async function onShown(_info, contextTab, givenSelectedTabs = null) {
+  const window   = await (contextTab ? browser.windows.get(contextTab.windowId, { populate: true }) : browser.windows.getLastFocused({ populate: true }));
+  const windowId = window.id;
+  const selectedTabs = givenSelectedTabs || await Selection.getSelection(windowId);
 
-  promisedMenuUpdated.push(browser.menus.removeAll());
-  try {
-    if (configs.enableIntegrationWithTST)
-      promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
-        type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
-      }).catch(handleMissingReceiverError));
+  const hasMultipleTabs       = window.tabs.length > 1;
+  const normalTabsCount       = window.tabs.filter(tab => !tab.pinned).length;
+  const hasMultipleNormalTabs = normalTabsCount > 1;
+  const multiselected         = selectedTabs.length > 1;
+  const visibleTabs           = window.tabs.filter(tab => !tab.hidden);
+
+  let modifiedItemsCount = 0;
+  let visibleItemsCount = 0;
+
+  // ESLint reports "short circuit" error for following codes.
+  //   https://eslint.org/docs/rules/no-unused-expressions#allowshortcircuit
+  // To allow those usages, I disable the rule temporarily.
+  /* eslint-disable no-unused-expressions */
+
+  updateItem('context_reloadTab', {
+    visible: (contextTab || multiselected) && ++visibleItemsCount,
+    multiselected: multiselected || !contextTab
+  }) && modifiedItemsCount++;
+  updateItem('context_toggleMuteTab-mute', {
+    visible: contextTab && (!contextTab.mutedInfo || !contextTab.mutedInfo.muted) && ++visibleItemsCount,
+    multiselected
+  }) && modifiedItemsCount++;
+  updateItem('context_toggleMuteTab-unmute', {
+    visible: contextTab && contextTab.mutedInfo && contextTab.mutedInfo.muted && ++visibleItemsCount,
+    multiselected
+  }) && modifiedItemsCount++;
+  updateItem('context_pinTab', {
+    visible: contextTab && !contextTab.pinned && ++visibleItemsCount,
+    multiselected
+  }) && modifiedItemsCount++;
+  updateItem('context_unpinTab', {
+    visible: contextTab && contextTab.pinned && ++visibleItemsCount,
+    multiselected
+  }) && modifiedItemsCount++;
+  updateItem('context_duplicateTab', {
+    visible: contextTab && ++visibleItemsCount,
+    multiselected
+  }) && modifiedItemsCount++;
+
+  updateItem('context_separator:afterDuplicate', {
+    visible: contextTab && visibleItemsCount > 0
+  }) && modifiedItemsCount++;
+  visibleItemsCount = 0;
+
+  updateItem('context_bookmarkSelected', {
+    visible: !contextTab && ++visibleItemsCount
+  }) && modifiedItemsCount++;
+  updateItem('context_selectAllTabs', {
+    visible: ++visibleItemsCount,
+    enabled: !contextTab || selectedTabs.length < visibleTabs.length,
+    multiselected
+  }) && modifiedItemsCount++;
+  updateItem('context_bookmarkTab', {
+    visible: contextTab && ++visibleItemsCount,
+    multiselected: multiselected || !contextTab
+  }) && modifiedItemsCount++;
+
+  /*
+  let showContextualIdentities = false;
+  for (const item of mContextualIdentityItems.values()) {
+    const id = item.id;
+    let visible = contextTab && id != `context_reopenInContainer:${contextTab.cookieStoreId}`;
+    if (id == 'context_reopenInContainer_separator')
+      visible = contextTab && contextTab.cookieStoreId != 'firefox-default';
+    updateItem(id, { visible }) && modifiedItemsCount++;
+    if (visible)
+      showContextualIdentities = true;
   }
-  catch(_e) {
-  }
+  updateItem('context_reopenInContainer', {
+    visible: contextTab && showContextualIdentities && ++visibleItemsCount,
+    multiselected
+  }) && modifiedItemsCount++;
 
-  const nativeMenuParams = [];
-  const fakeMenuParams   = [];
+  updateItem('context_moveTab', {
+    visible: contextTab && ++visibleItemsCount,
+    enabled: contextTab && hasMultipleTabs,
+    multiselected
+  }) && modifiedItemsCount++;
+  updateItem('context_moveTabToStart', {
+    enabled: contextTab && hasMultipleTabs && (previousSiblingTab || previousTab) && (Tabs.isPinned(previousSiblingTab || previousTab) == contextTab.pinned),
+    multiselected
+  }) && modifiedItemsCount++;
+  updateItem('context_moveTabToEnd', {
+    enabled: contextTab && hasMultipleTabs && (nextSiblingTab || nextTab) && (Tabs.isPinned(nextSiblingTab || nextTab) == contextTab.pinned),
+    multiselected
+  }) && modifiedItemsCount++;
+  */
+  updateItem('context_openTabInWindow', {
+    enabled: contextTab && hasMultipleTabs && ++visibleItemsCount,
+    multiselected
+  }) && modifiedItemsCount++;
 
-  mActiveItems = [];
-  const otherWindows = (await browser.windows.getAll())
-    .filter(window => window.id != currentWindow.id && window.incognito == currentWindow.incognito);
-  const visibilities = await getContextMenuItemVisibilities({
-    tab:          contextTab,
-    tabs,
-    windowId:     currentWindow.id,
-    otherWindows: otherWindows
-  });
-  log('visibilities: ', visibilities);
+  updateItem('context_separator:afterSendTab', {
+    visible: contextTab && visibleItemsCount > 0
+  }) && modifiedItemsCount++;
+  visibleItemsCount = 0;
 
-  const hasSelection         = selectedTabs.length > 1;
-  let separatorsCount        = 0;
-  let topLevelItemsCount     = 0;
-  const normalItemAppearedIn = {};
-  const createdItems         = {};
-  const nextSeparatorIn      = {};
-  const registerItem = async (id, options = {}) => {
-    const parts = id.split('/');
-    id = parts.pop();
+  updateItem('context_closeTabsToTheEnd', {
+    visible: contextTab && ++visibleItemsCount,
+    enabled: hasMultipleNormalTabs && contextTab && contextTab.index < window.tabs.length,
+    multiselected
+  }) && modifiedItemsCount++;
+  updateItem('context_closeOtherTabs', {
+    visible: contextTab && ++visibleItemsCount,
+    enabled: hasMultipleNormalTabs,
+    multiselected
+  }) && modifiedItemsCount++;
 
-    const parentId = parts.pop() || '';
-    if (parentId && !(parentId in createdItems)) {
-      log(`no parent ${parentId} for ${id}`);
-      return;
-    }
+  updateItem('context_undoCloseTab', {
+    visible: ++visibleItemsCount,
+    multiselected
+  }) && modifiedItemsCount++;
+  updateItem('context_closeTab', {
+    visible: contextTab && ++visibleItemsCount,
+    multiselected
+  }) && modifiedItemsCount++;
 
-    const isSeparator = id.charAt(0) == '-';
-    if (isSeparator) {
-      if (!normalItemAppearedIn[parentId]) {
-        log(`no normal item before separator ${id}`);
-        return;
-      }
-      normalItemAppearedIn[parentId] = false;
-      id = `separator${separatorsCount++}`;
-    }
-    else {
-      if (id in visibilities && !visibilities[id]) {
-        log(`${id} is hidden by condition`);
-        return;
-      }
-      if (!options.always && !hasSelection) {
-        log(`${id} is hidden for no selection`);
-        return;
-      }
-      const key = `context_${id}`;
-      if (configs[key] === false) {
-        log(`${id} is hidden by config`);
-        return;
-      }
-      normalItemAppearedIn[parentId] = true;
-      if (nextSeparatorIn[parentId]) {
-        mActiveItems.push(nextSeparatorIn[parentId]);
-        if (!options.onlyFakeMenu) {
-          const params = nextSeparatorIn[parentId];
-          nativeMenuParams.push(params);
-          if (mUseNativeContextMenu)
-            nativeMenuParams.push(Object.assign({}, params, {
-              id:        `panel_${params.id}`,
-              parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
-              viewTypes: ['popup'],
-              documentUrlPatterns: POPUP_URL_PATTERN
-            }));
-          if (configs.enableIntegrationWithTST)
-            fakeMenuParams.push(nextSeparatorIn[parentId]);
+
+  const invertItemVisible = configs.context_invertSelection && selectedTabs.length > 0 && selectedTabs.length < visibleTabs.length;
+  updateItem('invertSelection', {
+    visible: invertItemVisible && ++visibleItemsCount
+  }) && modifiedItemsCount++;
+
+  const forExtraItems = givenSelectedTabs && mExtraItems.size > 0 && Array.from(mExtraItems.values()).some(item => item.visible !== false)
+  updateItem('lastSeparatorBeforeExtraItems', {
+    visible: (forExtraItems || invertItemVisible) && ++visibleItemsCount
+  }) && modifiedItemsCount++;
+
+  /* eslint-enable no-unused-expressions */
+
+  if (modifiedItemsCount)
+    browser.menus.refresh();
+}
+
+async function onClick(info, contextTab) {
+  //log('context menu item clicked: ', info, contextTab);
+  const window            = await browser.windows.getLastFocused({ populate: true });
+  const contextWindowId   = window.id;
+
+  const multiselectedTabs = await Selection.getSelection(contextWindowId);
+  const isMultiselected   = multiselectedTabs.length > 1;
+
+  const activeTab = window.tabs.find(tab => tab.active);
+
+  switch (info.menuItemId) {
+    case 'context_reloadTab':
+      if (isMultiselected) {
+        for (const tab of multiselectedTabs) {
+          browser.tabs.reload(tab.id);
         }
-      }
-      delete nextSeparatorIn[parentId];
-    }
-    //log('build ', id, parentId);
-    createdItems[id] = true;
-    const type = isSeparator ? 'separator' : 'normal';
-    let title = null;
-    if (!isSeparator) {
-      if (options.title)
-        title = options.title;
-      else
-        title = browser.i18n.getMessage(`context_${id.replace(/[^a-z0-9@_]/gi, '_')}_label`);
-    }
-    const params = {
-      id, type, title,
-      contexts: ['page', 'tab']
-    };
-    if (parentId)
-      params.parentId = parentId;
-    if (isSeparator) {
-      nextSeparatorIn[parentId] = params;
-      return;
-    }
-    mActiveItems.push(params);
-    if (!options.onlyFakeMenu) {
-      if (mUseNativeContextMenu) {
-        if (params.id == 'selection') {
-          params.visible = false;
-          mLastSubmenuVisible = false;
-        }
-        else {
-          nativeMenuParams.push(Object.assign({}, params, {
-            id:        `panel_${params.id}`,
-            parentId:  params.parentId == 'selection' ? null : `panel_${params.parentId}`,
-            viewTypes: ['popup'],
-            documentUrlPatterns: POPUP_URL_PATTERN
-          }));
-        }
-        nativeMenuParams.push(params);
       }
       else {
-        nativeMenuParams.push(Object.assign({}, params, {
-          // Access key is not supported by WE API.
-          // See also: https://bugzilla.mozilla.org/show_bug.cgi?id=1320462
-          title: params.title && params.title.replace(/\(&[a-z]\)|&([a-z])/i, '$1')
-        }));
+        browser.tabs.reload(activeTab.id);
       }
-      if (configs.enableIntegrationWithTST)
-        fakeMenuParams.push(params);
-      if (parentId == 'selection')
-        topLevelItemsCount++;
-    }
-  }
-
-  for (const id of mItems) {
-    await registerItem(id);
-  }
-
-  // create submenu items for "copy to clipboard"
-  let formatIds;
-  const formats = configs.copyToClipboardFormats;
-  if (Array.isArray(formats)) {
-    formatIds = formats
-      .map((item, index) => `clipboard/clipboard:${index}:${item.label}`)
-      .filter((item, index) => formats[index].label);
-  }
-  else {
-    const labels = Object.keys(formats);
-    formatIds = labels
-      .map((label, index) => `clipboard/clipboard:${index}:${label}`)
-      .filter((item, index) => labels[index]);
-  }
-  for (const id of formatIds) {
-    await registerItem(id, {
-      title: id.replace(/^clipboard\/clipboard:[0-9]+:/, '')
-    });
-  }
-
-  // create submenu items for "move to other window"
-  for (const window of otherWindows) {
-    await registerItem(`moveToOtherWindow/moveToOtherWindow:${window.id}`, {
-      title: window.title
-    });
-  }
-
-  // create additional items registered by other addons
-  for (const id of Object.keys(mExtraItems)) {
-    await registerItem(`selection/extra:${id}`, Object.assign({}, mExtraItems[id], {
-      onlyFakeMenu: true
-    }));
-  }
-
-  log('refreshing: ', { nativeMenuParams, fakeMenuParams, topLevelItemsCount });
-  if (topLevelItemsCount > 0) {
-    if (topLevelItemsCount == 1) {
-      nativeMenuParams.splice(0, 1);
-      fakeMenuParams.splice(0, 1);
-    }
-    for (const params of nativeMenuParams) {
-      if (topLevelItemsCount == 1 && params.parentId == 'selection')
-        params.parentId = null;
-      promisedMenuUpdated.push(browser.menus.create(params));
-    }
-    for (const params of fakeMenuParams) {
-      if (topLevelItemsCount == 1 && params.parentId == 'selection')
-        params.parentId = null;
-      promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
-        type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
-        params
-      }).catch(handleMissingReceiverError));
-    }
-  }
-
-  log('menu becomes undirty');
-  mDirty = false;
-  return Promise.all(promisedMenuUpdated).then(() => browser.menus.refresh());
-}
-
-async function getContextMenuItemVisibilities(params) {
-  const tab = params.tab;
-  const [selectedTabs, allTabs] = await Promise.all([
-    params.tabs || Selection.getSelection(params.windowId),
-    Selection.getAllTabs(params.windowId)
-  ]);
-  log('getContextMenuItemVisibilities ', { params, selectedTabs, allTabs });
-  const hasSelection = selectedTabs.length > 1;
-  const allSelected  = selectedTabs.length == allTabs.length;
-  let pinnedCount = 0;
-  let mutedCount = 0;
-  let suspendedCount = 0;
-  let lockedCount = 0;
-  let protectedCount = 0;
-  let frozenCount = 0;
-  for (const tab of selectedTabs) {
-    if (tab.pinned)
-      pinnedCount++;
-    if (tab.mutedInfo.muted)
-      mutedCount++;
-    if (tab.discarded)
-      suspendedCount++;
-    if (tab.states && tab.states.indexOf('locked') < 0)
-      lockedCount++;
-    if (tab.states && tab.states.indexOf('protected') < 0)
-      protectedCount++;
-    if (tab.states && tab.states.indexOf('frozen') < 0)
-      frozenCount++;
-  }
-  return {
-    reloadTabs:    hasSelection,
-    bookmarkTabs:  hasSelection,
-    removeBookmarkFromTabs: hasSelection,
-    duplicateTabs: hasSelection,
-    pinTabs:       hasSelection && pinnedCount < selectedTabs.length,
-    unpinTabs:     hasSelection && pinnedCount > 0,
-    muteTabs:      hasSelection && mutedCount < selectedTabs.length,
-    unmuteTabs:    hasSelection && mutedCount > 0,
-    moveToNewWindow: hasSelection,
-    moveToOtherWindow: hasSelection && params.otherWindows.length > 0,
-    removeTabs:    hasSelection,
-    removeOther:   hasSelection && !allSelected,
-    clipboard:     hasSelection,
-    saveTabs:      hasSelection,
-    printTabs:     hasSelection,
-    freezeTabs:    hasSelection && frozenCount < selectedTabs.length,
-    unfreezeTabs:  hasSelection && frozenCount > 0,
-    protectTabs:   hasSelection && protectedCount < selectedTabs.length,
-    unprotectTabs: hasSelection && protectedCount > 0,
-    lockTabs:      hasSelection && lockedCount < selectedTabs.length,
-    unlockTabs:    hasSelection && lockedCount > 0,
-    groupTabs:     hasSelection,
-    suspendTabs:   hasSelection && suspendedCount < selectedTabs.length,
-    resumeTabs:    hasSelection && suspendedCount > 0,
-    selectAll:     !allSelected,
-    select:        !tab || !tab.highlighted,
-    unselect:      !tab || tab.highlighted,
-    invertSelection: hasSelection
-  };
-}
-
-async function onClick(info, tab) {
-  //log('context menu item clicked: ', info, tab);
-  const windowId       = tab && tab.windowId;
-  const selectedTabs   = await Selection.getSelection(windowId);
-  const selectedTabIds = selectedTabs.map(tab => tab.id);
-  log('info.menuItemId, selectedTabIds ', info.menuItemId, selectedTabIds);
-  let shouldClearSelection = configs.clearSelectionAfterCommandInvoked;
-  const itemId = info.menuItemId.replace(/^panel_/, '');
-  switch (itemId) {
-    case 'reloadTabs':
-      await Commands.reloadTabs(selectedTabIds);
       break;
-    case 'bookmarkTabs':
-      await Commands.bookmarkTabs(selectedTabIds);
-      break;
-    case 'removeBookmarkFromTabs':
-      // not implemented
-      break;
-
-    case 'duplicateTabs':
-      await Commands.duplicateTabs(selectedTabIds);
-      break;
-
-    case 'pinTabs':
-      await Commands.pinTabs(selectedTabIds);
-      break;
-    case 'unpinTabs':
-      await Commands.unpinTabs(selectedTabIds);
-      break;
-    case 'muteTabs':
-      await Commands.muteTabs(selectedTabIds);
-      break;
-    case 'unmuteTabs':
-      await Commands.unmuteTabs(selectedTabIds);
-      break;
-
-    case 'moveToNewWindow':
-      await Commands.moveToWindow(selectedTabIds);
-      shouldClearSelection = false;
-      break;
-
-    case 'removeTabs':
-      await Commands.removeTabs(selectedTabIds);
-      break;
-    case 'removeOther':
-      await Commands.removeOtherTabs(selectedTabIds);
-      break;
-
-    case 'clipboard':
-      break;
-    case 'saveTabs':
-      if (shouldClearSelection) {
-        await Selection.clear(windowId);
-      }
-      await Commands.saveTabs(selectedTabIds);
-      break;
-
-    case 'printTabs':
-      break;
-
-    case 'freezeTabs':
-    case 'unfreezeTabs':
-    case 'protectTabs':
-    case 'unprotectTabs':
-    case 'lockTabs':
-    case 'unlockTabs':
-      break;
-
-    case 'groupTabs':
-      await browser.runtime.sendMessage(Constants.kTST_ID, {
-        type: Constants.kTSTAPI_GROUP_TABS,
-        tabs: selectedTabIds
-      }).catch(handleMissingReceiverError);
-      break;
-
-    case 'suspendTabs':
-      await Commands.suspendTabs(selectedTabIds);
-      break;
-    case 'resumeTabs':
-      await Commands.resumeTabs(selectedTabIds);
-      break;
-
-    case 'selectAll':
-      Selection.selectAll(windowId);
-      shouldClearSelection = false;
-      break;
-    case 'select':
-      Selection.select(tab);
-      shouldClearSelection = false;
-      break;
-    case 'unselect':
-      Selection.unselect(tab);
-      shouldClearSelection = false;
-      break;
-    case 'invertSelection':
-      Selection.invert(windowId);
-      shouldClearSelection = false;
-      break;
-
-    default:
-      if (itemId.indexOf('clipboard:') == 0) {
-        const id = itemId.replace(/^clipboard:/, '');
-        let format;
-        if (Array.isArray(configs.copyToClipboardFormats)) {
-          let index = id.match(/^([0-9]+):/);
-          index = parseInt(index[1]);
-          const item = configs.copyToClipboardFormats[index];
-          format = item.format;
+    case 'context_toggleMuteTab-mute':
+      if (isMultiselected) {
+        for (const tab of multiselectedTabs) {
+          browser.tabs.update(tab.id, { muted: true });
         }
-        else {
-          format = configs.copyToClipboardFormats[id.replace(/^[0-9]+:/, '')];
+      }
+      else {
+        browser.tabs.update(contextTab.id, { muted: true });
+      }
+      break;
+    case 'context_toggleMuteTab-unmute':
+      if (isMultiselected) {
+        for (const tab of multiselectedTabs) {
+          browser.tabs.update(tab.id, { muted: false });
         }
-        if (shouldClearSelection)
-          await Selection.clear(windowId);
-        await Commands.copyToClipboard(selectedTabIds, format);
       }
-      else if (itemId.indexOf('moveToOtherWindow:') == 0) {
-        const id = parseInt(itemId.replace(/^moveToOtherWindow:/, ''));
-        await Commands.moveToWindow(selectedTabIds, id);
+      else {
+        browser.tabs.update(contextTab.id, { muted: false });
       }
-      else if (itemId.indexOf('extra:') == 0) {
-        const idMatch   = itemId.match(/^extra:([^:]+):(.+)$/);
+      break;
+    case 'context_pinTab':
+      if (isMultiselected) {
+        for (const tab of multiselectedTabs) {
+          browser.tabs.update(tab.id, { pinned: true });
+        }
+      }
+      else {
+        browser.tabs.update(contextTab.id, { pinned: true });
+      }
+      break;
+    case 'context_unpinTab':
+      if (isMultiselected) {
+        for (const tab of multiselectedTabs) {
+          browser.tabs.update(tab.id, { pinned: false });
+        }
+      }
+      else {
+        browser.tabs.update(contextTab.id, { pinned: false });
+      }
+      break;
+    case 'context_duplicateTab':
+      if (isMultiselected) {
+        for (const tab of multiselectedTabs) {
+          browser.tabs.duplicate(tab.id);
+        }
+      }
+      else {
+        browser.tabs.duplicate(contextTab.id);
+      }
+      break;
+    case 'context_moveTabToStart': break;
+    case 'context_moveTabToEnd': break;
+    case 'context_openTabInWindow':
+      if (isMultiselected) {
+        await Commands.moveToWindow(multiselectedTabs.map(tab => tab.id));
+      }
+      else {
+        await browser.windows.create({
+          tabId:     contextTab.id,
+          incognito: contextTab.incognito
+        });
+      }
+      break;
+    case 'context_selectAllTabs': {
+      const tabs = await browser.tabs.query({ windowId: contextWindowId });
+      browser.tabs.highlight({
+        windowId: contextWindowId,
+        tabs: tabs.map(tab => tab.index)
+      });
+    }; break;
+    case 'context_bookmarkTab':
+      if (!isMultiselected) {
+        await Commands.bookmarkTabs([(contextTab || activeTab).id]);
+        break;
+      }
+    case 'context_bookmarkAllTabs':
+      await Commands.bookmarkTabs(multiselectedTabs.map(tab => tab.id));
+      break;
+    case 'context_reloadAllTabs': {
+      const tabs = await browser.tabs.query({ windowId: contextWindowId }) ;
+      for (const tab of tabs) {
+        browser.tabs.reload(tab.id);
+      }
+    }; break;
+    case 'context_closeTabsToTheEnd': {
+      const tabs = await browser.tabs.query({ windowId: contextWindowId });
+      let after = false;
+      const closeTabs = [];
+      const keptTabIds = isMultiselected ?
+        multiselectedTabs.map(tab => tab.id) :
+        [contextTab.id] ;
+      for (const tab of tabs) {
+        if (keptTabIds.includes(tab.id)) {
+          after = true;
+          continue;
+        }
+        if (after && !tab.pinned)
+          closeTabs.push(tab);
+      }
+      /*
+      const canceled = (await browser.runtime.sendMessage({
+        type:     Constants.kCOMMAND_NOTIFY_TABS_CLOSING,
+        count:    closeTabs.length,
+        windowId: contextWindowId
+      })) === false
+      if (canceled)
+        break;
+      */
+      browser.tabs.remove(closeTabs.map(tab => tab.id));
+    }; break;
+    case 'context_closeOtherTabs': {
+      const tabs  = await browser.tabs.query({ windowId: contextWindowId });
+      const keptTabIds = isMultiselected ?
+        multiselectedTabs.map(tab => tab.id) :
+        [contextTab.id] ;
+      const closeTabs = tabs.filter(tab => !tab.pinned && !keptTabIds.includes(tab.id)).map(tab => tab.id);
+      /*
+      const canceled = (await browser.runtime.sendMessage({
+        type:     Constants.kCOMMAND_NOTIFY_TABS_CLOSING,
+        count:    closeTabs.length,
+        windowId: contextWindowId
+      })) === false
+      if (canceled)
+        break;
+      */
+      browser.tabs.remove(closeTabs);
+    }; break;
+    case 'context_undoCloseTab': {
+      const sessions = await browser.sessions.getRecentlyClosed({ maxResults: 1 });
+      if (sessions.length && sessions[0].tab)
+        browser.sessions.restore(sessions[0].tab.sessionId);
+    }; break;
+    case 'context_closeTab':
+      if (isMultiselected) {
+        // close down to top, to keep tree structure of Tree Style Tab
+        multiselectedTabs.reverse();
+        for (const tab of multiselectedTabs) {
+          browser.tabs.remove(tab.id);
+        }
+      }
+      else {
+        browser.tabs.remove(contextTab.id);
+      }
+      break;
+
+    default: {
+      if (info.menuItemId.indexOf('extra:') == 0) {
+        const idMatch   = info.menuItemId.match(/^extra:([^:]+):(.+)$/);
         const owner     = idMatch[1];
         const id        = idMatch[2];
-        const selection = await Selection.getSelectionAndOthers(windowId);
+        const selection = await Selection.getSelectionAndOthers(contextWindowId);
         browser.runtime.sendMessage(owner, {
           type: Constants.kMTHAPI_INVOKE_SELECTED_TAB_COMMAND,
           id,
           selection
         }).catch(_e => {});
       }
-      break;
+    }; break;
   }
+}
 
-  if (shouldClearSelection)
-    Selection.clear(windowId);
-};
-browser.menus.onClicked.addListener(onClick);
 
 function onMessage(message) {
   if (!message || !message.type)
@@ -493,8 +491,14 @@ function onMessage(message) {
   switch (message.type) {
     case Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO: return (async () => {
       const tabs = await Promise.all(message.tabIds.map(id => browser.tabs.get(id)));
-      await refreshItems(tabs[0], tabs);
-      return mActiveItems;
+      await onShown({}, tabs[0], tabs);
+      const visibleItems = [];
+      for (const id of Object.keys(mItemsById)) {
+        const item = mItemsById[id];
+        if (item.visible)
+          visibleItems.push(item);
+      }
+      return visibleItems;
     })();
 
     case Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK:
@@ -525,27 +529,22 @@ function onMessageExternal(message, sender) {
       const addons = Object.assign({}, configs.cachedExternalAddons);
       addons[sender.id] = true;
       configs.cachedExternalAddons = addons;
-      mExtraItems[`${sender.id}:${message.id}`] = message;
+      mExtraItems.set(`${sender.id}:${message.id}`, message);
       log('menu becomes dirty by added command from other addon');
-      mDirty = true;
       return Promise.resolve(true);
     };
 
     case Constants.kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
-      delete mExtraItems[`${sender.id}:${message.id}`];
+      mExtraItems.delete(`${sender.id}:${message.id}`);
       log('menu becomes dirty by removed command from other addon');
-      mDirty = true;
       return Promise.resolve(true);
 
     case Constants.kMTHAPI_REMOVE_ALL_SELECTED_TAB_COMMANDS:
-      for (const key of Object.keys(mExtraItems)) {
+      for (const key of mExtraItems.keys()) {
         if (key.indexOf(`${sender.id}:`) == 0) {
-          delete mExtraItems[key];
-          mDirty = true;
+          mExtraItems.delete(key);
         }
       }
-      if (mDirty)
-        log('menu becomes dirty by removed commands from other addon');
       return Promise.resolve(true);
   }
 }
@@ -560,46 +559,7 @@ function onTSTAPIMessage(message) {
 }
 
 
-// hide submenu for self panel
-
-let mIsPanelOpen = false;
-const mPanelConnectionMatcher = new RegExp(`^${Constants.kCOMMAND_REQUEST_CONNECT_PREFIX}`);
-browser.runtime.onConnect.addListener(port => {
-  if (!mPanelConnectionMatcher.test(port.name))
-    return;
-  mIsPanelOpen = true;
-  port.onDisconnect.addListener(_message => {
-    mIsPanelOpen = false;
-  });
-});
-
-async function onShown(info, tab) {
-  await refreshItems(tab);
-
-  const visible = !mIsPanelOpen || info.viewType != 'popup';
-  if (mLastSubmenuVisible == visible)
-    return;
-
-  if (mUseNativeContextMenu)
-    browser.menus.update('selection', { visible })
-      .then(() => {
-        browser.menus.refresh();
-      })
-      .catch(_e => {});
-
-  browser.runtime.sendMessage(Constants.kTST_ID, {
-    type:   Constants.kTSTAPI_CONTEXT_MENU_UPDATE,
-    params: ['selection', { visible }]
-  }).catch(handleMissingReceiverError)
-
-  mLastSubmenuVisible = visible;
-}
-
-browser.menus.onShown.addListener(onShown);
-
-
 DragSelectionManager.onDragSelectionEnd.addListener(async (message, selectionInfo) => {
-  await refreshItems(selectionInfo.dragStartTab);
   try {
     if (configs.autoOpenMenuOnDragEnd)
       await browser.runtime.sendMessage(Constants.kTST_ID, {
@@ -612,18 +572,5 @@ DragSelectionManager.onDragSelectionEnd.addListener(async (message, selectionInf
   }
   catch(e) {
     log('failed to open context menu: ', e);
-  }
-});
-
-let mLastSelectionCount = 1;
-
-browser.tabs.onHighlighted.addListener(async highlightInfo => {
-  if (highlightInfo.tabIds.length != mLastSelectionCount) {
-    mDirty = true;
-    mLastSelectionCount = highlightInfo.tabIds.length;
-  }
-  if (mDirty) {
-    const tabs = await Promise.all(highlightInfo.tabIds.map(id => browser.tabs.get(id)));
-    refreshItems(tabs[0], tabs);
   }
 });

@@ -71,229 +71,61 @@
         "message": "Multiple Tab Handler 现在基于 WebExtensions，适用于 Firefox 57 及更高版本。您现在可以从“选择并执行”的工具栏按钮中选择多个标签页并执行命令。\n\n此外，此扩展也兼容 <a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">Tree Style Tab</a> 扩展。在 Tree Style Tab 扩展的侧栏中，长按标签页超过 0.5 秒可选择标签页。",
         "hash": "bb3439aa738547f6b9faebe1a092fcd7"
     },
-    "saveTabsPrefix_defaultValue": {
-        "message": "已保存标签页/",
-        "hash": "c4de7a7d09f7247035c1686067b893b5"
+    "tabContextMenu_reload_label": {
+        "message": "重新载入标签页(&R)",
+        "hash": "b47f1ba4fa9f6689bd27124978684636"
     },
-    "context_selection_label": {
-        "message": "已选中标签页",
-        "hash": "1f9c0050f1f9ab68cd3d2f0aa15c4845"
-    },
-    "context_reloadTabs_label": {
-        "message": "重新加载标签页(&R)",
-        "hash": "89b4a145dfcd0914608180f795bc12f5"
-    },
-    "context_bookmarkTabs_label": {
-        "message": "标签页加入书签(&B)",
-        "hash": "7900abb656a37c99c228c74d8d409d0c"
-    },
-    "context_removeBookmarkFromTabs_label": {
-        "message": "移除标签页的书签",
-        "hash": "59a387cc0e1b36304e899229a8128a91"
-    },
-    "context_duplicateTabs_label": {
-        "message": "克隆标签页(&D)",
-        "hash": "0c30a83f8bcc07500df79d0596d99597"
-    },
-    "context_pinTabs_label": {
-        "message": "固定标签页(&P)",
-        "hash": "b32691b5170714cfdb1b406b5756149b"
-    },
-    "context_unpinTabs_label": {
-        "message": "取消固定标签页(&B)",
-        "hash": "e575798cd6aac561b8d34662dc0a358c"
-    },
-    "context_muteTabs_label": {
+    "tabContextMenu_mute_label": {
         "message": "静音标签页(&M)",
-        "hash": "1291adb90de56e6d936a1e486b370a85"
+        "hash": "1ff23ae0ae540c6635e774388a77ea2f"
     },
-    "context_unmuteTabs_label": {
-        "message": "取消静音标签页(&N)",
-        "hash": "de4f8c61eb4c8bd6b215f9eb477bddbb"
+    "tabContextMenu_unmute_label": {
+        "message": "取消静音标签页(&M)",
+        "hash": "c3ae3c72832dfedee6c48d0dc37eb954"
     },
-    "context_moveToNewWindow_label": {
-        "message": "移动标签页到新窗口(&W)",
-        "hash": "4e388833cd6d1853a72e407ae5655bf8"
+    "tabContextMenu_pin_label": {
+        "message": "固定标签页(&P)",
+        "hash": "84f0158295ff8a14fd6062c7ec19c77c"
     },
-    "context_moveToOtherWindow_label": {
-        "message": "移动标签页到其他窗口(&I)",
-        "hash": "c6a8b7f0fe11bd338977500ce3b50eaf"
+    "tabContextMenu_unpin_label": {
+        "message": "取消固定标签页(&B)",
+        "hash": "b3df98de903f20828d11fae57bbeac1f"
     },
-    "context_removeTabs_label": {
+    "tabContextMenu_duplicate_label": {
+        "message": "创建标签页副本(&D)",
+        "hash": "80666f37f8702cba5b66d3e8d816ea5c"
+    },
+    "tabContextMenu_tearOff_label": {
+        "message": "移动到新窗口(&W)",
+        "hash": "e73bb254e78fb1b2a161d4c3961065a9"
+    },
+    "tabContextMenu_reloadAll_label": {
+        "message": "重新载入所有标签页(&A)",
+        "hash": "df293c6903c9c0d90d7e75c6d0eb5f9f"
+    },
+    "tabContextMenu_bookmarkAll_label": {
+        "message": "为全部标签页添加书签(&T)…",
+        "hash": "da48e2cbed383746950b8eeda47068db"
+    },
+    "tabContextMenu_closeAfter_label": {
+        "message": "关闭右侧标签页(&I)",
+        "hash": "a27d298eb90c46cd1d6f62a8e405f980"
+    },
+    "tabContextMenu_closeOther_label": {
+        "message": "关闭其他标签页(&O)",
+        "hash": "5a4db75f9254da8f39e41b929fc2c445"
+    },
+    "tabContextMenu_undoClose_label": {
+        "message": "撤销关闭标签页(&U)",
+        "hash": "21be8c6cad39fbee2150e4110e3c55ce"
+    },
+    "tabContextMenu_close_label": {
         "message": "关闭标签页(&C)",
-        "hash": "cddff0744c927d429542c6c8b8744b08"
-    },
-    "context_removeOther_label": {
-        "message": "关闭未选中标签页(&O)",
-        "hash": "3a85f42571cbe8d9d4c2fb8bb06f98a5"
-    },
-    "context_clipboard_label": {
-        "message": "复制到剪贴板(&Y)",
-        "hash": "22acde57292bafa4ff70df7b4409f370"
-    },
-    "context_clipboard_url_label": {
-        "message": "网址（URI）",
-        "hash": "03e79fab464d592b2fa84198956b1d3f"
-    },
-    "context_clipboard_title_and_url_label": {
-        "message": "标题和网址",
-        "hash": "0573a8ce2c91303239d698fc88f5727b"
-    },
-    "context_clipboard_html_link_label": {
-        "message": "HTML 链接",
-        "hash": "e913c2c7469eecaec807c69921e025ea"
-    },
-    "context_clipboard_markdown_label": {
-        "message": "Markdown",
-        "hash": "7eb7461add44bc33bcee0d866ac541ee"
-    },
-    "context_clipboard_markdown_list_label": {
-        "message": "Markdown（列表）",
-        "hash": "76455d2a1f9f6a515a6dab6935209c32"
-    },
-    "context_saveTabs_label": {
-        "message": "保存标签页到文件(&V)",
-        "hash": "e4b61003932478b5800fe582aae631b3"
-    },
-    "context_printTabs_label": {
-        "message": "打印标签页(&P)",
-        "hash": "4c3a0efb602a3d98071bd768dec1dba2"
-    },
-    "context_freezeTabs_label": {
-        "message": "冻结标签页",
-        "hash": "c1f9640d692de5deec62edadca1945e8"
-    },
-    "context_unfreezeTabs_label": {
-        "message": "取消冻结标签页",
-        "hash": "9824fa71efabf09dfd2b858f87c02dac"
-    },
-    "context_protectTabs_label": {
-        "message": "保护标签页",
-        "hash": "e1a750ff39cfecef6903e39e100162f7"
-    },
-    "context_unprotectTabs_label": {
-        "message": "取消保护标签页",
-        "hash": "a1e6f9abc2bdd39af675abc517c8d154"
-    },
-    "context_lockTabs_label": {
-        "message": "锁定标签页",
-        "hash": "1ade2a14c8b0c249a578ec66e388c9a6"
-    },
-    "context_unlockTabs_label": {
-        "message": "取消锁定标签页",
-        "hash": "fe54b2544d87fab8b71b0d29700b39e8"
-    },
-    "context_groupTabs_label": {
-        "message": "创建新组(&G)",
-        "hash": "e21f9144d4903adf990ecfe83b197bb0"
-    },
-    "context_suspendTabs_label": {
-        "message": "休眠标签页(&D)",
-        "hash": "8da67f038872b46c0cb96da3973e8f9c"
-    },
-    "context_resumeTabs_label": {
-        "message": "恢复标签页(&E)",
-        "hash": "3c14a0e677b415ea8988fa83c3cc3409"
-    },
-    "context_select_label": {
-        "message": "选择(&S)",
-        "hash": "4ff93be1116a0740fe62b1b0022d19dd"
-    },
-    "context_unselect_label": {
-        "message": "取消选择(&U)",
-        "hash": "261490e0c9752fad332357725d76639f"
-    },
-    "context_selectAll_label": {
-        "message": "全选(&A)",
-        "hash": "f9910403e7d520346651c72d4d3905ea"
+        "hash": "517e4cda82f826395a14d6bda5b1c7a0"
     },
     "context_invertSelection_label": {
         "message": "反选(&I)",
         "hash": "009238291e1a95ff8c2dd1c3c37c6651"
-    },
-    "command_reloadSelectedTabs": {
-        "message": "重新加载选中标签页",
-        "hash": "c139b33ba17264b298fb78c71457a452"
-    },
-    "command_bookmarkSelectedTabs": {
-        "message": "选中标签页加入书签",
-        "hash": "5538f8ead772ba2c45c33a3e446e6a69"
-    },
-    "command_duplicateSelectedTabs": {
-        "message": "克隆选中标签页",
-        "hash": "1694d93d103776e900d84968b70677cb"
-    },
-    "command_pinSelectedTabs": {
-        "message": "固定选中标签页",
-        "hash": "ef798b35ee2b5ca5cdfc4e61dd80c817"
-    },
-    "command_unpinSelectedTabs": {
-        "message": "取消固定选中标签页",
-        "hash": "779d499f50525527c79866109012c54f"
-    },
-    "command_muteSelectedTabs": {
-        "message": "静音选中标签页",
-        "hash": "a4f307f08dffc8422650d7b4dab00e30"
-    },
-    "command_unmuteSelectedTabs": {
-        "message": "取消静音选中标签页",
-        "hash": "6fb76528535b95f9ffc9a64240a05d72"
-    },
-    "command_moveSelectedTabsToNewWindow": {
-        "message": "移动选中标签页到新窗口",
-        "hash": "7dd2e697e6bbdf65f4a487560b522f40"
-    },
-    "command_moveSelectedTabsToOtherWindow": {
-        "message": "移动选中标签页到其他窗口",
-        "hash": "2da79abc5af9554fdb512aaadf508206"
-    },
-    "command_moveSelectedTabsToOtherWindow_message": {
-        "message": "选择您想将选中标签页移动到哪一个窗口。",
-        "hash": "5b053a7537c0fca11daf59ca0ddb5e86"
-    },
-    "command_removeSelectedTabs": {
-        "message": "关闭选中标签页",
-        "hash": "312a1617523011e4c438154f115efe92"
-    },
-    "command_removeUnselectedTabs": {
-        "message": "关闭未选中标签页",
-        "hash": "ac4819ea6e53a04efd2cf8e9555fbc45"
-    },
-    "command_copySelectedTabs": {
-        "message": "复制选中标签页到剪贴板",
-        "hash": "c87b210383071c343a7810b57ed47ea4"
-    },
-    "command_copySelectedTabs_message": {
-        "message": "选择选中标签页复制为什么格式。",
-        "hash": "d572f1a179a3af5055c8943a6e94fc05"
-    },
-    "command_saveSelectedTabs": {
-        "message": "保存选中标签页到文件",
-        "hash": "66da9e69ca5c42f620d31d523aae8f1f"
-    },
-    "command_printSelectedTabs": {
-        "message": "打印选中标签页",
-        "hash": "acb1cde5e952cd1ca271dc8d3bb6cd67"
-    },
-    "command_groupSelectedTabs": {
-        "message": "为选中标签页创建新组",
-        "hash": "90a2b9f0d172cd3b0f9e2353c6287fe7"
-    },
-    "command_suspendSelectedTabs": {
-        "message": "休眠选中标签页",
-        "hash": "2c7aabae9ad60e7ca4aaeac356adfa22"
-    },
-    "command_resumeSelectedTabs": {
-        "message": "恢复选中标签页",
-        "hash": "d34303a236ef7228edff42a8c4d11bb9"
-    },
-    "command_toggleSelection": {
-        "message": "切换当前标签页选中状态",
-        "hash": "f2f75076d615cbb27d5a02f192f378a3"
-    },
-    "command_selectAll": {
-        "message": "选中所有标签页",
-        "hash": "e5c122d05a93c9aaafa325bd0a515b70"
     },
     "command_invertSelection": {
         "message": "反选所有标签页",

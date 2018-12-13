@@ -7,69 +7,12 @@
 
 import Configs from '/extlib/Configs.js';
 
-const defaultClipboardFormats = [];
-defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard_url_label'),
-  format: '%URL%'
-});
-defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard_title_and_url_label'),
-  format: '%TITLE%%EOL%%URL%'
-});
-/*
-defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard_title_and_url_tree_label'),
-  format: '%TST_INDENT(|   )(|---)%%TITLE%%EOL%%TST_INDENT(|   )%%URL%'
-});
-*/
-defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard_html_link_label'),
-  format: '<a title="%TITLE_HTML%" href="%URL_HTML%">%TITLE_HTML%</a>'
-});
-defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard_markdown_label'),
-  format: '[%TITLE%](%URL% "%TITLE%")'
-});
-defaultClipboardFormats.push({
-  label:  browser.i18n.getMessage('context_clipboard_markdown_list_label'),
-  format: '%TST_INDENT(  )%* [%TITLE%](%URL% "%TITLE%")'
-});
-
 export const configs = new Configs({
   optionsExpandedSections: ['section-general'],
 
-  context_reloadTabs: true,
-  context_bookmarkTabs: true,
-  context_removeBookmarkFromTabs: false,
-  context_duplicateTabs: true,
-  context_pinTabs: true,
-  context_unpinTabs: true,
-  context_muteTabs: true,
-  context_unmuteTabs: true,
-  context_moveToNewWindow: true,
-  context_moveToOtherWindow: true,
-  context_removeTabs: true,
-  context_removeOther: true,
-  context_clipboard: true,
-  context_saveTabs: true,
-  context_printTabs: false,
-  context_freezeTabs: false,
-  context_unfreezeTabs: false,
-  context_protectTabs: false,
-  context_unprotectTabs: false,
-  context_lockTabs: false,
-  context_unlockTabs: false,
-  context_groupTabs: false,
-  context_suspendTabs: true,
-  context_resumeTabs: true,
-  context_selectAll: true,
-  context_select: true,
-  context_unselect: true,
   context_invertSelection: true,
 
-  clearSelectionAfterCommandInvoked: false,
   autoOpenMenuOnDragEnd: true,
-  copyToClipboardFormats: defaultClipboardFormats,
   theme: 'default',
   useCRLF: false,
   useWorkaroundForBug1272869: true,
@@ -79,8 +22,6 @@ export const configs = new Configs({
   panelMinHeight: '20em',
   panelMaxHeight: '25em',
   panelFontSize: 'medium',
-
-  saveTabsPrefix: browser.i18n.getMessage('saveTabsPrefix_defaultValue'),
 
   disablePanelWhenAlternativeTabBarIsAvailable: true,
 

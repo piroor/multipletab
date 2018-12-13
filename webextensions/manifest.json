@@ -53,63 +53,6 @@
     ]
   },
   "commands": {
-    "reloadSelectedTabs": {
-      "description": "__MSG_command_reloadSelectedTabs__"
-    },
-    "bookmarkSelectedTabs": {
-      "description": "__MSG_command_bookmarkSelectedTabs__"
-    },
-    "duplicateSelectedTabs": {
-      "description": "__MSG_command_duplicateSelectedTabs__"
-    },
-    "pinSelectedTabs": {
-      "description": "__MSG_command_pinSelectedTabs__"
-    },
-    "unpinSelectedTabs": {
-      "description": "__MSG_command_unpinSelectedTabs__"
-    },
-    "muteSelectedTabs": {
-      "description": "__MSG_command_muteSelectedTabs__"
-    },
-    "unmuteSelectedTabs": {
-      "description": "__MSG_command_unmuteSelectedTabs__"
-    },
-    "moveSelectedTabsToNewWindow": {
-      "description": "__MSG_command_moveSelectedTabsToNewWindow__"
-    },
-    "moveSelectedTabsToOtherWindow": {
-      "description": "__MSG_command_moveSelectedTabsToOtherWindow__"
-    },
-    "removeSelectedTabs": {
-      "description": "__MSG_command_removeSelectedTabs__"
-    },
-    "removeUnselectedTabs": {
-      "description": "__MSG_command_removeUnselectedTabs__"
-    },
-    "copySelectedTabs": {
-      "description": "__MSG_command_copySelectedTabs__"
-    },
-    "saveSelectedTabs": {
-      "description": "__MSG_command_saveSelectedTabs__"
-    },
-    "printSelectedTabs": {
-      "description": "__MSG_command_printSelectedTabs__"
-    },
-    "groupSelectedTabs": {
-      "description": "__MSG_command_groupSelectedTabs__"
-    },
-    "suspendSelectedTabs": {
-      "description": "__MSG_command_suspendSelectedTabs__"
-    },
-    "resumeSelectedTabs": {
-      "description": "__MSG_command_resumeSelectedTabs__"
-    },
-    "toggleSelection": {
-      "description": "__MSG_command_toggleSelection__"
-    },
-    "selectAll": {
-      "description": "__MSG_command_selectAll__"
-    },
     "invertSelection": {
       "description": "__MSG_command_invertSelection__"
     }

@@ -14,7 +14,6 @@ import * as Constants from './constants.js';
 
 export const ALL_URLS        = { origins: ['<all_urls>'] };
 export const BOOKMARKS       = { permissions: ['bookmarks'] };
-export const CLIPBOARD_WRITE = { permissions: ['clipboardWrite'], origins: ['<all_urls>'] };
 
 export function clearRequest() {
   configs.requestingPermissions = null;
