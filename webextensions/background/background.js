@@ -42,15 +42,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   window.addEventListener('pagehide', async () => {
     unregisterFromTST();
   }, { once: true });
-
-  const allWindows = await browser.windows.getAll({ populate: true });
-  for (const window of allWindows) {
-    Selection.notifyTabStateToTST(
-      window.tabs,
-      [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
-      false
-    );
-  }
 }, { once: true });
 
 
@@ -231,6 +222,16 @@ function onTSTAPIMessage(message) {
       if (!configs.enableDragSelection)
         return;
       return DragSelectionManager.onDragEnd(message);
+
+    case Constants.kTSTAPI_NOTIFY_SIDEBAR_SHOW:
+      Selection.getAllTabs(message.windowId || message.window).then(tabs => {
+        Selection.notifyTabStateToTST(
+          tabs,
+          [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+          false
+        );
+      });
+      return;
   }
 }
 
@@ -372,6 +373,15 @@ async function registerToTST() {
       `
     }).catch(handleMissingReceiverError);
     DragSelectionManager.activateInVerticalTabbarOfTST();
+
+    const allWindows = await browser.windows.getAll({ populate: true });
+    for (const window of allWindows) {
+      Selection.notifyTabStateToTST(
+        window.tabs,
+        [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+        false
+      );
+    }
   }
   catch(_e) {
     return false;

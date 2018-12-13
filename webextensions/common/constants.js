@@ -35,6 +35,7 @@ export const kTSTAPI_REGISTER_SELF           = 'register-self';
 export const kTSTAPI_UNREGISTER_SELF         = 'unregister-self';
 export const kTSTAPI_PING                    = 'ping';
 export const kTSTAPI_NOTIFY_READY            = 'ready';
+export const kTSTAPI_NOTIFY_SIDEBAR_SHOW     = 'sidebar-show';
 export const kTSTAPI_NOTIFY_TAB_CLICKED      = 'tab-clicked'; // for backward compatibility
 export const kTSTAPI_NOTIFY_TAB_MOUSEDOWN    = 'tab-mousedown';
 export const kTSTAPI_NOTIFY_TAB_MOUSEUP      = 'tab-mouseup';
