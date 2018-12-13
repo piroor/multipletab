@@ -19,6 +19,7 @@ browser.windows.onCreated.addListener(window => {
 browser.windows.onRemoved.addListener(windowId => {
   const dragSelection = getDragSelection(windowId);
   dragSelection.onDragSelectionEnd.removeListener(delegateOnDragSelectionEnd);
+  dragSelection.destroy();
   mDragSelections.delete(windowId);
 });
 

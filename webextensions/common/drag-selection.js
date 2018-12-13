@@ -29,9 +29,17 @@ export default class DragSelection {
     this.dragEnteredCount      = 0;
     this.inSelectionSession    = false;
 
+    this.onHighlited = this.onHighlited.bind(this);
+    browser.tabs.onHighlighted.addListener(this.onHighlited);
+
     this.onSelectionChange = new EventListenerManager();
     this.onCloseSelectionChange = new EventListenerManager();
     this.onDragSelectionEnd = new EventListenerManager();
+  }
+
+  destroy() {
+    this.clear();
+    browser.tabs.onHighlighted.removeListener(this.onHighlited);
   }
 
   cancel() {
@@ -474,4 +482,17 @@ export default class DragSelection {
     }
   }
 
+
+  async onHighlited(highlightInfo) {
+    const selectedIds = this.selectedTabIds;
+    if (selectedIds.length == 0 ||
+        selectedIds.sort().join(',') == highlightInfo.tabIds.sort().join(','))
+      return;
+    log('DragSelection.onHighlited: selected             => ', selectedIds);
+    log('DragSelection.onHighlited: highlightInfo.tabIds => ', highlightInfo.tabIds);
+    const toBeUnselected = selectedIds.filter(id => !highlightInfo.tabIds.includes(id));
+    const toBeSelected   = highlightInfo.tabIds.filter(id => !selectedIds.includes(id));
+    this.onSelectionChange.dispatch(await Promise.all(toBeUnselected.map(id => browser.tabs.get(id))), false);
+    this.onSelectionChange.dispatch(await Promise.all(toBeSelected.map(id => browser.tabs.get(id))), true);
+  }
 };

@@ -100,7 +100,7 @@ window.addEventListener('pagehide', () => {
   gDragSelection.onDragSelectionEnd.removeListener(onDragSelectionEnd);
   gDragSelection.onSelectionChange.removeListener(onSelectionChange);
   gDragSelection.onCloseSelectionChange.removeListener(onCloseSelectionChange);
-  gDragSelection.clear();
+  gDragSelection.destroy();
   gWindowId = null;
 }, { once: true });
 
