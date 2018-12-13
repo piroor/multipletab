@@ -28,7 +28,6 @@ let gClickFired = false;
 let gWindowId = null;
 let gDragSelection;
 
-const gUseNativeContextMenu = typeof browser.menus.overrideContext == 'function';
 let gContextMenuIsOpened = false;
 
 window.addEventListener('DOMContentLoaded', async () => {
@@ -156,8 +155,7 @@ function onDragSelectionEnd(message, _selectionInfo) {
   log('onDragSelectionEnd ', message);
   gDragSelection.syncToHighlighted().then(() => {
     log('ready to open');
-    if (gUseNativeContextMenu &&
-        gContextMenuIsOpened)
+    if (gContextMenuIsOpened)
       return;
     openMenu(message);
   }).catch(console.log);
@@ -224,8 +222,7 @@ function findBottomCaptionFromEvent(event) {
 
 function onContextMenu(event) {
   const tabItem = findTabItemFromEvent(event);
-  if (tabItem &&
-      gUseNativeContextMenu) {
+  if (tabItem) {
     browser.menus.overrideContext({
       context: 'tab',
       tabId:   tabItem.tab.id
