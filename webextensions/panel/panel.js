@@ -268,7 +268,8 @@ async function onClick(event) {
       metaKey:       event.metaKey,
       shiftKey:      event.shiftKey
     }, true).catch(console.log);
-    gLastClickedItem.classList.remove('last-focused');
+    if (gLastClickedItem)
+      gLastClickedItem.classList.remove('last-focused');
     gLastClickedItem = item;
     gLastClickedItem.classList.add('last-focused');
   }
@@ -314,6 +315,8 @@ async function onMouseMove(event) {
 }
 
 function onMouseUp(event) {
+  if (gLastClickedItem)
+    gLastClickedItem.classList.remove('last-focused');
   gLastClickedItem = null;
   if (mIsCapturing) {
     gTabBar.removeEventListener('mousemove', onMouseMove);
