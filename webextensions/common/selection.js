@@ -68,7 +68,7 @@ function requestUpdateHighlightedState(params = {}) {
     clearTimeout(mDelayedUpdate);
   mDelayedUpdate = setTimeout(async () => {
     mDelayedUpdate = null;
-    const toBeSelected = Array.from(mToBeSelected.values());
+    let toBeSelected = Array.from(mToBeSelected.values());
     const toBeUnselected = Array.from(mToBeUnselected.values());
     const clear = mClearSelection;
     log('requestUpdateHighlightedState: update now ', { toBeSelected, toBeUnselected, clear });
@@ -77,19 +77,27 @@ function requestUpdateHighlightedState(params = {}) {
     mClearSelection = false;
     if (!clear && toBeSelected.length === 0 && toBeUnselected.length > 0) {
       const unselectedIds = toBeUnselected.map(tab => tab.id);
-      const selectedTabs = await getSelection(toBeUnselected[0].windowId);
+      toBeSelected = await getSelection(toBeUnselected[0].windowId);
+      toBeSelected = toBeSelected.filter(tab => !unselectedIds.includes(tab.id));
+      const activeTabs = toBeSelected.splice(toBeSelected.findIndex(tab => tab.active), 1);
+      toBeSelected = activeTabs.concat(toBeSelected);
+      log('requestUpdateHighlightedState:unselect ', toBeSelected);
       browser.tabs.highlight({
-        windowId: toBeUnselected[0].windowId,
-        tabs:     selectedTabs.filter(tab => !unselectedIds.includes(tab.id)).map(tab => tab.index)
+        windowId: toBeSelected[0].windowId,
+        tabs:     toBeSelected.map(tab => tab.index)
       });
     }
     else if (!clear && toBeSelected.length > 0) {
+      const activeTabs = toBeSelected.splice(toBeSelected.findIndex(tab => tab.active), 1);
+      toBeSelected = activeTabs.concat(toBeSelected);
+      log('requestUpdateHighlightedState:select ', toBeSelected);
       browser.tabs.highlight({
         windowId: toBeSelected[0].windowId,
         tabs:     toBeSelected.map(tab => tab.index)
       });
     }
     else {
+      log('requestUpdateHighlightedState:clear');
       const windowId = (await getActiveWindow()).id;
       const activeTabs = await browser.tabs.query({ windowId, active: true });
       browser.tabs.highlight({
