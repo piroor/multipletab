@@ -225,8 +225,8 @@ export default class DragSelection {
     }
     */
 
-    let selected = false;
-    {
+    let selected = message.tab.active;
+    if (!selected) {
       if (message.tab.states)
         selected = message.tab.states.includes(Constants.kSELECTED);
       else
@@ -279,6 +279,7 @@ export default class DragSelection {
           await this.setSelectedStateToCollapsedDescendants(lastActiveTab, true);
       }
       for (const tab of tabs) {
+        log(' toggle ', { tab, toBeSelected: !selected });
         if (selected)
           this.delete(tab);
         else
