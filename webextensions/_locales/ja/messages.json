@@ -73,8 +73,11 @@
   "tabContextMenu_close_label_multiselected":       { "message": "選択したタブを閉じる(&S)" },
 
 
+  "context_groupTabs_label":              { "message": "新しいグループにする(&G)" },
+  "command_groupSelectedTabs":            { "message": "選択中のタブを新しいグループにする" },
+
   "context_invertSelection_label":        { "message": "選択を反転(&I)" },
-  "command_invertSelection":               { "message": "すべてのタブの選択状態を反転" },
+  "command_invertSelection":              { "message": "すべてのタブの選択状態を反転" },
 
 
   "config_general_caption": { "message": "全般" },

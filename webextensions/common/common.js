@@ -10,6 +10,7 @@ import Configs from '/extlib/Configs.js';
 export const configs = new Configs({
   optionsExpandedSections: ['section-general'],
 
+  context_groupTabs: false,
   context_invertSelection: true,
 
   autoOpenMenuOnDragEnd: true,

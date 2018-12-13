@@ -34,10 +34,6 @@ ul p.sub {
 }
 
 
-#menu-items {
-  column-count: 2;
-}
-
 .grid {
   display: flex;
   flex-direction: column;

@@ -102,6 +102,12 @@ const mItemsById = {
   'lastSeparatorBeforeExtraItems': {
     type: 'separator'
   },
+
+  'groupTabs': {
+    title: browser.i18n.getMessage('context_groupTabs_label'),
+    viewTypes: null,
+    documentUrlPatterns: null
+  },
   'invertSelection': {
     title: browser.i18n.getMessage('context_invertSelection_label'),
     viewTypes: null,
@@ -286,15 +292,18 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
     multiselected
   }) && modifiedItemsCount++;
 
+  visibleItemsCount = 0;
 
-  const invertItemVisible = configs.context_invertSelection && selectedTabs.length > 0 && selectedTabs.length < visibleTabs.length;
+  updateItem('groupTabs', {
+    visible: configs.context_groupTabs && selectedTabs.length > 1 && ++visibleItemsCount
+  }) && modifiedItemsCount++;
   updateItem('invertSelection', {
-    visible: invertItemVisible && ++visibleItemsCount
+    visible: configs.context_invertSelection && selectedTabs.length > 0 && selectedTabs.length < visibleTabs.length && ++visibleItemsCount
   }) && modifiedItemsCount++;
 
   const forExtraItems = givenSelectedTabs && mExtraItems.size > 0 && Array.from(mExtraItems.values()).some(item => item.visible !== false)
   updateItem('lastSeparatorBeforeExtraItems', {
-    visible: (forExtraItems || invertItemVisible) && ++visibleItemsCount
+    visible: (forExtraItems || visibleItemsCount > 0) && ++visibleItemsCount
   }) && modifiedItemsCount++;
 
   /* eslint-enable no-unused-expressions */
@@ -467,6 +476,13 @@ async function onClick(info, contextTab) {
       else {
         browser.tabs.remove(contextTab.id);
       }
+      break;
+
+    case 'groupTabs':
+      await browser.runtime.sendMessage(Constants.kTST_ID, {
+        type: Constants.kTSTAPI_GROUP_TABS,
+        tabs: multiselectedTabs.map(tab => tab.id)
+      }).catch(handleMissingReceiverError);
       break;
 
     case 'invertSelection':

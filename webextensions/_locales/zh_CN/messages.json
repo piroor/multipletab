@@ -123,6 +123,14 @@
         "message": "关闭标签页(&C)",
         "hash": "517e4cda82f826395a14d6bda5b1c7a0"
     },
+    "context_groupTabs_label": {
+        "message": "创建新组(&G)",
+        "hash": "e21f9144d4903adf990ecfe83b197bb0"
+    },
+    "command_groupSelectedTabs": {
+        "message": "为选中标签页创建新组",
+        "hash": "90a2b9f0d172cd3b0f9e2353c6287fe7"
+    },
     "context_invertSelection_label": {
         "message": "反选(&I)",
         "hash": "009238291e1a95ff8c2dd1c3c37c6651"
