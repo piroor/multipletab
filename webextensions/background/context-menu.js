@@ -615,6 +615,15 @@ DragSelectionManager.onDragSelectionEnd.addListener(async (message, selectionInf
   }
 });
 
-browser.tabs.onHighlighted.addListener(_highlightInfo => {
-  mDirty = true;
+let mLastSelectionCount = 1;
+
+browser.tabs.onHighlighted.addListener(async highlightInfo => {
+  if (highlightInfo.tabIds.length != mLastSelectionCount) {
+    mDirty = true;
+    mLastSelectionCount = highlightInfo.tabIds.length;
+  }
+  if (mDirty) {
+    const tabs = await Promise.all(highlightInfo.tabIds.map(id => browser.tabs.get(id)));
+    refreshItems(tabs[0], tabs);
+  }
 });
