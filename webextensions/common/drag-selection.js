@@ -236,10 +236,7 @@ export default class DragSelection {
     const ctrlKeyPressed = /^Mac/i.test(navigator.platform) ? message.metaKey : message.ctrlKey;
     if (!ctrlKeyPressed && !message.shiftKey) {
       log('regular click');
-      if (!selected) {
-        log('clear selection');
-        this.clear();
-      }
+      this.clear();
       this.inSelectionSession = false;
       this.lastClickedTab = null;
       return false;
