@@ -115,6 +115,7 @@ async function refreshItems(contextTab, tabs = null) {
 
   const hasSelection         = selectedTabs.length > 1;
   let separatorsCount        = 0;
+  let topLevelItemsCount     = 0;
   const normalItemAppearedIn = {};
   const createdItems         = {};
   const nextSeparatorIn      = {};
@@ -216,6 +217,8 @@ async function refreshItems(contextTab, tabs = null) {
       }
       if (configs.enableIntegrationWithTST)
         fakeMenuParams.push(params);
+      if (parentId == 'selection')
+        topLevelItemsCount++;
     }
   }
 
@@ -257,15 +260,20 @@ async function refreshItems(contextTab, tabs = null) {
     }));
   }
 
-  log('nativeMenuParams: ', nativeMenuParams);
-  log('fakeMenuParams: ', fakeMenuParams);
-  if (nativeMenuParams.length > 1 ||
-      (nativeMenuParams.length == 1 &&
-       nativeMenuParams[0].id != 'selection')) {
+  log('refreshing: ', { nativeMenuParams, fakeMenuParams, topLevelItemsCount });
+  if (topLevelItemsCount > 0) {
+    if (topLevelItemsCount == 1) {
+      nativeMenuParams.splice(0, 1);
+      fakeMenuParams.splice(0, 1);
+    }
     for (const params of nativeMenuParams) {
+      if (topLevelItemsCount == 1 && params.parentId == 'selection')
+        params.parentId = null;
       promisedMenuUpdated.push(browser.menus.create(params));
     }
     for (const params of fakeMenuParams) {
+      if (topLevelItemsCount == 1 && params.parentId == 'selection')
+        params.parentId = null;
       promisedMenuUpdated.push(browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_CONTEXT_MENU_CREATE,
         params
