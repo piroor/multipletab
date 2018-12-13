@@ -491,7 +491,6 @@ async function buildMenu() {
     type:   Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO,
     tabIds: gDragSelection.selectedTabIds
   });
-  items.shift(); // delete toplevel "selection" menu
   log('buildMenu for ', items);
 
   const range = document.createRange();

@@ -162,7 +162,9 @@ function updateItem(id, state = {}) {
   return modified;
 }
 
-async function onShown(_info, contextTab, givenSelectedTabs = null) {
+async function onShown(info, contextTab, givenSelectedTabs = null) {
+  log('onShown ', { info, contextTab, givenSelectedTabs });
+
   const window   = await (contextTab ? browser.windows.get(contextTab.windowId, { populate: true }) : browser.windows.getLastFocused({ populate: true }));
   const windowId = window.id;
   const selectedTabs = givenSelectedTabs || await Selection.getSelection(windowId);
@@ -492,12 +494,13 @@ function onMessage(message) {
     case Constants.kCOMMAND_PULL_ACTIVE_CONTEXT_MENU_INFO: return (async () => {
       const tabs = await Promise.all(message.tabIds.map(id => browser.tabs.get(id)));
       await onShown({}, tabs[0], tabs);
-      const visibleItems = [];
+      let visibleItems = [];
       for (const id of Object.keys(mItemsById)) {
         const item = mItemsById[id];
-        if (item.visible)
+        if (item.lastVisible)
           visibleItems.push(item);
       }
+      visibleItems = visibleItems.concat(Array.from(mExtraItems.values()));
       return visibleItems;
     })();
 
