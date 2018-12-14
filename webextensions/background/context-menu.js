@@ -57,6 +57,7 @@ const mItemsById = {
   'context_reopenInContainer': {
     title: browser.i18n.getMessage('tabContextMenu_reopenInContainer_label')
   },
+  */
   'context_moveTab': {
     title:              browser.i18n.getMessage('tabContextMenu_moveTab_label'),
     titleMultiselected: browser.i18n.getMessage('tabContextMenu_moveTab_label_multiselected')
@@ -69,9 +70,8 @@ const mItemsById = {
     parentId: 'context_moveTab',
     title:    browser.i18n.getMessage('tabContextMenu_moveTabToEnd_label')
   },
-  */
   'context_openTabInWindow': {
-    //parentId: 'context_moveTab',
+    parentId: 'context_moveTab',
     title:    browser.i18n.getMessage('tabContextMenu_tearOff_label')
   },
   'context_separator:afterSendTab': {
@@ -209,6 +209,8 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
   const hasMultipleNormalTabs = normalTabsCount > 1;
   const multiselected         = selectedTabs.length > 1;
   const visibleTabs           = window.tabs.filter(tab => !tab.hidden);
+  const previousTab           = contextTab.index > 0 ? window.tabs[contextTab.index - 1] : null;
+  const nextTab               = contextTab.index < window.tabs.length ? window.tabs[contextTab.index + 1] : null;
 
   let modifiedItemsCount = 0;
   let visibleItemsCount = 0;
@@ -276,6 +278,7 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
     visible: contextTab && showContextualIdentities && ++visibleItemsCount,
     multiselected
   }) && modifiedItemsCount++;
+  */
 
   updateItem('context_moveTab', {
     visible: contextTab && ++visibleItemsCount,
@@ -283,16 +286,15 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
     multiselected
   }) && modifiedItemsCount++;
   updateItem('context_moveTabToStart', {
-    enabled: contextTab && hasMultipleTabs && (previousSiblingTab || previousTab) && (Tabs.isPinned(previousSiblingTab || previousTab) == contextTab.pinned),
+    enabled: contextTab && hasMultipleTabs && previousTab && (previousTab.pinned == contextTab.pinned),
     multiselected
   }) && modifiedItemsCount++;
   updateItem('context_moveTabToEnd', {
-    enabled: contextTab && hasMultipleTabs && (nextSiblingTab || nextTab) && (Tabs.isPinned(nextSiblingTab || nextTab) == contextTab.pinned),
+    enabled: contextTab && hasMultipleTabs && nextTab && (nextTab.pinned == contextTab.pinned),
     multiselected
   }) && modifiedItemsCount++;
-  */
   updateItem('context_openTabInWindow', {
-    enabled: contextTab && hasMultipleTabs && ++visibleItemsCount,
+    enabled: contextTab && hasMultipleTabs,
     multiselected
   }) && modifiedItemsCount++;
 
@@ -303,7 +305,7 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
 
   updateItem('context_closeTabsToTheEnd', {
     visible: contextTab && ++visibleItemsCount,
-    enabled: hasMultipleNormalTabs && contextTab && contextTab.index < window.tabs.length,
+    enabled: hasMultipleNormalTabs && contextTab && nextTab,
     multiselected
   }) && modifiedItemsCount++;
   updateItem('context_closeOtherTabs', {
@@ -421,9 +423,29 @@ async function onClick(info, contextTab) {
         browser.tabs.duplicate(contextTab.id);
       }
       break;
-    case 'context_moveTabToStart': break;
-    case 'context_moveTabToEnd': break;
-    case 'context_openTabInWindow':
+    case 'context_moveTabToStart': {
+      const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
+        type: Constants.kTSTAPI_MOVE_TO_START,
+        tab:  contextTab.id
+      }).catch(handleMissingReceiverError);
+      if (doneByTST)
+        break;
+    }; break;
+    case 'context_moveTabToEnd': {
+      const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
+        type: Constants.kTSTAPI_MOVE_TO_END,
+        tabs: (isMultiselected ? multiselectedTabs : contextTab).map(tab => tab.id)
+      }).catch(handleMissingReceiverError);
+      if (doneByTST)
+        break;
+    }; break;
+    case 'context_openTabInWindow': {
+      const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
+        type: Constants.kTSTAPI_OPEN_IN_NEW_WINDOW,
+        tabs: (isMultiselected ? multiselectedTabs : contextTab).map(tab => tab.id)
+      }).catch(handleMissingReceiverError);
+      if (doneByTST)
+        break;
       if (isMultiselected) {
         await Commands.moveToWindow(multiselectedTabs.map(tab => tab.id));
       }
@@ -433,7 +455,7 @@ async function onClick(info, contextTab) {
           incognito: contextTab.incognito
         });
       }
-      break;
+    }; break;
     case 'context_selectAllTabs': {
       const tabs = await browser.tabs.query({ windowId: contextWindowId });
       browser.tabs.highlight({
