@@ -424,20 +424,32 @@ async function onClick(info, contextTab) {
       }
       break;
     case 'context_moveTabToStart': {
+      const movedTabs   = isMultiselected ? multiselectedTabs : [contextTab];
+      const movedTabIds = movedTabs.map(tab => tab.id);
       const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_MOVE_TO_START,
-        tabs: (isMultiselected ? multiselectedTabs : contextTab).map(tab => tab.id)
+        tabs: movedTabIds
       }).catch(handleMissingReceiverError);
       if (doneByTST)
         break;
+      const allTabs   = window.tabs.filter(tab => tab.pinned == contextTab.pinned);
+      const otherTabs = allTabs.filter(tab => !movedTabIds.includes(tab.id));
+      if (otherTabs.length > 0)
+        await browser.tabs.move(movedTabs.map(tab => tab.id), { index: otherTabs[0].index });
     }; break;
     case 'context_moveTabToEnd': {
+      const movedTabs   = isMultiselected ? multiselectedTabs : [contextTab];
+      const movedTabIds = movedTabs.map(tab => tab.id);
       const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_MOVE_TO_END,
-        tabs: (isMultiselected ? multiselectedTabs : contextTab).map(tab => tab.id)
+        tabs: movedTabIds
       }).catch(handleMissingReceiverError);
       if (doneByTST)
         break;
+      const allTabs   = window.tabs.filter(tab => tab.pinned == contextTab.pinned);
+      const otherTabs = allTabs.filter(tab => !movedTabIds.includes(tab.id));
+      if (otherTabs.length > 0)
+        await browser.tabs.move(movedTabs.map(tab => tab.id), { index: window.tabs.length - 1 });
     }; break;
     case 'context_openTabInWindow': {
       const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
