@@ -18,6 +18,8 @@ import * as ContextMenu from './context-menu.js';
 
 log.context = 'BG';
 
+const kFEATURES_VERSION = 1;
+
 window.addEventListener('DOMContentLoaded', async () => {
   await configs.$loaded;
 
@@ -34,11 +36,13 @@ window.addEventListener('DOMContentLoaded', async () => {
   registerToTST();
 
   notifyReady();
-  notifyUpdatedFromLegacy();
 
   window.addEventListener('pagehide', async () => {
     unregisterFromTST();
   }, { once: true });
+
+  if (!(await notifyUpdatedFromLegacy()))
+    notifyNewFeatures();
 }, { once: true });
 
 
@@ -326,13 +330,47 @@ browser.runtime.onInstalled.addListener(details => {
     configs.shouldNotifyUpdatedFromLegacyVersion = false;
 });
 
+async function notifyNewFeatures() {
+  /*
+  let featuresVersionOffset = 0;
+  const browserInfo = await browser.runtime.getBrowserInfo();
+  // "search" permission becomes available!
+  if (parseInt(browserInfo.version.split('.')[0]) >= 63)
+    featuresVersionOffset++;
+  // "menus.overrideContext" permission becomes available!
+  if (parseInt(browserInfo.version.split('.')[0]) >= 64)
+    featuresVersionOffset++;
+  */
+
+  const featuresVersion = kFEATURES_VERSION /*+ featuresVersionOffset*/;
+
+  if (configs.notifiedFeaturesVersion >= featuresVersion)
+    return false;
+  configs.notifiedFeaturesVersion = featuresVersion;
+
+  const tab = await browser.tabs.create({
+    url:    browser.extension.getURL('resources/notify-features.html'),
+    active: true
+  });
+  const title       = `${browser.i18n.getMessage('extensionName')} ${browser.runtime.getManifest().version}`
+  const description = browser.i18n.getMessage('message_newFeatures_description');
+  browser.tabs.executeScript(tab.id, {
+    code: `
+      document.querySelector('#title').textContent = document.title = ${JSON.stringify(title)};
+      document.querySelector('#description').innerHTML = ${JSON.stringify(description)};
+      location.replace('data:text/html,' + encodeURIComponent(document.documentElement.innerHTML));
+    `
+  });
+  return true;
+}
+
 async function notifyUpdatedFromLegacy() {
   if (!configs.shouldNotifyUpdatedFromLegacyVersion)
-    return;
+    return false;
   configs.shouldNotifyUpdatedFromLegacyVersion = false;
 
   const tab = await browser.tabs.create({
-    url:    browser.extension.getURL('resources/updated-from-legacy.html'),
+    url:    browser.extension.getURL('resources/notify-features.html'),
     active: true
   });
   const title       = `${browser.i18n.getMessage('extensionName')} ${browser.runtime.getManifest().version}`

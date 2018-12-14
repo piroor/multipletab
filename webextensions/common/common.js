@@ -35,6 +35,7 @@ export const configs = new Configs({
 
   applyThemeColorToIcon: false,
 
+  notifiedFeaturesVersion: 0,
   shouldNotifyUpdatedFromLegacyVersion: false,
   debug: false
 }, {
@@ -46,6 +47,7 @@ export const configs = new Configs({
     cachedExternalAddons
     requestingPermissions
     requestingPermissionsNatively
+    notifiedFeaturesVersion
     shouldNotifyUpdatedFromLegacyVersion
     debug
   `.trim().split('\n').map(key => key.trim()).filter(key => key && key.indexOf('//') != 0)
