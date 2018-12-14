@@ -102,20 +102,11 @@ const mItemsById = {
   'lastSeparatorBeforeExtraItems': {
     type: 'separator'
   },
-  'groupTabs': {
-    title: browser.i18n.getMessage('context_groupTabs_label')
-  },
   'invertSelection': {
     title: browser.i18n.getMessage('context_invertSelection_label')
   },
 
 
-  'global_groupTabs': {
-    title: browser.i18n.getMessage('context_groupTabs_label'),
-    viewTypes: ['tab', 'sidebar'],
-    documentUrlPatterns: null,
-    TST: true
-  },
   'global_invertSelection': {
     title: browser.i18n.getMessage('context_invertSelection_label'),
     viewTypes: ['tab', 'sidebar'],
@@ -127,13 +118,6 @@ const mItemsById = {
     title: browser.i18n.getMessage('context_selection_label'),
     viewTypes: ['tab', 'sidebar'],
     documentUrlPatterns: null,
-    TST: true
-  },
-  'selection_groupTabs': {
-    title: browser.i18n.getMessage('context_groupTabs_label'),
-    viewTypes: ['tab', 'sidebar'],
-    documentUrlPatterns: null,
-    parentId: 'selection',
     TST: true
   },
   'selection_invertSelection': {
@@ -338,18 +322,7 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
 
   visibleItemsCount = 0;
 
-  const showGroupTabs = configs.context_groupTabs && selectedTabs.length > 1 && ++visibleItemsCount;
   const showInvertSelection = configs.context_invertSelection && selectedTabs.length > 0 && selectedTabs.length < visibleTabs.length && ++visibleItemsCount;
-
-  updateItem('groupTabs', {
-    visible: showGroupTabs
-  }) && modifiedItemsCount++;
-  updateItem('global_groupTabs', {
-    visible: showGroupTabs && visibleItemsCount == 1
-  }) && modifiedItemsCount++;
-  updateItem('selection_groupTabs', {
-    visible: showGroupTabs && visibleItemsCount > 1
-  }) && modifiedItemsCount++;
 
   updateItem('invertSelection', {
     visible: showInvertSelection
@@ -540,13 +513,6 @@ async function onClick(info, contextTab) {
       else {
         browser.tabs.remove(contextTab.id);
       }
-      break;
-
-    case 'groupTabs':
-      await browser.runtime.sendMessage(Constants.kTST_ID, {
-        type: Constants.kTSTAPI_GROUP_TABS,
-        tabs: multiselectedTabs.map(tab => tab.id)
-      }).catch(handleMissingReceiverError);
       break;
 
     case 'invertSelection':

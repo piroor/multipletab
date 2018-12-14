@@ -53,9 +53,6 @@
     ]
   },
   "commands": {
-    "groupSelectedTabs": {
-      "description": "__MSG_command_groupSelectedTabs__"
-    },
     "invertSelection": {
       "description": "__MSG_command_invertSelection__"
     }

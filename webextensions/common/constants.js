@@ -48,7 +48,6 @@ export const kTSTAPI_NOTIFY_TAB_DRAGSTART    = 'tab-dragstart';
 export const kTSTAPI_NOTIFY_TAB_DRAGENTER    = 'tab-dragenter';
 export const kTSTAPI_NOTIFY_TAB_DRAGEXIT     = 'tab-dragexit';
 export const kTSTAPI_NOTIFY_TAB_DRAGEND      = 'tab-dragend';
-export const kTSTAPI_GROUP_TABS              = 'group-tabs';
 export const kTSTAPI_ADD_TAB_STATE           = 'add-tab-state';
 export const kTSTAPI_REMOVE_TAB_STATE        = 'remove-tab-state';
 export const kTSTAPI_GET_TREE                = 'get-tree';

@@ -75,9 +75,6 @@
 
   "context_selection_label":              { "message": "選択したタブを操作" },
 
-  "context_groupTabs_label":              { "message": "新しいグループにする(&G)" },
-  "command_groupSelectedTabs":            { "message": "選択中のタブを新しいグループにする" },
-
   "context_invertSelection_label":        { "message": "選択を反転(&I)" },
   "command_invertSelection":              { "message": "すべてのタブの選択状態を反転" },
 
