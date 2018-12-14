@@ -426,7 +426,7 @@ async function onClick(info, contextTab) {
     case 'context_moveTabToStart': {
       const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_MOVE_TO_START,
-        tab:  contextTab.id
+        tabs: (isMultiselected ? multiselectedTabs : contextTab).map(tab => tab.id)
       }).catch(handleMissingReceiverError);
       if (doneByTST)
         break;
