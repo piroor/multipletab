@@ -53,11 +53,9 @@ const mItemsById = {
     title:              browser.i18n.getMessage('tabContextMenu_bookmark_label'),
     titleMultiselected: browser.i18n.getMessage('tabContextMenu_bookmark_label_multiselected')
   },
-  /*
   'context_reopenInContainer': {
     title: browser.i18n.getMessage('tabContextMenu_reopenInContainer_label')
   },
-  */
   'context_moveTab': {
     title:              browser.i18n.getMessage('tabContextMenu_moveTab_label'),
     titleMultiselected: browser.i18n.getMessage('tabContextMenu_moveTab_label_multiselected')
@@ -164,8 +162,70 @@ export function init() {
 
   browser.menus.onShown.addListener(onShown);
   browser.menus.onClicked.addListener(onClick);
+
+  updateContextualIdentities();
+  browser.contextualIdentities.onCreated.addListener(updateContextualIdentities);
+  browser.contextualIdentities.onRemoved.addListener(updateContextualIdentities);
+  browser.contextualIdentities.onUpdated.addListener(updateContextualIdentities);
 }
 
+const mContextualIdentityItems = new Set();
+async function updateContextualIdentities() {
+  for (const item of mContextualIdentityItems.values()) {
+    const id = item.id;
+    if (id in mItemsById)
+      delete mItemsById[id];
+    browser.menus.remove(id);
+  }
+  mContextualIdentityItems.clear();
+
+  const defaultItem = {
+    parentId:  'context_reopenInContainer',
+    id:        'context_reopenInContainer:firefox-default',
+    title:     browser.i18n.getMessage('tabContextMenu_reopenInContainer_noContainer_label'),
+    contexts:  ['tab'],
+    viewTypes: ['popup'],
+    documentUrlPatterns: POPUP_URL_PATTERN
+  };
+  browser.menus.create(defaultItem);
+  mContextualIdentityItems.add(defaultItem);
+
+  const defaultSeparator = {
+    parentId:  'context_reopenInContainer',
+    id:        'context_reopenInContainer_separator',
+    type:      'separator',
+    contexts:  ['tab'],
+    viewTypes: ['popup'],
+    documentUrlPatterns: POPUP_URL_PATTERN
+  };
+  browser.menus.create(defaultSeparator);
+  mContextualIdentityItems.add(defaultSeparator);
+
+  const identities = await browser.contextualIdentities.query({});
+  for (const identity of identities) {
+    const id = `context_reopenInContainer:${identity.cookieStoreId}`;
+    const icon = identity.icon && identity.color ?
+      `/resources/icons/contextual-identities/${identity.icon}.svg#${identity.color}` :
+      identity.iconUrl;
+    const item = {
+      parentId: 'context_reopenInContainer',
+      id:       id,
+      title:    identity.name.replace(/^([a-z0-9])/i, '&$1'),
+      contexts: ['tab'],
+      viewTypes: ['popup'],
+      documentUrlPatterns: POPUP_URL_PATTERN
+    };
+    if (icon)
+      item.icons = { 16: icon };
+    browser.menus.create(item);
+    mContextualIdentityItems.add(item);
+  }
+  for (const item of mContextualIdentityItems.values()) {
+    mItemsById[item.id] = item;
+    item.lastVisible = true;
+    item.lastEnabled = true;
+  }
+}
 
 function updateItem(id, state = {}) {
   let modified = false;
@@ -263,7 +323,6 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
     multiselected: multiselected || !contextTab
   }) && modifiedItemsCount++;
 
-  /*
   let showContextualIdentities = false;
   for (const item of mContextualIdentityItems.values()) {
     const id = item.id;
@@ -278,7 +337,6 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
     visible: contextTab && showContextualIdentities && ++visibleItemsCount,
     multiselected
   }) && modifiedItemsCount++;
-  */
 
   updateItem('context_moveTab', {
     visible: contextTab && ++visibleItemsCount,

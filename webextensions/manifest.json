@@ -6,7 +6,8 @@
   "description": "__MSG_extensionDescription__",
   "permissions": [
     "activeTab",
-    "downloads",
+    "contextualIdentities",
+    "cookies",
     "menus",
     "menus.overrideContext",
     "notifications",
@@ -15,8 +16,7 @@
   ],
   "optional_permissions": [
     "<all_urls>",
-    "bookmarks",
-    "clipboardWrite"
+    "bookmarks"
   ],
   "icons": {
     "16": "/resources/16x16.svg",
