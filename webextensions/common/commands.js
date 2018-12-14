@@ -59,12 +59,10 @@ export async function bookmarkTabs(ids, options = {}) {
 }
 
 export async function moveToWindow(ids, windowId) {
-  const structure = !configs.enableIntegrationWithTST ?
-    null :
-    await browser.runtime.sendMessage(Constants.kTST_ID, {
+  const structure = (await browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_GET_TREE_STRUCTURE,
       tabs: ids
-    }).catch(handleMissingReceiverError);
+    }).catch(handleMissingReceiverError));
   log('structure ', structure);
   const firstTab = ids[0];
   let window;
@@ -77,7 +75,7 @@ export async function moveToWindow(ids, windowId) {
     });
     ids = ids.slice(1);
   }
-  if (configs.enableIntegrationWithTST)
+  if (structure)
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type:   Constants.kTSTAPI_BLOCK_GROUPING,
       window: window.id
@@ -108,12 +106,11 @@ export async function moveToWindow(ids, windowId) {
       tabs: ids,
       structure
     }).catch(handleMissingReceiverError);
-  }
-  if (configs.enableIntegrationWithTST)
     await browser.runtime.sendMessage(Constants.kTST_ID, {
       type:   Constants.kTSTAPI_UNBLOCK_GROUPING,
       window: window.id
     }).catch(handleMissingReceiverError);
+  }
 }
 
 // workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1394477

@@ -1,6 +1,8 @@
 # 更新履歴
 
  - master/HEAD
+   * Firefox 63およびそれ以前への対応を終了し、複数のタブをドラッグ操作で選択する機能のみに特化したアドオンとして再構築した
+   * 選択されたタブに対する特別な操作を削除した（今後はFirefoxのネイティブのタブ複数選択機能に対応した他のアドオンと組み合わせて使って下さい。例：[選択したタブをクリップボードにコピー](https://addons.mozilla.org/firefox/addon/copy-selected-tabs-to-clipboar), [選択したタブを保存](https://addons.mozilla.org/firefox/addon/save-selected-tabs-to-files/), and [Tab Mover](https://addons.mozilla.org/firefox/addon/tab-mover/)）
  - 2.2.5 (2018.11.30)
    * コンテキストメニュー項目の表示・非表示をより確実に更新するようにした
    * 「クリップボードにコピー」の設定項目の削除結果が正しく保存されていなかったのを修正

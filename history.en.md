@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+   * Drop support for Firefox 63 and older versions. Now this addon concentrates to provide ability to select multiple tabs by dragging.
+   * No longer support special commands for selected tabs. To reintroduce those features, please install other addons supporting Firefox's native multiselection. For example: [Copy Selected Tabs to Clipboard](https://addons.mozilla.org/firefox/addon/copy-selected-tabs-to-clipboar), [Save Selected Tabs to Files](https://addons.mozilla.org/firefox/addon/save-selected-tabs-to-files/), and [Tab Mover](https://addons.mozilla.org/firefox/addon/tab-mover/)
  - 2.2.5 (2018.11.30)
    * Update visibility of context menu items more certainly.
    * Save removal of "copy to clipboard" formats correctly.

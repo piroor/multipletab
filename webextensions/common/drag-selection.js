@@ -282,8 +282,7 @@ export default class DragSelection {
       if (message.tab.id != lastActiveTab.id ||
           !this.inSelectionSession) {
         this.add(lastActiveTab);
-        if (configs.enableIntegrationWithTST)
-          await this.setSelectedStateToCollapsedDescendants(lastActiveTab, true);
+        await this.setSelectedStateToCollapsedDescendants(lastActiveTab, true);
       }
       for (const tab of tabs) {
         log(' toggle ', { tab, toBeSelected: !selected });

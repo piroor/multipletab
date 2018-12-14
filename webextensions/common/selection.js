@@ -183,8 +183,7 @@ export async function invert(windowId) {
 export async function notifyTabStateToTST(tabIds, state, value) {
   if (!Array.isArray(tabIds))
     tabIds = [tabIds];
-  if (!configs.enableIntegrationWithTST ||
-      tabIds.length == 0)
+  if (tabIds.length == 0)
     return;
 
   browser.runtime.sendMessage(Constants.kTST_ID, {

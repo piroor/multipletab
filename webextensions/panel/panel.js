@@ -113,13 +113,9 @@ function onMenuHidden() {
 }
 
 async function updateUIForTST() {
-  if (!configs.enableIntegrationWithTST)
-    return;
-
   const disabledMessage = document.querySelector('#disabled-message');
 
-  if (configs.disablePanelWhenAlternativeTabBarIsAvailable &&
-      configs.enableIntegrationWithTST) {
+  if (configs.disablePanelWhenAlternativeTabBarIsAvailable) {
     try {
       const responded = await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_PING
