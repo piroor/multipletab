@@ -7,7 +7,6 @@
 
 import {
   log,
-  configs,
   handleMissingReceiverError
 } from './common.js';
 import * as Constants from './constants.js';
