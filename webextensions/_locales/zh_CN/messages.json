@@ -64,7 +64,7 @@
         "hash": "cf5f82a4493e732a4100b101af1b921e"
     },
     "message_updatedFromLegacy_description": {
-        "message": "<p>Multiple Tab Handler 现在基于 WebExtensions，适用于 Firefox 57 及更高版本。您现在可以从“选择并执行”的工具栏按钮中选择多个标签页并执行命令。\n\n此外，此扩展也兼容 <a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">Tree Style Tab</a> 扩展。在 Tree Style Tab 扩展的侧栏中，长按标签页超过 0.5 秒可选择标签页。</p>",
+        "message": "<p>Multiple Tab Handler 现在基于 WebExtensions，适用于 Firefox 57 及更高版本。您现在可以从“Select Tabs by Dragging”的工具栏按钮中选择多个标签页并执行命令。\n\n此外，此扩展也兼容 <a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">Tree Style Tab</a> 扩展。在 Tree Style Tab 扩展的侧栏中，长按标签页超过 0.5 秒可选择标签页。</p>",
         "hash": ""
     },
     "tabContextMenu_reload_label": {
