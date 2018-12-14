@@ -523,6 +523,8 @@ async function buildMenu() {
       continue;
 
     const itemNode = buildMenuItem(item);
+    if (item.icons)
+      itemNode.dataset.icon = item.icons['16'];
     if (item.parentId &&
         item.parentId != 'selection' &&
         item.parentId in knownItems) {
