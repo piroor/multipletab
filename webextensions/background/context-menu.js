@@ -530,7 +530,8 @@ async function onClick(info, contextTab) {
       const tabs = await browser.tabs.query({ windowId: contextWindowId });
       browser.tabs.highlight({
         windowId: contextWindowId,
-        tabs: tabs.map(tab => tab.index)
+        populate: false,
+        tabs:     tabs.map(tab => tab.index)
       });
     }; break;
     case 'context_bookmarkTab':

@@ -83,6 +83,7 @@ function requestUpdateHighlightedState(params = {}) {
       log('requestUpdateHighlightedState:unselect ', toBeSelected);
       browser.tabs.highlight({
         windowId: toBeSelected[0].windowId,
+        populate: false,
         tabs:     toBeSelected.map(tab => tab.index)
       });
     }
@@ -92,6 +93,7 @@ function requestUpdateHighlightedState(params = {}) {
       log('requestUpdateHighlightedState:select ', toBeSelected);
       browser.tabs.highlight({
         windowId: toBeSelected[0].windowId,
+        populate: false,
         tabs:     toBeSelected.map(tab => tab.index)
       });
     }
@@ -101,7 +103,8 @@ function requestUpdateHighlightedState(params = {}) {
       const activeTabs = await browser.tabs.query({ windowId, active: true });
       browser.tabs.highlight({
         windowId,
-        tabs: activeTabs.map(tab => tab.index)
+        populate: false,
+        tabs:     activeTabs.map(tab => tab.index)
       });
     }
   }, 100);
