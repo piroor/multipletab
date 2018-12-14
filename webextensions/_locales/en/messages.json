@@ -22,7 +22,7 @@
   "notPermitted_clipboardWrite_message": { "message": "Failed to get permissions to write data to the clipboard. Please grant permissions via the configurations of Multiple Tab Handler." },
 
 
-  "panelTitle": { "message": "Select and Do" },
+  "panelTitle": { "message": "Select Tabs by Dragging" },
   "panelCaptionTop": { "message": "Select Tabs" },
   "panelCaptionBottom": { "message": "And Click Here to Choose Action" },
 

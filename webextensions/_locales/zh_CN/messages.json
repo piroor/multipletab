@@ -51,10 +51,6 @@
         "message": "获取写入数据到剪贴板的权限失败。请通过 Multiple Tab Handler 的配置授予权限。",
         "hash": "3acf34ebd388e9bf0bf26ae5d9da06c6"
     },
-    "panelTitle": {
-        "message": "选择并执行",
-        "hash": "9673de3184ccca9bf5befcdde067d111"
-    },
     "panelCaptionTop": {
         "message": "选择标签页",
         "hash": "ad9c1cee078ec4f786531c7f84c7a7e5"

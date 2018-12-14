@@ -22,7 +22,7 @@
   "notPermitted_clipboardWrite_message": { "message": "クリップボードへのデータの書き込みに必要な権限を取得できませんでした。マルチプルタブハンドラの設定画面で権限を設定して下さい。" },
 
 
-  "panelTitle": { "message": "タブをまとめて操作" },
+  "panelTitle": { "message": "タブをドラッグして選択" },
   "panelCaptionTop": { "message": "タブを選択してください" },
   "panelCaptionBottom": { "message": "その後、ここをクリックして操作を選択" },
 
