@@ -139,6 +139,7 @@ export function init() {
 
   for (const id of Object.keys(mItemsById)) {
     const item = mItemsById[id];
+    item.id          = id;
     item.lastTitle   = item.title;
     item.lastVisible = true;
     item.lastEnabled = true;
