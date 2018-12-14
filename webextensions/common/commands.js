@@ -59,9 +59,9 @@ export async function bookmarkTabs(ids, options = {}) {
 
 export async function moveToWindow(ids, windowId) {
   const structure = (await browser.runtime.sendMessage(Constants.kTST_ID, {
-      type: Constants.kTSTAPI_GET_TREE_STRUCTURE,
-      tabs: ids
-    }).catch(handleMissingReceiverError));
+    type: Constants.kTSTAPI_GET_TREE_STRUCTURE,
+    tabs: ids
+  }).catch(handleMissingReceiverError));
   log('structure ', structure);
   const firstTab = ids[0];
   let window;
