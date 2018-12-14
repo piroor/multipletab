@@ -56,6 +56,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   browser.tabs.onCreated.addListener(onTabModified);
   browser.tabs.onRemoved.addListener(onTabModified);
+  browser.tabs.onMoved.addListener(onTabModified);
+  browser.tabs.onAttached.addListener(onTabModified);
+  browser.tabs.onDetached.addListener(onTabModified);
 
   browser.menus.onHidden.addListener(onMenuHidden);
 
@@ -95,6 +98,9 @@ window.addEventListener('pagehide', () => {
   gTabBar.removeEventListener('mouseout', onMouseOut);
   browser.tabs.onCreated.removeListener(onTabModified);
   browser.tabs.onRemoved.removeListener(onTabModified);
+  browser.tabs.onMoved.removeListener(onTabModified);
+  browser.tabs.onAttached.removeListener(onTabModified);
+  browser.tabs.onDetached.removeListener(onTabModified);
   browser.menus.onHidden.removeListener(onMenuHidden);
   gDragSelection.onDragSelectionEnd.removeListener(onDragSelectionEnd);
   gDragSelection.onSelectionChange.removeListener(onSelectionChange);
@@ -105,7 +111,7 @@ window.addEventListener('pagehide', () => {
 
 function onTabModified() {
   reserveClearSelection();
-  rebuildTabItems();
+  reserveRebuildTabItems();
 }
 
 function onMenuHidden() {
@@ -387,6 +393,15 @@ function cancelDelayedDragExit() {
   }
 }
 
+
+function reserveRebuildTabItems() {
+  if (reserveRebuildTabItems.reserved)
+    clearTimeout(reserveRebuildTabItems.reserved);
+  reserveRebuildTabItems.reserved = setTimeout(() => {
+    delete reserveRebuildTabItems.reserved;
+    rebuildTabItems();
+  }, 100);
+}
 
 async function rebuildTabItems() {
   const range = document.createRange();
