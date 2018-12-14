@@ -592,7 +592,7 @@ function onMessage(message) {
     })();
 
     case Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK:
-      return onClick({ menuItemId: message.id });
+      return onClick({ menuItemId: message.id }, message.contextTab);
   }
 }
 

@@ -331,6 +331,7 @@ function onMouseUp(event) {
       !configs.enableDragSelection)
     return;
   const item = findTabItemFromEvent(event);
+  gLastClickedItem = item;
   setTimeout(async () => {
     if (gClickFired)
       return;
@@ -483,7 +484,7 @@ async function openMenu(event) {
   });
 }
 
-function onMenuCommand(item, event) {
+async function onMenuCommand(item, event) {
   if (event.button != 0)
     return gMenu.ui.close();
 
@@ -491,9 +492,11 @@ function onMenuCommand(item, event) {
 
   const id = item.getAttribute('data-item-id');
   if (id) {
+    const contextTab = gLastClickedItem && gLastClickedItem.tab || (await browser.tabs.query({ currentWindow: true, active: true }))[0];
     browser.runtime.sendMessage({
       type: Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK,
-      id:   id
+      id:   id,
+      contextTab
     });
   }
 }
