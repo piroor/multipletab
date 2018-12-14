@@ -512,7 +512,7 @@ async function onClick(info, contextTab) {
     case 'context_openTabInWindow': {
       const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_OPEN_IN_NEW_WINDOW,
-        tabs: (isMultiselected ? multiselectedTabs : contextTab).map(tab => tab.id)
+        tabs: (isMultiselected ? multiselectedTabs : [contextTab]).map(tab => tab.id)
       }).catch(handleMissingReceiverError);
       if (doneByTST)
         break;
@@ -614,6 +614,29 @@ async function onClick(info, contextTab) {
       break;
 
     default: {
+      const contextualIdentityMatch = info.menuItemId.match(/^context_reopenInContainer:(.+)$/);
+      if (contextualIdentityMatch) {
+        const sourceTabs = isMultiselected ? multiselectedTabs : [contextTab];
+        const containerId = contextualIdentityMatch[1];
+        const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
+          type: Constants.kTSTAPI_REOPEN_IN_CONTAINER,
+          tabs: sourceTabs.map(tab => tab.id),
+          containerId
+        }).catch(handleMissingReceiverError);
+        if (doneByTST)
+          break;
+        let index = sourceTabs[sourceTabs.length-1].index + 1;
+        for (const sourceTab of sourceTabs) {
+          await browser.tabs.create({
+            windowId:      sourceTab.windowId,
+            url:           sourceTab.url,
+            cookieStoreId: containerId,
+            index:         index++,
+            active:        sourceTab == sourceTabs[0]
+          });
+        }
+        break;
+      }
       if (info.menuItemId.indexOf('extra:') == 0) {
         const idMatch   = info.menuItemId.match(/^extra:([^:]+):(.+)$/);
         const owner     = idMatch[1];
