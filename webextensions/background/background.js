@@ -271,7 +271,6 @@ async function registerToTST() {
         }
       `
     }).catch(handleMissingReceiverError);
-    DragSelectionManager.activateInVerticalTabbarOfTST();
 
     const allWindows = await browser.windows.getAll({ populate: true });
     for (const window of allWindows) {
@@ -288,7 +287,6 @@ async function registerToTST() {
 }
 
 function unregisterFromTST() {
-  DragSelectionManager.deactivateInVerticalTabbarOfTST();
   try {
     browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL

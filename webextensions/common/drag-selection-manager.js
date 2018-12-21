@@ -89,16 +89,3 @@ export async function onDragExit(message) {
 export async function onDragEnd(message) {
   return getDragSelection(await getWindowId(message)).onDragEnd(message);
 }
-
-
-export function activateInVerticalTabbarOfTST() {
-  DragSelection.activatedInVerticalTabbarOfTST = true;
-}
-
-export function deactivateInVerticalTabbarOfTST() {
-  DragSelection.activatedInVerticalTabbarOfTST = false;
-}
-
-export function isActivatedInVerticalTabbarOfTST() {
-  return !!DragSelection.activatedInVerticalTabbarOfTST;
-}
