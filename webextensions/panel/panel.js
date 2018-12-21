@@ -262,7 +262,6 @@ async function onClick(event) {
   const item = findTabItemFromEvent(event);
   if (item) {
     mLastDragSelectionClicked = gDragSelection.onClick({
-      window:        item.tab.windowId,
       tab:           item.tab,
       lastActiveTab: gLastClickedItem && gLastClickedItem.tab,
       button:        event.button,
@@ -308,7 +307,7 @@ async function onMouseMove(event) {
   gLastDragEnteredTarget = gDragTargetIsClosebox ? event.target : item ;
   gDragSelection.onDragReady({
     tab:             item.tab,
-    window:          gWindowId,
+    windowId:        gWindowId,
     startOnClosebox: gDragTargetIsClosebox
   }).catch(console.log);
   gTabBar.addEventListener('mouseover', onMouseOver);
@@ -339,10 +338,10 @@ function onMouseUp(event) {
       return;
     await buildMenu();
     gDragSelection.onDragEnd({
-      tab:     item && item.tab,
-      window:  gWindowId,
-      clientX: event.clientX,
-      clientY: event.clientY
+      tab:      item && item.tab,
+      windowId: gWindowId,
+      clientX:  event.clientX,
+      clientY:  event.clientY
     }).catch(console.log);
   }, 10);
 }
@@ -360,8 +359,8 @@ function onMouseOver(event) {
       (!gDragTargetIsClosebox || isClosebox)) {
     if (target != gLastDragEnteredTarget) {
       gDragSelection.onDragEnter({
-        tab:    item.tab,
-        window: gWindowId
+        tab:      item.tab,
+        windowId: gWindowId
       }).catch(console.log);
     }
   }
@@ -383,8 +382,8 @@ function onMouseOut(event) {
   gOnDragExitTimeout = setTimeout(() => {
     gOnDragExitTimeout = null;
     gDragSelection.onDragExit({
-      tab:    item.tab,
-      window: gWindowId
+      tab:      item.tab,
+      windowId: gWindowId
     }).catch(console.log);
   }, 10);
 }
