@@ -33,6 +33,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
+
+  browser.windows.getAll({}).then(windows => {
+    windows.forEach(onWindowCreated);
+  });
+
+  browser.windows.onCreated.addListener(onWindowCreated);
+  browser.windows.onRemoved.addListener(onWindowRemoved);
+
   registerToTST();
 
   notifyReady();
@@ -70,6 +78,28 @@ async function onShortcutCommand(command) {
     case 'invertSelection':
       Selection.invert();
       break;
+  }
+}
+
+function onWindowCreated(window) {
+  const dragSelection = DragSelectionManager.getDragSelection(window.id);
+  dragSelection.onSelectionChange.addListener(onSelectionChange);
+}
+
+function onWindowRemoved(windowId) {
+  const dragSelection = DragSelectionManager.getDragSelection(windowId);
+  dragSelection.onSelectionChange.removeListener(onSelectionChange);
+}
+
+async function onSelectionChange(info) {
+  const tab = info.selected.length > 0 ? info.selected[0] : info.unselected[0];
+  if (!tab)
+    return;
+  const selectedTabs = await browser.tabs.query({ windowId: tab.windowId, highlighted: true });
+  if (selectedTabs.length == 1 &&
+      info.unselected.length > 1 &&
+      !info.clear) {
+    info.dragSelection.clear(true);
   }
 }
 

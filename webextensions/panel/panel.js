@@ -163,12 +163,13 @@ function onDragSelectionEnd(message, _selectionInfo) {
   }).catch(console.log);
 }
 
-function onSelectionChange(tabs, selected) {
-  for (const tab of tabs) {
+function onSelectionChange(info) {
+  for (const tab of info.selected.concat(info.unselected)) {
     const item = document.getElementById(`tab-${tab.id}`);
     if (!item)
       continue;
     const checkbox = item.querySelector('input[type="checkbox"]');
+    const selected = info.selected.includes(tab);
     checkbox.checked = selected;
     if (selected)
       item.classList.add('selected');
@@ -177,12 +178,12 @@ function onSelectionChange(tabs, selected) {
   }
 }
 
-function onCloseSelectionChange(tabs, selected) {
-  for (const tab of tabs) {
+function onCloseSelectionChange(info) {
+  for (const tab of info.selected.concat(info.unselected)) {
     const item = document.getElementById(`tab-${tab.id}`);
     if (!item)
       continue;
-    if (selected)
+    if (info.selected.includes(tab))
       item.classList.add('ready-to-close');
     else
       item.classList.remove('ready-to-close');

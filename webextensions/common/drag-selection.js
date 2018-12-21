@@ -28,8 +28,8 @@ export default class DragSelection {
     this.dragEnteredCount      = 0;
     this.inSelectionSession    = false;
 
-    this.onHighlited = this.onHighlited.bind(this);
-    browser.tabs.onHighlighted.addListener(this.onHighlited);
+    this.onHighlighted = this.onHighlighted.bind(this);
+    browser.tabs.onHighlighted.addListener(this.onHighlighted);
 
     this.onSelectionChange = new EventListenerManager();
     this.onCloseSelectionChange = new EventListenerManager();
@@ -38,7 +38,7 @@ export default class DragSelection {
 
   destroy() {
     this.clear();
-    browser.tabs.onHighlighted.removeListener(this.onHighlited);
+    browser.tabs.onHighlighted.removeListener(this.onHighlighted);
   }
 
   cancel() {
@@ -61,9 +61,12 @@ export default class DragSelection {
           [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
           false
         ),
-        this.willCloseSelectedTabs ?
-          this.onCloseSelectionChange.dispatch(tabs, false) :
-          this.onSelectionChange.dispatch(tabs, false)
+        this[this.willCloseSelectedTabs ? 'onCloseSelectionChange' : 'onSelectionChange'].dispatch({
+          unselected:    tabs,
+          selected:      [],
+          dragSelection: this,
+          clear:         true
+        })
       ]);
     }
     this.cancel();
@@ -79,18 +82,20 @@ export default class DragSelection {
 
   add(tab) {
     this.selection.set(tab.id, tab);
-    if (this.willCloseSelectedTabs)
-      this.onCloseSelectionChange.dispatch([tab], true);
-    else
-      this.onSelectionChange.dispatch([tab], true);
+    this[this.willCloseSelectedTabs ? 'onCloseSelectionChange' : 'onSelectionChange'].dispatch({
+      unselected:    [],
+      selected:      [tab],
+      dragSelection: this
+    });
   }
 
   delete(tab) {
     this.selection.delete(tab.id);
-    if (this.willCloseSelectedTabs)
-      this.onCloseSelectionChange.dispatch([tab], false);
-    else
-      this.onSelectionChange.dispatch([tab], false);
+    this[this.willCloseSelectedTabs ? 'onCloseSelectionChange' : 'onSelectionChange'].dispatch({
+      unselected:    [tab],
+      selected:      [],
+      dragSelection: this
+    });
   }
 
   get selectedTabs() {
@@ -483,21 +488,24 @@ export default class DragSelection {
   }
 
 
-  async onHighlited(highlightInfo) {
-    if (this.dragStartTarget)
+  async onHighlighted(highlightInfo) {
+    if (this.dragStartTarget ||
+        highlightInfo.windowId != this.windowId)
       return;
     const selectedIds = this.selectedTabIds;
+    const allTabs     = await browser.tabs.query({ windowId: this.windowId });
     if (selectedIds.length == 0 ||
         selectedIds.sort().join(',') == highlightInfo.tabIds.sort().join(','))
       return;
-    log('DragSelection.onHighlited: ', {
+    log('DragSelection.onHighlighted: ', {
       selectedIds: selectedIds.join(','),
       highlighted: highlightInfo.tabIds.join(','),
       dragStartTarget: this.dragStartTarget
     });
-    const toBeUnselected = selectedIds.filter(id => !highlightInfo.tabIds.includes(id));
-    const toBeSelected   = highlightInfo.tabIds.filter(id => !selectedIds.includes(id));
-    this.onSelectionChange.dispatch(await Promise.all(toBeUnselected.map(id => browser.tabs.get(id))), false);
-    this.onSelectionChange.dispatch(await Promise.all(toBeSelected.map(id => browser.tabs.get(id))), true);
+    this.onSelectionChange.dispatch({
+      unselected:    allTabs.filter(tab => selectedIds.includes(tab.id) && !highlightInfo.tabIds.includes(tab.id)),
+      selected:      allTabs.filter(tab => !selectedIds.includes(tab.id) && highlightInfo.tabIds.includes(tab.id)),
+      dragSelection: this
+    });
   }
 };

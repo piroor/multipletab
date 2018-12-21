@@ -17,10 +17,12 @@ browser.windows.onCreated.addListener(window => {
 });
 
 browser.windows.onRemoved.addListener(windowId => {
-  const dragSelection = getDragSelection(windowId);
-  dragSelection.onDragSelectionEnd.removeListener(delegateOnDragSelectionEnd);
-  dragSelection.destroy();
-  mDragSelections.delete(windowId);
+  setTimeout(() => {
+    const dragSelection = getDragSelection(windowId);
+    dragSelection.onDragSelectionEnd.removeListener(delegateOnDragSelectionEnd);
+    dragSelection.destroy();
+    mDragSelections.delete(windowId);
+  }, 100);
 });
 
 browser.tabs.onCreated.addListener(tab => {
@@ -38,7 +40,7 @@ async function getWindowId(message) {
       (await browser.windows.getLastFocused({})).id;
 }
 
-function getDragSelection(windowId) {
+export function getDragSelection(windowId) {
   if (mDragSelections.has(windowId))
     return mDragSelections.get(windowId);
 
