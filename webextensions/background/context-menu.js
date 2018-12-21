@@ -531,7 +531,7 @@ async function onClick(info, contextTab) {
       browser.tabs.highlight({
         windowId: contextWindowId,
         populate: false,
-        tabs:     tabs.map(tab => tab.index)
+        tabs:     [activeTab.index].concat(tabs.filter(tab => !tab.active).map(tab => tab.index))
       });
     }; break;
     case 'context_bookmarkTab':
