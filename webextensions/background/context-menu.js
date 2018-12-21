@@ -535,6 +535,7 @@ async function onClick(info, contextTab) {
       });
     }; break;
     case 'context_bookmarkTab':
+    case 'context_bookmarkSelected':
       if (!isMultiselected) {
         await Commands.bookmarkTabs([(contextTab || activeTab).id]);
         break;
