@@ -490,7 +490,7 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
 }
 
 async function onClick(info, contextTab) {
-  //log('context menu item clicked: ', info, contextTab);
+  log('context menu item clicked: ', info, contextTab);
   const window            = await browser.windows.getLastFocused({ populate: true });
   const contextWindowId   = window.id;
 
@@ -781,19 +781,20 @@ function onMessageExternal(message, sender) {
       const addons = Object.assign({}, configs.cachedExternalAddons);
       addons[sender.id] = true;
       configs.cachedExternalAddons = addons;
-      mExtraItems.set(`${sender.id}:${message.id}`, message);
+      message.id = `extra:${sender.id}:${message.id}`;
+      mExtraItems.set(message.id, message);
       log('menu becomes dirty by added command from other addon');
       return Promise.resolve(true);
     };
 
     case Constants.kMTHAPI_REMOVE_SELECTED_TAB_COMMAND:
-      mExtraItems.delete(`${sender.id}:${message.id}`);
+      mExtraItems.delete(`extra:${sender.id}:${message.id}`);
       log('menu becomes dirty by removed command from other addon');
       return Promise.resolve(true);
 
     case Constants.kMTHAPI_REMOVE_ALL_SELECTED_TAB_COMMANDS:
       for (const key of mExtraItems.keys()) {
-        if (key.indexOf(`${sender.id}:`) == 0) {
+        if (key.indexOf(`extra:${sender.id}:`) == 0) {
           mExtraItems.delete(key);
         }
       }
