@@ -43,9 +43,6 @@ const mItemsById = {
   'context_separator:afterDuplicate': {
     type: 'separator'
   },
-  'context_bookmarkSelected': {
-    title: browser.i18n.getMessage('tabContextMenu_bookmarkSelected_label')
-  },
   'context_selectAllTabs': {
     title: browser.i18n.getMessage('tabContextMenu_selectAllTabs_label')
   },
@@ -97,6 +94,20 @@ const mItemsById = {
     title:              browser.i18n.getMessage('tabContextMenu_close_label'),
     titleMultiselected: browser.i18n.getMessage('tabContextMenu_close_label_multiselected')
   },
+
+  'noContextTab:context_reloadTab': {
+    title:              browser.i18n.getMessage('tabContextMenu_reload_label_multiselected')
+  },
+  'noContextTab:context_bookmarkSelected': {
+    title: browser.i18n.getMessage('tabContextMenu_bookmarkSelected_label')
+  },
+  'noContextTab:context_selectAllTabs': {
+    title: browser.i18n.getMessage('tabContextMenu_selectAllTabs_label')
+  },
+  'noContextTab:context_undoCloseTab': {
+    title: browser.i18n.getMessage('tabContextMenu_undoClose_label')
+  },
+
   'lastSeparatorBeforeExtraItems': {
     type: 'separator'
   },
@@ -131,16 +142,64 @@ const mExtraItems = new Map();
 
 const POPUP_URL_PATTERN = [`moz-extension://${location.host}/*`];
 
+function getItemPlacementSignature(item) {
+  if (item.placementSignature)
+    return item.placementSignature;
+  return item.placementSignature = JSON.stringify({
+    parent:              item.parentId || '',
+    TST:                 item.TST || '',
+    viewTypes:           item.viewTypes || '',
+    documentUrlPatterns: item.documentUrlPatterns || ''
+  });
+}
+
 export function init() {
   browser.runtime.onMessage.addListener(onMessage);
   browser.runtime.onMessageExternal.addListener(onMessageExternal);
 
-  for (const id of Object.keys(mItemsById)) {
+  const itemIds = Object.keys(mItemsById);
+  for (const id of itemIds) {
     const item = mItemsById[id];
     item.id          = id;
     item.lastTitle   = item.title;
     item.lastVisible = true;
     item.lastEnabled = true;
+    if (item.type == 'separator') {
+      let beforeSeparator = true;
+      item.precedingItems = [];
+      item.followingItems = [];
+      for (const id of itemIds) {
+        const possibleSibling = mItemsById[id];
+        if (getItemPlacementSignature(item) != getItemPlacementSignature(possibleSibling)) {
+          if (beforeSeparator)
+            continue;
+          else
+            break;
+        }
+        if (id == item.id) {
+          beforeSeparator = false;
+          continue;
+        }
+        if (beforeSeparator) {
+          if (possibleSibling.type == 'separator') {
+            item.previousSeparator = possibleSibling;
+            item.precedingItems = [];
+          }
+          else {
+            item.precedingItems.push(id);
+          }
+        }
+        else {
+          if (possibleSibling.type == 'separator') {
+            item.followingSeparator = item.followingSeparator || possibleSibling;
+            break;
+          }
+          else {
+            item.followingItems.push(id);
+          }
+        }
+      }
+    }
     const info = {
       id,
       title:     item.title,
@@ -257,6 +316,25 @@ function updateItem(id, state = {}) {
   return modified;
 }
 
+function updateSeparator(id, options = {}) {
+  const item = mItemsById[id];
+  const visible = (
+    (options.hasVisiblePreceding ||
+     hasVisiblePrecedingItem(item)) &&
+    (options.hasVisibleFollowing ||
+     item.followingItems.some(id => mItemsById[id].type != 'separator' && mItemsById[id].lastVisible))
+  );
+  return updateItem(id, { visible });
+}
+function hasVisiblePrecedingItem(separator) {
+  return (
+    separator.precedingItems.some(id => mItemsById[id].type != 'separator' && mItemsById[id].lastVisible) ||
+    (separator.previousSeparator &&
+     !separator.previousSeparator.lastVisible &&
+     hasVisiblePrecedingItem(separator.previousSeparator))
+  );
+}
+
 async function onShown(info, contextTab, givenSelectedTabs = null) {
   log('onShown ', { info, contextTab, givenSelectedTabs });
 
@@ -273,7 +351,6 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
   const nextTab               = contextTab.index < window.tabs.length ? window.tabs[contextTab.index + 1] : null;
 
   let modifiedItemsCount = 0;
-  let visibleItemsCount = 0;
 
   // ESLint reports "short circuit" error for following codes.
   //   https://eslint.org/docs/rules/no-unused-expressions#allowshortcircuit
@@ -281,45 +358,37 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
   /* eslint-disable no-unused-expressions */
 
   updateItem('context_reloadTab', {
-    visible: (contextTab || multiselected) && ++visibleItemsCount,
-    multiselected: multiselected || !contextTab
+    visible: contextTab,
+    multiselected: multiselected
   }) && modifiedItemsCount++;
   updateItem('context_toggleMuteTab-mute', {
-    visible: contextTab && (!contextTab.mutedInfo || !contextTab.mutedInfo.muted) && ++visibleItemsCount,
+    visible: contextTab && (!contextTab.mutedInfo || !contextTab.mutedInfo.muted),
     multiselected
   }) && modifiedItemsCount++;
   updateItem('context_toggleMuteTab-unmute', {
-    visible: contextTab && contextTab.mutedInfo && contextTab.mutedInfo.muted && ++visibleItemsCount,
+    visible: contextTab && contextTab.mutedInfo && contextTab.mutedInfo.muted,
     multiselected
   }) && modifiedItemsCount++;
   updateItem('context_pinTab', {
-    visible: contextTab && !contextTab.pinned && ++visibleItemsCount,
+    visible: contextTab && !contextTab.pinned,
     multiselected
   }) && modifiedItemsCount++;
   updateItem('context_unpinTab', {
-    visible: contextTab && contextTab.pinned && ++visibleItemsCount,
+    visible: contextTab && contextTab.pinned,
     multiselected
   }) && modifiedItemsCount++;
   updateItem('context_duplicateTab', {
-    visible: contextTab && ++visibleItemsCount,
+    visible: contextTab,
     multiselected
   }) && modifiedItemsCount++;
 
-  updateItem('context_separator:afterDuplicate', {
-    visible: contextTab && visibleItemsCount > 0
-  }) && modifiedItemsCount++;
-  visibleItemsCount = 0;
-
-  updateItem('context_bookmarkSelected', {
-    visible: !contextTab && ++visibleItemsCount
-  }) && modifiedItemsCount++;
   updateItem('context_selectAllTabs', {
-    visible: ++visibleItemsCount,
-    enabled: !contextTab || selectedTabs.length < visibleTabs.length,
+    visible: contextTab,
+    enabled: contextTab && selectedTabs.length < visibleTabs.length,
     multiselected
   }) && modifiedItemsCount++;
   updateItem('context_bookmarkTab', {
-    visible: contextTab && ++visibleItemsCount,
+    visible: contextTab,
     multiselected: multiselected || !contextTab
   }) && modifiedItemsCount++;
 
@@ -334,12 +403,12 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
       showContextualIdentities = true;
   }
   updateItem('context_reopenInContainer', {
-    visible: contextTab && showContextualIdentities && ++visibleItemsCount,
+    visible: contextTab && showContextualIdentities,
     multiselected
   }) && modifiedItemsCount++;
 
   updateItem('context_moveTab', {
-    visible: contextTab && ++visibleItemsCount,
+    visible: contextTab,
     enabled: contextTab && hasMultipleTabs,
     multiselected
   }) && modifiedItemsCount++;
@@ -356,33 +425,27 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
     multiselected
   }) && modifiedItemsCount++;
 
-  updateItem('context_separator:afterSendTab', {
-    visible: contextTab && visibleItemsCount > 0
-  }) && modifiedItemsCount++;
-  visibleItemsCount = 0;
-
   updateItem('context_closeTabsToTheEnd', {
-    visible: contextTab && ++visibleItemsCount,
+    visible: contextTab,
     enabled: hasMultipleNormalTabs && contextTab && nextTab,
     multiselected
   }) && modifiedItemsCount++;
   updateItem('context_closeOtherTabs', {
-    visible: contextTab && ++visibleItemsCount,
+    visible: contextTab,
     enabled: hasMultipleNormalTabs,
     multiselected
   }) && modifiedItemsCount++;
 
   updateItem('context_undoCloseTab', {
-    visible: ++visibleItemsCount,
+    visible: contextTab,
     multiselected
   }) && modifiedItemsCount++;
   updateItem('context_closeTab', {
-    visible: contextTab && ++visibleItemsCount,
+    visible: contextTab,
     multiselected
   }) && modifiedItemsCount++;
 
-  visibleItemsCount = 0;
-
+  let visibleItemsCount = 0;
   const showInvertSelection = configs.context_invertSelection && selectedTabs.length > 0 && selectedTabs.length < visibleTabs.length && ++visibleItemsCount;
 
   updateItem('invertSelection', {
@@ -399,9 +462,25 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
     visible: visibleItemsCount > 1,
   }) && modifiedItemsCount++;
 
-  const forExtraItems = givenSelectedTabs && mExtraItems.size > 0 && Array.from(mExtraItems.values()).some(item => item.visible !== false)
-  updateItem('lastSeparatorBeforeExtraItems', {
-    visible: (forExtraItems || visibleItemsCount > 0) && ++visibleItemsCount
+  updateItem('noContextTab:context_reloadTab', {
+    visible: !contextTab
+  }) && modifiedItemsCount++;
+  updateItem('noContextTab:context_bookmarkSelected', {
+    visible: !contextTab
+  }) && modifiedItemsCount++;
+  updateItem('noContextTab:context_selectAllTabs', {
+    visible: !contextTab,
+    enabled: !contextTab && selectedTabs.length < visibleTabs.length,
+  }) && modifiedItemsCount++;
+  updateItem('noContextTab:context_undoCloseTab', {
+    visible: !contextTab
+  }) && modifiedItemsCount++;
+
+  updateSeparator('context_separator:afterDuplicate') && modifiedItemsCount++;
+  updateSeparator('context_separator:afterSendTab') && modifiedItemsCount++;
+  updateSeparator('lastSeparatorBeforeExtraItems', {
+    hasVisiblePreceding: visibleItemsCount > 0,
+    hasVisibleFollowing: givenSelectedTabs && mExtraItems.size > 0 && Array.from(mExtraItems.values()).some(item => item.visible !== false)
   }) && modifiedItemsCount++;
 
   /* eslint-enable no-unused-expressions */
@@ -420,7 +499,7 @@ async function onClick(info, contextTab) {
 
   const activeTab = window.tabs.find(tab => tab.active);
 
-  switch (info.menuItemId) {
+  switch (info.menuItemId.replace(/^noContextTab:/, '')) {
     case 'context_reloadTab':
       if (isMultiselected) {
         for (const tab of multiselectedTabs) {
