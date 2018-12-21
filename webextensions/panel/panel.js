@@ -333,6 +333,7 @@ function onMouseUp(event) {
     return;
   const item = findTabItemFromEvent(event);
   gLastClickedItem = item;
+  gLastClickedItem.classList.add('last-focused');
   setTimeout(async () => {
     if (gClickFired)
       return;
