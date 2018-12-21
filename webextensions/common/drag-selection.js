@@ -350,6 +350,9 @@ export default class DragSelection {
   /* select tabs by dragging */
 
   async onDragReady(message) {
+    return this.lastDragReady = this.onDragReadyInternal(message);
+  }
+  async onDragReadyInternal(message) {
     log('onDragReady', message);
 
     await this.clear(true);
@@ -388,6 +391,7 @@ export default class DragSelection {
   }
 
   async onDragEnter(message) {
+    await this.lastDragReady;
     //console.log('onDragEnter', message, message.tab == this.lastHoverTarget);
     this.dragEnteredCount++;
     // processAutoScroll(event);
@@ -436,6 +440,7 @@ export default class DragSelection {
   }
 
   async onDragExit(_message) {
+    await this.lastDragReady;
     this.dragEnteredCount--;
     this.reserveDragExitAllWithDelay();
   }
@@ -461,6 +466,7 @@ export default class DragSelection {
   }
 
   async onDragEnd(message) {
+    await this.lastDragReady;
     log('onDragEnd', message, this.selection);
     if (this.selection.size > 1)
       this.syncToHighlighted();
@@ -485,6 +491,7 @@ export default class DragSelection {
     else {
       this.clear();
     }
+    delete this.lastDragReady;
   }
 
 
