@@ -1,6 +1,8 @@
 # 更新履歴
 
  - master/HEAD
+ - 3.0.1 (2018.12.22)
+   * タブのフォーカス切り替え周りのパフォーマンスを改善（by Lej77, thanks!）
  - 3.0.0 (2018.12.22)
    * Firefox 63およびそれ以前への対応を終了し、複数のタブをドラッグ操作で選択する機能のみに特化したアドオンとして再構築した
    * 選択されたタブに対する特別な操作を削除した（今後はFirefoxのネイティブのタブ複数選択機能に対応した他のアドオンと組み合わせて使って下さい。例：[選択したタブをクリップボードにコピー](https://addons.mozilla.org/firefox/addon/copy-selected-tabs-to-clipboar), [選択したタブを保存](https://addons.mozilla.org/firefox/addon/save-selected-tabs-to-files/), and [Tab Mover](https://addons.mozilla.org/firefox/addon/tab-mover/)）
