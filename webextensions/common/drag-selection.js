@@ -250,7 +250,7 @@ export default class DragSelection {
     const ctrlKeyPressed = /^Mac/i.test(navigator.platform) ? message.metaKey : message.ctrlKey;
     if (!ctrlKeyPressed && !message.shiftKey) {
       log('regular click');
-      await this.clear(this.inSelectionSession);
+      await this.clear();
       this.inSelectionSession = false;
       this.lastClickedTab = null;
       return false;
@@ -355,7 +355,7 @@ export default class DragSelection {
   async onDragReadyInternal(message) {
     log('onDragReady', message);
 
-    await this.clear(true);
+    await this.clear();
     this.dragEnteredCount = 1;
     this.willCloseSelectedTabs = message.startOnClosebox;
     this.state = this.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;
