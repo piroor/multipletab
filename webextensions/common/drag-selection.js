@@ -270,7 +270,7 @@ export default class DragSelection {
       tabs.push(this.lastClickedTab || lastActiveTab);
       const selectedTabIds = tabs.map(tab => tab.id);
       if (!ctrlKeyPressed) {
-        for (const tab of window.tabs.filter(tab => !selectedTabIds.includes(tab.id))) {
+        for (const tab of this.selectedTabs.filter(tab => !selectedTabIds.includes(tab.id))) {
           this.delete(tab);
         }
       }
