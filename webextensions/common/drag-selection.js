@@ -56,8 +56,8 @@ export default class DragSelection {
     const tabs = force ? (await Selection.getAllTabs(this.windowId)) : this.selectedTabs;
     if (tabs.length > 0) {
       await Promise.all([
-        Selection.notifyTabStateToTST(
-          tabs.map(tab => tab.id),
+        (force ? Selection.clearTabStateFromTST : Selection.notifyTabStateToTST)(
+          force ? this.windowId : tabs.map(tab => tab.id),
           [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
           false
         ),
