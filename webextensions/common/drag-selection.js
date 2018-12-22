@@ -56,8 +56,8 @@ export default class DragSelection {
     const tabs = force ? (await Selection.getAllTabs(this.windowId)) : this.selectedTabs;
     if (tabs.length > 0) {
       await Promise.all([
-        Selection.notifyTabStateToTST(
-          tabs.map(tab => tab.id),
+        (force ? Selection.clearTabStateFromTST : Selection.notifyTabStateToTST)(
+          force ? this.windowId : tabs.map(tab => tab.id),
           [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
           false
         ),
@@ -250,7 +250,7 @@ export default class DragSelection {
     const ctrlKeyPressed = /^Mac/i.test(navigator.platform) ? message.metaKey : message.ctrlKey;
     if (!ctrlKeyPressed && !message.shiftKey) {
       log('regular click');
-      await this.clear(true);
+      await this.clear();
       this.inSelectionSession = false;
       this.lastClickedTab = null;
       return false;
@@ -270,7 +270,7 @@ export default class DragSelection {
       tabs.push(this.lastClickedTab || lastActiveTab);
       const selectedTabIds = tabs.map(tab => tab.id);
       if (!ctrlKeyPressed) {
-        for (const tab of window.tabs.filter(tab => !selectedTabIds.includes(tab.id))) {
+        for (const tab of this.selectedTabs.filter(tab => !selectedTabIds.includes(tab.id))) {
           this.delete(tab);
         }
       }
@@ -355,7 +355,7 @@ export default class DragSelection {
   async onDragReadyInternal(message) {
     log('onDragReady', message);
 
-    await this.clear(true);
+    await this.clear();
     this.dragEnteredCount = 1;
     this.willCloseSelectedTabs = message.startOnClosebox;
     this.state = this.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;

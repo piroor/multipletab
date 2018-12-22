@@ -153,13 +153,11 @@ function onTSTAPIMessage(message) {
       return DragSelectionManager.onDragEnd(message);
 
     case Constants.kTSTAPI_NOTIFY_SIDEBAR_SHOW:
-      Selection.getAllTabs(message.windowId || message.window).then(tabs => {
-        Selection.notifyTabStateToTST(
-          tabs,
-          [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
-          false
-        );
-      });
+      Selection.clearTabStateFromTST(
+        message.windowId || message.window.id,
+        [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+        false
+      );
       return;
   }
 }
@@ -302,10 +300,10 @@ async function registerToTST() {
       `
     }).catch(handleMissingReceiverError);
 
-    const allWindows = await browser.windows.getAll({ populate: true });
+    const allWindows = await browser.windows.getAll({ populate: false });
     for (const window of allWindows) {
-      Selection.notifyTabStateToTST(
-        window.tabs,
+      Selection.clearTabStateFromTST(
+        window.id,
         [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
         false
       );
