@@ -183,22 +183,22 @@ export async function invert(windowId) {
 }
 
 export async function clearTabStateFromTST(windowId, state, value = false) {
-
   const tstTabs = await browser.runtime.sendMessage(Constants.kTST_ID, {
-    type: 'get-tree',
+    type:   'get-tree',
     window: windowId,
-    tabs: '*',
+    tabs:   '*',
   }).catch(handleMissingReceiverError);
   if (!tstTabs)
     return; // TST not found/ready.
 
   const affectedStates = Array.isArray(state) ? state : [state];
   const affectedTabs = tstTabs.filter(tab => tab.states.some(tabState => {
-    let hasState = affectedStates.includes(tabState);
+    const hasState = affectedStates.includes(tabState);
     if (value) {
       // Add state => Only need to update tab if the tab doesn't have a wanted state.
       return !hasState;
-    } else {
+    }
+    else {
       // Remove state => Only need to update tab if it has an affected state.
       return hasState;
     }
