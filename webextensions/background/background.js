@@ -155,6 +155,13 @@ function onTSTAPIMessage(message) {
     //    return;
     //  return DragSelectionManager.onDragReady(message);
 
+    case Constants.kTSTAPI_NOTIFY_NATIVE_TAB_DRAGSTART:
+      if (TSTLongPressTimer) {
+        clearTimeout(TSTLongPressTimer);
+        TSTLongPressTimer = undefined;
+      }
+      return;
+
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
       if (!configs.enableDragSelectionByLongPress)
         return;
@@ -290,6 +297,7 @@ async function registerToTST() {
   ];
   const dragSelectionListeningTypes = [
     //Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY,
+    Constants.kTSTAPI_NOTIFY_NATIVE_TAB_DRAGSTART,
     Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL,
     Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART,
     Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER,
