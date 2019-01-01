@@ -117,8 +117,11 @@ function onTSTAPIMessage(message) {
       return DragSelectionManager.onMouseDown(message).then(action => {
         if (action & Constants.kCLICK_ACTION_REGULAR_CLICK &&
             configs.enableDragSelectionByLongPress) {
-          TSTLongPressTimer = setTimeout(() => {
+          TSTLongPressTimer = setTimeout(async () => {
             TSTLongPressTimer = undefined;
+            const window = await browser.windows.get(message.window, { populate: true });
+            if (window.tabs.filter(tab => tab.highlighted).length > 1)
+              return; // don't clear existing multiselection
             browser.runtime.sendMessage(Constants.kTST_ID, {
               type:     Constants.kTSTAPI_START_CUSTOM_DRAG,
               windowId: message.windowId
