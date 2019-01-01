@@ -203,13 +203,13 @@
         "message": "*您可以使用任何 CSS font-size 值。",
         "hash": "c8a9e09704138baa86d1666120f98453"
     },
+    "config_autoOpenMenuOnDragEnd_label": {
+        "message": "标签页选中后自动打开菜单 by dragging",
+        "hash": ""
+    },
     "config_dragSelection_label": {
         "message": "长按后拖拽选择标签页 on Tree Style Tab's sidebar",
         "hash": ""
-    },
-    "config_autoOpenMenuOnDragEnd_label": {
-        "message": "标签页选中后自动打开菜单",
-        "hash": "341c26d657efb040575a8ca4e467e44c"
     },
     "config_menu_caption": {
         "message": "额外上下文菜单项",
