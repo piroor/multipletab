@@ -361,7 +361,7 @@ export default class DragSelection {
     const allTabs = await Selection.getAllTabs(this.windowId);
     if (message.tab.highlighted &&
         allTabs.filter(tab => tab.highlighted).length > 1)
-      return;
+      return false;
 
     await this.clear();
     this.dragEnteredCount = 1;
@@ -377,6 +377,7 @@ export default class DragSelection {
       this.undeterminedRange.set(tab.id, tab);
     }
     Selection.notifyTabStateToTST(startTabs.map(tab => tab.id), this.state, true);
+    return true;
   }
 
   async onDragCancel(message) {
