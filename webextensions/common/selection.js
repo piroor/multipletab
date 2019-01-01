@@ -71,9 +71,6 @@ function requestUpdateHighlightedState(params = {}) {
     const toBeUnselected = Array.from(mToBeUnselected.values());
     const clear = mClearSelection;
     log('requestUpdateHighlightedState: update now ', { toBeSelected, toBeUnselected, clear });
-    mToBeSelected.clear();
-    mToBeUnselected.clear();
-    mClearSelection = false;
     if (!clear && toBeSelected.length === 0 && toBeUnselected.length > 0) {
       const unselectedIds = toBeUnselected.map(tab => tab.id);
       toBeSelected = await getSelection(toBeUnselected[0].windowId);
@@ -110,6 +107,9 @@ function requestUpdateHighlightedState(params = {}) {
         tabs:     activeTabs.map(tab => tab.index)
       });
     }
+    mToBeSelected.clear();
+    mToBeUnselected.clear();
+    mClearSelection = false;
   }, 100);
 }
 
