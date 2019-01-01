@@ -16,6 +16,12 @@ export const kCOMMAND_REQUEST_CONNECT_PREFIX        = 'multipletab:request-conne
 export const kSELECTED       = 'mht-selected';
 export const kREADY_TO_CLOSE = 'mth-ready-to-close';
 
+export const kCLICK_ACTION_NONE           = 1 << 0;
+export const kCLICK_ACTION_REGULAR_CLICK  = 1 << 1;
+export const kCLICK_ACTION_RANGE_SELECT   = 1 << 2;
+export const kCLICK_ACTION_PARTIAL_SELECT = 1 << 3;
+export const kCLICK_ACTION_MULTISELECTION = kCLICK_ACTION_RANGE_SELECT | kCLICK_ACTION_PARTIAL_SELECT;
+
 export const kMTHAPI_READY                       = 'ready';
 export const kMTHAPI_GET_TAB_SELECTION           = 'get-tab-selection';
 export const kMTHAPI_SET_TAB_SELECTION           = 'set-tab-selection';
@@ -48,6 +54,7 @@ export const kTSTAPI_NOTIFY_TAB_DRAGSTART    = 'tab-dragstart';
 export const kTSTAPI_NOTIFY_TAB_DRAGENTER    = 'tab-dragenter';
 export const kTSTAPI_NOTIFY_TAB_DRAGEXIT     = 'tab-dragexit';
 export const kTSTAPI_NOTIFY_TAB_DRAGEND      = 'tab-dragend';
+export const kTSTAPI_START_CUSTOM_DRAG       = 'start-custom-drag';
 export const kTSTAPI_ADD_TAB_STATE           = 'add-tab-state';
 export const kTSTAPI_REMOVE_TAB_STATE        = 'remove-tab-state';
 export const kTSTAPI_MOVE_TO_START           = 'move-to-start';

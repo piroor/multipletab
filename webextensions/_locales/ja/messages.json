@@ -108,6 +108,8 @@
 
   "config_enableDragSelection_label": { "message": "項目のドラッグでタブを選択する" },
   "config_enableDragSelectionByLongPress_label": { "message": "ツリー型タブのサイドバー上で、タブの長押しからのドラッグでタブを選択する" },
+  "config_longPressDuration_label_before": { "message": "\u200b" },
+  "config_longPressDuration_label_after":  { "message": "ミリ秒以上ボタンを押していたら長押しと見なす" },
   "config_autoOpenMenuOnDragEnd_label": { "message": "ドラッグ操作でタブを選択した後に自動的にメニューを開く" },
 
 

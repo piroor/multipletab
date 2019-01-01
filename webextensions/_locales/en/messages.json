@@ -108,6 +108,8 @@
 
   "config_enableDragSelection_label": { "message": "Select tabs by dragging on items" },
   "config_enableDragSelectionByLongPress_label": { "message": "On Tree Style Tab's sidebar, select tabs by long-press and dragging" },
+  "config_longPressDuration_label_before": { "message": "Treat as a long-press when the mouse button is pressed over " },
+  "config_longPressDuration_label_after":  { "message": "msec." },
   "config_autoOpenMenuOnDragEnd_label": { "message": "Open menu automatically after tabs are selected by dragging" },
 
   "config_dragSelection_label": { "message": "" },

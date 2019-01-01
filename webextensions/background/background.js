@@ -103,6 +103,8 @@ async function onSelectionChange(info) {
   }
 }
 
+let TSTLongPressTimer;
+
 function onTSTAPIMessage(message) {
   switch (message.type) {
     case Constants.kTSTAPI_NOTIFY_READY:
@@ -110,22 +112,45 @@ function onTSTAPIMessage(message) {
       return Promise.resolve(true);
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN:
-      if (message.soundButton)
+      if (message.twisty || message.soundButton)
         return;
-      return DragSelectionManager.onClick(message);
+      return DragSelectionManager.onMouseDown(message).then(action => {
+        if (action & Constants.kCLICK_ACTION_REGULAR_CLICK &&
+            configs.enableDragSelectionByLongPress) {
+          TSTLongPressTimer = setTimeout(() => {
+            TSTLongPressTimer = undefined;
+            browser.runtime.sendMessage(Constants.kTST_ID, {
+              type:     Constants.kTSTAPI_START_CUSTOM_DRAG,
+              windowId: message.windowId
+            }).catch(handleMissingReceiverError);
+            DragSelectionManager.onDragReady({
+              tab:             message.tab,
+              window:          message.windowId,
+              windowId:        message.windowId,
+              startOnClosebox: message.closebox
+            });
+          }, configs.longPressDuration);
+        }
+
+        return action & Constants.kCLICK_ACTION_MULTISELECTION ? true : false;
+      });
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP:
-      if (message.soundButton)
+      if (message.twisty || message.soundButton)
         return;
+      if (TSTLongPressTimer) {
+        clearTimeout(TSTLongPressTimer);
+        TSTLongPressTimer = undefined;
+      }
       return DragSelectionManager.onMouseUp(message);
 
     case Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED:
       return DragSelectionManager.onNonTabAreaClick(message);
 
-    case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
-      if (!configs.enableDragSelectionByLongPress)
-        return;
-      return DragSelectionManager.onDragReady(message);
+    //case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
+    //  if (!configs.enableDragSelectionByLongPress)
+    //    return;
+    //  return DragSelectionManager.onDragReady(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
       if (!configs.enableDragSelectionByLongPress)
@@ -261,7 +286,7 @@ async function registerToTST() {
     Constants.kTSTAPI_CONTEXT_MENU_SHOWN
   ];
   const dragSelectionListeningTypes = [
-    Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY,
+    //Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY,
     Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL,
     Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART,
     Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER,

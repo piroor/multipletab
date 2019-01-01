@@ -55,8 +55,8 @@ function delegateOnDragSelectionEnd(...args) {
 }
 
 
-export async function onClick(message) {
-  return getDragSelection(await getWindowId(message)).onClick(message);
+export async function onMouseDown(message) {
+  return getDragSelection(await getWindowId(message)).onMouseDown(message);
 }
 
 export async function onMouseUp(message) {

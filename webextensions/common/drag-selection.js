@@ -226,18 +226,10 @@ export default class DragSelection {
 
   /* event handling */
 
-  async onClick(message) {
-    log('onClick ', message);
+  async onMouseDown(message) {
+    log('onMouseDown ', message);
     if (message.button != 0)
-      return false;
-
-    /*
-    this.selection.clear();
-    const selectedTabs = await Selection.getSelection(this.windowId);
-    for (const tab of selectedTabs) {
-      this.add(tab);
-    }
-    */
+      return Constants.kCLICK_ACTION_NONE;
 
     let selected = message.tab.active;
     if (!selected) {
@@ -257,7 +249,7 @@ export default class DragSelection {
         this.inSelectionSession = false;
         this.lastClickedTab = null;
       }
-      return false;
+      return Constants.kCLICK_ACTION_REGULAR_CLICK;
     }
 
     const lastActiveTab = message.lastActiveTab || (await browser.tabs.query({
@@ -283,7 +275,7 @@ export default class DragSelection {
       }
       this.inSelectionSession = true;
       this.syncToHighlighted();
-      return true;
+      return Constants.kCLICK_ACTION_RANGE_SELECT;
     }
     else if (ctrlKeyPressed) {
       log('toggle selection of the tab and all collapsed descendants');
@@ -302,9 +294,9 @@ export default class DragSelection {
       this.inSelectionSession = true;
       this.lastClickedTab = message.tab;
       this.syncToHighlighted();
-      return true;
+      return Constants.kCLICK_ACTION_PARTIAL_SELECT;
     }
-    return false;
+    return Constants.kCLICK_ACTION_NONE;
   }
   async setSelectedStateToCollapsedDescendants(tab, selected) {
     const tree = await browser.runtime.sendMessage(Constants.kTST_ID, {

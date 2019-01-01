@@ -261,7 +261,7 @@ async function onClick(event) {
     return;
   const item = findTabItemFromEvent(event);
   if (item) {
-    mLastDragSelectionClicked = gDragSelection.onClick({
+    mLastDragSelectionClicked = gDragSelection.onMouseDown({
       tab:           item.tab,
       lastActiveTab: gLastClickedItem && gLastClickedItem.tab,
       button:        event.button,
@@ -269,7 +269,7 @@ async function onClick(event) {
       ctrlKey:       event.ctrlKey,
       metaKey:       event.metaKey,
       shiftKey:      event.shiftKey
-    }, true).catch(console.log);
+    }).catch(console.log);
     if (gLastClickedItem)
       gLastClickedItem.classList.remove('last-focused');
     gLastClickedItem = item;
