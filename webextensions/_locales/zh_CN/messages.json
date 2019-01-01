@@ -207,10 +207,6 @@
         "message": "标签页选中后自动打开菜单 by dragging",
         "hash": ""
     },
-    "config_dragSelection_label": {
-        "message": "长按后拖拽选择标签页 on Tree Style Tab's sidebar",
-        "hash": ""
-    },
     "config_menu_caption": {
         "message": "额外上下文菜单项",
         "hash": "8e00dac74731a0e2d5ea82820f171cf2"

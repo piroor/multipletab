@@ -123,32 +123,32 @@ function onTSTAPIMessage(message) {
       return DragSelectionManager.onNonTabAreaClick(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionByLongPress)
         return;
       return DragSelectionManager.onDragReady(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionByLongPress)
         return;
       return DragSelectionManager.onDragCancel(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionByLongPress)
         return;
       return DragSelectionManager.onDragStart(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionByLongPress)
         return;
       return DragSelectionManager.onDragEnter(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionByLongPress)
         return;
       return DragSelectionManager.onDragExit(message);
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEND:
-      if (!configs.enableDragSelection)
+      if (!configs.enableDragSelectionByLongPress)
         return;
       return DragSelectionManager.onDragEnd(message);
 
@@ -243,7 +243,7 @@ function onMessage(message) {
 
 configs.$addObserver(key => {
   switch (key) {
-    case 'enableDragSelection':
+    case 'enableDragSelectionByLongPress':
       unregisterFromTST();
       registerToTST();
       break;
@@ -268,7 +268,7 @@ async function registerToTST() {
     Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT,
     Constants.kTSTAPI_NOTIFY_TAB_DRAGEND
   ];
-  const listeningTypes = configs.enableDragSelection ?
+  const listeningTypes = configs.enableDragSelectionByLongPress ?
     baseListeningTypes.concat(dragSelectionListeningTypes) :
     baseListeningTypes;
   try {

@@ -106,9 +106,11 @@
   "config_applyThemeColorToIcon_label": { "message": "Apply theme color to the toolbar button (*You need to set \"svg.context-properties.content.enabled\" to \"true\" via \"about:config\" on Firefox 62 or later)" },
 
 
+  "config_enableDragSelection_label": { "message": "Select tabs by dragging on items" },
+  "config_enableDragSelectionByLongPress_label": { "message": "On Tree Style Tab's sidebar, select tabs by long-press and dragging" },
   "config_autoOpenMenuOnDragEnd_label": { "message": "Open menu automatically after tabs are selected by dragging" },
 
-  "config_dragSelection_label": { "message": "Tab Selection from dragging after long-press on Tree Style Tab's sidebar" },
+  "config_dragSelection_label": { "message": "" },
 
 
   "config_menu_caption": { "message": "Extra Context Menu Items" },

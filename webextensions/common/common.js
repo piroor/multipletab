@@ -28,6 +28,8 @@ export const configs = new Configs({
   cachedExternalAddons: {},
 
   enableDragSelection: true,
+  enableDragSelectionByLongPress: true,
+  longPressDuration: 400,
 
   requestingPermissions: null,
   requestingPermissionsNatively: null,
