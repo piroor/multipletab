@@ -88,6 +88,9 @@ function requestUpdateHighlightedState(params = {}) {
       });
     }
     else if (!clear && toBeSelected.length > 0) {
+      // refresh array of tabs, because active tab can be changed while selecting
+      const allTabs = await getAllTabs(toBeSelected[0].windowId);
+      toBeSelected = allTabs.filter(tab => mToBeSelected.has(tab.id));
       const activeTabs = toBeSelected.splice(toBeSelected.findIndex(tab => tab.active), 1);
       toBeSelected = activeTabs.concat(toBeSelected);
       log('requestUpdateHighlightedState:select ', toBeSelected);
