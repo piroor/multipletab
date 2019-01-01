@@ -250,9 +250,13 @@ export default class DragSelection {
     const ctrlKeyPressed = /^Mac/i.test(navigator.platform) ? message.metaKey : message.ctrlKey;
     if (!ctrlKeyPressed && !message.shiftKey) {
       log('regular click');
-      await this.clear();
-      this.inSelectionSession = false;
-      this.lastClickedTab = null;
+      const window = await browser.windows.get(message.window, { populate: true });
+      if (window.tabs.filter(tab => tab.highlighted).length <= 1 ||
+          !message.tab.highlighted) {
+        await this.clear();
+        this.inSelectionSession = false;
+        this.lastClickedTab = null;
+      }
       return false;
     }
 
@@ -354,6 +358,10 @@ export default class DragSelection {
   }
   async onDragReadyInternal(message) {
     log('onDragReady', message);
+    const allTabs = await Selection.getAllTabs(this.windowId);
+    if (message.tab.highlighted &&
+        allTabs.filter(tab => tab.highlighted).length > 1)
+      return;
 
     await this.clear();
     this.dragEnteredCount = 1;
@@ -361,7 +369,7 @@ export default class DragSelection {
     this.state = this.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;
     this.pendingTabs = null;
     this.dragStartTarget = this.firstHoverTarget = this.lastHoverTarget = message.tab;
-    this.allTabsOnDragReady = await Selection.getAllTabs(this.windowId);
+    this.allTabsOnDragReady = allTabs;
 
     const startTabs = this.retrieveTargetTabs(message.tab);
     for (const tab of startTabs) {
