@@ -690,6 +690,8 @@ async function onClick(info, contextTab) {
       break;
 
     case 'invertSelection':
+    case 'global_invertSelection':
+    case 'selection_invertSelection':
       Selection.invert(contextWindowId);
       break;
 
