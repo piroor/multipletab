@@ -116,28 +116,30 @@ const mItemsById = {
   },
 
 
-  // viewTypes=["tab", "sidebar"] means that the item should be visible
-  // on the tab bar and the sidebar, and hidden on the popup panel.
-  // However items with such viewTypes actually hidden on the tab bar,
-  // so we need to control visibility of those items based on "viewType"
+  // viewTypes=["tab"] means that the item should be visible
+  // on the content area, so viewTypes=["tab", "sidebar"] means
+  // "show the item on the sidebar or the content area" instead of
+  // "show the item on the sidebar or the tab bar".
+  // To provide context menu items for sidebar and the tab bar,
+  // we need to control visibility of those items based on "viewType"
   // parameter of menus.onShown listeners.
 
   'global_invertSelection': {
     title: browser.i18n.getMessage('context_invertSelection_label'),
-    viewTypes: null, // ['tab', 'sidebar'],
+    viewTypes: null,
     documentUrlPatterns: null,
     TST: true
   },
 
   'selection': {
     title: browser.i18n.getMessage('context_selection_label'),
-    viewTypes: null, // ['tab', 'sidebar'],
+    viewTypes: null,
     documentUrlPatterns: null,
     TST: true
   },
   'selection_invertSelection': {
     title: browser.i18n.getMessage('context_invertSelection_label'),
-    viewTypes: null, // ['tab', 'sidebar'],
+    viewTypes: null,
     documentUrlPatterns: null,
     parentId: 'selection',
     TST: true
