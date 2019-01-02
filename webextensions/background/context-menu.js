@@ -116,22 +116,28 @@ const mItemsById = {
   },
 
 
+  // viewTypes=["tab", "sidebar"] means that the item should be visible
+  // on the tab bar and the sidebar, and hidden on the popup panel.
+  // However items with such viewTypes actually hidden on the tab bar,
+  // so we need to control visibility of those items based on "viewType"
+  // parameter of menus.onShown listeners.
+
   'global_invertSelection': {
     title: browser.i18n.getMessage('context_invertSelection_label'),
-    viewTypes: ['tab', 'sidebar'],
+    viewTypes: null, // ['tab', 'sidebar'],
     documentUrlPatterns: null,
     TST: true
   },
 
   'selection': {
     title: browser.i18n.getMessage('context_selection_label'),
-    viewTypes: ['tab', 'sidebar'],
+    viewTypes: null, // ['tab', 'sidebar'],
     documentUrlPatterns: null,
     TST: true
   },
   'selection_invertSelection': {
     title: browser.i18n.getMessage('context_invertSelection_label'),
-    viewTypes: ['tab', 'sidebar'],
+    viewTypes: null, // ['tab', 'sidebar'],
     documentUrlPatterns: null,
     parentId: 'selection',
     TST: true
@@ -204,12 +210,25 @@ export function init() {
       id,
       title:     item.title,
       type:      item.type || 'normal',
-      contexts:  ['tab'],
-      viewTypes: 'viewTypes' in item ? item.viewTypes : ['popup'],
-      documentUrlPatterns: 'documentUrlPatterns' in item ? item.documentUrlPatterns : POPUP_URL_PATTERN
+      contexts:  ['tab']
     };
+    if ('viewTypes' in item) {
+      if (item.viewTypes)
+        info.viewTypes = item.viewTypes;
+    }
+    else {
+      info.viewTypes = ['popup'];
+    }
+    if ('documentUrlPatterns' in item) {
+      if (item.documentUrlPatterns)
+        info.documentUrlPatterns = item.documentUrlPatterns;
+    }
+    else {
+      info.documentUrlPatterns = POPUP_URL_PATTERN
+    }
     if (item.parentId)
       info.parentId = item.parentId;
+    log('create ', info);
     browser.menus.create(info);
 
     if (item.TST)
@@ -304,6 +323,7 @@ function updateItem(id, state = {}) {
                  updateInfo.enabled != item.lastEnabled;
   item.lastVisible = updateInfo.visible;
   item.lastEnabled = updateInfo.enabled;
+  log('updateItem ', id, modified, updateInfo);
   if (modified) {
     browser.menus.update(id, updateInfo);
     if (item.TST)
@@ -448,18 +468,20 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
   let visibleItemsCount = 0;
   const showInvertSelection = configs.context_invertSelection && selectedTabs.length > 0 && selectedTabs.length < visibleTabs.length && ++visibleItemsCount;
 
+  log('visibleItemsCount ', visibleItemsCount);
+
   updateItem('invertSelection', {
     visible: showInvertSelection
   }) && modifiedItemsCount++;
   updateItem('global_invertSelection', {
-    visible: showInvertSelection && visibleItemsCount == 1
+    visible: info.viewType != 'popup' && showInvertSelection && visibleItemsCount == 1
   }) && modifiedItemsCount++;
   updateItem('selection_invertSelection', {
-    visible: showInvertSelection && visibleItemsCount > 1
+    visible: info.viewType != 'popup' && showInvertSelection && visibleItemsCount > 1
   }) && modifiedItemsCount++;
 
   updateItem('selection', {
-    visible: visibleItemsCount > 1,
+    visible: info.viewType != 'popup' && visibleItemsCount > 1,
   }) && modifiedItemsCount++;
 
   updateItem('noContextTab:context_reloadTab', {
