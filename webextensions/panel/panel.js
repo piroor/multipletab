@@ -349,6 +349,7 @@ function onMouseUp(event) {
 function onMouseOver(event) {
   if (!configs.enableDragSelection)
     return;
+  autoScrollOnMouseEvent(event);
   const item       = findTabItemFromEvent(event);
   let target     = item;
   const isClosebox = event.target.classList.contains('closebox');
@@ -557,3 +558,19 @@ function buildMenuItem(item) {
   }
   return itemNode;
 }
+
+
+function autoScrollOnMouseEvent(event) {
+  const tabbarRect = gTabBar.getBoundingClientRect();
+  const size = gTabBar.querySelector('.tab').getBoundingClientRect().height;
+  const scrollPixels = Math.round(size * 0.5);
+  if (event.clientY < tabbarRect.top + autoScrollOnMouseEvent.areaSize) {
+    if (gTabBar.scrollTop > 0)
+      gTabBar.scrollTop -= scrollPixels;
+  }
+  else if (event.clientY > tabbarRect.bottom - autoScrollOnMouseEvent.areaSize) {
+    if (gTabBar.scrollTop < gTabBar.scrollTopMax)
+      gTabBar.scrollTop += scrollPixels;
+  }
+}
+autoScrollOnMouseEvent.areaSize = 20;
