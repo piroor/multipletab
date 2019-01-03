@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 3.0.2 (2019.1.3)
    * Allow to autoscroll the popup panel while dragging.
    * The "Invert Selection" command now works on native context menus.
    * Show "Invert Selection" command in the context menu on the tab bar.
