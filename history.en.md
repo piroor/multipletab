@@ -1,6 +1,12 @@
 # History
 
  - master/HEAD
+   * Allow to autoscroll the popup panel while dragging.
+   * The "Invert Selection" command now works on native context menus.
+   * Show "Invert Selection" command in the context menu on the tab bar.
+   * Add ability to control timeout to detect "long press" on the sidebar of Tree Style Tab.
+   * Don't start multiselection of tabs by long press on already-multiselected tab, on the sidebar of Tree Style Tab.
+   * Separated config checkboxes to activate drag selection on the panel and the sidebar of Tree Style Tab.
  - 3.0.1 (2018.12.22)
    * Optimize/fix performance regression around changing of tab focus by Lej77. Thanks!
  - 3.0.0 (2018.12.22)
