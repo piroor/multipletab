@@ -104,6 +104,7 @@ async function onSelectionChange(info) {
 }
 
 let TSTLongPressTimer;
+let mousedownHandled = false;
 
 function onTSTAPIMessage(message) {
   switch (message.type) {
@@ -112,8 +113,11 @@ function onTSTAPIMessage(message) {
       return Promise.resolve(true);
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN:
-      if (message.twisty || message.soundButton)
+      if (message.twisty || message.soundButton) {
+        mousedownHandled = false;
         return;
+      }
+      mousedownHandled = true;
       return DragSelectionManager.onMouseDown(message).then(action => {
         if (action & Constants.kCLICK_ACTION_REGULAR_CLICK &&
             configs.enableDragSelectionByLongPress) {
@@ -139,7 +143,7 @@ function onTSTAPIMessage(message) {
       });
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP:
-      if (message.twisty || message.soundButton)
+      if (!mousedownHandled)
         return;
       if (TSTLongPressTimer) {
         clearTimeout(TSTLongPressTimer);
