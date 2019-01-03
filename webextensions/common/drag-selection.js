@@ -331,7 +331,11 @@ export default class DragSelection {
     const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
     if (!ctrlKeyPressed &&
         !message.shiftKey &&
-        !this.dragStartTarget) {
+        (!this.dragStartTarget ||
+         // dragend on the dragstart tab itself
+         (message.tab &&
+          message.tab.id == this.dragStartTarget.id &&
+          this.selectedTabs.length == 1))) {
       this.clear();
     }
   }
