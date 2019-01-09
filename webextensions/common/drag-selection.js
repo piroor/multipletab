@@ -278,9 +278,24 @@ export default class DragSelection {
       return Constants.kCLICK_ACTION_RANGE_SELECT;
     }
     else if (ctrlKeyPressed) {
-      log('toggle selection of the tab and all collapsed descendants');
-      if (message.tab.id != lastActiveTab.id ||
-          !this.inSelectionSession) {
+      log('toggle selection of the tab and all collapsed descendants, inSelectionSession = ', this.inSelectionSession);
+      if (message.tab.id == lastActiveTab.id) {
+        if (this.inSelectionSession) {
+          const descendants = tabs.slice(1);
+          if (descendants.length > 0) {
+            this.add(lastActiveTab);
+            const partiallySelected = descendants.filter(tab => tab.states.includes(Constants.kSELECTED)).length != descendants.length;
+            selected = partiallySelected ? false : descendants[0].states.includes(Constants.kSELECTED);
+            tabs = tabs.filter(tab => tab.id != lastActiveTab.id);
+          }
+        }
+        else {
+          this.add(lastActiveTab);
+          await this.setSelectedStateToCollapsedDescendants(lastActiveTab, true);
+          tabs = [];
+        }
+      }
+      else if (!this.inSelectionSession) {
         this.add(lastActiveTab);
         await this.setSelectedStateToCollapsedDescendants(lastActiveTab, true);
       }
