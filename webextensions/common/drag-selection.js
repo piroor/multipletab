@@ -343,6 +343,9 @@ export default class DragSelection {
     if (message.button != 0)
       return false;
 
+    if (this.dragEnteredCount > 0)
+      return this.onDragEnd(message);
+
     const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
     if (!ctrlKeyPressed &&
         !message.shiftKey &&
@@ -469,6 +472,7 @@ export default class DragSelection {
     this.cancelDragExitAllWithDelay();
     if (this.dragEnteredCount <= 0) {
       this.firstHoverTarget = this.lastHoverTarget = null;
+      this.dragEnteredCount = 0;
       this.undeterminedRange.clear();
     }
   }
