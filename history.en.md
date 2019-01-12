@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 3.0.4 (2019.1.13)
    * Multiselect collapsed tree of Tree Style Tabs more correctly.
    * Don't updated highlighted status of Firefox tabs while dragging on the panel. Firefox tabs are highlighted after the dragged range is determined.
    * Clear selection after multiselection is cleared by other addons correctly.
