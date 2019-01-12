@@ -92,6 +92,8 @@ function onWindowRemoved(windowId) {
 }
 
 async function onSelectionChange(info) {
+  if (info.bySelf)
+    return;
   const tab = info.selected.length > 0 ? info.selected[0] : info.unselected[0];
   if (!tab)
     return;
