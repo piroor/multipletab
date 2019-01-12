@@ -21,8 +21,8 @@ export default class DragSelection {
     this.allTabsOnDragReady    = [];
     this.pendingTabs           = null;
     this.dragStartTarget       = null;
-    this.lastHoverTarget       = null;
-    this.firstHoverTarget      = null;
+    this.lastHoverTargets      = new Map();
+    this.firstHoverTargets     = new Map();
     this.lastClickedTab        = null;
     this.undeterminedRange     = new Map();
     this.dragEnteredCount      = 0;
@@ -42,7 +42,9 @@ export default class DragSelection {
   }
 
   cancel() {
-    this.dragStartTarget = this.firstHoverTarget = this.lastHoverTarget = null;
+    this.dragStartTarget = null;
+    this.firstHoverTargets.clear();
+    this.lastHoverTargets.clear();
     this.undeterminedRange.clear();
     this.lastClickedTab = null;
     this.willCloseSelectedTabs = false;
@@ -120,12 +122,39 @@ export default class DragSelection {
     return tabs;
   }
 
-  getTabsBetween(aBegin, end, allTabs = []) {
-    if (aBegin.id == end.id)
+  // boundaries of beggining and end can be multiple tabs - for example, collapsed tree of Tree Style Tab.
+  getTabsBetween(beginningTabs, endTabs, allTabs = []) {
+    if (beginningTabs.constructor != Map) {
+      const beginningTabsMap = new Map();
+      beginningTabsMap.set(beginningTabs.id, beginningTabs);
+      beginningTabs = beginningTabsMap;
+    }
+    if (endTabs.constructor != Map) {
+      const endTabsMap = new Map();
+      endTabsMap.set(endTabs.id, endTabs);
+      endTabs = endTabsMap;
+    }
+    if (Array.from(endTabs.keys()).sort().join(',') == Array.from(beginningTabs.keys()).sort().join(','))
       return [];
     let inRange = false;
+    let beginningBoundaryPassed = false;
+    let endBoundaryPassed = false;
     return allTabs.filter(tab => {
-      if (tab.id == aBegin.id || tab.id == end.id) {
+      if (beginningTabs.has(tab.id)) {
+        if (!beginningBoundaryPassed)
+          beginningBoundaryPassed = true;
+      }
+      else {
+        beginningBoundaryPassed = false;
+      }
+      if (endTabs.has(tab.id)) {
+        if (!endBoundaryPassed)
+          endBoundaryPassed = true;
+      }
+      else {
+        endBoundaryPassed = false;
+      }
+      if (beginningBoundaryPassed || endBoundaryPassed) {
         inRange = !inRange;
         return false;
       }
@@ -133,26 +162,30 @@ export default class DragSelection {
     });
   }
 
-  toggleStateOfDragOverTabs(params = {}) {
-    log('toggleStateOfDragOverTabs ', params);
+  // target can be multiple tabs - for example, collapsed tree of Tree Style Tab.
+  toggleStateOfDragOverTabs(targetTabs) {
+    if (Array.isArray(targetTabs))
+      targetTabs = new Map(targetTabs.map(tab => [tab.id, tab]));
+
+    log('toggleStateOfDragOverTabs ', targetTabs);
+
     const toBeSelected = new Set();
     const toBeUnselected = new Set();
-    if (this.firstHoverTarget) {
-      log('  firstHoverTarget ', this.firstHoverTarget);
+    if (this.firstHoverTargets.size > 0) {
+      log('  firstHoverTargets ', this.firstHoverTargets);
       const oldUndeterminedRange = this.undeterminedRange;
       this.undeterminedRange = new Map();
       log('  oldUndeterminedRange ', oldUndeterminedRange);
 
-      let newUndeterminedRange = params.allTargets;
-      if (newUndeterminedRange.every(tab => tab.id != this.firstHoverTarget.id))
-        newUndeterminedRange.push(this.firstHoverTarget);
-
-      const betweenTabs = this.getTabsBetween(this.firstHoverTarget, params.target, this.allTabsOnDragReady);
-      newUndeterminedRange = newUndeterminedRange.concat(betweenTabs);
+      const betweenTabs = this.getTabsBetween(this.firstHoverTargets, targetTabs, this.allTabsOnDragReady);
+      const newUndeterminedRange = new Map([
+        ...this.firstHoverTargets.entries(),
+        ...betweenTabs.map(tab => [tab.id, tab]),
+        ...targetTabs.entries()
+      ]);
       log('  newUndeterminedRange ', newUndeterminedRange);
 
-      const newUndeterminedRangeIds = newUndeterminedRange.map(tab => tab.id);
-      const outOfRangeTabIds = Array.from(oldUndeterminedRange.keys()).filter(id => newUndeterminedRangeIds.indexOf(id) < 0);
+      const outOfRangeTabIds = Array.from(oldUndeterminedRange.keys()).filter(id => !newUndeterminedRange.has(id));
       {
         for (const id of outOfRangeTabIds) {
           const tab = oldUndeterminedRange.get(id);
@@ -168,7 +201,7 @@ export default class DragSelection {
       }
 
       {
-        for (const tab of newUndeterminedRange) {
+        for (const tab of newUndeterminedRange.values()) {
           if (this.undeterminedRange.has(tab.id))
             continue;
           this.undeterminedRange.set(tab.id, tab);
@@ -188,7 +221,7 @@ export default class DragSelection {
       }
     }
     else {
-      for (const tab of params.allTargets) {
+      for (const tab of targetTabs.values()) {
         if (this.undeterminedRange.has(tab.id))
           this.undeterminedRange.delete(tab.id);
         else
@@ -382,13 +415,17 @@ export default class DragSelection {
     this.willCloseSelectedTabs = message.startOnClosebox;
     this.state = this.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;
     this.pendingTabs = null;
-    this.dragStartTarget = this.firstHoverTarget = this.lastHoverTarget = message.tab;
+    this.dragStartTarget = message.tab;
+    this.firstHoverTargets.set(message.tab.id, message.tab);
+    this.lastHoverTargets.set(message.tab.id, message.tab);
     this.allTabsOnDragReady = allTabs;
 
     const startTabs = this.retrieveTargetTabs(message.tab);
     for (const tab of startTabs) {
       this.add(tab);
       this.undeterminedRange.set(tab.id, tab);
+      this.firstHoverTargets.set(tab.id, tab);
+      this.lastHoverTargets.set(tab.id, tab);
     }
     Selection.notifyTabStateToTST(startTabs.map(tab => tab.id), this.state, true);
     return true;
@@ -415,12 +452,11 @@ export default class DragSelection {
 
   async onDragEnter(message) {
     await this.lastDragReady;
-    //console.log('onDragEnter', message, message.tab == this.lastHoverTarget);
+    //console.log('onDragEnter', message, { tab: message.tab, lastHover: this.lastHoverTargets });
     this.dragEnteredCount++;
     // processAutoScroll(event);
 
-    if (this.lastHoverTarget &&
-        message.tab.id == this.lastHoverTarget.id)
+    if (this.lastHoverTargets.has(message.tab.id))
       return;
 
     if (this.pendingTabs) {
@@ -434,10 +470,7 @@ export default class DragSelection {
     if (this.willCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
     */
     const targetTabs = this.retrieveTargetTabs(message.tab);
-    this.toggleStateOfDragOverTabs({
-      target:     message.tab,
-      allTargets: targetTabs
-    });
+    this.toggleStateOfDragOverTabs(targetTabs);
     if (this.dragStartTarget &&
         message.tab.id == this.dragStartTarget.id &&
         this.selection.size == targetTabs.length) {
@@ -457,9 +490,10 @@ export default class DragSelection {
       browser.tabs.update(message.tab.id, { active: true });
     }
     */
-    this.lastHoverTarget = message.tab;
-    if (!this.firstHoverTarget)
-      this.firstHoverTarget = this.lastHoverTarget;
+    this.lastHoverTargets.clear();
+    this.lastHoverTargets.set(message.tab.id, message.tab);
+    if (this.firstHoverTargets.size == 0)
+      this.firstHoverTargets = new Map(this.lastHoverTargets.entries());
   }
 
   async onDragExit(_message) {
@@ -471,7 +505,8 @@ export default class DragSelection {
     //console.log('dragExitAllWithDelay '+this.dragEnteredCount);
     this.cancelDragExitAllWithDelay();
     if (this.dragEnteredCount <= 0) {
-      this.firstHoverTarget = this.lastHoverTarget = null;
+      this.firstHoverTargets.clear();
+      this.lastHoverTargets.clear();
       this.dragEnteredCount = 0;
       this.undeterminedRange.clear();
     }
