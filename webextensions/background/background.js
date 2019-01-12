@@ -326,12 +326,18 @@ async function registerToTST() {
           content: " ";
           display: block;
           left: 0;
-          opacity: 0.38;
           pointer-events: none;
           position: absolute;
           right: 0;
           top: 0;
           z-index: 10;
+        }
+        .mutiple-highlighted > .tab.highlighted::after {
+          opacity: 0.28;
+        }
+        .tab.${Constants.kSELECTED}::after,
+        .mutiple-highlighted > .tab.highlighted.${Constants.kSELECTED}::after {
+          opacity: 0.38;
         }
 
         /* ::after pseudo element prevents firing of dragstart event */
