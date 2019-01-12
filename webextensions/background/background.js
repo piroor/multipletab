@@ -325,7 +325,7 @@ async function registerToTST() {
           content: " ";
           display: block;
           left: 0;
-          opacity: 0.5;
+          opacity: 0.38;
           pointer-events: none;
           position: absolute;
           right: 0;
