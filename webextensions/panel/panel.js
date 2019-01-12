@@ -322,7 +322,6 @@ let gOnDragExitTimeout;
 let mLastCleared;
 
 async function onMouseDown(event) {
-console.log('onMouseDown====================================================');
   switch (event.button) {
     case 0:
       gClickFired = false;
