@@ -186,37 +186,33 @@ export default class DragSelection {
       log('  newUndeterminedRange ', newUndeterminedRange);
 
       const outOfRangeTabIds = Array.from(oldUndeterminedRange.keys()).filter(id => !newUndeterminedRange.has(id));
-      {
-        for (const id of outOfRangeTabIds) {
-          const tab = oldUndeterminedRange.get(id);
-          if (this.has(tab)) {
-            this.delete(tab);
-            toBeUnselected.add(id);
-          }
-          else {
-            this.add(tab);
-            toBeSelected.add(id);
-          }
+      for (const id of outOfRangeTabIds) {
+        const tab = oldUndeterminedRange.get(id);
+        if (this.has(tab)) {
+          this.delete(tab);
+          toBeUnselected.add(id);
+        }
+        else {
+          this.add(tab);
+          toBeSelected.add(id);
         }
       }
 
-      {
-        for (const tab of newUndeterminedRange.values()) {
-          if (this.undeterminedRange.has(tab.id))
-            continue;
-          this.undeterminedRange.set(tab.id, tab);
-          if (oldUndeterminedRange.has(tab.id))
-            continue;
-          if (this.has(tab)) {
-            this.delete(tab);
-            toBeUnselected.add(tab.id);
-            toBeSelected.delete(tab.id);
-          }
-          else {
-            this.add(tab);
-            toBeSelected.add(tab.id);
-            toBeUnselected.delete(tab.id);
-          }
+      for (const tab of newUndeterminedRange.values()) {
+        if (this.undeterminedRange.has(tab.id))
+          continue;
+        this.undeterminedRange.set(tab.id, tab);
+        if (oldUndeterminedRange.has(tab.id))
+          continue;
+        if (this.has(tab)) {
+          this.delete(tab);
+          toBeUnselected.add(tab.id);
+          toBeSelected.delete(tab.id);
+        }
+        else {
+          this.add(tab);
+          toBeSelected.add(tab.id);
+          toBeUnselected.delete(tab.id);
         }
       }
     }
