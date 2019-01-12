@@ -113,14 +113,17 @@ function requestUpdateHighlightedState(params = {}) {
   }, 100);
 }
 
-export async function clear(windowId, force = false) {
+export async function clear(options = {}) {
+  let windowId = options.windowId;
   if (!windowId)
     windowId = (await getActiveWindow()).id;
-  const selectedTabs = await (force ? /* getAllTabs(windowId) */ null : getSelection(windowId));
-  await Promise.all([
-    (force ? clearTabStateFromTST : notifyTabStateToTST)(force ? windowId : selectedTabs.map(tab => tab.id), Constants.kSELECTED, false),
+  const selectedTabs = await (options.force ? /* getAllTabs(windowId) */ null : getSelection(windowId));
+  const promises = [
+    (options.force ? clearTabStateFromTST : notifyTabStateToTST)(options.force ? windowId : selectedTabs.map(tab => tab.id), Constants.kSELECTED, false)
+  ];
+  if (options.highlighted !== false)
     requestUpdateHighlightedState({ clear: true })
-  ]);
+  await Promise.all(promises);
 }
 
 export async function select(tabsOrTab) {

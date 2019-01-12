@@ -164,17 +164,23 @@ function onDragSelectionEnd(message, _selectionInfo) {
 }
 
 function onSelectionChange(info) {
-  for (const tab of info.selected.concat(info.unselected)) {
-    const item = document.getElementById(`tab-${tab.id}`);
+  const getItem = tab => document.getElementById(`tab-${tab.id}`);
+  const getCheckbox = item => item.querySelector('input[type="checkbox"]');
+
+  for (const tab of info.unselected) {
+    const item = getItem(tab);
     if (!item)
       continue;
-    const checkbox = item.querySelector('input[type="checkbox"]');
-    const selected = info.selected.includes(tab);
-    checkbox.checked = selected;
-    if (selected)
-      item.classList.add('selected');
-    else
-      item.classList.remove('selected');
+    getCheckbox(item).checked = false;
+    item.classList.remove('selected');
+  }
+
+  for (const tab of info.selected) {
+    const item = getItem(tab);
+    if (!item)
+      continue;
+    getCheckbox(item).checked = true;
+    item.classList.add('selected');
   }
 }
 
@@ -283,26 +289,38 @@ async function onClick(event) {
 
 let gLastDragEnteredTarget;
 let gOnDragExitTimeout;
+let mLastCleared;
 
 async function onMouseDown(event) {
+console.log('onMouseDown====================================================');
   switch (event.button) {
     case 0:
       gClickFired = false;
-      gTabBar.addEventListener('mousemove', onMouseMove);
+      if (event.ctrlKey ||event.shiftKey)
+        return;
+      // tabs.onHighlighted notified while mousemove may break new
+      //  selection,so we need to clear old selection here.
+      if (!findCheckboxFromEvent(event)) {
+        mLastCleared = gDragSelection.clear({ highlighted: false });
+        tryDragStart(event);
+      }
+      else {
+        gTabBar.addEventListener('mousemove', onMouseMove);
+      }
       break;
   }
 }
 
 let mIsCapturing = false;
 
-async function onMouseMove(event) {
-  gTabBar.removeEventListener('mousemove', onMouseMove);
+async function tryDragStart(event) {
   if (gClickFired ||
       !configs.enableDragSelection)
     return;
   const item = findTabItemFromEvent(event);
   if (!item)
     return;
+  await mLastCleared;
   gDragTargetIsClosebox =  event.target.classList.contains('closebox');
   gLastDragEnteredTarget = gDragTargetIsClosebox ? event.target : item ;
   gDragSelection.onDragReady({
@@ -314,6 +332,11 @@ async function onMouseMove(event) {
   gTabBar.addEventListener('mouseout', onMouseOut);
   gTabBar.setCapture(false);
   mIsCapturing = true;
+}
+
+async function onMouseMove(event) {
+  gTabBar.removeEventListener('mousemove', onMouseMove);
+  tryDragStart(event);
 }
 
 function onMouseUp(event) {
