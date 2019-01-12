@@ -30,6 +30,9 @@ let gDragSelection;
 
 let gContextMenuIsOpened = false;
 
+const gTabItems = new Map();
+const gHighlightedTabs = new Map();
+
 window.addEventListener('DOMContentLoaded', async () => {
   gTabBar = document.querySelector('#tabs');
   gMenu = document.querySelector('#menu');
@@ -59,6 +62,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   browser.tabs.onMoved.addListener(onTabModified);
   browser.tabs.onAttached.addListener(onTabModified);
   browser.tabs.onDetached.addListener(onTabModified);
+  browser.tabs.onHighlighted.addListener(onTabHighlighted);
 
   browser.menus.onHidden.addListener(onMenuHidden);
 
@@ -101,17 +105,43 @@ window.addEventListener('pagehide', () => {
   browser.tabs.onMoved.removeListener(onTabModified);
   browser.tabs.onAttached.removeListener(onTabModified);
   browser.tabs.onDetached.removeListener(onTabModified);
+  browser.tabs.onHighlighted.removeListener(onTabHighlighted);
   browser.menus.onHidden.removeListener(onMenuHidden);
   gDragSelection.onDragSelectionEnd.removeListener(onDragSelectionEnd);
   gDragSelection.onSelectionChange.removeListener(onSelectionChange);
   gDragSelection.onCloseSelectionChange.removeListener(onCloseSelectionChange);
   gDragSelection.destroy();
   gWindowId = null;
+  gTabItems.clear();
+  gHighlightedTabs.clear();
 }, { once: true });
 
 function onTabModified() {
   reserveClearSelection();
   reserveRebuildTabItems();
+}
+
+function onTabHighlighted(highlightInfo) {
+  if (highlightInfo.windowId != gWindowId)
+    return;
+
+  for (const id of gHighlightedTabs.keys()) {
+    if (highlightInfo.tabIds.includes(id))
+      continue;
+    const item = gTabItems.get(id);
+    if (!item)
+      continue;
+    item.tab.highlighted = false;
+    gHighlightedTabs.delete(id);
+  }
+
+  for (const id of highlightInfo.tabIds) {
+    const item = gTabItems.get(id);
+    if (!item)
+      continue;
+    item.tab.highlighted = true;
+    gHighlightedTabs.set(id, item.tab);
+  }
 }
 
 function onMenuHidden() {
@@ -433,6 +463,8 @@ async function rebuildTabItems() {
   const range = document.createRange();
   range.selectNodeContents(gTabBar);
   range.deleteContents();
+  gTabItems.clear();
+  gHighlightedTabs.clear();
   const fragment = document.createDocumentFragment();
   const tabs = await browser.tabs.query({ currentWindow: true });
   for (const tab of tabs) {
@@ -493,6 +525,10 @@ function buildTabItem(tab) {
   const closebox = document.createElement('span');
   closebox.classList.add('closebox');
   item.appendChild(closebox);
+
+  gTabItems.set(tab.id, item);
+  if (tab.highlighted)
+    gHighlightedTabs.set(tab.id, tab);
 
   return item;
 }
