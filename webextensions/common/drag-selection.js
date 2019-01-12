@@ -192,8 +192,9 @@ export default class DragSelection {
       ]);
       log('  newUndeterminedRange ', newUndeterminedRange);
 
-      const outOfRangeTabIds = Array.from(oldUndeterminedRange.keys()).filter(id => !newUndeterminedRange.has(id));
-      for (const id of outOfRangeTabIds) {
+      for (const id of oldUndeterminedRange.keys()) {
+        if (newUndeterminedRange.has(id))
+          continue;
         const tab = oldUndeterminedRange.get(id);
         if (this.has(tab)) {
           this.delete(tab);
