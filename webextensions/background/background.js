@@ -97,7 +97,8 @@ async function onSelectionChange(info) {
     return;
   const selectedTabs = await browser.tabs.query({ windowId: tab.windowId, highlighted: true });
   if (selectedTabs.length == 1 &&
-      info.unselected.length > 1 &&
+      (info.unselected.length > 1 /* multiple tabs are unselected */ ||
+       info.selected.length == 0 /* one tab is unselected and no new tab is newly selected */) &&
       !info.clear) {
     info.dragSelection.clear(true);
   }

@@ -260,6 +260,8 @@ export default class DragSelection {
     if (message.button != 0)
       return Constants.kCLICK_ACTION_NONE;
 
+    const windowId = message.window || message.windowId || message.tab.windowId;
+
     let selected = message.tab.active;
     if (!selected) {
       if (message.tab.states)
@@ -271,7 +273,7 @@ export default class DragSelection {
     const ctrlKeyPressed = /^Mac/i.test(navigator.platform) ? message.metaKey : message.ctrlKey;
     if (!ctrlKeyPressed && !message.shiftKey) {
       log('regular click');
-      const window = await browser.windows.get(message.window, { populate: true });
+      const window = await browser.windows.get(windowId, { populate: true });
       if (window.tabs.filter(tab => tab.highlighted).length <= 1 ||
           !message.tab.highlighted) {
         await this.clear();
@@ -289,7 +291,7 @@ export default class DragSelection {
     let tabs = this.retrieveTargetTabs(message.tab);
     if (message.shiftKey) {
       log('select the clicked tab and tabs between last activated tab');
-      const window = await browser.windows.get(message.window, { populate: true });
+      const window = await browser.windows.get(windowId, { populate: true });
       const betweenTabs = this.getTabsBetween(this.lastClickedTab || lastActiveTab, message.tab, window.tabs);
       tabs = tabs.concat(betweenTabs);
       tabs.push(this.lastClickedTab || lastActiveTab);
@@ -372,8 +374,10 @@ export default class DragSelection {
     if (message.button != 0)
       return false;
 
-    if (this.dragEnteredCount > 0)
-      return this.onDragEnd(message);
+    // mouseup after long-press on the same target doesn't notify "dragend", so simulate dragexit.
+    if (this.dragStartTarget &&
+        this.dragStartTarget.id == message.tab.id)
+      this.onDragEnd(message);
 
     const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
     if (!ctrlKeyPressed &&
@@ -551,13 +555,13 @@ export default class DragSelection {
 
 
   async onHighlighted(highlightInfo) {
-    if (this.dragStartTarget ||
-        highlightInfo.windowId != this.windowId)
+    if (highlightInfo.windowId != this.windowId)
       return;
     const selectedIds = this.selectedTabIds;
-    const allTabs     = await browser.tabs.query({ windowId: this.windowId });
-    if (selectedIds.length == 0 ||
-        selectedIds.sort().join(',') == highlightInfo.tabIds.sort().join(','))
+    if (selectedIds.length == 0)
+      return;
+    const allTabs = await browser.tabs.query({ windowId: this.windowId });
+    if (selectedIds.sort().join(',') == highlightInfo.tabIds.sort().join(','))
       return;
     log('DragSelection.onHighlighted: ', {
       selectedIds: selectedIds.join(','),
