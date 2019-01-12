@@ -143,30 +143,14 @@ export default class DragSelection {
     }
     if (Array.from(endTabs.keys()).sort().join(',') == Array.from(beginningTabs.keys()).sort().join(','))
       return [];
-    let inRange = false;
-    let beginningBoundaryPassed = false;
-    let endBoundaryPassed = false;
-    return allTabs.filter(tab => {
-      if (beginningTabs.has(tab.id)) {
-        if (!beginningBoundaryPassed)
-          beginningBoundaryPassed = true;
-      }
-      else {
-        beginningBoundaryPassed = false;
-      }
-      if (endTabs.has(tab.id)) {
-        if (!endBoundaryPassed)
-          endBoundaryPassed = true;
-      }
-      else {
-        endBoundaryPassed = false;
-      }
-      if (beginningBoundaryPassed || endBoundaryPassed) {
-        inRange = !inRange;
-        return false;
-      }
-      return inRange;
-    });
+    beginningTabs = Array.from(beginningTabs.values());
+    endTabs = Array.from(endTabs.values());
+    if (beginningTabs[0].index < endTabs[0].index) { // top to bottom
+      return allTabs.slice(beginningTabs[beginningTabs.length - 1].index + 1, endTabs[0].index);
+    }
+    else { // bottom to top
+      return allTabs.slice(endTabs[endTabs.length - 1].index + 1, beginningTabs[0].index);
+    }
   }
 
   // target can be multiple tabs - for example, collapsed tree of Tree Style Tab.
