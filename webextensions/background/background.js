@@ -321,25 +321,22 @@ async function registerToTST() {
       icons: browser.runtime.getManifest().icons,
       listeningTypes,
       style: `
-        .tab.${Constants.kSELECTED}::after,
-        .mutiple-highlighted > .tab.highlighted::after {
-          background: Highlight;
+        .tab.${Constants.kSELECTED}::after {
+          background: var(--multiselected-color);
           bottom: 0;
           content: " ";
           display: block;
           left: 0;
+          opacity: var(--multiselected-color-opacity);
           pointer-events: none;
           position: absolute;
           right: 0;
           top: 0;
           z-index: 10;
         }
-        .mutiple-highlighted > .tab.highlighted::after {
-          opacity: 0.28;
-        }
         .tab.${Constants.kSELECTED}::after,
         .mutiple-highlighted > .tab.highlighted.${Constants.kSELECTED}::after {
-          opacity: 0.38;
+          opacity: calc(var(--multiselected-color-opacity) + 0.1);
         }
 
         /* ::after pseudo element prevents firing of dragstart event */
