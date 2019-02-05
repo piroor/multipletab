@@ -13,9 +13,9 @@ export const kCOMMAND_NOTIFY_PERMISSIONS_GRANTED    = 'multipletab:notify-permis
 export const kCOMMAND_REQUEST_CONNECT_PREFIX        = 'multipletab:request-connect-from:';
 
 
-export const kSELECTED       = 'mth-selected';
+export const kSELECTED        = 'mth-selected';
 export const kREADY_TO_SELECT = 'mth-ready-to-select';
-export const kREADY_TO_CLOSE = 'mth-ready-to-close';
+export const kREADY_TO_CLOSE  = 'mth-ready-to-close';
 
 export const kCLICK_ACTION_NONE           = 1 << 0;
 export const kCLICK_ACTION_REGULAR_CLICK  = 1 << 1;
