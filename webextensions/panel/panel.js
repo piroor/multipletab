@@ -515,6 +515,7 @@ function buildTabItem(tab) {
   if (tab.active) {
     gLastClickedItem = item;
     item.classList.add('last-focused');
+    gDragSelection.lastClickedTab = tab;
   }
   if (gDragSelection.has(tab))
     item.classList.add('selected');

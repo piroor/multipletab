@@ -272,8 +272,8 @@ export default class DragSelection {
           !message.tab.highlighted) {
         await this.clear();
         this.inSelectionSession = false;
-        this.lastClickedTab = null;
       }
+      this.lastClickedTab = message.tab;
       return Constants.kCLICK_ACTION_REGULAR_CLICK;
     }
 
@@ -284,9 +284,13 @@ export default class DragSelection {
 
     let tabs = this.retrieveTargetTabs(message.tab);
     if (message.shiftKey) {
-      log('select the clicked tab and tabs between last activated tab');
       const window = await browser.windows.get(windowId, { populate: true });
       const betweenTabs = this.getTabsBetween(this.lastClickedTab || lastActiveTab, message.tab, window.tabs);
+      log('select the clicked tab and tabs between last activated tab ', {
+        lastClickedTab: this.lastClickedTab,
+        lastActiveTab,
+        betweenTabs
+      });
       tabs = tabs.concat(betweenTabs);
       tabs.push(this.lastClickedTab || lastActiveTab);
       const selectedTabIds = tabs.map(tab => tab.id);
