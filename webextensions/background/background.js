@@ -321,7 +321,8 @@ async function registerToTST() {
       icons: browser.runtime.getManifest().icons,
       listeningTypes,
       style: `
-        .tab.${Constants.kSELECTED}::after {
+        .tab.${Constants.kSELECTED}::after,
+        .tab.${Constants.kREADY_TO_SELECT}::after {
           background: var(--multiselected-color);
           bottom: 0;
           content: " ";
@@ -334,9 +335,9 @@ async function registerToTST() {
           top: 0;
           z-index: 10;
         }
-        .tab.${Constants.kSELECTED}::after,
-        .mutiple-highlighted > .tab.highlighted.${Constants.kSELECTED}::after {
-          opacity: calc(var(--multiselected-color-opacity) + 0.1);
+        .tab.${Constants.kREADY_TO_SELECT}::after,
+        .mutiple-highlighted > .tab.highlighted.${Constants.kREADY_TO_SELECT}::after {
+          opacity: calc(var(--multiselected-color-opacity) + 0.15);
         }
 
         /* ::after pseudo element prevents firing of dragstart event */
@@ -350,7 +351,7 @@ async function registerToTST() {
     for (const window of allWindows) {
       Selection.clearTabStateFromTST(
         window.id,
-        [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+        [Constants.kSELECTED, Constants.kREADY_TO_SELECT, Constants.kREADY_TO_CLOSE],
         false
       );
     }

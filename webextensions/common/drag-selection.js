@@ -60,7 +60,7 @@ export default class DragSelection {
       await Promise.all([
         (options.force ? Selection.clearTabStateFromTST : Selection.notifyTabStateToTST)(
           options.force ? this.windowId : tabs.map(tab => tab.id),
-          [Constants.kSELECTED, Constants.kREADY_TO_CLOSE],
+          [Constants.kSELECTED, Constants.kREADY_TO_SELECT, Constants.kREADY_TO_CLOSE],
           false
         ),
         this[this.willCloseSelectedTabs ? 'onCloseSelectionChange' : 'onSelectionChange'].dispatch({
@@ -229,8 +229,10 @@ export default class DragSelection {
   }
 
   async syncToHighlighted() {
-    if (!this.willCloseSelectedTabs)
-      await Selection.select(this.selectedTabs);
+    if (this.willCloseSelectedTabs)
+      return;
+    await Selection.select(this.selectedTabs);
+    Selection.clearTabStateFromTST(this.windowId, Constants.kREADY_TO_SELECT);
   }
 
   async syncFromHighlighted() {
@@ -405,7 +407,7 @@ export default class DragSelection {
     await this.clear({ highlighted: false });
     this.dragEnteredCount = 1;
     this.willCloseSelectedTabs = message.startOnClosebox;
-    this.state = this.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kSELECTED ;
+    this.state = this.willCloseSelectedTabs ? Constants.kREADY_TO_CLOSE : Constants.kREADY_TO_SELECT ;
     this.pendingTabs = null;
     this.dragStartTarget = message.tab;
     this.allTabsOnDragReady = allTabs;

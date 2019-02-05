@@ -119,7 +119,7 @@ export async function clear(options = {}) {
     windowId = (await getActiveWindow()).id;
   const selectedTabs = await (options.force ? /* getAllTabs(windowId) */ null : getSelection(windowId));
   const promises = [
-    (options.force ? clearTabStateFromTST : notifyTabStateToTST)(options.force ? windowId : selectedTabs.map(tab => tab.id), Constants.kSELECTED, false)
+    (options.force ? clearTabStateFromTST : notifyTabStateToTST)(options.force ? windowId : selectedTabs.map(tab => tab.id), [Constants.kSELECTED, Constants.kREADY_TO_SELECT], false)
   ];
   if (options.highlighted !== false)
     requestUpdateHighlightedState({ clear: true })

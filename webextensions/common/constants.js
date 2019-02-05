@@ -14,6 +14,7 @@ export const kCOMMAND_REQUEST_CONNECT_PREFIX        = 'multipletab:request-conne
 
 
 export const kSELECTED       = 'mth-selected';
+export const kREADY_TO_SELECT = 'mth-ready-to-select';
 export const kREADY_TO_CLOSE = 'mth-ready-to-close';
 
 export const kCLICK_ACTION_NONE           = 1 << 0;
