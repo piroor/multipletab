@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 3.0.5 (2019.2.19)
+   * Shift-click on popup panel should select tabs. (regression on recent versions)
+   * Follow to changes of the theme on Tree Style Tab 2.7.19.
  - 3.0.4 (2019.1.13)
    * Multiselect collapsed tree of Tree Style Tabs more correctly.
    * Don't updated highlighted status of Firefox tabs while dragging on the panel. Firefox tabs are highlighted after the dragged range is determined.
