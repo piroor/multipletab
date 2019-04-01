@@ -369,8 +369,8 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
   const hasMultipleNormalTabs = normalTabsCount > 1;
   const multiselected         = selectedTabs.length > 1;
   const visibleTabs           = window.tabs.filter(tab => !tab.hidden);
-  const previousTab           = contextTab.index > 0 ? window.tabs[contextTab.index - 1] : null;
-  const nextTab               = contextTab.index < window.tabs.length ? window.tabs[contextTab.index + 1] : null;
+  const previousTab           = contextTab && contextTab.index > 0 ? window.tabs[contextTab.index - 1] : null;
+  const nextTab               = contextTab && contextTab.index < window.tabs.length ? window.tabs[contextTab.index + 1] : null;
 
   let modifiedItemsCount = 0;
 
