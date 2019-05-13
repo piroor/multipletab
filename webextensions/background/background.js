@@ -134,7 +134,7 @@ function onTSTAPIMessage(message) {
               windowId: message.windowId
             }).catch(handleMissingReceiverError);
             DragSelectionManager.onDragReady({
-              tab:             message.tab,
+              tab:             message.nearestVisibleAncestor || message.tab,
               window:          message.windowId,
               windowId:        message.windowId,
               startOnClosebox: message.closebox

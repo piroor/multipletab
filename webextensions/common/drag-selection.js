@@ -254,14 +254,15 @@ export default class DragSelection {
     if (message.button != 0)
       return Constants.kCLICK_ACTION_NONE;
 
-    const windowId = message.window || message.windowId || message.tab.windowId;
+    const tab      = message.nearestVisibleAncestor || message.tab;
+    const windowId = message.window || message.windowId || tab.windowId;
 
-    let selected = message.tab.active;
+    let selected = tab.active;
     if (!selected) {
-      if (message.tab.states)
-        selected = message.tab.states.includes(Constants.kSELECTED);
+      if (tab.states)
+        selected = tab.states.includes(Constants.kSELECTED);
       else
-        selected = this.has(message.tab);
+        selected = this.has(tab);
     }
 
     const ctrlKeyPressed = /^Mac/i.test(navigator.platform) ? message.metaKey : message.ctrlKey;
@@ -269,11 +270,11 @@ export default class DragSelection {
       log('regular click');
       const window = await browser.windows.get(windowId, { populate: true });
       if (window.tabs.filter(tab => tab.highlighted).length <= 1 ||
-          !message.tab.highlighted) {
+          !tab.highlighted) {
         await this.clear();
         this.inSelectionSession = false;
       }
-      this.lastClickedTab = message.tab;
+      this.lastClickedTab = tab;
       return Constants.kCLICK_ACTION_REGULAR_CLICK;
     }
 
@@ -282,10 +283,10 @@ export default class DragSelection {
       windowId: this.windowId
     }))[0];
 
-    let tabs = this.retrieveTargetTabs(message.tab);
+    let tabs = this.retrieveTargetTabs(tab);
     if (message.shiftKey) {
       const window = await browser.windows.get(windowId, { populate: true });
-      const betweenTabs = this.getTabsBetween(this.lastClickedTab || lastActiveTab, message.tab, window.tabs);
+      const betweenTabs = this.getTabsBetween(this.lastClickedTab || lastActiveTab, tab, window.tabs);
       log('select the clicked tab and tabs between last activated tab ', {
         lastClickedTab: this.lastClickedTab,
         lastActiveTab,
@@ -308,7 +309,7 @@ export default class DragSelection {
     }
     else if (ctrlKeyPressed) {
       log('toggle selection of the tab and all collapsed descendants, inSelectionSession = ', this.inSelectionSession);
-      if (message.tab.id == lastActiveTab.id) {
+      if (tab.id == lastActiveTab.id) {
         if (this.inSelectionSession) {
           const descendants = tabs.slice(1);
           if (descendants.length > 0) {
@@ -336,7 +337,7 @@ export default class DragSelection {
           this.add(tab);
       }
       this.inSelectionSession = true;
-      this.lastClickedTab = message.tab;
+      this.lastClickedTab = tab;
       this.syncToHighlighted();
       return Constants.kCLICK_ACTION_PARTIAL_SELECT;
     }
@@ -372,9 +373,11 @@ export default class DragSelection {
     if (message.button != 0)
       return false;
 
+    const tab = message.nearestVisibleAncestor || message.tab;
+
     // mouseup after long-press on the same target doesn't notify "dragend", so simulate dragexit.
     if (this.dragStartTarget &&
-        this.dragStartTarget.id == message.tab.id)
+        this.dragStartTarget.id == tab.id)
       this.onDragEnd(message);
 
     const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
@@ -382,8 +385,8 @@ export default class DragSelection {
         !message.shiftKey &&
         (!this.dragStartTarget ||
          // dragend on the dragstart tab itself
-         (message.tab &&
-          message.tab.id == this.dragStartTarget.id &&
+         (tab &&
+          tab.id == this.dragStartTarget.id &&
           this.selectedTabs.length == 1))) {
       this.clear();
     }
