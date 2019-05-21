@@ -320,7 +320,7 @@ async function registerToTST() {
       name:  browser.i18n.getMessage('extensionName'),
       icons: browser.runtime.getManifest().icons,
       listeningTypes,
-      permissions: ['tabs', 'cookies'],
+      permissions: ['tabs', 'cookies', 'incognito'],
       style: `
         .tab.${Constants.kSELECTED}::after,
         .tab.${Constants.kREADY_TO_SELECT}::after {
