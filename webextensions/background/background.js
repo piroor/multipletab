@@ -124,28 +124,28 @@ function onTSTAPIMessage(message) {
       return (async () => {
         await resolveTreeItemsToTabs(message);
         return DragSelectionManager.onMouseDown(message).then(action => {
-        if (action & Constants.kCLICK_ACTION_REGULAR_CLICK &&
-            configs.enableDragSelectionByLongPress) {
-          TSTLongPressTimer = setTimeout(async () => {
-            TSTLongPressTimer = undefined;
-            const window = await browser.windows.get(message.window, { populate: true });
-            if (window.tabs.filter(tab => tab.highlighted).length > 1)
-              return; // don't clear existing multiselection
-            browser.runtime.sendMessage(Constants.kTST_ID, {
-              type:     Constants.kTSTAPI_START_CUSTOM_DRAG,
-              windowId: message.windowId
-            }).catch(handleMissingReceiverError);
-            DragSelectionManager.onDragReady({
-              tab:             message.tab,
-              window:          message.windowId,
-              windowId:        message.windowId,
-              startOnClosebox: message.closebox
-            });
-          }, configs.longPressDuration);
-        }
+          if (action & Constants.kCLICK_ACTION_REGULAR_CLICK &&
+              configs.enableDragSelectionByLongPress) {
+            TSTLongPressTimer = setTimeout(async () => {
+              TSTLongPressTimer = undefined;
+              const window = await browser.windows.get(message.window, { populate: true });
+              if (window.tabs.filter(tab => tab.highlighted).length > 1)
+                return; // don't clear existing multiselection
+              browser.runtime.sendMessage(Constants.kTST_ID, {
+                type:     Constants.kTSTAPI_START_CUSTOM_DRAG,
+                windowId: message.windowId
+              }).catch(handleMissingReceiverError);
+              DragSelectionManager.onDragReady({
+                tab:             message.tab,
+                window:          message.windowId,
+                windowId:        message.windowId,
+                startOnClosebox: message.closebox
+              });
+            }, configs.longPressDuration);
+          }
 
-        return action & Constants.kCLICK_ACTION_MULTISELECTION ? true : false;
-      });
+          return action & Constants.kCLICK_ACTION_MULTISELECTION ? true : false;
+        });
       })();
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP:
@@ -157,7 +157,7 @@ function onTSTAPIMessage(message) {
       }
       return (async () => {
         await resolveTreeItemsToTabs(message);
-      return DragSelectionManager.onMouseUp(message);
+        return DragSelectionManager.onMouseUp(message);
       })();
 
     case Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED:
@@ -180,7 +180,7 @@ function onTSTAPIMessage(message) {
         return;
       return (async () => {
         await resolveTreeItemsToTabs(message);
-      return DragSelectionManager.onDragCancel(message);
+        return DragSelectionManager.onDragCancel(message);
       })();
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART:
@@ -188,7 +188,7 @@ function onTSTAPIMessage(message) {
         return;
       return (async () => {
         await resolveTreeItemsToTabs(message);
-      return DragSelectionManager.onDragStart(message);
+        return DragSelectionManager.onDragStart(message);
       })();
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER:
@@ -196,7 +196,7 @@ function onTSTAPIMessage(message) {
         return;
       return (async () => {
         await resolveTreeItemsToTabs(message);
-      return DragSelectionManager.onDragEnter(message);
+        return DragSelectionManager.onDragEnter(message);
       })();
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT:
@@ -204,7 +204,7 @@ function onTSTAPIMessage(message) {
         return;
       return (async () => {
         await resolveTreeItemsToTabs(message);
-      return DragSelectionManager.onDragExit(message);
+        return DragSelectionManager.onDragExit(message);
       })();
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEND:
@@ -212,7 +212,7 @@ function onTSTAPIMessage(message) {
         return;
       return (async () => {
         await resolveTreeItemsToTabs(message);
-      return DragSelectionManager.onDragEnd(message);
+        return DragSelectionManager.onDragEnd(message);
       })();
 
     case Constants.kTSTAPI_NOTIFY_SIDEBAR_SHOW:
