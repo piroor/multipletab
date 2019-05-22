@@ -146,10 +146,16 @@ export default class DragSelection {
     beginningTabs = Array.from(beginningTabs.values());
     endTabs = Array.from(endTabs.values());
     if (beginningTabs[0].index < endTabs[0].index) { // top to bottom
-      return allTabs.slice(beginningTabs[beginningTabs.length - 1].index + 1, endTabs[0].index);
+      const startIndex = beginningTabs[beginningTabs.length - 1].index + 1;
+      const endIndex   = endTabs[0].index;
+      log(' => top to bottom ', { startIndex, endIndex });
+      return allTabs.slice(startIndex, endIndex);
     }
-    else { // bottom to top
-      return allTabs.slice(endTabs[endTabs.length - 1].index + 1, beginningTabs[0].index);
+    else {
+      const startIndex = endTabs[endTabs.length - 1].index + 1;
+      const endIndex   = beginningTabs[0].index;
+      log(' => bottom to top ', { startIndex, endIndex });
+      return allTabs.slice(startIndex, endIndex);
     }
   }
 
@@ -169,6 +175,7 @@ export default class DragSelection {
       log('  oldUndeterminedRange ', oldUndeterminedRange);
 
       const betweenTabs = this.getTabsBetween(this.firstHoverTargets, targetTabs, this.allTabsOnDragReady);
+      log('  betweenTabs ', betweenTabs);
       const newUndeterminedRange = new Map([
         ...this.firstHoverTargets.entries(),
         ...betweenTabs.map(tab => [tab.id, tab]),
