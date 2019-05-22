@@ -127,6 +127,7 @@ function onTSTAPIMessage(message) {
           TSTLongPressTimer = setTimeout(async () => {
             TSTLongPressTimer = undefined;
             const window = await browser.windows.get(message.window, { populate: true });
+            const tab = message.tab && window.tabs.find(tab => tab.id == message.tab.id);
             if (window.tabs.filter(tab => tab.highlighted).length > 1)
               return; // don't clear existing multiselection
             browser.runtime.sendMessage(Constants.kTST_ID, {
@@ -134,7 +135,7 @@ function onTSTAPIMessage(message) {
               windowId: message.windowId
             }).catch(handleMissingReceiverError);
             DragSelectionManager.onDragReady({
-              tab:             message.nearestVisibleAncestor || message.tab,
+              tab,
               window:          message.windowId,
               windowId:        message.windowId,
               startOnClosebox: message.closebox
@@ -320,7 +321,6 @@ async function registerToTST() {
       name:  browser.i18n.getMessage('extensionName'),
       icons: browser.runtime.getManifest().icons,
       listeningTypes,
-      permissions: ['tabs', 'cookies'],
       style: `
         .tab.${Constants.kSELECTED}::after,
         .tab.${Constants.kREADY_TO_SELECT}::after {
