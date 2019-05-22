@@ -254,7 +254,7 @@ export default class DragSelection {
     if (message.button != 0)
       return Constants.kCLICK_ACTION_NONE;
 
-    const tab      = message.nearestVisibleAncestor || message.tab;
+    const tab      = message.tab;
     const windowId = message.window || message.windowId || tab.windowId;
 
     let selected = tab.active;

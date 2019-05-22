@@ -121,21 +121,22 @@ function onTSTAPIMessage(message) {
         return;
       }
       mousedownHandled = true;
-      return DragSelectionManager.onMouseDown(message).then(action => {
+      return (async () => {
+        await resolveTreeItemsToTabs(message);
+        return DragSelectionManager.onMouseDown(message).then(action => {
         if (action & Constants.kCLICK_ACTION_REGULAR_CLICK &&
             configs.enableDragSelectionByLongPress) {
           TSTLongPressTimer = setTimeout(async () => {
             TSTLongPressTimer = undefined;
             const window = await browser.windows.get(message.window, { populate: true });
-            const tab = message.tab && window.tabs.find(tab => tab.id == message.tab.id);
-            if (window.tabs.filter(tab => tab.highlighted).length > 1)
+            if (window.tabs.filter(tab => message.tab.highlighted).length > 1)
               return; // don't clear existing multiselection
             browser.runtime.sendMessage(Constants.kTST_ID, {
               type:     Constants.kTSTAPI_START_CUSTOM_DRAG,
               windowId: message.windowId
             }).catch(handleMissingReceiverError);
             DragSelectionManager.onDragReady({
-              tab,
+              tab:             message.tab,
               window:          message.windowId,
               windowId:        message.windowId,
               startOnClosebox: message.closebox
@@ -145,6 +146,7 @@ function onTSTAPIMessage(message) {
 
         return action & Constants.kCLICK_ACTION_MULTISELECTION ? true : false;
       });
+      })();
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP:
       if (!mousedownHandled)
@@ -153,7 +155,10 @@ function onTSTAPIMessage(message) {
         clearTimeout(TSTLongPressTimer);
         TSTLongPressTimer = undefined;
       }
+      return (async () => {
+        await resolveTreeItemsToTabs(message);
       return DragSelectionManager.onMouseUp(message);
+      })();
 
     case Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED:
       return DragSelectionManager.onNonTabAreaClick(message);
@@ -173,27 +178,42 @@ function onTSTAPIMessage(message) {
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
       if (!configs.enableDragSelectionByLongPress)
         return;
+      return (async () => {
+        await resolveTreeItemsToTabs(message);
       return DragSelectionManager.onDragCancel(message);
+      })();
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART:
       if (!configs.enableDragSelectionByLongPress)
         return;
+      return (async () => {
+        await resolveTreeItemsToTabs(message);
       return DragSelectionManager.onDragStart(message);
+      })();
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER:
       if (!configs.enableDragSelectionByLongPress)
         return;
+      return (async () => {
+        await resolveTreeItemsToTabs(message);
       return DragSelectionManager.onDragEnter(message);
+      })();
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT:
       if (!configs.enableDragSelectionByLongPress)
         return;
+      return (async () => {
+        await resolveTreeItemsToTabs(message);
       return DragSelectionManager.onDragExit(message);
+      })();
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEND:
       if (!configs.enableDragSelectionByLongPress)
         return;
+      return (async () => {
+        await resolveTreeItemsToTabs(message);
       return DragSelectionManager.onDragEnd(message);
+      })();
 
     case Constants.kTSTAPI_NOTIFY_SIDEBAR_SHOW:
       Selection.clearTabStateFromTST(
@@ -203,6 +223,23 @@ function onTSTAPIMessage(message) {
       );
       return;
   }
+}
+
+async function resolveTreeItemsToTabs(message) {
+  if (!message.tab)
+    return;
+  const tabs = await browser.tabs.query({ windowId: message.windowId || message.window });
+  const tabsById = new Map();
+  for (const tab of tabs) {
+    tabsById.set(tab.id, tab);
+  }
+  message.tab = Object.assign(tabsById.get(message.tab.id), message.tab);
+  const resolve = (tab) => {
+    if (tab.children)
+      tab.children = tab.children.map(resolve);
+    return Object.assign(tabsById.get(tab.id), tab);
+  };
+  message.tab = resolve(message.tab);
 }
 
 function onMessageExternal(message, sender) {
