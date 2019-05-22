@@ -129,7 +129,7 @@ function onTSTAPIMessage(message) {
           TSTLongPressTimer = setTimeout(async () => {
             TSTLongPressTimer = undefined;
             const window = await browser.windows.get(message.window, { populate: true });
-            if (window.tabs.filter(tab => message.tab.highlighted).length > 1)
+            if (window.tabs.filter(tab => tab.highlighted).length > 1)
               return; // don't clear existing multiselection
             browser.runtime.sendMessage(Constants.kTST_ID, {
               type:     Constants.kTSTAPI_START_CUSTOM_DRAG,
