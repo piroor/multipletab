@@ -752,7 +752,11 @@ async function onClick(info, contextTab) {
         browser.runtime.sendMessage(owner, {
           type: Constants.kMTHAPI_INVOKE_SELECTED_TAB_COMMAND,
           id,
-          selection
+          windowId:  contextWindowId,
+          selection: {
+            selected:   TabSanitizer.sanitize(selection.selected),
+            unselected: TabSanitizer.sanitize(selection.unselected)
+          }
         }).catch(_e => {});
       }
     }; break;
@@ -781,7 +785,7 @@ function onMessage(message) {
     })();
 
     case Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK:
-      return onClick({ menuItemId: message.id }, TabSanitizer.sanitize(message.contextTab));
+      return onClick({ menuItemId: message.id }, message.contextTab);
   }
 }
 
