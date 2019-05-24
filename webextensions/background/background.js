@@ -205,6 +205,34 @@ function onTSTAPIMessage(message) {
   }
 }
 
+const EXPORTABLE_TAB_PROPERTIES = [
+  // basic tabs.Tab properties
+  'active',
+  'attention',
+  'audible',
+  'autoDiscardable',
+  'discarded',
+  'height',
+  'hidden',
+  'highlighted',
+  'id',
+  'incognito',
+  'index',
+  'isArticle',
+  'isInReaderMode',
+  'lastAccessed',
+  'mutedInfo',
+  'openerTabId',
+  'pinned',
+  'selected',
+  'sessionId',
+  'sharingState',
+  'status',
+  'successorId',
+  'width',
+  'windowId'
+];
+
 function onMessageExternal(message, sender) {
   //log('onMessageExternal: ', message, sender);
 
@@ -227,7 +255,21 @@ function onMessageExternal(message, sender) {
 
   switch (message.type) {
     case Constants.kMTHAPI_GET_TAB_SELECTION:
-      return Selection.getSelection();
+      return (async () => {
+        const highlightedTabs = await Selection.getSelection();
+        const sanitizedTabs = [];
+        for (const tab of highlightedTabs) {
+          if (tab.incognito)
+            continue;
+          const sanitizedTab = {};
+          for (const key of EXPORTABLE_TAB_PROPERTIES) {
+            if (key in tab)
+              sanitizedTab[key] = tab[key];
+          }
+          sanitizedTabs.push(sanitizedTab);
+        }
+        return sanitizedTabs;
+      })();
 
     case Constants.kMTHAPI_SET_TAB_SELECTION:
       return (async () => {
