@@ -3,7 +3,7 @@
  - master/HEAD
  - 3.0.7 (2019.5.24)
    * API経由でプライベートウィンドウのタブの情報を返さないようにした
-   * APIのレ寸ポンス等で`title`, `url`, `favIconUrl` および `cookieStoreId`を隠すようにした
+   * APIのレスポンス等で`title`, `url`, `favIconUrl` および `cookieStoreId`を隠すようにした
    * `tab-selection-command` のメッセージにウィンドウのIDを示すプロパティ `windowId` を追加した
  - 3.0.6 (2019.5.24)
    * ツリー型タブでプライベートウィンドウからのメッセージの通知が許可されている時に、プライベートウィンドウのタブを正しく強調表示するようにした
