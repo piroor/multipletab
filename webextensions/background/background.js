@@ -14,6 +14,7 @@ import * as Constants from '/common/constants.js';
 import * as Selection from '/common/selection.js';
 import * as Permissions from '/common/permissions.js';
 import * as DragSelectionManager from '/common/drag-selection-manager.js';
+import * as TabSanitizer from '/common/tab-sanitizer.js';
 import * as ContextMenu from './context-menu.js';
 
 log.context = 'BG';
@@ -205,34 +206,6 @@ function onTSTAPIMessage(message) {
   }
 }
 
-const EXPORTABLE_TAB_PROPERTIES = [
-  // basic tabs.Tab properties
-  'active',
-  'attention',
-  'audible',
-  'autoDiscardable',
-  'discarded',
-  'height',
-  'hidden',
-  'highlighted',
-  'id',
-  'incognito',
-  'index',
-  'isArticle',
-  'isInReaderMode',
-  'lastAccessed',
-  'mutedInfo',
-  'openerTabId',
-  'pinned',
-  'selected',
-  'sessionId',
-  'sharingState',
-  'status',
-  'successorId',
-  'width',
-  'windowId'
-];
-
 function onMessageExternal(message, sender) {
   //log('onMessageExternal: ', message, sender);
 
@@ -257,18 +230,7 @@ function onMessageExternal(message, sender) {
     case Constants.kMTHAPI_GET_TAB_SELECTION:
       return (async () => {
         const highlightedTabs = await Selection.getSelection();
-        const sanitizedTabs = [];
-        for (const tab of highlightedTabs) {
-          if (tab.incognito)
-            continue;
-          const sanitizedTab = {};
-          for (const key of EXPORTABLE_TAB_PROPERTIES) {
-            if (key in tab)
-              sanitizedTab[key] = tab[key];
-          }
-          sanitizedTabs.push(sanitizedTab);
-        }
-        return sanitizedTabs;
+        return TabSanitizer.sanitize(highlightedTabs);
       })();
 
     case Constants.kMTHAPI_SET_TAB_SELECTION:

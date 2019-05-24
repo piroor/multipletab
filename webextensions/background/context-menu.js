@@ -14,6 +14,7 @@ import * as Constants from '/common/constants.js';
 import * as Selection from '/common/selection.js';
 import * as Commands from '/common/commands.js';
 import * as DragSelectionManager from '/common/drag-selection-manager.js';
+import * as TabSanitizer from '/common/tab-sanitizer.js';
 
 const mItemsById = {
   'context_reloadTab': {
@@ -780,7 +781,7 @@ function onMessage(message) {
     })();
 
     case Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK:
-      return onClick({ menuItemId: message.id }, message.contextTab);
+      return onClick({ menuItemId: message.id }, TabSanitizer.sanitize(message.contextTab));
   }
 }
 

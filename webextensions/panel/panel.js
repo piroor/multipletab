@@ -13,6 +13,7 @@ import {
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import DragSelection from '/common/drag-selection.js';
+import * as TabSanitizer from '/common/tab-sanitizer.js';
 import MenuUI from '/extlib/MenuUI.js';
 import TabFavIconHelper from '/extlib/TabFavIconHelper.js';
 import '../extlib/l10n.js';
@@ -557,7 +558,7 @@ async function onMenuCommand(item, event) {
     browser.runtime.sendMessage({
       type: Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK,
       id:   id,
-      contextTab
+      contextTab: TabSanitizer.sanitize(contextTab)
     });
   }
 }
