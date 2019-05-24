@@ -2,7 +2,7 @@
 
  - master/HEAD
  - 3.0.7 (2019.5.24)
-   * IMPORTANT SECURITY NOTE: All versions MTH 2.x and MTH 3.x older than MTH 3.0.7 had a data breach problem via API for other addons. Sensitive tab information including private window tabs were unintentionally exposed to untrusted addons, regardless they were not have permissions to access those information via WebExtensions API. I strongly recommend you to update to MTH 3.0.7 and later. Please see [detailed information](https://github.com/piroor/treestyletab/issues/2288) also.
+   * IMPORTANT SECURITY NOTE: All versions MTH 2.x and MTH 3.x older than MTH 3.0.7 had a data disclosure problem via API for other addons. Sensitive tab information including private window tabs were unintentionally exposed to untrusted addons, regardless they were not have permissions to access those information via WebExtensions API. I strongly recommend you to update to MTH 3.0.7 and later. Please see [detailed information](https://github.com/piroor/treestyletab/issues/2288) also.
    * Never return tabs in private windows via the API.
    * Never expose `title`, `url`, `favIconUrl` and `cookieStoreId` to API responses.
    * Add an extra property `windowId` for `tab-selection-command` type messages.
