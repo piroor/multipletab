@@ -1,6 +1,10 @@
 # History
 
  - master/HEAD
+ - 3.0.7 (2019.5.24)
+   * Never return tabs in private windows via the API.
+   * Never expose `title`, `url`, `favIconUrl` and `cookieStoreId` to API responses.
+   * Add an extra property `windowId` for `tab-selection-command` type messages.
  - 3.0.6 (2019.5.24)
    * Highlight mutiselected tabs correctly when Tree Style Tab allows to notify messages from private windows.
    * Suppress error for context menu on non-tab area of Tree Style Tab.
