@@ -68,6 +68,7 @@ export const kTSTAPI_GET_TREE_STRUCTURE      = 'get-tree-structure';
 export const kTSTAPI_SET_TREE_STRUCTURE      = 'set-tree-structure';
 export const kTSTAPI_BLOCK_GROUPING          = 'block-grouping';
 export const kTSTAPI_UNBLOCK_GROUPING        = 'unblock-grouping';
+export const kTSTAPI_PERMISSIONS_CHANGED     = 'permissions-changed';
 export const kTSTAPI_CONTEXT_MENU_OPEN       = 'fake-contextMenu-open';
 export const kTSTAPI_CONTEXT_MENU_CREATE     = 'fake-contextMenu-create';
 export const kTSTAPI_CONTEXT_MENU_UPDATE     = 'fake-contextMenu-update';

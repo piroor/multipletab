@@ -112,6 +112,7 @@ let mousedownHandled = false;
 function onTSTAPIMessage(message) {
   switch (message.type) {
     case Constants.kTSTAPI_NOTIFY_READY:
+    case Constants.kTSTAPI_PERMISSIONS_CHANGED:
       registerToTST();
       return Promise.resolve(true);
 
@@ -299,6 +300,7 @@ async function registerToTST() {
     Constants.kTSTAPI_NOTIFY_TAB_MOUSEDOWN,
     Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP,
     Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED,
+    Constants.kTSTAPI_PERMISSIONS_CHANGED,
     Constants.kTSTAPI_CONTEXT_MENU_CLICK,
     Constants.kTSTAPI_CONTEXT_MENU_SHOWN
   ];
