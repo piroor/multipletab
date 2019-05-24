@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 3.0.6 (2019.5.24)
    * Highlight mutiselected tabs correctly when Tree Style Tab allows to notify messages from private windows.
    * Suppress error for context menu on non-tab area of Tree Style Tab.
    * Add ability to export and import all configurations except keyboard shortcuts. (Options => "Development" => "Debug mode" => "All Configs" => "Import/Export")
