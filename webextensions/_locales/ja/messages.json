@@ -17,7 +17,7 @@
   "notPermitted_allUrls_title": { "message": "権限のエラー" },
   "notPermitted_allUrls_message": { "message": "Webページの内容にアクセスするために必要な権限を取得できませんでした。マルチプルタブハンドラの設定画面で権限を設定して下さい。" },
   "notPermitted_bookmarks_title": { "message": "権限のエラー" },
-  "notPermitted_bookmarks_message": { "message": "ブックマーク作成に必要な権限を取得できませんでした。マルチプルタブハンドラの設定画面で権限を設定して下さい。" },
+  "notPermitted_bookmarks_message": { "message": "ブックマーク作成に必要な権限を取得できませんでした。この通知をクリックして権限を許可して下さい。" },
   "notPermitted_clipboardWrite_title": { "message": "権限のエラー" },
   "notPermitted_clipboardWrite_message": { "message": "クリップボードへのデータの書き込みに必要な権限を取得できませんでした。マルチプルタブハンドラの設定画面で権限を設定して下さい。" },
 
@@ -80,6 +80,8 @@
   "context_invertSelection_label":        { "message": "選択を反転(&I)" },
   "command_invertSelection":              { "message": "すべてのタブの選択状態を反転" },
 
+
+  "config_title": { "message": "マルチプルタブハンドラの設定" },
 
   "config_general_caption": { "message": "全般" },
 

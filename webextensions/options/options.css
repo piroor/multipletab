@@ -4,6 +4,24 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+body.independent {
+  background: -moz-dialog;
+  box-sizing: border-box;
+  color: #222426;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  font: caption;
+  margin: 0;
+  padding: 1em 1em 100%;
+  -moz-user-select: none;
+}
+
+em {
+  font-style: normal;
+  font-weight: bold;
+}
+
 p, ul {
   margin: 0 0 0.5em 0;
   padding: 0;
@@ -107,4 +125,10 @@ body > section > h1:first-child ~ * {
 }
 body > section.collapsed > h1:first-child ~ * {
   opacity: 0;
+}
+
+:target {
+  box-shadow: 0 0 0.5em highlight;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }

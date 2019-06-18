@@ -17,7 +17,7 @@
   "notPermitted_allUrls_title": { "message": "Permission error" },
   "notPermitted_allUrls_message": { "message": "Failed to get permissions to access contents of webpages. Please grant permissions via the configurations of Multiple Tab Handler." },
   "notPermitted_bookmarks_title": { "message": "Permission error" },
-  "notPermitted_bookmarks_message": { "message": "Failed to get permissions to create bookmarks. Please grant permissions via the configurations of Multiple Tab Handler." },
+  "notPermitted_bookmarks_message": { "message": "Failed to get permissions to create bookmarks. Please click here to grant the permission." },
   "notPermitted_clipboardWrite_title": { "message": "Permission error" },
   "notPermitted_clipboardWrite_message": { "message": "Failed to get permissions to write data to the clipboard. Please grant permissions via the configurations of Multiple Tab Handler." },
 
@@ -80,6 +80,8 @@
   "context_invertSelection_label":        { "message": "&Invert Selection" },
   "command_invertSelection":              { "message": "Invert Selection of All Tabs" },
 
+
+  "config_title": { "message": "Multiple Tab Handler Configurations" },
 
   "config_general_caption": { "message": "General" },
 

@@ -18,7 +18,8 @@ export async function bookmarkTabs(ids, options = {}) {
   if (!(await Permissions.isGranted(Permissions.BOOKMARKS))) {
     notify({
       title:   browser.i18n.getMessage('notPermitted_bookmarks_title'),
-      message: browser.i18n.getMessage('notPermitted_bookmarks_message')
+      message: browser.i18n.getMessage('notPermitted_bookmarks_message'),
+      url:     `moz-extension://${location.host}/options/options.html#permissionsSection`
     });
     return null;
   }
