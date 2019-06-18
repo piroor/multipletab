@@ -266,8 +266,8 @@ export default class DragSelection {
 
     let selected = tab.active;
     if (!selected) {
-      if (tab.states)
-        selected = tab.states.includes(Constants.kSELECTED);
+      if ('highlighted' in tab)
+        selected = tab.highlighted;
       else
         selected = this.has(tab);
     }
@@ -321,8 +321,8 @@ export default class DragSelection {
           const descendants = tabs.slice(1);
           if (descendants.length > 0) {
             this.add(lastActiveTab);
-            const partiallySelected = descendants.filter(tab => tab.states.includes(Constants.kSELECTED)).length != descendants.length;
-            selected = partiallySelected ? false : descendants[0].states.includes(Constants.kSELECTED);
+            const partiallySelected = descendants.filter(tab => tab.highlighted).length != descendants.length;
+            selected = partiallySelected ? false : descendants[0].highlighted;
             tabs = tabs.filter(tab => tab.id != lastActiveTab.id);
           }
         }
