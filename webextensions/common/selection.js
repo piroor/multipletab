@@ -44,6 +44,7 @@ export async function getSelectionAndOthers(windowId) {
 
 const mToBeSelected   = new Map();
 const mToBeUnselected = new Map();
+const mTabStates      = new Map();
 let mClearSelection = false;
 let mDelayedUpdate = null;
 function requestUpdateHighlightedState(params = {}) {
@@ -198,17 +199,20 @@ export async function clearTabStateFromTST(windowId, state, value = false) {
     return; // TST not found/ready.
 
   const affectedStates = Array.isArray(state) ? state : [state];
-  const affectedTabs = tstTabs.filter(tab => tab.states.some(tabState => {
-    const hasState = affectedStates.includes(tabState);
+  const affectedTabs = tstTabs.filter(tab => {
+    for (state of affectedStates) {
+    const states = mTabStates.get(tab.id);
+    const hasState = states && states.has(state);
     if (value) {
       // Add state => Only need to update tab if the tab doesn't have a wanted state.
-      return !hasState;
+      if (!hasState)
+        return true;
     }
-    else {
-      // Remove state => Only need to update tab if it has an affected state.
-      return hasState;
+    else if (hasState) { // Remove state => Only need to update tab if it has an affected state.
+      return true;
     }
-  }));
+    }
+  });
 
   return notifyTabStateToTST(affectedTabs, state, value);
 }
@@ -218,6 +222,19 @@ export async function notifyTabStateToTST(tabIds, state, value) {
     tabIds = [tabIds];
   if (tabIds.length == 0)
     return;
+
+  for (const id of tabIds) {
+    const states = mTabStates.get(id) || new Set();
+    if (value)
+      states.add(state);
+    else
+      states.delete(state);
+
+    if (states.size > 0)
+      mTabStates.set(id, state);
+    else
+      mTabStates.delete(id);
+  }
 
   browser.runtime.sendMessage(Constants.kTST_ID, {
     type:  value ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
