@@ -230,7 +230,7 @@ export async function notifyTabStateToTST(tabIds, state, value) {
       states.delete(state);
 
     if (states.size > 0)
-      mTabStates.set(id, state);
+      mTabStates.set(id, states);
     else
       mTabStates.delete(id);
   }
