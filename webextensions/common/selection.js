@@ -201,16 +201,15 @@ export async function clearTabStateFromTST(windowId, state, value = false) {
   const affectedStates = Array.isArray(state) ? state : [state];
   const affectedTabs = tstTabs.filter(tab => {
     for (state of affectedStates) {
-    const states = mTabStates.get(tab.id);
-    const hasState = states && states.has(state);
-    if (value) {
-      // Add state => Only need to update tab if the tab doesn't have a wanted state.
-      if (!hasState)
+      const states = mTabStates.get(tab.id);
+      const hasState = states && states.has(state);
+      if (value) {
+        if (!hasState) // Add state => Only need to update tab if the tab doesn't have a wanted state.
+          return true;
+      }
+      else if (hasState) { // Remove state => Only need to update tab if it has an affected state.
         return true;
-    }
-    else if (hasState) { // Remove state => Only need to update tab if it has an affected state.
-      return true;
-    }
+      }
     }
   });
 
