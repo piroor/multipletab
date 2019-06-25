@@ -12,4 +12,15 @@ before_script:
   - make install_extlib
 script:
   - make lint
-
+before_deploy:
+  - make
+deploy:
+  provider: releases
+  api_key:
+    secure: "TPlYewIsMRi3D5P7RjCtu8PezDXhnghsagYEjz8T0J5N6ZE1IEtHJCNl0L6KUOxy1iz+aTh3DesjWr8bIHdk9vQhDeZcq129KQ4GmYS8URRLACPFQDDNwWM47iHeUvPdLortgry4/M50i4HGMOu846CWdB2hu3Mq4ub+gKocTNc="
+  file:
+    - multipletab-we.xpi
+  skip_cleanup: true
+  on:
+    repo: piroor/multipletab
+    tags: true
