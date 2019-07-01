@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Clear "ready to select" state of tabs in Tree Style Tab's sidebar correctly when the multiselection state is cleared by other addons.
  - 3.0.8 (2019.6.19)
    * Fix compatibility issue with TST 3.0.8 and later. Deselection with Ctrl-click works again.
    * Add ability to open the options page from a notification for a required permission.
