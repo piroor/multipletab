@@ -103,7 +103,11 @@ async function onSelectionChange(info) {
       (info.unselected.length > 1 /* multiple tabs are unselected */ ||
        info.selected.length == 0 /* one tab is unselected and no new tab is newly selected */) &&
       !info.clear) {
-    info.dragSelection.clear({ force: true });
+    info.dragSelection.clear({
+      selected:   info.selected,
+      unselected: info.unselected,
+      force:      true
+    });
   }
 }
 
