@@ -35,7 +35,7 @@ function onConfigChanged(key) {
 configs.$addObserver(onConfigChanged);
 window.addEventListener('DOMContentLoaded', () => {
   // remove accesskey mark
-  for (const label of Array.slice(document.querySelectorAll('#menu-items label, #bookmarksPermissionCheck'))) {
+  for (const label of document.querySelectorAll('#menu-items label, #bookmarksPermissionCheck')) {
     label.lastChild.nodeValue = label.lastChild.nodeValue.replace(/\(&[a-z]\)|&([a-z])/i, '$1');
   }
 
@@ -57,7 +57,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 function initCollapsibleSections() {
-  for (const heading of Array.slice(document.querySelectorAll('body > section > h1'))) {
+  for (const heading of document.querySelectorAll('body > section > h1')) {
     const section = heading.parentNode;
     section.style.maxHeight = `${heading.offsetHeight}px`;
     if (configs.optionsExpandedSections.indexOf(section.id) < 0)
