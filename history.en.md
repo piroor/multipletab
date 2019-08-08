@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 3.0.10 (2019.8.8)
+   * Remove obsolete codes deprecated at Firefox 70.
  - 3.0.9 (2019.7.1)
    * Clear "ready to select" state of tabs in Tree Style Tab's sidebar correctly when the multiselection state is cleared by other addons.
  - 3.0.8 (2019.6.19)
