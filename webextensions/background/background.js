@@ -351,7 +351,8 @@ async function registerToTST() {
         }
 
         /* ::after pseudo element prevents firing of dragstart event */
-        .tab.${Constants.kREADY_TO_CLOSE} .closebox {
+        .tab.${Constants.kREADY_TO_CLOSE} tab-closebox,
+        .tab.${Constants.kREADY_TO_CLOSE} .closebox /* for TST 3.1.8 or older */ {
           background: Highlight;
         }
       `
