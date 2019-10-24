@@ -8,16 +8,15 @@ all: xpi
 install_dependency:
 	npm install
 
-lint:
-	$(NPM_BIN_DIR)/eslint . --ext=.js --report-unused-disable-directives
-	find . -type d -name node_modules -prune -o -type f -name '*.json' -print | \
-	  while read path; \
-	  do \
-	    "$(NPM_BIN_DIR)/jsonlint" -q "$$path" || exit 1; \
-	  done
+install_dependency:
+	[ -e "$(NPM_BIN_DIR)/eslint" -a -e "$(NPM_BIN_DIR)/jsonlint-cli" ] || npm install
 
-format:
-	$(NPM_BIN_DIR)/eslint . --ext=.js --report-unused-disable-directives --fix
+lint: install_dependency
+	"$(NPM_BIN_DIR)/eslint" . --ext=.js --report-unused-disable-directives
+	find . -type d -name node_modules -prune -o -type f -name '*.json' -print | xargs "$(NPM_BIN_DIR)/jsonlint-cli"
+
+format: install_dependency
+	"$(NPM_BIN_DIR)/eslint" . --ext=.js --report-unused-disable-directives --fix
 
 xpi: update_extlib install_extlib lint
 	rm -f ./*.xpi
