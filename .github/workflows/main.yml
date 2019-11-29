@@ -1,0 +1,22 @@
+name: CI/CD
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: prepare manifest.json with a revision number
+      run: |
+        cp webextensions/manifest.json ./
+        version=$(cat manifest.json | jq -r ".version" | sed -r -e "s/$/.$(git log --oneline | wc -l)/")
+        cat manifest.json | jq ".version |= \"$version\"" > webextensions/manifest.json
+    - name: build xpi
+      run: make
+    - uses: actions/upload-artifact@master
+      with:
+        name: multipletab-we.xpi
+        path: multipletab-we.xpi
