@@ -200,7 +200,7 @@ export async function clearTabStateFromTST(windowId, state, value = false) {
 
   const affectedStates = Array.isArray(state) ? state : [state];
   const affectedTabs = tstTabs.filter(tab => {
-    for (state of affectedStates) {
+    for (const state of affectedStates) {
       const states = mTabStates.get(tab.id);
       const hasState = states && states.has(state);
       if (value) {
