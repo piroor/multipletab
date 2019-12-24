@@ -852,7 +852,7 @@ DragSelectionManager.onDragSelectionEnd.addListener(async (message, selectionInf
       await onShown({}, selectionInfo.dragStartTab, mLastSelection);
       await browser.runtime.sendMessage(Constants.kTST_ID, {
         type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
-        window: (await browser.windows.getLastFocused()).id,
+        window: (message.window || message.windowId || (await browser.windows.getLastFocused()).id),
         tab:  selectionInfo.dragStartTab.id,
         left: message.clientX,
         top:  message.clientY
