@@ -334,9 +334,6 @@ async function onMouseDown(event) {
         mLastCleared = gDragSelection.clear({ highlighted: false });
         tryDragStart(event);
       }
-      else {
-        gTabBar.addEventListener('mousemove', onMouseMove);
-      }
       break;
   }
 }
@@ -364,17 +361,11 @@ async function tryDragStart(event) {
   mIsCapturing = true;
 }
 
-async function onMouseMove(event) {
-  gTabBar.removeEventListener('mousemove', onMouseMove);
-  tryDragStart(event);
-}
-
 function onMouseUp(event) {
   if (gLastClickedItem)
     gLastClickedItem.classList.remove('last-focused');
   gLastClickedItem = null;
   if (mIsCapturing) {
-    gTabBar.removeEventListener('mousemove', onMouseMove);
     gTabBar.removeEventListener('mouseover', onMouseOver);
     gTabBar.removeEventListener('mouseout', onMouseOut);
   }
