@@ -279,7 +279,7 @@ export default class DragSelection {
       if (window.tabs.filter(tab => tab.highlighted).length <= 1 ||
           !tab.highlighted) {
         if (!message.closebox)
-        await this.clear();
+          await this.clear();
         this.inSelectionSession = false;
       }
       this.lastClickedTab = tab;
