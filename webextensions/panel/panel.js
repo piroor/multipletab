@@ -281,7 +281,6 @@ async function onClick(event) {
 
   gClickFired = true;
   if (item && findCloseboxFromEvent(event)) {
-    if (!document.querySelector('.ready-to-close'))
       browser.tabs.remove(item.tab.id);
     return;
   }
