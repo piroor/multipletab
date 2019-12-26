@@ -320,7 +320,9 @@ async function onClick(event) {
       gLastClickedItem = item;
       gLastClickedItem.classList.add('last-focused');
 
-      if (event.ctrlKey || event.shiftKey)
+      if (event.ctrlKey ||
+          event.metaKey ||
+          event.shiftKey)
         return;
       item.classList.add('selected');
       gDragSelection.add(item.tab);
@@ -342,6 +344,7 @@ async function onMouseDown(event) {
     case 0:
       gClickFired = false;
       if (event.ctrlKey ||
+          event.metaKey ||
           event.shiftKey ||
           findCheckboxFromEvent(event))
         return;
