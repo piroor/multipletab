@@ -281,7 +281,7 @@ async function onClick(event) {
   await mLastDragSelectionClicked;
   const item = findTabItemFromEvent(event);
 
-  gClickFired = gLastDragEnteredTarget == (gDragTargetIsClosebox ? event.target : item);
+  gClickFired = !gLastDragEnteredTarget || (gLastDragEnteredTarget == (gDragTargetIsClosebox ? event.target : item));
   if (item && findCloseboxFromEvent(event)) {
     browser.tabs.remove(item.tab.id);
     return;
@@ -341,6 +341,7 @@ let gOnDragExitTimeout;
 let mLastCleared;
 
 async function onMouseDown(event) {
+  gLastDragEnteredTarget = null;
   switch (event.button) {
     case 0:
       gClickFired = false;
