@@ -4,10 +4,13 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
 body.independent {
-  background: -moz-dialog;
   box-sizing: border-box;
-  color: #222426;
   cursor: default;
   display: flex;
   flex-direction: column;
