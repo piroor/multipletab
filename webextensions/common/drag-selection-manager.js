@@ -30,8 +30,11 @@ browser.tabs.onCreated.addListener(tab => {
 });
 
 browser.tabs.onRemoved.addListener((tabId, removeInfo) => {
-  if (!removeInfo.isWindowClosing)
-    getDragSelection(removeInfo.windowId).clear();
+  if (!removeInfo.isWindowClosing) {
+    const selection = getDragSelection(removeInfo.windowId);
+    if (selection.selection.has(tabId))
+      selection.clear();
+  }
 });
 
 async function getWindowId(message) {

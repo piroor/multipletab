@@ -278,6 +278,7 @@ export default class DragSelection {
       const window = await browser.windows.get(windowId, { populate: true });
       if (window.tabs.filter(tab => tab.highlighted).length <= 1 ||
           !tab.highlighted) {
+        if (!message.closebox)
         await this.clear();
         this.inSelectionSession = false;
       }
@@ -390,7 +391,9 @@ export default class DragSelection {
     const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
     if (!ctrlKeyPressed &&
         !message.shiftKey &&
-        (!this.dragStartTarget ||
+        ((!this.dragStartTarget &&
+          tab &&
+          tab.highlighted) ||
          // dragend on the dragstart tab itself
          (tab &&
           tab.id == this.dragStartTarget.id &&
