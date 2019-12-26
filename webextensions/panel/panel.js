@@ -271,6 +271,8 @@ function onContextMenu(event) {
 }
 
 let mLastDragSelectionClicked;
+let gLastDragEnteredTarget;
+let gLastMousedownItemTabId;
 
 async function onClick(event) {
   if (event.button != 0)
@@ -279,7 +281,7 @@ async function onClick(event) {
   await mLastDragSelectionClicked;
   const item = findTabItemFromEvent(event);
 
-  gClickFired = true;
+  gClickFired = gLastDragEnteredTarget == (gDragTargetIsClosebox ? event.target : item);
   if (item && findCloseboxFromEvent(event)) {
     browser.tabs.remove(item.tab.id);
     return;
@@ -328,13 +330,13 @@ async function onClick(event) {
       gDragSelection.syncToHighlighted();
     });
   }
-  else
+  else if (!gLastMousedownItemTabId) {
     gDragSelection.onNonTabAreaClick({
       button: event.button
     }).catch(console.log);
+  }
 }
 
-let gLastDragEnteredTarget;
 let gOnDragExitTimeout;
 let mLastCleared;
 
@@ -342,6 +344,8 @@ async function onMouseDown(event) {
   switch (event.button) {
     case 0:
       gClickFired = false;
+      const item = findTabItemFromEvent(event);
+      gLastMousedownItemTabId = item && item.tab.id;
       if (event.ctrlKey ||
           event.metaKey ||
           event.shiftKey ||
@@ -351,6 +355,10 @@ async function onMouseDown(event) {
       //  selection,so we need to clear old selection here.
       mLastCleared = gDragSelection.clear({ highlighted: false });
       tryDragStart(event);
+      break;
+
+    default:
+      gLastMousedownItemTabId = null;
       break;
   }
 }
@@ -365,12 +373,12 @@ async function tryDragStart(event) {
   if (!item)
     return;
   await mLastCleared;
-  gDragTargetIsClosebox =  event.target.classList.contains('closebox');
+  gDragTargetIsClosebox  = findCloseboxFromEvent(event);
   gLastDragEnteredTarget = gDragTargetIsClosebox ? event.target : item ;
   gDragSelection.onDragReady({
     tab:             item.tab,
     windowId:        gWindowId,
-    startOnClosebox: gDragTargetIsClosebox
+    startOnClosebox: !!gDragTargetIsClosebox
   }).catch(console.log);
   gTabBar.addEventListener('mouseover', onMouseOver);
   gTabBar.addEventListener('mouseout', onMouseOut);
@@ -487,7 +495,7 @@ async function rebuildTabItems() {
 
 function buildTabItem(tab) {
   const item = document.createElement('li');
-  item.classList.toggle('tab');
+  item.classList.add('tab');
 
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
