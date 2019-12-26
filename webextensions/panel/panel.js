@@ -229,35 +229,30 @@ function onCloseSelectionChange(info) {
 
 function findTabItemFromEvent(event) {
   let target = event.target;
-  while (target && !target.tab) {
+  if (!(target instanceof Element))
     target = target.parentNode;
-  }
-  if (target && target.tab)
-    return target;
-  else
-    return null;
+  return target.closest('li.tab');
 }
 
 function findCheckboxFromEvent(event) {
   let target = event.target;
-  while (target && String(target.localName).toLowerCase() != 'input') {
+  if (!(target instanceof Element))
     target = target.parentNode;
-  }
-  if (target && target.getAttribute('type') == 'checkbox')
-    return target;
-  else
-    return null;
+  return target.closest('.checkbox-container');
+}
+
+function findCloseboxFromEvent(event) {
+  let target = event.target;
+  if (!(target instanceof Element))
+    target = target.parentNode;
+  return target.closest('.closebox');
 }
 
 function findBottomCaptionFromEvent(event) {
   let target = event.target;
-  while (target && target.className != 'caption bottom') {
+  if (!(target instanceof Element))
     target = target.parentNode;
-  }
-  if (target && target.className == 'caption bottom')
-    return target;
-  else
-    return null;
+  return target.closest('.caption.button');
 }
 
 function onContextMenu(event) {
@@ -281,11 +276,13 @@ async function onClick(event) {
   if (event.button != 0)
     return;
 
+  await mLastDragSelectionClicked;
+  const item = findTabItemFromEvent(event);
+
   gClickFired = true;
-  if (event.target.classList &&
-      event.target.classList.contains('closebox')) {
+  if (item && findCloseboxFromEvent(event)) {
     if (!document.querySelector('.ready-to-close'))
-      browser.tabs.remove(event.target.parentNode.tab.id);
+      browser.tabs.remove(item.tab.id);
     return;
   }
   const caption = findBottomCaptionFromEvent(event);
@@ -294,9 +291,19 @@ async function onClick(event) {
     return;
   }
   gMenu.ui.close();
-  if (findCheckboxFromEvent(event))
+
+  if (item && findCheckboxFromEvent(event)) {
+    item.classList.toggle('selected');
+    if (item.classList.contains('selected')) {
+      gDragSelection.add(item.tab);
+    }
+    else {
+      gDragSelection.delete(item.tab);
+    }
+    gDragSelection.syncToHighlighted();
     return;
-  const item = findTabItemFromEvent(event);
+  }
+
   if (item) {
     mLastDragSelectionClicked = gDragSelection.onMouseDown({
       tab:           item.tab,
@@ -326,14 +333,14 @@ async function onMouseDown(event) {
   switch (event.button) {
     case 0:
       gClickFired = false;
-      if (event.ctrlKey ||event.shiftKey)
+      if (event.ctrlKey ||
+          event.shiftKey ||
+          findCheckboxFromEvent(event))
         return;
       // tabs.onHighlighted notified while mousemove may break new
       //  selection,so we need to clear old selection here.
-      if (!findCheckboxFromEvent(event)) {
-        mLastCleared = gDragSelection.clear({ highlighted: false });
-        tryDragStart(event);
-      }
+      mLastCleared = gDragSelection.clear({ highlighted: false });
+      tryDragStart(event);
       break;
   }
 }
@@ -470,23 +477,16 @@ function buildTabItem(tab) {
   const item = document.createElement('li');
   item.classList.toggle('tab');
 
-  const label    = document.createElement('label');
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');
   if (gDragSelection.has(tab))
     checkbox.setAttribute('checked', true);
-  checkbox.addEventListener('change', async () => {
-    await mLastDragSelectionClicked;
-    item.classList.toggle('selected');
-    if (item.classList.contains('selected')) {
-      gDragSelection.add(tab);
-    }
-    else {
-      gDragSelection.delete(tab);
-    }
-    gDragSelection.syncToHighlighted();
-  });
-  label.appendChild(checkbox);
+  const checkboxContainer = document.createElement('span');
+  checkboxContainer.classList.add('checkbox-container');
+  checkboxContainer.appendChild(checkbox);
+  item.appendChild(checkboxContainer);
+
+  const label = document.createElement('label');
   const favicon = document.createElement('img');
   TabFavIconHelper.loadToImage({
     image: favicon,

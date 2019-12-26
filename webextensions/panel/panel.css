@@ -8,6 +8,7 @@
   --button-opacity: 0.75;
   --button-hover-opacity: 1;
   --button-active-opacity: 0.5;
+  --item-vertical-padding: 0.25em;
   /* https://dxr.mozilla.org/mozilla-central/rev/b056526be38e96b3e381b7e90cd8254ad1d96d9d/browser/themes/windows/browser.css#45 */
   --toolbar-non-lwt-bgcolor: #f9f9fa;
   --toolbar-non-lwt-textcolor: #0c0c0d;
@@ -88,10 +89,15 @@ body {
   vertical-align: middle;
 }
 
+#tabs li .checkbox-container {
+  margin-left: 0.5em;
+  padding: var(--item-vertical-padding) 0;
+}
+
 #tabs li label {
   flex-grow: 1;
   overflow: hidden;
-  padding: 0.25em 1em 0.25em 0.5em;
+  padding: var(--item-vertical-padding) 1em var(--item-vertical-padding) 0;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -126,6 +132,7 @@ body {
 
 .closebox {
   opacity: var(--button-opacity);
+  padding: var(--item-vertical-padding) 0;
 }
 
 .closebox::before {
