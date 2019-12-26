@@ -537,8 +537,8 @@ export default class DragSelection {
   }
 
   async onDragEnd(message) {
+    log('onDragEnd', { message, selection: this.selection, willCloseSelectedTabs: this.willCloseSelectedTabs });
     await this.lastDragReady;
-    log('onDragEnd', message, this.selection);
     if (this.selection.size > 1)
       this.syncToHighlighted();
     if (this.willCloseSelectedTabs) {
