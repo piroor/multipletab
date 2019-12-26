@@ -281,7 +281,7 @@ async function onClick(event) {
 
   gClickFired = true;
   if (item && findCloseboxFromEvent(event)) {
-      browser.tabs.remove(item.tab.id);
+    browser.tabs.remove(item.tab.id);
     return;
   }
   const caption = findBottomCaptionFromEvent(event);
