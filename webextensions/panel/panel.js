@@ -314,10 +314,16 @@ async function onClick(event) {
       metaKey:       event.metaKey,
       shiftKey:      event.shiftKey
     }).catch(console.log);
+    mLastDragSelectionClicked.then(() => {
     if (gLastClickedItem)
       gLastClickedItem.classList.remove('last-focused');
     gLastClickedItem = item;
     gLastClickedItem.classList.add('last-focused');
+
+      item.classList.add('selected');
+      gDragSelection.add(item.tab);
+      gDragSelection.syncToHighlighted();
+    });
   }
   else
     gDragSelection.onNonTabAreaClick({
