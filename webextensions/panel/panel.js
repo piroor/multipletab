@@ -320,6 +320,8 @@ async function onClick(event) {
       gLastClickedItem = item;
       gLastClickedItem.classList.add('last-focused');
 
+      if (event.ctrlKey || event.shiftKey)
+        return;
       item.classList.add('selected');
       gDragSelection.add(item.tab);
       gDragSelection.syncToHighlighted();
