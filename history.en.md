@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 3.1.1 (2019.12.27)
+   * Suppress error on click at TST sidebar.
  - 3.1.0 (2019.12.27)
    * Support Dark mode of the platform.
    * Show the fake context menu in TST's sidebar on the operated window correctly.
