@@ -26,9 +26,9 @@
   "panelCaptionTop": { "message": "タブを選択してください" },
   "panelCaptionBottom": { "message": "その後、ここをクリックして操作を選択" },
 
-  "panelDisabledBy_treestyletab": { "message": "タブをまとめて操作するUIは無効になっています。代わりにツリー型タブが提供するサイドバー内の縦型タブバーを使用して下さい。タブは0.5秒以上の長押しで開始するドラッグ操作で選択でき、また、Ctrl-クリックは選択のトグル、Shift-クリックはクリックしたタブとアクティブなタブの間にあるタブ全てを選択します。" },
+  "panelDisabledBy_treestyletab": { "message": "タブをまとめて操作するUIは無効になっています。代わりにTree Style Tabが提供するサイドバー内の縦型タブバーを使用して下さい。タブは0.5秒以上の長押しで開始するドラッグ操作で選択でき、また、Ctrl-クリックは選択のトグル、Shift-クリックはクリックしたタブとアクティブなタブの間にあるタブ全てを選択します。" },
 
-  "message_updatedFromLegacy_description": { "message": "<p>Firefox 57以降のバージョンに対応するため、Multiple Tab HandlerがWebExtensionsベースに生まれ変わりました。タブバー上でのドラッグ操作に代わって、今後はツールバー上の「タブをドラッグして選択」ボタンからパネルを開いてタブを選択して下さい。\n\nまた、<a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">ツリー型タブ</a>と併用すると、サイドバー内に表示されたタブバーにおいて同様のタブ選択操作を行えます（この場合は、タブの上でマウスのボタンを押してからしばらく待つとタブの選択が始まります）。</p>" },
+  "message_updatedFromLegacy_description": { "message": "<p>Firefox 57以降のバージョンに対応するため、Multiple Tab HandlerがWebExtensionsベースに生まれ変わりました。タブバー上でのドラッグ操作に代わって、今後はツールバー上の「タブをドラッグして選択」ボタンからパネルを開いてタブを選択して下さい。\n\nまた、<a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">Tree Style Tab</a>と併用すると、サイドバー内に表示されたタブバーにおいて同様のタブ選択操作を行えます（この場合は、タブの上でマウスのボタンを押してからしばらく待つとタブの選択が始まります）。</p>" },
 
   "message_newFeatures_description": { "message": "<p>Multiple Tab Handlerはドラッグ操作でタブを選択する機能を提供するアドオンです。選択されたタブに対する特別な機能は含まれませんので、選択されたタブの操作に対応した他のアドオンをインストールして併用して下さい。例：</p><ul><li><a href=\"https://addons.mozilla.org/firefox/addon/copy-selected-tabs-to-clipboar/\">選択したタブをクリップボードにコピー</a>: 選択されたタブの情報をクリップボードにコピーします。</li><li><a href=\"https://addons.mozilla.org/firefox/addon/save-selected-tabs-to-files/\">選択したタブを保存</a>: 選択されたタブの内容をファイルとしてダウンロードします。</li><li><a href=\"https://addons.mozilla.org/firefox/addon/tab-mover/\">Tab Mover</a>: 選択されたタブを他のウィンドウに移動します。</li></ul>" },
 
@@ -109,7 +109,7 @@
 
 
   "config_enableDragSelection_label": { "message": "項目のドラッグでタブを選択する" },
-  "config_enableDragSelectionByLongPress_label": { "message": "ツリー型タブのサイドバー上で、タブの長押しからのドラッグでタブを選択する" },
+  "config_enableDragSelectionByLongPress_label": { "message": "Tree Style Tabのサイドバー上で、タブの長押しからのドラッグでタブを選択する" },
   "config_longPressDuration_label_before": { "message": "\u200b" },
   "config_longPressDuration_label_after":  { "message": "ミリ秒以上ボタンを押していたら長押しと見なす" },
   "config_autoOpenMenuOnDragEnd_label": { "message": "ドラッグ操作でタブを選択した後に自動的にメニューを開く" },
@@ -139,7 +139,7 @@
 
   "config_dependsOn_before": { "message": "※この機能を使うには" },
   "config_dependsOn_after":  { "message": "が必要です。" },
-  "config_dependsOn_treestyletab_name": { "message": "ツリー型タブ" },
+  "config_dependsOn_treestyletab_name": { "message": "Tree Style Tab" },
   "config_dependsOn_treestyletab_uri":  { "message": "https://addons.mozilla.org/firefox/addon/tree-style-tab/" },
 
   "config_clearSelectionAfterCommandInvoked_label": { "message": "コマンドの実行後にタブの選択を解除する" },

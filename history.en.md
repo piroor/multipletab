@@ -1,6 +1,14 @@
 # History
 
  - master/HEAD
+   * Support Dark mode of the platform.
+   * Show the fake context menu in TST's sidebar on the operated window correctly.
+   * Clear "multiselected" appearance of tabs in TST's sidebar correctly after multiselection state is changed by someone.
+   * Don't start selection of items by dragstart on a checkbox in the popup panel anymore, to prevent misoperation around clicking on a checkbox.
+   * Expand clickable area of each checkboxe to fill the height of the tab item itself, to prevent misoperation around clicking on a checkbox.
+   * Handle Command-click on the popup panel correctly.
+   * Keep selection after a non-highlighted tab is closed, to respect Firefox's behavior.
+   * Unlocalize the name of this addon.
  - 3.0.10 (2019.8.8)
    * Remove obsolete codes deprecated at Firefox 70.
  - 3.0.9 (2019.7.1)
