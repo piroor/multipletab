@@ -396,6 +396,7 @@ export default class DragSelection {
           tab.highlighted) ||
          // dragend on the dragstart tab itself
          (tab &&
+          this.dragStartTarget &&
           tab.id == this.dragStartTarget.id &&
           this.selectedTabs.length == 1))) {
       this.clear();
