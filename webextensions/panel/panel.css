@@ -16,9 +16,28 @@
 }
 
 :root[data-theme="dark"] {
-  --bg-color: #2A2A2E /* rgb(42, 42, 46) */;
-  --text-color: rgb(249, 249, 250);
+  --in-content-page-background: #2A2A2E /* rgb(42, 42, 46) */;
+  --in-content-button-background: rgba(249,249,250,0.1);
+  --in-content-button-background-hover: rgba(249,249,250,0.15);
+  --in-content-border-hover: rgba(249,249,250,0.3);
+
+  --bg-color: var(--dark-popup);
+  --text-color: var(--dark-popup-text);
+  --focused-item-bgcolor: var(--in-content-button-background-hover);
+  --focused-item-textcolor: var(--text-color);
   --disabled-message-bgcolor: rgba(42, 42, 46, 0.85);
+  scrollbar-color: var(--in-content-border-hover) var(--in-content-page-background);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: var(--dark-popup);
+    --text-color: var(--dark-popup-text);
+    --focused-item-bgcolor: var(--in-content-button-background-hover);
+    --focused-item-textcolor: var(--text-color);
+    --disabled-message-bgcolor: rgba(42, 42, 46, 0.85);
+    scrollbar-color: var(--in-content-border-hover) var(--in-content-page-background);
+  }
 }
 
 body {
@@ -74,6 +93,10 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+#tabs li:hover {
+  background: var(--in-content-button-background);
 }
 
 #tabs li * {
