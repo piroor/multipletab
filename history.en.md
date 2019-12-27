@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+ - 3.1.0 (2019.12.27)
    * Support Dark mode of the platform.
    * Show the fake context menu in TST's sidebar on the operated window correctly.
    * Clear "multiselected" appearance of tabs in TST's sidebar correctly after multiselection state is changed by someone.
