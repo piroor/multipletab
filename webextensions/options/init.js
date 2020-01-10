@@ -33,7 +33,7 @@ function onConfigChanged(key) {
 }
 
 configs.$addObserver(onConfigChanged);
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
   // remove accesskey mark
   for (const label of document.querySelectorAll('#menu-items label, #bookmarksPermissionCheck')) {
     label.lastChild.nodeValue = label.lastChild.nodeValue.replace(/\(&[a-z]\)|&([a-z])/i, '$1');
@@ -43,16 +43,18 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('shortcuts').appendChild(aUI);
   });
 
-  configs.$loaded.then(() => {
-    Permissions.bindToCheckbox(
-      Permissions.BOOKMARKS,
-      document.querySelector('#bookmarksPermissionGranted')
-    );
+  await configs.$loaded;
 
-    options.buildUIForAllConfigs(document.querySelector('#debug-configs'));
-    onConfigChanged('debug');
-    initCollapsibleSections();
-  });
+  Permissions.bindToCheckbox(
+    Permissions.BOOKMARKS,
+    document.querySelector('#bookmarksPermissionGranted')
+  );
+
+  options.buildUIForAllConfigs(document.querySelector('#debug-configs'));
+  onConfigChanged('debug');
+  initCollapsibleSections();
+
+  document.documentElement.classList.add('initialized');
 }, { once: true });
 
 

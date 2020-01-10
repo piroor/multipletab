@@ -4,6 +4,13 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
 
+:root > * {
+  transition: opacity 0.25s ease-out;
+}
+:root:not(.initialized) > * {
+  opacity: 0;
+}
+
 body {
   background: var(--bg-color);
   color: var(--text-color);
