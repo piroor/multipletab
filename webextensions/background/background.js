@@ -112,6 +112,7 @@ async function onSelectionChange(info) {
 }
 
 let TSTLongPressTimer;
+let shoudHandleTSTLongPress = false;
 let mousedownHandled = false;
 
 function onTSTAPIMessage(message) {
@@ -127,9 +128,11 @@ function onTSTAPIMessage(message) {
         return;
       }
       mousedownHandled = true;
+      shoudHandleTSTLongPress = true;
       return DragSelectionManager.onMouseDown(message).then(action => {
         if (action & Constants.kCLICK_ACTION_REGULAR_CLICK &&
-            configs.enableDragSelectionByLongPress) {
+            configs.enableDragSelectionByLongPress &&
+            shoudHandleTSTLongPress) {
           TSTLongPressTimer = setTimeout(async () => {
             TSTLongPressTimer = undefined;
             const window = await browser.windows.get(message.window, { populate: true });
@@ -152,6 +155,7 @@ function onTSTAPIMessage(message) {
       });
 
     case Constants.kTSTAPI_NOTIFY_TAB_MOUSEUP:
+      shoudHandleTSTLongPress = false;
       if (!mousedownHandled)
         return;
       if (TSTLongPressTimer) {
