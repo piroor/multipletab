@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 3.1.2 (2020.1.24)
+   * Don't start "long-press" selection of tabs in Tree Style Tab's sidebar with simple left click even if it take too much time.
+   * Show options page after localized messages become ready.
  - 3.1.1 (2019.12.27)
    * Suppress error on click at TST sidebar.
  - 3.1.0 (2019.12.27)
