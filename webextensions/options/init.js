@@ -11,7 +11,6 @@ import {
 } from '/common/common.js';
 import * as Permissions from '/common/permissions.js';
 import Options from '/extlib/Options.js';
-import ShortcutCustomizeUI from '/extlib/ShortcutCustomizeUI.js';
 import '../extlib/l10n.js';
 
 log.context = 'Options';
@@ -38,10 +37,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   for (const label of document.querySelectorAll('#menu-items label, #bookmarksPermissionCheck')) {
     label.lastChild.nodeValue = label.lastChild.nodeValue.replace(/\(&[a-z]\)|&([a-z])/i, '$1');
   }
-
-  ShortcutCustomizeUI.build().then(aUI => {
-    document.getElementById('shortcuts').appendChild(aUI);
-  });
 
   await configs.$loaded;
 
