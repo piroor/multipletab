@@ -1,14 +1,14 @@
 {
     "extensionName": {
-        "message": "Multiple Tab Handler",
+        "message": "Multiple Tab Handler - 多标签页操控",
         "hash": "1ae1c8610559ba82a18c082648d91729"
     },
     "extensionDescription": {
-        "message": "让你能一次操控多个标签页。",
+        "message": "能够一次性管理多个标签页。",
         "hash": "7d75b0fb3741e0e731ec5ea7058cacf3"
     },
     "bookmarkFolder_label": {
-        "message": "$TITLE$ 及更多",
+        "message": "$TITLE$ 以及更多",
         "placeholders": {
             "title": { "content": "$1", "example": "title" }
         },
@@ -19,7 +19,7 @@
         "hash": "ab61fa1fa1bf23847df2aba0cc9f8bf9"
     },
     "bookmarkTabs_notification_message": {
-        "message": "$COUNT$ 个标签页（包括“$TITLE$”）已加入书签，放入“$PARENT$”中的新文件夹。",
+        "message": "$COUNT$ 个包含 “$TITLE$” 的标签页已被加入书签中名为 “$PARENT$” 的新建文件夹下。",
         "placeholders": {
             "title": { "content": "$1", "example": "Title" },
             "count": { "content": "$2", "example": "2" },
@@ -32,7 +32,7 @@
         "hash": "5648aca0df76cc07ac7f3cf1b709dff2"
     },
     "notPermitted_allUrls_message": {
-        "message": "获取访问网页内容的权限失败。请通过 Multiple Tab Handler 的配置授予权限。",
+        "message": "未能获取获取访问网页内容的权限。请通过 Multiple Tab Handler 的配置文件来授予权限。",
         "hash": "88f5f8311b24a573dd940b4e71e67e87"
     },
     "notPermitted_bookmarks_title": {
@@ -40,43 +40,51 @@
         "hash": "5648aca0df76cc07ac7f3cf1b709dff2"
     },
     "notPermitted_bookmarks_message": {
-        "message": "获取创建书签的权限失败。Please click here to grant the permission.",
-        "hash": "6b6d86e0a98131c72b8a754408486cff"
+        "message": "未能获取创建书签的权限。请点击这里授予来权限。",
+        "hash": "c5d639b53be3fbadaced2e7bdc2f3d48"
     },
     "notPermitted_clipboardWrite_title": {
         "message": "权限错误",
         "hash": "5648aca0df76cc07ac7f3cf1b709dff2"
     },
     "notPermitted_clipboardWrite_message": {
-        "message": "获取写入数据到剪贴板的权限失败。请通过 Multiple Tab Handler 的配置授予权限。",
+        "message": "未能获取将数据写入到剪贴板的权限。请通过 Multiple Tab Handler 的配置文件来授予权限。",
         "hash": "3acf34ebd388e9bf0bf26ae5d9da06c6"
     },
+    "panelTitle": {
+        "message": "用拖动来选择多个标签页",
+        "hash": "9ea2711ee2002a97843caf1128d69afd"
+    },
     "panelCaptionTop": {
-        "message": "选择标签页",
+        "message": "选择多个标签页",
         "hash": "ad9c1cee078ec4f786531c7f84c7a7e5"
     },
     "panelCaptionBottom": {
-        "message": "然后点击这里来选择操作",
+        "message": "然后点击这里来选择后续动作",
         "hash": "b0e45c7784e24174abc89f845d74a41a"
     },
     "panelDisabledBy_treestyletab": {
-        "message": "选择并执行面板已禁用，请改为查看 Tree Style Tab 在侧栏提供的垂直标签页栏。您可以长按标签页 0.5 秒以上以开始拖拽选择多个标签页。此外，按住 Ctrl 键并单击来选中单个标签页，按住 Shift 并单击来选择当前与点击目标及两者之间的标签页。",
+        "message": "选择和执行面板已被禁用，请改为查看 Tree Style Tab 在侧栏提供的垂直标签页栏。您可以通过拖动（长按超过 0.5 秒以上才能开始拖动操作）来选中多个标签页。此外，按住 Ctrl 键并点击可以切换单个标签页的选择状态，按住 Shift 并点击可以选中位于点击项和活动标签页之间的所有标签页。",
         "hash": "cf5f82a4493e732a4100b101af1b921e"
     },
     "message_updatedFromLegacy_description": {
-        "message": "<p>Multiple Tab Handler 现在基于 WebExtensions，适用于 Firefox 57 及更高版本。您现在可以从“Select Tabs by Dragging”的工具栏按钮中选择多个标签页并执行命令。\n\n此外，此扩展也兼容 <a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">Tree Style Tab</a> 扩展。在 Tree Style Tab 扩展的侧栏中，长按标签页超过 0.5 秒可选择标签页。</p>",
-        "hash": ""
+        "message": "<p>Multiple Tab Handler 现在基于 WebExtensions 技术，该技术被使用于 Firefox 57 以及更高版本。现在您可以在 “用拖动来选择多个标签页” 的工具栏按钮中选中多个标签页并执行一些命令。\n\n此外，此附加组件兼容于另一个名为 <a href=\"https://addons.mozilla.org/firefox/addon/tree-style-tab/\" target=\"_blank\">Tree Style Tab</a> 的附加组件。您将在 树状标签页 的侧栏中，通过长按（大约 0.5 秒）来选择多个标签页。</p>",
+        "hash": "ed0528212e80b778753c67d5506acf33"
+    },
+    "message_newFeatures_description": {
+        "message": "<p>作为一个附加组件，Multiple Tab Handler 提供了用拖动操作来选中多个标签页的能力。它将不会再提供用于这些选中标签页的特殊命令，请通过安装其它附加组件来对这些选中标签页进行处理。比如：</p><ul><li><a href=\"https://addons.mozilla.org/firefox/addon/copy-selected-tabs-to-clipboar/\">Copy Selected Tabs to Clipboard</a>：将这些选中标签页的信息复制到剪贴板。</li><li><a href=\"https://addons.mozilla.org/firefox/addon/save-selected-tabs-to-files/\">Save Selected Tabs to Files</a>：将这些选中标签页的内容下载到本地文件。</li><li><a href=\"https://addons.mozilla.org/firefox/addon/tab-mover/\">Tab Mover</a>：将这些选中标签页移动到其它窗口。</li></ul>",
+        "hash": "faa691484604de3b532141db71971689"
     },
     "tabContextMenu_reload_label": {
         "message": "重新载入标签页(&R)",
         "hash": "b47f1ba4fa9f6689bd27124978684636"
     },
     "tabContextMenu_mute_label": {
-        "message": "静音标签页(&M)",
+        "message": "将标签页静音(&M)",
         "hash": "1ff23ae0ae540c6635e774388a77ea2f"
     },
     "tabContextMenu_unmute_label": {
-        "message": "取消静音标签页(&M)",
+        "message": "将标签页取消静音(&M)",
         "hash": "c3ae3c72832dfedee6c48d0dc37eb954"
     },
     "tabContextMenu_pin_label": {
@@ -84,15 +92,43 @@
         "hash": "84f0158295ff8a14fd6062c7ec19c77c"
     },
     "tabContextMenu_unpin_label": {
-        "message": "取消固定标签页(&B)",
-        "hash": "b3df98de903f20828d11fae57bbeac1f"
+        "message": "取消固定标签页(&P)",
+        "hash": "60571db0ccb087c30009dadd2042ebd8"
     },
     "tabContextMenu_duplicate_label": {
-        "message": "创建标签页副本(&D)",
+        "message": "复制标签页(&D)",
         "hash": "80666f37f8702cba5b66d3e8d816ea5c"
     },
+    "tabContextMenu_selectAllTabs_label": {
+        "message": "选择全部标签页(&S)",
+        "hash": "667f807520d10d23768e1f075ae3879b"
+    },
+    "tabContextMenu_bookmark_label": {
+        "message": "将标签页加入书签(&B)",
+        "hash": "b035ef8b11c8bd09d475dc6a9a678524"
+    },
+    "tabContextMenu_reopenInContainer_label": {
+        "message": "用身份标签页重新打开(&E)",
+        "hash": "726c943cc0471513b11ea0dd9e83eed0"
+    },
+    "tabContextMenu_reopenInContainer_noContainer_label": {
+        "message": "无身份(&N)",
+        "hash": "62484898877c1c17dc4d60b12e127d45"
+    },
+    "tabContextMenu_moveTab_label": {
+        "message": "移动标签页(&V)",
+        "hash": "77e8a303ce434c9e0070b31836010c4c"
+    },
+    "tabContextMenu_moveTabToStart_label": {
+        "message": "移动到开头(&S)",
+        "hash": "0e98f182155fd7508ec2a355c24b330d"
+    },
+    "tabContextMenu_moveTabToEnd_label": {
+        "message": "移动到结尾(&E)",
+        "hash": "e25325b73a53982569896d47395c1d1b"
+    },
     "tabContextMenu_tearOff_label": {
-        "message": "移动到新窗口(&W)",
+        "message": "移动到新建窗口(&W)",
         "hash": "e73bb254e78fb1b2a161d4c3961065a9"
     },
     "tabContextMenu_reloadAll_label": {
@@ -100,12 +136,12 @@
         "hash": "df293c6903c9c0d90d7e75c6d0eb5f9f"
     },
     "tabContextMenu_bookmarkAll_label": {
-        "message": "为全部标签页添加书签(&T)…",
+        "message": "将所有标签页添加到书签…(&T)",
         "hash": "da48e2cbed383746950b8eeda47068db"
     },
-    "tabContextMenu_closeAfter_label": {
-        "message": "关闭右侧标签页(&I)",
-        "hash": "a27d298eb90c46cd1d6f62a8e405f980"
+    "tabContextMenu_closeTabsToBottom_label": {
+        "message": "关闭下方所有标签页(&O)",
+        "hash": "0689164749139e0495098b167b7b8153"
     },
     "tabContextMenu_closeOther_label": {
         "message": "关闭其他标签页(&O)",
@@ -119,17 +155,61 @@
         "message": "关闭标签页(&C)",
         "hash": "517e4cda82f826395a14d6bda5b1c7a0"
     },
+    "tabContextMenu_reload_label_multiselected": {
+        "message": "重新载入这些选中标签页(&R)",
+        "hash": "3e5cf0fe27692755cd7ee6980c4cd09a"
+    },
+    "tabContextMenu_mute_label_multiselected": {
+        "message": "将这些标签页静音(&M)",
+        "hash": "1291adb90de56e6d936a1e486b370a85"
+    },
+    "tabContextMenu_unmute_label_multiselected": {
+        "message": "将这些标签页取消静音(&M)",
+        "hash": "c9aec61975e838ae00211e78c365ca82"
+    },
+    "tabContextMenu_pin_label_multiselected": {
+        "message": "固定这些标签页(&P)",
+        "hash": "b32691b5170714cfdb1b406b5756149b"
+    },
+    "tabContextMenu_unpin_label_multiselected": {
+        "message": "取消固定这些标签页(&P)",
+        "hash": "b6bb715b523238636abe60c06c9679e6"
+    },
+    "tabContextMenu_duplicate_label_multiselected": {
+        "message": "复制这些标签页(&D)",
+        "hash": "0c30a83f8bcc07500df79d0596d99597"
+    },
+    "tabContextMenu_moveTab_label_multiselected": {
+        "message": "移动这些标签页(&V)",
+        "hash": "a4f38bcae623c1945a3ebf9ce6bd4e36"
+    },
+    "tabContextMenu_bookmark_label_multiselected": {
+        "message": "将这些标签页加入书签…(&B)",
+        "hash": "e6936ac5775361879f79f812c1ab0435"
+    },
+    "tabContextMenu_bookmarkSelected_label": {
+        "message": "将这些选中标签页加入书签…(&T)",
+        "hash": "0e8ef863c0adf4a4bad85202c69c8915"
+    },
+    "tabContextMenu_close_label_multiselected": {
+        "message": "关闭这些选中标签页(&S)",
+        "hash": "4b390c9abd8ac915b722d04f8555ce30"
+    },
     "context_selection_label": {
-        "message": "已选中标签页",
+        "message": "所选标签页",
         "hash": "1f9c0050f1f9ab68cd3d2f0aa15c4845"
     },
     "context_invertSelection_label": {
-        "message": "反选(&I)",
+        "message": "反向选择(&I)",
         "hash": "009238291e1a95ff8c2dd1c3c37c6651"
     },
     "command_invertSelection": {
-        "message": "反选所有标签页",
+        "message": "在所有标签页中反向选择",
         "hash": "dc57bf59cb8908abddab98cb11ff4c1a"
+    },
+    "config_title": {
+        "message": "Multiple Tab Handler 配置文件",
+        "hash": "2439110ce701f28d83c9e5e45be5f589"
     },
     "config_general_caption": {
         "message": "常规",
@@ -140,7 +220,7 @@
         "hash": "4e916e83dfa642d4d35d88b3910ef1ab"
     },
     "config_theme_caption": {
-        "message": "颜色主题",
+        "message": "颜色方案",
         "hash": "1c58e73a457bed7142f669cea9dc2a4c"
     },
     "config_theme_default": {
@@ -152,7 +232,7 @@
         "hash": "f52e24bb113e8c96fde952627b413812"
     },
     "config_panelSize_description": {
-        "message": "*您可以使用任何 CSS 长度值。",
+        "message": "*您可以使用任何 CSS length 数值。",
         "hash": "77b8f971520f137ed0ad26727acf25f3"
     },
     "config_minSize_caption": {
@@ -200,15 +280,35 @@
         "hash": "64887fe9dc790f0670deae5f1b7ac7e2"
     },
     "config_fontSize_description": {
-        "message": "*您可以使用任何 CSS font-size 值。",
+        "message": "*您可以使用任何 CSS font-size 数值。",
         "hash": "c8a9e09704138baa86d1666120f98453"
     },
+    "config_applyThemeColorToIcon_label": {
+        "message": "将主题颜色应用到工具栏按钮（*在 Firefox 62 或者更高版本中，您需要通过 “about:config” 将 “svg.context-properties.content.enabled” 设置为 “true” ）",
+        "hash": "ed5f019ba1ec52dfefab380adadf3bd4"
+    },
+    "config_enableDragSelection_label": {
+        "message": "通过在条目上拖动来选中多个标签页",
+        "hash": "7e88645533f1e85f29a81516bdb08a89"
+    },
+    "config_enableDragSelectionByLongPress_label": {
+        "message": "在 Tree Style Tab 的侧栏中，需要通过长按后拖动来选中多个标签页",
+        "hash": "e59fa9d883523d41346282cf74631bd1"
+    },
+    "config_longPressDuration_label_before": {
+        "message": "当鼠标按键被按下超过",
+        "hash": "8d6e116cf5511a34d7fab2d380621bc8"
+    },
+    "config_longPressDuration_label_after": {
+        "message": "毫秒后，将其当做一次长按来处理",
+        "hash": "3b4832e2c9bcddba0b917845a0d984dc"
+    },
     "config_autoOpenMenuOnDragEnd_label": {
-        "message": "标签页选中后自动打开菜单 by dragging",
-        "hash": ""
+        "message": "用拖动选中多个标签页后自动打开菜单",
+        "hash": "040b0e53f155fedf5e490a43bd6558ff"
     },
     "config_menu_caption": {
-        "message": "额外上下文菜单项",
+        "message": "附加的上下文菜单项",
         "hash": "8e00dac74731a0e2d5ea82820f171cf2"
     },
     "config_clipboard_caption": {
@@ -216,11 +316,11 @@
         "hash": "f9ca6af12c53daa24ac97c96517b6a66"
     },
     "config_copyToClipboardFormats_label": {
-        "message": "名称",
+        "message": "标签名称",
         "hash": "6af54e4f44a97d7e4a804e2e9a2536e5"
     },
     "config_copyToClipboardFormats_template": {
-        "message": "复制数据的格式",
+        "message": "被复制数据的格式",
         "hash": "875a3da27f3b3df461a0bc357944fd8b"
     },
     "config_copyToClipboardFormats_add": {
@@ -240,19 +340,19 @@
         "hash": "ecc5ac18ed80111eb2930718a8062449"
     },
     "config_copyToClipboardFormats_restoreDefaults": {
-        "message": "恢复默认格式设置（保留新增的格式）",
+        "message": "恢复默认格式设置（保留新增格式）",
         "hash": "7292b900eb5211e2a5c8cc8219de8a1b"
     },
     "config_copyToClipboardFormats_placeholders": {
-        "message": "格式栏可用的占位符：\n%URL%=页面网址，\n%TITLE%=页面标题，\n%AUTHOR%=作者名（META 信息指定），\n%DESCRIPTION%=描述（META 信息指定），\n%KEYWORDS%=搜索关键词（META 信息指定），\n%URL_HTMLIFIED%=为 HTML 转义的 URL，\n%TITLE_HTMLIFIED%=为 HTML 转义的标题，\n%AUTHOR_HTMLIFIED%=为 HTML 转义的作者名，\n%DESCRIPTION_HTMLIFIED%=为 HTML 转义的描述，\n%KEYWORDS_HTMLIFIED%=为 HTML 转义的关键词，\n%TST_INDENT(indenter)%、%TST_INDENT(indenter1)(indenter2)...(indenterN)%=层级（由 Tree Style Tab 提供）\n%TAB%=Tab，\n%EOL%=换行，\n%RT%=复制为富文本（注：复制的文本中不含此占位符）",
+        "message": "格式栏可用占位符：\n%URL%=页面网址，\n%TITLE%=页面标题，\n%AUTHOR%=作者名（由 META 指定），\n%DESCRIPTION%=描述（由 META 指定），\n%KEYWORDS%=搜索关键字（由 META 指定），\n%URL_HTMLIFIED%= HTML 转义网址，\n%TITLE_HTMLIFIED%= HTML 转义标题，\n%AUTHOR_HTMLIFIED%= HTML 转义作者名，\n%DESCRIPTION_HTMLIFIED%= HTML 转义描述，\n%KEYWORDS_HTMLIFIED%= HTML 转义关键字，\n%TST_INDENT(indenter)%、%TST_INDENT(indenter1)(indenter2)...(indenterN)%=缩进（由 Tree Style Tab 提供支持）\n%TAB%=Tab，\n%EOL%=换行，\n%RT%=复制为富文本（请注意：占位符本身不会被复制）",
         "hash": "e4fa53727b5f0e073c95814d82357d4a"
     },
     "config_saveTabs_caption": {
-        "message": "保存标签页到文件",
+        "message": "将这些标签页另存为文件",
         "hash": "9bf874a9c6376e6b9cb7a6f2124acd7c"
     },
     "config_saveTabsPrefix_label_before": {
-        "message": "标签页保存到",
+        "message": "将这些标签页保存到",
         "hash": "c5bfd74aed6217ca9d8a3c6b00e992f3"
     },
     "config_saveTabsPrefix_label_after": {
@@ -260,7 +360,7 @@
         "hash": "aa7906338dbdd2af4993295aa9112e97"
     },
     "config_saveTabsPrefix_description": {
-        "message": "*路径相对于“下载”文件夹。“/”将识别为路径分隔符。",
+        "message": "*路径位于 “下载” 文件夹中。 “/” 将被识别为路径分隔符。",
         "hash": "2ff802469cb2f1617681b50581ed2e94"
     },
     "config_permissions_caption": {
@@ -268,11 +368,11 @@
         "hash": "327ada9ad92a7d2f7318184f2a6d4f15"
     },
     "config_permissions_fallbackToToolbarButton_title": {
-        "message": "点击“选择并执行”工具栏按钮",
+        "message": "点击 “选择并执行” 工具栏按钮",
         "hash": "f094df277293beb64e74300ff15b419e"
     },
     "config_permissions_fallbackToToolbarButton_message": {
-        "message": "由于 Firefox 的问题，您无法从此画面请求权限。请点击“选择并执行”工具栏按钮来授予权限。",
+        "message": "由于 Firefox 的 bug ，您无法从此画面请求权限。请点击 “选择并执行” 工具栏按钮来授予权限。",
         "hash": "eb399fc1c0c872202db4efada8282d84"
     },
     "config_dependsOn_before": {
@@ -291,16 +391,20 @@
         "message": "https://addons.mozilla.org/firefox/addon/tree-style-tab/",
         "hash": "ad4806f641e96569dc143eaa0bf40f4d"
     },
+    "config_clearSelectionAfterCommandInvoked_label": {
+        "message": "当有命令被执行后取消选择",
+        "hash": "c1eb8acb602a6f6c239a81d480f92c68"
+    },
     "config_shortcuts_caption": {
         "message": "键盘快捷键",
         "hash": "3e4c94412820831fbea1494aa4d5ecf4"
     },
     "config_debug_caption": {
-        "message": "开发调试",
+        "message": "开发",
         "hash": "af84c3ce90181048c533886621f00ac2"
     },
     "config_disablePanelWhenAlternativeTabBarIsAvailable_label": {
-        "message": "有其他标签页栏可用时禁用面板",
+        "message": "有备选标签页栏可用时禁用面板",
         "hash": "4cfce1a08cace23ec76ab0cfe7878e41"
     },
     "config_debug_label": {
@@ -308,7 +412,7 @@
         "hash": "09b9b4dc690b71222315f1191f9a1d1b"
     },
     "config_all_caption": {
-        "message": "所有配置参数",
+        "message": "所有配置",
         "hash": "e0437bb7bd8d7ce28700078c6bb12418"
     },
 
