@@ -252,7 +252,7 @@ function findBottomCaptionFromEvent(event) {
   let target = event.target;
   if (!(target instanceof Element))
     target = target.parentNode;
-  return target.closest('.caption.button');
+  return target.closest('.caption.bottom');
 }
 
 function onContextMenu(event) {
