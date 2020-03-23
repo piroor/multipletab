@@ -24,7 +24,7 @@
 
   "panelTitle": { "message": "タブをドラッグして選択" },
   "panelCaptionTop": { "message": "タブを選択してください" },
-  "panelCaptionBottom": { "message": "その後、ここをクリックして操作を選択" },
+  "panelCaptionBottom": { "message": "その後、右クリックして操作を選択" },
 
   "panelDisabledBy_treestyletab": { "message": "タブをまとめて操作するUIは無効になっています。代わりにTree Style Tabが提供するサイドバー内の縦型タブバーを使用して下さい。タブは0.5秒以上の長押しで開始するドラッグ操作で選択でき、また、Ctrl-クリックは選択のトグル、Shift-クリックはクリックしたタブとアクティブなタブの間にあるタブ全てを選択します。" },
 
