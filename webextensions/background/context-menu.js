@@ -809,7 +809,7 @@ function onMessageExternal(message, sender) {
 
   switch (message.type) {
     case Constants.kMTHAPI_ADD_SELECTED_TAB_COMMAND: {
-      const addons = Object.assign({}, configs.cachedExternalAddons);
+      const addons = { ...configs.cachedExternalAddons };
       addons[sender.id] = true;
       configs.cachedExternalAddons = addons;
       message.id = `extra:${sender.id}:${message.id}`;

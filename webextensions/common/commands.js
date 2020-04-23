@@ -117,9 +117,10 @@ export async function moveToWindow(ids, windowId) {
 export async function safeMoveApiTabsAcrossWindows(aTabIds, moveOptions) {
   return (await Promise.all(aTabIds.map(async (aTabId, index) => {
     try {
-      let movedTab = await browser.tabs.move(aTabId, Object.assign({}, moveOptions, {
+      let movedTab = await browser.tabs.move(aTabId, {
+        ...moveOptions,
         index: moveOptions.index + index
-      }));
+      });
       if (Array.isArray(movedTab))
         movedTab = movedTab[0];
       return movedTab;
