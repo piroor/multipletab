@@ -1,8 +1,12 @@
 # History
 
  - master/HEAD
+ - 3.1.3 (2020.4.28)
+   * Recommend to use right click to show the menu instead of left click.
+   * Respond to click on the bottom caption as instructed.
    * Show in-content confirmation dialog correctly on lately versions of Firefox.
    * Remove keyboard shorctut customization UI, because Firefox ESR68 has it.
+   * Update `zh_CN` locale by [NightSharp](https://github.com/NightSharp). Thanks!
  - 3.1.2 (2020.1.24)
    * Don't start "long-press" selection of tabs in Tree Style Tab's sidebar with simple left click even if it take too much time.
    * Show options page after localized messages become ready.
