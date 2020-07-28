@@ -485,7 +485,7 @@ async function rebuildTabItems() {
   gTabItems.clear();
   gHighlightedTabs.clear();
   const fragment = document.createDocumentFragment();
-  const tabs = await browser.tabs.query({ currentWindow: true });
+  const tabs = await browser.tabs.query({ currentWindow: true, hidden: false });
   for (const tab of tabs) {
     const tabItem = buildTabItem(tab);
     fragment.appendChild(tabItem);
