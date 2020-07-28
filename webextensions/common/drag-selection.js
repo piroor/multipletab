@@ -300,8 +300,8 @@ export default class DragSelection {
         lastActiveTab,
         betweenTabs
       });
-      tabs = tabs.concat(betweenTabs);
-      tabs.push(this.lastClickedTab || lastActiveTab);
+      tabs.push(...betweenTabs, this.lastClickedTab || lastActiveTab);
+      tabs = tabs.filter(tab => !tab.hidden);
       const selectedTabIds = tabs.map(tab => tab.id);
       if (!ctrlKeyPressed) {
         for (const tab of this.selectedTabs.filter(tab => !selectedTabIds.includes(tab.id))) {
@@ -324,7 +324,7 @@ export default class DragSelection {
             this.add(lastActiveTab);
             const partiallySelected = descendants.filter(tab => tab.highlighted).length != descendants.length;
             selected = partiallySelected ? false : descendants[0].highlighted;
-            tabs = tabs.filter(tab => tab.id != lastActiveTab.id);
+            tabs = tabs.filter(tab => tab.id != lastActiveTab.id && !tab.hidden);
           }
         }
         else {
