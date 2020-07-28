@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 3.1.4 (2020.7.29)
+   * Better support for hidden tabs. (Hidden tabs won't be listed and multiselected anymore.)
  - 3.1.3 (2020.4.28)
    * Recommend to use right click to show the menu instead of left click.
    * Respond to click on the bottom caption as instructed.
