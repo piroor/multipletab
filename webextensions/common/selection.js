@@ -18,13 +18,13 @@ export async function getActiveWindow() {
 export async function getAllTabs(windowId) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
-  return browser.tabs.query({ windowId });
+  return browser.tabs.query({ windowId, hidden: false });
 }
 
 export async function getSelection(windowId) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
-  return browser.tabs.query({ windowId, highlighted: true });
+  return browser.tabs.query({ windowId, highlighted: true, hidden: false });
 }
 
 export async function getSelectionAndOthers(windowId) {

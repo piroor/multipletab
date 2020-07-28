@@ -631,7 +631,7 @@ async function onClick(info, contextTab) {
       }
     }; break;
     case 'context_selectAllTabs': {
-      const tabs = await browser.tabs.query({ windowId: contextWindowId });
+      const tabs = await browser.tabs.query({ windowId: contextWindowId, hidden: false });
       browser.tabs.highlight({
         windowId: contextWindowId,
         populate: false,
@@ -648,13 +648,13 @@ async function onClick(info, contextTab) {
       await Commands.bookmarkTabs(multiselectedTabs.map(tab => tab.id));
       break;
     case 'context_reloadAllTabs': {
-      const tabs = await browser.tabs.query({ windowId: contextWindowId }) ;
+      const tabs = await browser.tabs.query({ windowId: contextWindowId, hidden: false }) ;
       for (const tab of tabs) {
         browser.tabs.reload(tab.id);
       }
     }; break;
     case 'context_closeTabsToTheEnd': {
-      const tabs = await browser.tabs.query({ windowId: contextWindowId });
+      const tabs = await browser.tabs.query({ windowId: contextWindowId, hidden: false });
       let after = false;
       const closeTabs = [];
       const keptTabIds = isMultiselected ?
@@ -680,7 +680,7 @@ async function onClick(info, contextTab) {
       browser.tabs.remove(closeTabs.map(tab => tab.id));
     }; break;
     case 'context_closeOtherTabs': {
-      const tabs  = await browser.tabs.query({ windowId: contextWindowId });
+      const tabs  = await browser.tabs.query({ windowId: contextWindowId, hidden: false });
       const keptTabIds = isMultiselected ?
         multiselectedTabs.map(tab => tab.id) :
         [contextTab.id] ;

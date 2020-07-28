@@ -119,11 +119,14 @@ export default class DragSelection {
   /* utilities */
 
   retrieveTargetTabs(serializedTab, force = false) {
-    let tabs = [serializedTab];
-    if (serializedTab.children &&
-        (force || serializedTab.states.indexOf('subtree-collapsed') > -1)) {
-      for (const tab of serializedTab.children) {
-        tabs = tabs.concat(this.retrieveTargetTabs(tab, true))
+    const tabs = [];
+    if (!serializedTab.hidden) {
+      tabs.push(serializedTab);
+      if (serializedTab.children &&
+          (force || serializedTab.states.indexOf('subtree-collapsed') > -1)) {
+        for (const tab of serializedTab.children) {
+          tabs.push(...this.retrieveTargetTabs(tab, true))
+        }
       }
     }
     return tabs;
@@ -149,13 +152,13 @@ export default class DragSelection {
       const startIndex = beginningTabs[beginningTabs.length - 1].index + 1;
       const endIndex   = endTabs[0].index;
       log(' => top to bottom ', { startIndex, endIndex });
-      return allTabs.slice(startIndex, endIndex);
+      return allTabs.slice(startIndex, endIndex).filter(tab => !tab.hidden);
     }
     else {
       const startIndex = endTabs[endTabs.length - 1].index + 1;
       const endIndex   = beginningTabs[0].index;
       log(' => bottom to top ', { startIndex, endIndex });
-      return allTabs.slice(startIndex, endIndex);
+      return allTabs.slice(startIndex, endIndex).filter(tab => !tab.hidden);
     }
   }
 
@@ -367,10 +370,13 @@ export default class DragSelection {
     }
   }
   collectTabsRecursively(tab) {
-    let tabs = [tab];
-    if (tab.children) {
-      for (const child of tab.children) {
-        tabs = tabs.concat(this.collectTabsRecursively(child));
+    const tabs = [];
+    if (!tab.hidden) {
+      tabs.push(tab);
+      if (tab.children) {
+        for (const child of tab.children) {
+          tabs.push(...this.collectTabsRecursively(child));
+        }
       }
     }
     return tabs;
@@ -577,7 +583,7 @@ export default class DragSelection {
     const selectedIds = this.selectedTabIds;
     if (selectedIds.length == 0)
       return;
-    const allTabs = await browser.tabs.query({ windowId: this.windowId });
+    const allTabs = await browser.tabs.query({ windowId: this.windowId, hidden: false });
     if (selectedIds.sort().join(',') == highlightInfo.tabIds.sort().join(','))
       return;
     log('DragSelection.onHighlighted: ', {

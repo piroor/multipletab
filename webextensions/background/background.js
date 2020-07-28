@@ -98,7 +98,11 @@ async function onSelectionChange(info) {
   const tab = info.selected.length > 0 ? info.selected[0] : info.unselected[0];
   if (!tab)
     return;
-  const selectedTabs = await browser.tabs.query({ windowId: tab.windowId, highlighted: true });
+  const selectedTabs = await browser.tabs.query({
+    windowId:    tab.windowId,
+    highlighted: true,
+    hidden:      false
+  });
   if (selectedTabs.length == 1 &&
       (info.unselected.length > 1 /* multiple tabs are unselected */ ||
        info.selected.length == 0 /* one tab is unselected and no new tab is newly selected */) &&
