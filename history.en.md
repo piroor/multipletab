@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 3.1.5 (2020.7.30)
+   * Better support for hidden tabs. (Fixed broken selection from dragging on tabs.)
  - 3.1.4 (2020.7.29)
    * Better support for hidden tabs. (Hidden tabs won't be listed and multiselected anymore.)
  - 3.1.3 (2020.4.28)
