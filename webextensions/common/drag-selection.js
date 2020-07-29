@@ -148,18 +148,36 @@ export default class DragSelection {
       return [];
     beginningTabs = Array.from(beginningTabs.values());
     endTabs = Array.from(endTabs.values());
+    let startIndex, endIndex;
     if (beginningTabs[0].index < endTabs[0].index) { // top to bottom
-      const startIndex = beginningTabs[beginningTabs.length - 1].index + 1;
-      const endIndex   = endTabs[0].index;
+      const lastBeginningTab = beginningTabs[beginningTabs.length - 1];
+      for (let i = 0, maxi = allTabs.length; i < maxi; i++) {
+        const tab = allTabs[i];
+        if (tab.id == lastBeginningTab.id)
+          startIndex = i + 1;
+        if (tab.id == endTabs[0].id)
+          endIndex = i;
+        if (startIndex !== undefined &&
+            endIndex !== undefined)
+          break;
+      }
       log(' => top to bottom ', { startIndex, endIndex });
-      return allTabs.slice(startIndex, endIndex).filter(tab => !tab.hidden);
     }
     else {
-      const startIndex = endTabs[endTabs.length - 1].index + 1;
-      const endIndex   = beginningTabs[0].index;
+      const lastEndTab = endTabs[endTabs.length - 1];
+      for (let i = 0, maxi = allTabs.length; i < maxi; i++) {
+        const tab = allTabs[i];
+        if (tab.id == lastEndTab.id)
+          startIndex = i + 1;
+        if (tab.id == beginningTabs[0].id)
+          endIndex = i;
+        if (startIndex !== undefined &&
+            endIndex !== undefined)
+          break;
+      }
       log(' => bottom to top ', { startIndex, endIndex });
-      return allTabs.slice(startIndex, endIndex).filter(tab => !tab.hidden);
     }
+    return allTabs.slice(startIndex, endIndex).filter(tab => !tab.hidden);
   }
 
   // target can be multiple tabs - for example, collapsed tree of Tree Style Tab.
