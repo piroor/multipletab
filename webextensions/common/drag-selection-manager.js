@@ -58,39 +58,39 @@ function delegateOnDragSelectionEnd(...args) {
 }
 
 
-export async function onMouseDown(message) {
-  return getDragSelection(await getWindowId(message)).onMouseDown(message);
+export async function onMouseDown(message, options = {}) {
+  return getDragSelection(await getWindowId(message)).onMouseDown(message, options);
 }
 
-export async function onMouseUp(message) {
-  return getDragSelection(await getWindowId(message)).onMouseUp(message);
+export async function onMouseUp(message, options = {}) {
+  return getDragSelection(await getWindowId(message)).onMouseUp(message, options);
 }
 
-export async function onNonTabAreaClick(message) {
-  return getDragSelection(await getWindowId(message)).onNonTabAreaClick(message);
+export async function onNonTabAreaClick(message, options = {}) {
+  return getDragSelection(await getWindowId(message)).onNonTabAreaClick(message, options);
 }
 
 
-export async function onDragReady(message) {
-  return getDragSelection(await getWindowId(message)).onDragReady(message);
+export async function onDragReady(message, options = {}) {
+  return getDragSelection(await getWindowId(message)).onDragReady(message, options);
 }
 
-export async function onDragCancel(message) {
-  return getDragSelection(await getWindowId(message)).onDragCancel(message);
+export async function onDragCancel(message, options = {}) {
+  return getDragSelection(await getWindowId(message)).onDragCancel(message, options);
 }
 
-export async function onDragStart(message) {
-  return getDragSelection(await getWindowId(message)).onDragStart(message);
+export async function onDragStart(message, options = {}) {
+  return getDragSelection(await getWindowId(message)).onDragStart(message, options);
 }
 
-export async function onDragEnter(message) {
-  return getDragSelection(await getWindowId(message)).onDragEnter(message);
+export async function onDragEnter(message, options = {}) {
+  return getDragSelection(await getWindowId(message)).onDragEnter(message, options);
 }
 
-export async function onDragExit(message) {
-  return getDragSelection(await getWindowId(message)).onDragExit(message);
+export async function onDragExit(message, options = {}) {
+  return getDragSelection(await getWindowId(message)).onDragExit(message, options);
 }
 
-export async function onDragEnd(message) {
-  return getDragSelection(await getWindowId(message)).onDragEnd(message);
+export async function onDragEnd(message, options = {}) {
+  return getDragSelection(await getWindowId(message)).onDragEnd(message, options);
 }

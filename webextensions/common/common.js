@@ -16,7 +16,7 @@ export const configs = new Configs({
   theme: 'default',
   useCRLF: false,
   useWorkaroundForBug1272869: true,
-  ignoreHiddenTabs: true,
+  ignoreHidden: true,
 
   panelMinWidth: '25em',
   panelMaxWidth: '30em',
@@ -54,6 +54,10 @@ export const configs = new Configs({
     debug
   `.trim().split('\n').map(key => key.trim()).filter(key => key && key.indexOf('//') != 0)
 });
+
+export function shouldIgnoreHidden(givenValue) {
+  return givenValue !== undefined ? givenValue : configs.ignoreHidden;
+}
 
 
 export function log(message, ...args)

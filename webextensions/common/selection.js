@@ -6,7 +6,7 @@
 'use strict';
 
 import {
-  configs,
+  shouldIgnoreHidden,
   log,
   handleMissingReceiverError
 } from './common.js';
@@ -16,31 +16,31 @@ export async function getActiveWindow() {
   return browser.windows.getLastFocused({ populate: true });
 }
 
-export async function getAllTabs(windowId) {
+export async function getAllTabs(windowId, { ignoreHidden } = {}) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
   return browser.tabs.query({
     windowId,
-    ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
+    ...(shouldIgnoreHidden(ignoreHidden) ? { hidden: false } : {})
   });
 }
 
-export async function getSelection(windowId) {
+export async function getSelection(windowId, { ignoreHidden } = {}) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
   return browser.tabs.query({
     windowId,
     highlighted: true,
-    ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
+    ...(shouldIgnoreHidden(ignoreHidden) ? { hidden: false } : {})
   });
 }
 
-export async function getSelectionAndOthers(windowId) {
+export async function getSelectionAndOthers(windowId, { ignoreHidden } = {}) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
   const [allTabs, selectedTabs] = await Promise.all([
-    getAllTabs(windowId),
-    getSelection(windowId)
+    getAllTabs(windowId, { ignoreHidden }),
+    getSelection(windowId, { ignoreHidden })
   ]);
   const selectedTabIds = selectedTabs.map(tab => tab.id);
   return {
@@ -172,10 +172,10 @@ export async function unselect(tabsOrTab) {
   }
 }
 
-export async function selectAll(windowId) {
+export async function selectAll(windowId, { ignoreHidden } = {}) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
-  const tabs = await getAllTabs(windowId);
+  const tabs = await getAllTabs(windowId, { ignoreHidden });
   return select(tabs);
 }
 
@@ -188,10 +188,10 @@ export async function toggle(tab) {
     return select(tab);
 }
 
-export async function invert(windowId) {
+export async function invert(windowId, { ignoreHidden } = {}) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
-  const selection = await getSelectionAndOthers(windowId);
+  const selection = await getSelectionAndOthers(windowId, { ignoreHidden });
   notifyTabStateToTST(selection.selected.map(tab => tab.id), Constants.kSELECTED, false);
   notifyTabStateToTST(selection.unselected.map(tab => tab.id), Constants.kSELECTED, true);
   requestUpdateHighlightedState({ selected: selection.unselected });

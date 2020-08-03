@@ -100,8 +100,7 @@ async function onSelectionChange(info) {
     return;
   const selectedTabs = await browser.tabs.query({
     windowId:    tab.windowId,
-    highlighted: true,
-    ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
+    highlighted: true
   });
   if (selectedTabs.length == 1 &&
       (info.unselected.length > 1 /* multiple tabs are unselected */ ||
@@ -133,7 +132,7 @@ function onTSTAPIMessage(message) {
       }
       mousedownHandled = true;
       shoudHandleTSTLongPress = true;
-      return DragSelectionManager.onMouseDown(message).then(action => {
+      return DragSelectionManager.onMouseDown(message, { ignoreHidden: true }).then(action => {
         if (action & Constants.kCLICK_ACTION_REGULAR_CLICK &&
             configs.enableDragSelectionByLongPress &&
             shoudHandleTSTLongPress) {
@@ -150,7 +149,8 @@ function onTSTAPIMessage(message) {
               tab:             message.tab,
               window:          message.windowId,
               windowId:        message.windowId,
-              startOnClosebox: message.closebox
+              startOnClosebox: message.closebox,
+              ignoreHidden:    true
             });
           }, configs.longPressDuration);
         }
@@ -166,15 +166,15 @@ function onTSTAPIMessage(message) {
         clearTimeout(TSTLongPressTimer);
         TSTLongPressTimer = undefined;
       }
-      return DragSelectionManager.onMouseUp(message);
+      return DragSelectionManager.onMouseUp(message, { ignoreHidden: true });
 
     case Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED:
-      return DragSelectionManager.onNonTabAreaClick(message);
+      return DragSelectionManager.onNonTabAreaClick(message, { ignoreHidden: true });
 
     //case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
     //  if (!configs.enableDragSelectionByLongPress)
     //    return;
-    //  return DragSelectionManager.onDragReady(message);
+    //  return DragSelectionManager.onDragReady(message, { ignoreHidden: true });
 
     case Constants.kTSTAPI_NOTIFY_NATIVE_TAB_DRAGSTART:
       if (TSTLongPressTimer) {
@@ -186,27 +186,27 @@ function onTSTAPIMessage(message) {
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGCANCEL:
       if (!configs.enableDragSelectionByLongPress)
         return;
-      return DragSelectionManager.onDragCancel(message);
+      return DragSelectionManager.onDragCancel(message, { ignoreHidden: true });
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGSTART:
       if (!configs.enableDragSelectionByLongPress)
         return;
-      return DragSelectionManager.onDragStart(message);
+      return DragSelectionManager.onDragStart(message, { ignoreHidden: true });
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGENTER:
       if (!configs.enableDragSelectionByLongPress)
         return;
-      return DragSelectionManager.onDragEnter(message);
+      return DragSelectionManager.onDragEnter(message, { ignoreHidden: true });
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEXIT:
       if (!configs.enableDragSelectionByLongPress)
         return;
-      return DragSelectionManager.onDragExit(message);
+      return DragSelectionManager.onDragExit(message, { ignoreHidden: true });
 
     case Constants.kTSTAPI_NOTIFY_TAB_DRAGEND:
       if (!configs.enableDragSelectionByLongPress)
         return;
-      return DragSelectionManager.onDragEnd(message);
+      return DragSelectionManager.onDragEnd(message, { ignoreHidden: true });
 
     case Constants.kTSTAPI_NOTIFY_SIDEBAR_SHOW:
       Selection.clearTabStateFromTST(
