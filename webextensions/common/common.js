@@ -16,7 +16,7 @@ export const configs = new Configs({
   theme: 'default',
   useCRLF: false,
   useWorkaroundForBug1272869: true,
-  ignoreHidden: true,
+  includeHidden: false,
 
   panelMinWidth: '25em',
   panelMaxWidth: '30em',
@@ -55,8 +55,8 @@ export const configs = new Configs({
   `.trim().split('\n').map(key => key.trim()).filter(key => key && key.indexOf('//') != 0)
 });
 
-export function shouldIgnoreHidden(givenValue) {
-  return givenValue !== undefined ? givenValue : configs.ignoreHidden;
+export function shouldIncludeHidden(givenValue) {
+  return givenValue !== undefined ? givenValue : configs.includeHidden;
 }
 
 

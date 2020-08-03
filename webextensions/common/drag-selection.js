@@ -6,7 +6,7 @@
 'use strict';
 
 import {
-  shouldIgnoreHidden,
+  shouldIncludeHidden,
   log,
   handleMissingReceiverError
 } from './common.js';
@@ -119,15 +119,15 @@ export default class DragSelection {
 
   /* utilities */
 
-  retrieveTargetTabs(serializedTab, { ignoreHidden, force } = {}) {
+  retrieveTargetTabs(serializedTab, { includeHidden, force } = {}) {
     const tabs = [];
-    if (!shouldIgnoreHidden(ignoreHidden) ||
+    if (shouldIncludeHidden(includeHidden) ||
         !serializedTab.hidden) {
       tabs.push(serializedTab);
       if (serializedTab.children &&
           (force || serializedTab.states.indexOf('subtree-collapsed') > -1)) {
         for (const tab of serializedTab.children) {
-          tabs.push(...this.retrieveTargetTabs(tab, { ignoreHidden, force: true }))
+          tabs.push(...this.retrieveTargetTabs(tab, { includeHidden, force: true }))
         }
       }
     }
@@ -135,7 +135,7 @@ export default class DragSelection {
   }
 
   // boundaries of beggining and end can be multiple tabs - for example, collapsed tree of Tree Style Tab.
-  getTabsBetween(beginningTabs, endTabs, allTabs = [], { ignoreHidden } = {}) {
+  getTabsBetween(beginningTabs, endTabs, allTabs = [], { includeHidden } = {}) {
     if (beginningTabs.constructor != Map) {
       const beginningTabsMap = new Map();
       beginningTabsMap.set(beginningTabs.id, beginningTabs);
@@ -180,13 +180,13 @@ export default class DragSelection {
       log(' => bottom to top ', { startIndex, endIndex });
     }
     const tabs = allTabs.slice(startIndex, endIndex);
-    return shouldIgnoreHidden(ignoreHidden) ?
-      tabs.filter(tab => !tab.hidden) :
-      tabs;
+    return shouldIncludeHidden(includeHidden) ?
+      tabs :
+      tabs.filter(tab => !tab.hidden);
   }
 
   // target can be multiple tabs - for example, collapsed tree of Tree Style Tab.
-  toggleStateOfDragOverTabs(targetTabs, { ignoreHidden } = {}) {
+  toggleStateOfDragOverTabs(targetTabs, { includeHidden } = {}) {
     if (Array.isArray(targetTabs))
       targetTabs = new Map(targetTabs.map(tab => [tab.id, tab]));
 
@@ -204,7 +204,7 @@ export default class DragSelection {
         this.firstHoverTargets,
         targetTabs,
         this.allTabsOnDragReady,
-        { ignoreHidden }
+        { includeHidden }
       );
       log('  betweenTabs ', betweenTabs);
       const newUndeterminedRange = new Map([
@@ -287,7 +287,7 @@ export default class DragSelection {
 
   /* event handling */
 
-  async onMouseDown(message, { ignoreHidden } = {}) {
+  async onMouseDown(message, { includeHidden } = {}) {
     log('onMouseDown ', message);
     if (message.button != 0)
       return Constants.kCLICK_ACTION_NONE;
@@ -322,14 +322,14 @@ export default class DragSelection {
       windowId: this.windowId
     }))[0];
 
-    let tabs = this.retrieveTargetTabs(tab, { ignoreHidden });
+    let tabs = this.retrieveTargetTabs(tab, { includeHidden });
     if (message.shiftKey) {
       const window = await browser.windows.get(windowId, { populate: true });
       const betweenTabs = this.getTabsBetween(
         this.lastClickedTab || lastActiveTab,
         tab,
         window.tabs,
-        { ignoreHidden }
+        { includeHidden }
       );
       log('select the clicked tab and tabs between last activated tab ', {
         lastClickedTab: this.lastClickedTab,
@@ -337,7 +337,7 @@ export default class DragSelection {
         betweenTabs
       });
       tabs.push(...betweenTabs, this.lastClickedTab || lastActiveTab);
-      if (shouldIgnoreHidden(ignoreHidden))
+      if (!shouldIncludeHidden(includeHidden))
         tabs = tabs.filter(tab => !tab.hidden);
       const selectedTabIds = tabs.map(tab => tab.id);
       if (!ctrlKeyPressed) {
@@ -363,20 +363,20 @@ export default class DragSelection {
             selected = partiallySelected ? false : descendants[0].highlighted;
             tabs = tabs.filter(tab => (
               tab.id != lastActiveTab.id &&
-              (!shouldIgnoreHidden(ignoreHidden) ||
+              (shouldIncludeHidden(includeHidden) ||
                !tab.hidden)
             ));
           }
         }
         else {
           this.add(lastActiveTab);
-          await this.setSelectedStateToCollapsedDescendants(lastActiveTab, true, { ignoreHidden });
+          await this.setSelectedStateToCollapsedDescendants(lastActiveTab, true, { includeHidden });
           tabs = [];
         }
       }
       else if (!this.inSelectionSession) {
         this.add(lastActiveTab);
-        await this.setSelectedStateToCollapsedDescendants(lastActiveTab, true, { ignoreHidden });
+        await this.setSelectedStateToCollapsedDescendants(lastActiveTab, true, { includeHidden });
       }
       for (const tab of tabs) {
         log(' toggle ', { tab, toBeSelected: !selected });
@@ -392,14 +392,14 @@ export default class DragSelection {
     }
     return Constants.kCLICK_ACTION_NONE;
   }
-  async setSelectedStateToCollapsedDescendants(tab, selected, { ignoreHidden } = {}) {
+  async setSelectedStateToCollapsedDescendants(tab, selected, { includeHidden } = {}) {
     const tree = await browser.runtime.sendMessage(Constants.kTST_ID, {
       type: Constants.kTSTAPI_GET_TREE,
       tab:  tab.id
     }).catch(handleMissingReceiverError);
     if (!tree || !tree.states.includes('subtree-collapsed'))
       return;
-    const treeTabs = this.collectTabsRecursively(tree, { ignoreHidden });
+    const treeTabs = this.collectTabsRecursively(tree, { includeHidden });
     for (const tab of treeTabs) {
       if (selected)
         this.add(tab);
@@ -407,21 +407,21 @@ export default class DragSelection {
         this.delete(tab);
     }
   }
-  collectTabsRecursively(tab, { ignoreHidden } = {}) {
+  collectTabsRecursively(tab, { includeHidden } = {}) {
     const tabs = [];
-    if (!shouldIgnoreHidden(ignoreHidden) ||
+    if (shouldIncludeHidden(includeHidden) ||
         !tab.hidden) {
       tabs.push(tab);
       if (tab.children) {
         for (const child of tab.children) {
-          tabs.push(...this.collectTabsRecursively(child, { ignoreHidden }));
+          tabs.push(...this.collectTabsRecursively(child, { includeHidden }));
         }
       }
     }
     return tabs;
   }
 
-  async onMouseUp(message, { ignoreHidden } = {}) {
+  async onMouseUp(message, { includeHidden } = {}) {
     log('onMouseUp ', message);
     if (message.button != 0)
       return false;
@@ -431,7 +431,7 @@ export default class DragSelection {
     // mouseup after long-press on the same target doesn't notify "dragend", so simulate dragexit.
     if (this.dragStartTarget &&
         this.dragStartTarget.id == tab.id)
-      this.onDragEnd(message, { ignoreHidden });
+      this.onDragEnd(message, { includeHidden });
 
     const ctrlKeyPressed = message.ctrlKey || (message.metaKey && /^Mac/i.test(navigator.platform));
     if (!ctrlKeyPressed &&
@@ -460,9 +460,9 @@ export default class DragSelection {
   async onDragReady(message, options = {}) {
     return this.lastDragReady = this.onDragReadyInternal(message, options);
   }
-  async onDragReadyInternal(message, { ignoreHidden } = {}) {
+  async onDragReadyInternal(message, { includeHidden } = {}) {
     log('onDragReady', message);
-    const allTabs = await Selection.getAllTabs(this.windowId, { ignoreHidden });
+    const allTabs = await Selection.getAllTabs(this.windowId, { includeHidden });
     if (message.tab.highlighted &&
         allTabs.filter(tab => tab.highlighted).length > 1)
       return false;
@@ -480,7 +480,7 @@ export default class DragSelection {
     this.firstHoverTargets.set(message.tab.id, message.tab);
     this.lastHoverTargets.set(message.tab.id, message.tab);
 
-    const startTabs = this.retrieveTargetTabs(message.tab, { ignoreHidden });
+    const startTabs = this.retrieveTargetTabs(message.tab, { includeHidden });
     for (const tab of startTabs) {
       this.add(tab);
       this.undeterminedRange.set(tab.id, tab);
@@ -511,7 +511,7 @@ export default class DragSelection {
     //console.log('onDragStart', message);
   }
 
-  async onDragEnter(message, { ignoreHidden } = {}) {
+  async onDragEnter(message, { includeHidden } = {}) {
     await this.lastDragReady;
     //console.log('onDragEnter', message, { tab: message.tab, lastHover: this.lastHoverTargets });
     this.dragEnteredCount++;
@@ -530,8 +530,8 @@ export default class DragSelection {
     /*
     if (this.willCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
     */
-    const targetTabs = this.retrieveTargetTabs(message.tab, { ignoreHidden });
-    this.toggleStateOfDragOverTabs(targetTabs, { ignoreHidden });
+    const targetTabs = this.retrieveTargetTabs(message.tab, { includeHidden });
+    this.toggleStateOfDragOverTabs(targetTabs, { includeHidden });
     if (this.dragStartTarget &&
         message.tab.id == this.dragStartTarget.id &&
         this.selection.size == targetTabs.length) {

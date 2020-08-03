@@ -633,7 +633,7 @@ async function onClick(info, contextTab) {
     case 'context_selectAllTabs': {
       const tabs = await browser.tabs.query({
         windowId: contextWindowId,
-        ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
+        ...(configs.includeHiddenTabs ? { hidden: false } : {})
       });
       browser.tabs.highlight({
         windowId: contextWindowId,
@@ -653,7 +653,7 @@ async function onClick(info, contextTab) {
     case 'context_reloadAllTabs': {
       const tabs = await browser.tabs.query({
         windowId: contextWindowId,
-        ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
+        ...(configs.includeHiddenTabs ? { hidden: false } : {})
       });
       for (const tab of tabs) {
         browser.tabs.reload(tab.id);
@@ -662,7 +662,7 @@ async function onClick(info, contextTab) {
     case 'context_closeTabsToTheEnd': {
       const tabs = await browser.tabs.query({
         windowId: contextWindowId,
-        ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
+        ...(configs.includeHiddenTabs ? { hidden: false } : {})
       });
       let after = false;
       const closeTabs = [];

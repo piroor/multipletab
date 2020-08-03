@@ -487,7 +487,7 @@ async function rebuildTabItems() {
   const fragment = document.createDocumentFragment();
   const tabs = await browser.tabs.query({
     currentWindow: true,
-    ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
+    ...(configs.includeHiddenTabs ? { hidden: false } : {})
   });
   for (const tab of tabs) {
     const tabItem = buildTabItem(tab);
