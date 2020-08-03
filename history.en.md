@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 3.1.6 (2020.8.4)
+   * Add an option to list tabs hidden by other addons.
  - 3.1.5 (2020.7.30)
    * Better support for hidden tabs. (Fixed broken selection from dragging on tabs.)
  - 3.1.4 (2020.7.29)
