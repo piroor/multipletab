@@ -101,7 +101,7 @@ async function onSelectionChange(info) {
   const selectedTabs = await browser.tabs.query({
     windowId:    tab.windowId,
     highlighted: true,
-    hidden:      false
+    ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
   });
   if (selectedTabs.length == 1 &&
       (info.unselected.length > 1 /* multiple tabs are unselected */ ||

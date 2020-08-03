@@ -485,7 +485,10 @@ async function rebuildTabItems() {
   gTabItems.clear();
   gHighlightedTabs.clear();
   const fragment = document.createDocumentFragment();
-  const tabs = await browser.tabs.query({ currentWindow: true, hidden: false });
+  const tabs = await browser.tabs.query({
+    currentWindow: true,
+    ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
+  });
   for (const tab of tabs) {
     const tabItem = buildTabItem(tab);
     fragment.appendChild(tabItem);
@@ -497,6 +500,9 @@ async function rebuildTabItems() {
 function buildTabItem(tab) {
   const item = document.createElement('li');
   item.classList.add('tab');
+
+  if (tab.hidden)
+    item.classList.add('hidden');
 
   const checkbox = document.createElement('input');
   checkbox.setAttribute('type', 'checkbox');

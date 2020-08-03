@@ -6,6 +6,7 @@
 'use strict';
 
 import {
+  configs,
   log,
   handleMissingReceiverError
 } from './common.js';
@@ -18,13 +19,20 @@ export async function getActiveWindow() {
 export async function getAllTabs(windowId) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
-  return browser.tabs.query({ windowId, hidden: false });
+  return browser.tabs.query({
+    windowId,
+    ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
+  });
 }
 
 export async function getSelection(windowId) {
   if (!windowId)
     windowId = (await getActiveWindow()).id;
-  return browser.tabs.query({ windowId, highlighted: true, hidden: false });
+  return browser.tabs.query({
+    windowId,
+    highlighted: true,
+    ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
+  });
 }
 
 export async function getSelectionAndOthers(windowId) {

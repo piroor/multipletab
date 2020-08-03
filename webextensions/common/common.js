@@ -16,6 +16,7 @@ export const configs = new Configs({
   theme: 'default',
   useCRLF: false,
   useWorkaroundForBug1272869: true,
+  ignoreHiddenTabs: true,
 
   panelMinWidth: '25em',
   panelMaxWidth: '30em',

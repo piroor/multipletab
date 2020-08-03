@@ -95,6 +95,10 @@ body {
   padding: 0;
 }
 
+#tabs li.hidden {
+  opacity: 0.65;
+}
+
 #tabs li:hover {
   background: var(--in-content-button-background);
 }

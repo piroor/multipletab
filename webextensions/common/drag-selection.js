@@ -6,6 +6,7 @@
 'use strict';
 
 import {
+  configs,
   log,
   handleMissingReceiverError
 } from './common.js';
@@ -120,7 +121,8 @@ export default class DragSelection {
 
   retrieveTargetTabs(serializedTab, force = false) {
     const tabs = [];
-    if (!serializedTab.hidden) {
+    if (!configs.ignoreHiddenTabs ||
+        !serializedTab.hidden) {
       tabs.push(serializedTab);
       if (serializedTab.children &&
           (force || serializedTab.states.indexOf('subtree-collapsed') > -1)) {
@@ -177,7 +179,8 @@ export default class DragSelection {
       }
       log(' => bottom to top ', { startIndex, endIndex });
     }
-    return allTabs.slice(startIndex, endIndex).filter(tab => !tab.hidden);
+    const tabs = allTabs.slice(startIndex, endIndex);
+    return configs.ignoreHiddenTabs ? tabs.filter(tab => !tab.hidden) : tabs;
   }
 
   // target can be multiple tabs - for example, collapsed tree of Tree Style Tab.
@@ -322,7 +325,8 @@ export default class DragSelection {
         betweenTabs
       });
       tabs.push(...betweenTabs, this.lastClickedTab || lastActiveTab);
-      tabs = tabs.filter(tab => !tab.hidden);
+      if (configs.ignoreHiddenTabs)
+        tabs = tabs.filter(tab => !tab.hidden);
       const selectedTabIds = tabs.map(tab => tab.id);
       if (!ctrlKeyPressed) {
         for (const tab of this.selectedTabs.filter(tab => !selectedTabIds.includes(tab.id))) {
@@ -345,7 +349,11 @@ export default class DragSelection {
             this.add(lastActiveTab);
             const partiallySelected = descendants.filter(tab => tab.highlighted).length != descendants.length;
             selected = partiallySelected ? false : descendants[0].highlighted;
-            tabs = tabs.filter(tab => tab.id != lastActiveTab.id && !tab.hidden);
+            tabs = tabs.filter(tab => (
+              tab.id != lastActiveTab.id &&
+              (!configs.ignoreHiddenTabs ||
+               !tab.hidden)
+            ));
           }
         }
         else {
@@ -389,7 +397,8 @@ export default class DragSelection {
   }
   collectTabsRecursively(tab) {
     const tabs = [];
-    if (!tab.hidden) {
+    if (!configs.ignoreHiddenTabs ||
+        !tab.hidden) {
       tabs.push(tab);
       if (tab.children) {
         for (const child of tab.children) {
@@ -601,7 +610,10 @@ export default class DragSelection {
     const selectedIds = this.selectedTabIds;
     if (selectedIds.length == 0)
       return;
-    const allTabs = await browser.tabs.query({ windowId: this.windowId, hidden: false });
+    const allTabs = await browser.tabs.query({
+      windowId: this.windowId,
+      ...(configs.ignoreHiddenTabs ? { hidden: false } : {})
+    });
     if (selectedIds.sort().join(',') == highlightInfo.tabIds.sort().join(','))
       return;
     log('DragSelection.onHighlighted: ', {
