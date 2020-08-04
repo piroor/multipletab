@@ -88,40 +88,58 @@ export async function wait(task = 0, timeout = 0) {
   });
 }
 
-export async function notify(params = {}) {
+
+export async function notify({ icon, title, message, timeout, url } = {}) {
   const id = await browser.notifications.create({
     type:    'basic',
-    iconUrl: params.icon,
-    title:   params.title,
-    message: params.message
+    iconUrl: icon,
+    title,
+    message
   });
 
   let onClicked;
-  if (params.url) {
+  let onClosed;
+  return new Promise(async (resolve, _reject) => {
+    let resolved = false;
+
     onClicked = notificationId => {
       if (notificationId != id)
         return;
-      browser.tabs.create({
-        url: params.url
-      });
-      browser.notifications.onClicked.removeListener(onClicked);
-      onClicked = null;
+      if (url) {
+        browser.tabs.create({
+          url
+        });
+      }
+      resolved = true;
+      resolve(true);
     };
     browser.notifications.onClicked.addListener(onClicked);
-  }
 
-  let timeout = params.timeout;
-  if (typeof timeout != 'number')
-    timeout = configs.notificationTimeout;
-  if (timeout >= 0)
-    await wait(timeout);
+    onClosed = notificationId => {
+      if (notificationId != id)
+        return;
+      if (!resolved) {
+        resolved = true;
+        resolve(false);
+      }
+    };
+    browser.notifications.onClosed.addListener(onClosed);
 
-  if (onClicked) {
+    if (typeof timeout != 'number')
+      timeout = configs.notificationTimeout;
+    if (timeout >= 0) {
+      await wait(timeout);
+    }
+    await browser.notifications.clear(id);
+    if (!resolved)
+      resolve(false);
+  }).then(clicked => {
     browser.notifications.onClicked.removeListener(onClicked);
     onClicked = null;
-  }
-
-  await browser.notifications.clear(id);
+    browser.notifications.onClosed.removeListener(onClosed);
+    onClosed = null;
+    return clicked;
+  });
 }
 
 export function handleMissingReceiverError(error) {
