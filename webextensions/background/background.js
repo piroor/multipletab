@@ -8,6 +8,7 @@
 import {
   log,
   configs,
+  notify,
   handleMissingReceiverError
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
@@ -435,24 +436,20 @@ async function notifyNewFeatures() {
   */
 
   const featuresVersion = kFEATURES_VERSION /*+ featuresVersionOffset*/;
+  const isInitialInstall = configs.notifiedFeaturesVersion == 0;
 
   if (configs.notifiedFeaturesVersion >= featuresVersion)
     return false;
   configs.notifiedFeaturesVersion = featuresVersion;
 
-  const tab = await browser.tabs.create({
-    url:    browser.extension.getURL('resources/notify-features.html'),
-    active: true
+  const suffix = isInitialInstall ? 'installed' : 'updated';
+  notify({
+    url:     browser.extension.getURL(`resources/notify-features.html?${suffix}`),
+    title:   browser.i18n.getMessage(`startup_notification_title_${suffix}`),
+    message: browser.i18n.getMessage(`startup_notification_message_${suffix}`),
+    timeout: 90 * 1000
   });
-  const title       = `${browser.i18n.getMessage('extensionName')} ${browser.runtime.getManifest().version}`
-  const description = browser.i18n.getMessage('message_newFeatures_description');
-  browser.tabs.executeScript(tab.id, {
-    code: `
-      document.querySelector('#title').textContent = document.title = ${JSON.stringify(title)};
-      document.querySelector('#description').innerHTML = ${JSON.stringify(description)};
-      location.replace('data:text/html,' + encodeURIComponent(document.documentElement.innerHTML));
-    `
-  });
+
   return true;
 }
 
@@ -461,28 +458,11 @@ async function notifyUpdatedFromLegacy() {
     return false;
   configs.shouldNotifyUpdatedFromLegacyVersion = false;
 
-  const tab = await browser.tabs.create({
-    url:    browser.extension.getURL('resources/notify-features.html'),
-    active: true
-  });
-  const title       = `${browser.i18n.getMessage('extensionName')} ${browser.runtime.getManifest().version}`
-  const description = browser.i18n.getMessage('message_updatedFromLegacy_description');
-  browser.tabs.executeScript(tab.id, {
-    code: `
-      document.querySelector('#title').textContent = document.title = ${JSON.stringify(title)};
-      document.querySelector('#description').innerHTML = ${JSON.stringify(description)};
-      location.replace('data:text/html,' + encodeURIComponent(document.documentElement.innerHTML));
-    `
-  });
-
-  browser.runtime.onMessage.addListener(function onMessage(message, _sender) {
-    if (message &&
-        typeof message.type == 'string' &&
-        message.type == Constants.kCOMMAND_NOTIFY_PANEL_SHOWN) {
-      browser.runtime.onMessage.removeListener(onMessage);
-      browser.tabs.remove(tab.id)
-        .catch(_e => {}); // ignore already closed tab
-    }
+  notify({
+    url:     browser.extension.getURL(`resources/notify-features.html?legacy`),
+    title:   browser.i18n.getMessage(`startup_notification_title_legacy`),
+    message: browser.i18n.getMessage(`startup_notification_message_legacy`),
+    timeout: 90 * 1000
   });
 }
 

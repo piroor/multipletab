@@ -22,6 +22,14 @@
   "notPermitted_clipboardWrite_message": { "message": "クリップボードへのデータの書き込みに必要な権限を取得できませんでした。Multiple Tab Handlerの設定画面で権限を設定して下さい。" },
 
 
+  "startup_notification_title_legacy":   { "message": "生まれ変わったMultiple Tab Handlerについて" },
+  "startup_notification_message_legacy": { "message": "タブの選択法法が大幅に変わりました。ここをクリックして補足説明を確認してください。" },
+  "startup_notification_title_installed":   { "message": "Multiple Tab Handlerを使い始める方へ" },
+  "startup_notification_message_installed": { "message": "より自然な操作感を得るためには、追加の権限を許可する必要があります。ここをクリックして権限を設定してください。" },
+  "startup_notification_title_updated":     { "message": "Multiple Tab Handlerの動作が変わりました" },
+  "startup_notification_message_updated":   { "message": "操作感に影響する大きな変更がありました。ここをクリックして補足説明を確認してください。" },
+
+
   "panelTitle": { "message": "タブをドラッグして選択" },
   "panelCaptionTop": { "message": "タブを選択してください" },
   "panelCaptionBottom": { "message": "その後、右クリックして操作を選択" },

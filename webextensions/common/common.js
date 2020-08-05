@@ -92,7 +92,7 @@ export async function wait(task = 0, timeout = 0) {
 export async function notify({ icon, title, message, timeout, url } = {}) {
   const id = await browser.notifications.create({
     type:    'basic',
-    iconUrl: icon,
+    iconUrl: icon || browser.extension.getURL(`resources/64x64.svg`),
     title,
     message
   });

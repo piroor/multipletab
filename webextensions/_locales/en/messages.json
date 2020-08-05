@@ -22,6 +22,14 @@
   "notPermitted_clipboardWrite_message": { "message": "Failed to get permissions to write data to the clipboard. Please grant permissions via the configurations of Multiple Tab Handler." },
 
 
+  "startup_notification_title_legacy":   { "message": "About revived Multiple Tab Handler" },
+  "startup_notification_message_legacy": { "message": "The operation to select tabs is totally changed. Please click here to see explanations." },
+  "startup_notification_title_installed":   { "message": "For newcomer of Multiple Tab Handler" },
+  "startup_notification_message_installed": { "message": "Some extra permissions are required for more natural user experiences. Please click here to grant them." },
+  "startup_notification_title_updated":     { "message": "Noticeable Changes on Multiple Tab Handler" },
+  "startup_notification_message_updated":   { "message": "Some changes may affect to your use case. Please click here to see explanations." },
+
+
   "panelTitle": { "message": "Select Tabs by Dragging" },
   "panelCaptionTop": { "message": "Select Tabs" },
   "panelCaptionBottom": { "message": "And Right-Click to Choose Action" },
