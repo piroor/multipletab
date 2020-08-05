@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 3.1.7 (2020.8.5)
+   * The option to list tabs hidden by other addons didn't work as expected.
  - 3.1.6 (2020.8.4)
    * Add an option to list tabs hidden by other addons.
  - 3.1.5 (2020.7.30)
