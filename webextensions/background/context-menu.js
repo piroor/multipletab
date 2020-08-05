@@ -8,6 +8,7 @@
 import {
   log,
   configs,
+  shouldIncludeHidden,
   handleMissingReceiverError
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
@@ -633,7 +634,7 @@ async function onClick(info, contextTab) {
     case 'context_selectAllTabs': {
       const tabs = await browser.tabs.query({
         windowId: contextWindowId,
-        ...(configs.includeHiddenTabs ? { hidden: false } : {})
+        ...(shouldIncludeHidden() ? {} : { hidden: false })
       });
       browser.tabs.highlight({
         windowId: contextWindowId,
@@ -653,7 +654,7 @@ async function onClick(info, contextTab) {
     case 'context_reloadAllTabs': {
       const tabs = await browser.tabs.query({
         windowId: contextWindowId,
-        ...(configs.includeHiddenTabs ? { hidden: false } : {})
+        ...(shouldIncludeHidden() ? {} : { hidden: false })
       });
       for (const tab of tabs) {
         browser.tabs.reload(tab.id);
@@ -662,7 +663,7 @@ async function onClick(info, contextTab) {
     case 'context_closeTabsToTheEnd': {
       const tabs = await browser.tabs.query({
         windowId: contextWindowId,
-        ...(configs.includeHiddenTabs ? { hidden: false } : {})
+        ...(shouldIncludeHidden() ? {} : { hidden: false })
       });
       let after = false;
       const closeTabs = [];

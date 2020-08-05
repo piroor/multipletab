@@ -9,6 +9,7 @@ import {
   log,
   wait,
   configs,
+  shouldIncludeHidden,
   handleMissingReceiverError
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
@@ -487,7 +488,7 @@ async function rebuildTabItems() {
   const fragment = document.createDocumentFragment();
   const tabs = await browser.tabs.query({
     currentWindow: true,
-    ...(configs.includeHiddenTabs ? { hidden: false } : {})
+    ...(shouldIncludeHidden() ? {} : { hidden: false })
   });
   for (const tab of tabs) {
     const tabItem = buildTabItem(tab);
