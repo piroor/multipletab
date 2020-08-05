@@ -411,6 +411,7 @@ async function notifyReady() {
     configs.cachedExternalAddons = addons;
 }
 
+
 // migration
 
 browser.runtime.onInstalled.addListener(details => {
@@ -465,6 +466,37 @@ async function notifyUpdatedFromLegacy() {
     timeout: 90 * 1000
   });
 }
+
+function initNotifyFeaturesTab(tab) {
+  const type = /\?(legacy|installed|updated)/i.test(tab.url) && String(RegExp.$1).toLowerCase();
+
+  const title = `${browser.i18n.getMessage('extensionName')} ${browser.runtime.getManifest().version}`;
+  const description = browser.i18n.getMessage(
+    type == 'legacy' ?
+      'message_updatedFromLegacy_description' :
+      'message_newFeatures_description'
+  );
+
+  browser.tabs.executeScript(tab.id, {
+    code: `
+      document.querySelector('#title').textContent = document.title = ${JSON.stringify(title)};
+      document.querySelector('#description').innerHTML = ${JSON.stringify(description)};
+    `
+  });
+}
+
+browser.tabs.onUpdated.addListener(
+  (_tabId, updateInfo, tab) => {
+    if (updateInfo.status != 'complete')
+      return;
+    initNotifyFeaturesTab(tab);
+  },
+  { properties: ['status'],
+    urls: [browser.extension.getURL(`resources/notify-features.html*`)] }
+);
+browser.tabs.query({ url: browser.extension.getURL(`resources/notify-features.html*`) })
+  .then(tabs => tabs.forEach(initNotifyFeaturesTab));
+
 
 // This section should be removed and define those context-fill icons
 // statically on manifest.json after Firefox ESR66 (or 67) is released.
