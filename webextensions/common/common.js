@@ -32,6 +32,8 @@ export const configs = new Configs({
   enableDragSelectionByLongPress: true,
   longPressDuration: 400,
 
+  notificationTimeout: 10 * 1000,
+
   requestingPermissions: null,
   requestingPermissionsNatively: null,
 
