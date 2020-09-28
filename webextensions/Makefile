@@ -6,9 +6,6 @@ NPM_BIN_DIR := $(NPM_MOD_DIR)/.bin
 all: xpi
 
 install_dependency:
-	npm install
-
-install_dependency:
 	[ -e "$(NPM_BIN_DIR)/eslint" -a -e "$(NPM_BIN_DIR)/jsonlint-cli" ] || npm install
 
 lint: install_dependency
