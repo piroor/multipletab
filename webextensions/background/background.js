@@ -172,10 +172,12 @@ function onTSTAPIMessage(message) {
     case Constants.kTSTAPI_NOTIFY_TABBAR_CLICKED:
       return DragSelectionManager.onNonTabAreaClick(message, { includeHidden: false });
 
-    //case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
-    //  if (!configs.enableDragSelectionByLongPress)
-    //    return;
-    //  return DragSelectionManager.onDragReady(message, { includeHidden: false });
+      /*
+    case Constants.kTSTAPI_NOTIFY_TAB_DRAGREADY:
+      if (!configs.enableDragSelectionByLongPress)
+        return;
+      return DragSelectionManager.onDragReady(message, { includeHidden: false });
+      */
 
     case Constants.kTSTAPI_NOTIFY_NATIVE_TAB_DRAGSTART:
       if (TSTLongPressTimer) {
