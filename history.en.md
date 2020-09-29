@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 3.1.9 (2020.9.29)
+   * Open optiosn page correctly by clicking on the permission notification.
+   * Fix wrong behaviors of "All Configs" UI: apply imported configs to options UI immediately and treat decimal values as valid for some numeric options.
  - 3.1.8 (2020.8.5)
    * Notify new features with a desktop notification instead of an annoying tab.
  - 3.1.7 (2020.8.5)
