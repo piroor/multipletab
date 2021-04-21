@@ -205,6 +205,7 @@ function onSelectionChange(info) {
       continue;
     getCheckbox(item).checked = false;
     item.classList.remove('selected');
+    item.setAttribute('aria-selected', 'false');
   }
 
   for (const tab of info.selected) {
@@ -213,6 +214,7 @@ function onSelectionChange(info) {
       continue;
     getCheckbox(item).checked = true;
     item.classList.add('selected');
+    item.setAttribute('aria-selected', 'true');
   }
 }
 
@@ -327,6 +329,7 @@ async function onClick(event) {
           event.shiftKey)
         return;
       item.classList.add('selected');
+      item.setAttribute('aria-selected', 'true');
       gDragSelection.add(item.tab);
       gDragSelection.syncToHighlighted();
     });
@@ -501,6 +504,8 @@ async function rebuildTabItems() {
 function buildTabItem(tab) {
   const item = document.createElement('li');
   item.classList.add('tab');
+  item.setAttribute('role', 'option');
+  item.setAttribute('aria-selected', tab.highlighted ? 'true' : 'false');
 
   if (tab.hidden)
     item.classList.add('hidden');
@@ -537,8 +542,10 @@ function buildTabItem(tab) {
     item.classList.add('last-focused');
     gDragSelection.lastClickedTab = tab;
   }
-  if (gDragSelection.has(tab))
+  if (gDragSelection.has(tab)) {
     item.classList.add('selected');
+    item.setAttribute('aria-selected', 'true');
+  }
   item.appendChild(label);
   item.tab = tab;
 
