@@ -63,6 +63,7 @@
         "message": "然后点击这里来选择后续动作",
         "hash": "b0e45c7784e24174abc89f845d74a41a"
     },
+    "closeTabLabel": { "message": "关闭标签页" },
     "panelDisabledBy_treestyletab": {
         "message": "选择和执行面板已被禁用，请改为查看 Tree Style Tab 在侧栏提供的垂直标签页栏。您可以通过拖动（长按超过 0.5 秒以上才能开始拖动操作）来选中多个标签页。此外，按住 Ctrl 键并点击可以切换单个标签页的选择状态，按住 Shift 并点击可以选中位于点击项和活动标签页之间的所有标签页。",
         "hash": "cf5f82a4493e732a4100b101af1b921e"

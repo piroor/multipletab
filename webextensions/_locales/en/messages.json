@@ -33,6 +33,7 @@
   "panelTitle": { "message": "Select Tabs by Dragging" },
   "panelCaptionTop": { "message": "Select Tabs" },
   "panelCaptionBottom": { "message": "And Right-Click to Choose Action" },
+  "closeTabLabel": { "message": "Close Tab" },
 
   "panelDisabledBy_treestyletab": { "message": "Select and Do panel is disabled, instead please see vertical tab bar in the sidebar provided by Tree Style Tab. You can select tabs by dragging (you need to start the drag action with a long press over 0.5sec). Moreover, Ctrl-Click toggles selection and Shift-Click selects tabs between the clicked and the active." },
 

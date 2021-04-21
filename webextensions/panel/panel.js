@@ -551,6 +551,9 @@ function buildTabItem(tab) {
 
   const closebox = document.createElement('span');
   closebox.classList.add('closebox');
+  closebox.setAttribute('role', 'button');
+  closebox.setAttribute('aria-label', browser.i18n.getMessage('closeTabLabel'));
+  closebox.setAttribute('title', browser.i18n.getMessage('closeTabLabel'));
   item.appendChild(closebox);
 
   gTabItems.set(tab.id, item);
