@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 3.1.10 (2021.10.1)
+   * Update `zh_CN` locale by [NightSharp](https://github.com/NightSharp). Thanks!
  - 3.1.9 (2020.9.29)
    * Open optiosn page correctly by clicking on the permission notification.
    * Fix wrong behaviors of "All Configs" UI: apply imported configs to options UI immediately and treat decimal values as valid for some numeric options.
