@@ -1,7 +1,8 @@
 # 更新履歴
 
  - master/HEAD
-   * メモリ消費を削減（[by @nirvdrum, thanks!](https://github.com/piroor/webextensions-lib-event-listener-manager/pull/1)）
+ - 3.1.11 (2022.11.3)
+   * メモリ消費を削減（[by nirvdrum, thanks!](https://github.com/piroor/webextensions-lib-event-listener-manager/pull/1)）
  - 3.1.10 (2021.10.1)
    * `zh_CN`言語リソース更新（by [NightSharp](https://github.com/NightSharp), thanks!）
  - 3.1.9 (2020.9.29)
