@@ -3,7 +3,20 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="レイヤー_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
 	 y="0px" width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
-<g fill="context-fill" fill-opacity="context-fill-opacity" fill-rule="evenodd">
+<style>
+	:root {
+	  color-scheme: light dark;
+	}
+	g {
+	  fill: #0C0C0D;
+	}
+	@media (prefers-color-scheme: dark) {
+	  g {
+	    fill: #F9F9FA;
+	  }
+	}
+</style>
+<g fill-rule="evenodd">
 <path d="M20.5,11h-2v2h2c0.271,0,0.5,0.229,0.5,0.5v7c0,0.271-0.229,0.5-0.5,0.5h-7c-0.271,0-0.5-0.229-0.5-0.5v-2
 	h-2v2c0,1.379,1.122,2.5,2.5,2.5h7c1.379,0,2.5-1.121,2.5-2.5v-7C23,12.122,21.879,11,20.5,11z"/>
 <path d="M16.24,20.5c0.003,0,0.007,0,0.01,0c0.169,0,0.327-0.086,0.42-0.229l3.693-5.707
