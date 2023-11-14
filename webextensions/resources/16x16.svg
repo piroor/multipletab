@@ -5,18 +5,28 @@
 	 y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
 <style>
 	:root {
-	  color-scheme: light dark;
+		color-scheme: light dark;
 	}
-	g {
-	  fill: #0C0C0D; /* --grey-90 at https://searchfox.org/mozilla-central/rev/d6576544301cacc0e393fbc919c53e4e6b0d46ec/devtools/client/themes/variables.css#128 */
+	g:target {
+		fill-rule: evenodd;
+	}
+	g.theme:target {
+		fill: transparent /* TO BE REPLACED WITH THEME COLOR */;
+	}
+	g.prefer-color-scheme.default:target {
+		fill: rgb(21, 20, 26); /* https://searchfox.org/mozilla-central/rev/d6576544301cacc0e393fbc919c53e4e6b0d46ec/toolkit/themes/shared/in-content/common-shared.css#16 */
+	}
+	g.prefer-color-scheme.toolbar:target {
+		fill: rgb(91, 91, 102); /* https://searchfox.org/mozilla-central/rev/d6576544301cacc0e393fbc919c53e4e6b0d46ec/browser/themes/shared/browser-custom-colors.css#74 */
 	}
 	@media (prefers-color-scheme: dark) {
-	  g {
-	    fill: #B1B1B3; /* --grey-40 at https://searchfox.org/mozilla-central/rev/d6576544301cacc0e393fbc919c53e4e6b0d46ec/devtools/client/themes/variables.css#254 */
-	  }
+		g.prefer-color-scheme.default:target,
+		g.prefer-color-scheme.toolbar:target {
+			fill: rgb(251, 251, 254); /* https://searchfox.org/mozilla-central/rev/d6576544301cacc0e393fbc919c53e4e6b0d46ec/browser/themes/shared/browser-custom-colors.css#74 */
+		}
 	}
 </style>
-<g fill-rule="evenodd">
+<symbol id="icon">
 <path d="M13,7h-0.5v1.5H13c0.232,0,0.424,0.171,0.478,0.39C13.295,8.852,13.1,8.912,12.979,9.07L12.5,9.692v0.585
 	c0,1.227-0.996,2.223-2.223,2.223h-0.121l0.318,0.425c0.094,0.125,0.241,0.199,0.397,0.2c0.001,0,0.002,0,0.003,0
 	c0.155,0,0.302-0.072,0.396-0.195l2.229-2.897V13c0,0.271-0.229,0.5-0.5,0.5H9c-0.271,0-0.5-0.229-0.5-0.5v-0.5H7V13
@@ -29,5 +39,17 @@
 	C2.729,7.5,2.5,7.271,2.5,7V3c0-0.271,0.229-0.5,0.5-0.5h4c0.232,0,0.424,0.171,0.477,0.389C7.295,2.851,7.1,2.912,6.979,3.07
 	L4.88,5.798L3.775,4.325c-0.166-0.222-0.48-0.267-0.7-0.1c-0.221,0.166-0.266,0.479-0.1,0.7l1.5,2c0.094,0.125,0.256,0.165,0.4,0.2
 	c0.155,0,0.302-0.072,0.396-0.195L7.5,4.033V7C7.5,7.271,7.271,7.5,7,7.5z"/>
+</symbol>
+<g id="toolbar-theme" class="theme toolbar">
+	<use href="#icon"/>
+</g>
+<g id="default-theme" class="theme default">
+	<use href="#icon"/>
+</g>
+<g id="toolbar" class="prefer-color-scheme toolbar">
+	<use href="#icon"/>
+</g>
+<g id="default" class="prefer-color-scheme default">
+	<use href="#icon"/>
 </g>
 </svg>
