@@ -25,6 +25,9 @@
 			fill: rgb(251, 251, 254); /* https://searchfox.org/mozilla-central/rev/d6576544301cacc0e393fbc919c53e4e6b0d46ec/browser/themes/shared/browser-custom-colors.css#74 */
 		}
 	}
+	g:not(:target) {
+		display: none;
+	}
 </style>
 <symbol id="icon">
 <path d="M16.5,9h-1v2h1c0.271,0,0.5,0.229,0.5,0.5v5c0,0.271-0.229,0.5-0.5,0.5h-5c-0.271,0-0.5-0.229-0.5-0.5v-1H9
