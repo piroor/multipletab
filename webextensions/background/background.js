@@ -120,6 +120,12 @@ let shoudHandleTSTLongPress = false;
 let mousedownHandled = false;
 
 function onTSTAPIMessage(message) {
+  if (message && message.messages) {
+    for (const oneMessage of message.messages) {
+      onTSTAPIMessage(oneMessage);
+    }
+    return;
+  }
   switch (message.type) {
     case Constants.kTSTAPI_NOTIFY_READY:
     case Constants.kTSTAPI_PERMISSIONS_CHANGED:
@@ -341,6 +347,7 @@ async function registerToTST() {
       name:  browser.i18n.getMessage('extensionName'),
       icons: browser.runtime.getManifest().icons,
       listeningTypes,
+      allowBulkMessaging: true,
       style: `
         .tab.${Constants.kSELECTED}::after,
         .tab.${Constants.kREADY_TO_SELECT}::after {
