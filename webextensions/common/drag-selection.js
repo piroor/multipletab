@@ -29,9 +29,13 @@ export default class DragSelection {
     this.undeterminedRange     = new Map();
     this.dragEnteredCount      = 0;
     this.inSelectionSession    = false;
+    this.activeTabId           = null;
+    this.lastActiveTabId       = null;
 
     this.onHighlighted = this.onHighlighted.bind(this);
     browser.tabs.onHighlighted.addListener(this.onHighlighted);
+    this.onActivated = this.onActivated.bind(this);
+    browser.tabs.onActivated.addListener(this.onActivated);
 
     this.onSelectionChange = new EventListenerManager();
     this.onCloseSelectionChange = new EventListenerManager();
@@ -41,6 +45,7 @@ export default class DragSelection {
   destroy() {
     this.clear();
     browser.tabs.onHighlighted.removeListener(this.onHighlighted);
+    browser.tabs.onActivated.removeListener(this.onActivated);
   }
 
   cancel() {
@@ -54,6 +59,8 @@ export default class DragSelection {
     this.allTabsOnDragReady = [];
     this.inSelectionSession = false;
     this.state = null;
+    this.activeTabId           = null;
+    this.lastActiveTabId       = null;
   }
 
   async clear(options = {}) {
@@ -318,10 +325,15 @@ export default class DragSelection {
       return Constants.kCLICK_ACTION_REGULAR_CLICK;
     }
 
-    const lastActiveTab = message.lastActiveTab || (await browser.tabs.query({
-      active:   true,
-      windowId: this.windowId
-    }))[0];
+    const lastActiveTab = message.lastActiveTab || await (
+      (this.activeTabId && this.activeTabId != tab.id) ?
+        browser.tabs.get(this.activeTabId) :
+        this.lastActiveTabId ?
+          browser.tabs.get(this.lastActiveTabId) :
+          browser.tabs.query({
+            active:   true,
+            windowId: this.windowId
+          }).then(tabs => tabs[0]));
 
     let tabs = this.retrieveTargetTabs(tab, { includeHidden });
     if (message.shiftKey) {
@@ -639,5 +651,13 @@ export default class DragSelection {
       dragSelection: this,
       bySelf:        !!this.dragStartTarget
     });
+  }
+
+
+  onActivated(activeInfo) {
+    if (activeInfo.windowId != this.windowId)
+      return;
+    this.activeTabId     = activeInfo.tabId;
+    this.lastActiveTabId = activeInfo.previousTabId;
   }
 };
