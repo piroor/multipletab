@@ -350,7 +350,7 @@ async function registerToTST() {
         icons: browser.runtime.getManifest().icons,
         listeningTypes,
         allowBulkMessaging: true,
-        lightTree: true,
+        lightTree: false, // We need to use "index". We can listen full tree item because lisning events are limited.
         style: `
           .tab.${Constants.kSELECTED}::after,
           .tab.${Constants.kREADY_TO_SELECT}::after {

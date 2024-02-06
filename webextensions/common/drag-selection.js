@@ -154,6 +154,7 @@ export default class DragSelection {
       endTabsMap.set(endTabs.id, endTabs);
       endTabs = endTabsMap;
     }
+    log('getTabsBetween ', { beginningTabs, endTabs, includeHidden });
     if (Array.from(endTabs.keys()).sort().join(',') == Array.from(beginningTabs.keys()).sort().join(','))
       return [];
     beginningTabs = Array.from(beginningTabs.values());
