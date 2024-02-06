@@ -343,7 +343,7 @@ async function registerToTST() {
     baseListeningTypes;
   try {
     const [TSTVersion] = await Promise.all([
-      browser.runtime.sendMessage(Constants.kTST_ID, { type: 'vet-version' }).catch(handleMissingReceiverError),
+      browser.runtime.sendMessage(Constants.kTST_ID, { type: 'get-version' }).catch(handleMissingReceiverError),
       browser.runtime.sendMessage(Constants.kTST_ID, {
         type:  Constants.kTSTAPI_REGISTER_SELF,
         name:  browser.i18n.getMessage('extensionName'),
