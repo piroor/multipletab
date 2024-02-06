@@ -64,6 +64,7 @@ export const kTSTAPI_MOVE_TO_END             = 'move-to-end';
 export const kTSTAPI_OPEN_IN_NEW_WINDOW      = 'open-in-new-window';
 export const kTSTAPI_REOPEN_IN_CONTAINER     = 'reopen-in-container';
 export const kTSTAPI_GET_TREE                = 'get-tree';
+export const kTSTAPI_GET_LIGHT_TREE          = 'get-light-tree';
 export const kTSTAPI_GET_TREE_STRUCTURE      = 'get-tree-structure';
 export const kTSTAPI_SET_TREE_STRUCTURE      = 'set-tree-structure';
 export const kTSTAPI_BLOCK_GROUPING          = 'block-grouping';

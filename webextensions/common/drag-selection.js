@@ -6,6 +6,7 @@
 'use strict';
 
 import {
+  configs,
   shouldIncludeHidden,
   log,
   handleMissingReceiverError
@@ -394,7 +395,7 @@ export default class DragSelection {
   }
   async setSelectedStateToCollapsedDescendants(tab, selected, { includeHidden } = {}) {
     const tree = await browser.runtime.sendMessage(Constants.kTST_ID, {
-      type: Constants.kTSTAPI_GET_TREE,
+      type: configs.getTreeType,
       tab:  tab.id
     }).catch(handleMissingReceiverError);
     if (!tree || !tree.states.includes('subtree-collapsed'))

@@ -7,6 +7,8 @@
 
 import Configs from '/extlib/Configs.js';
 
+import * as Constants from './constants.js';
+
 export const configs = new Configs({
   optionsExpandedSections: ['section-general'],
 
@@ -38,6 +40,8 @@ export const configs = new Configs({
   requestingPermissionsNatively: null,
 
   applyThemeColorToIcon: false,
+
+  getTreeType: Constants.kTSTAPI_GET_TREE,
 
   notifiedFeaturesVersion: 0,
   shouldNotifyUpdatedFromLegacyVersion: false,

@@ -342,39 +342,49 @@ async function registerToTST() {
     baseListeningTypes.concat(dragSelectionListeningTypes) :
     baseListeningTypes;
   try {
-    await browser.runtime.sendMessage(Constants.kTST_ID, {
-      type:  Constants.kTSTAPI_REGISTER_SELF,
-      name:  browser.i18n.getMessage('extensionName'),
-      icons: browser.runtime.getManifest().icons,
-      listeningTypes,
-      allowBulkMessaging: true,
-      style: `
-        .tab.${Constants.kSELECTED}::after,
-        .tab.${Constants.kREADY_TO_SELECT}::after {
-          background: var(--multiselected-color);
-          bottom: 0;
-          content: " ";
-          display: block;
-          left: 0;
-          opacity: var(--multiselected-color-opacity);
-          pointer-events: none;
-          position: absolute;
-          right: 0;
-          top: 0;
-          z-index: 10;
-        }
-        .tab.${Constants.kREADY_TO_SELECT}::after,
-        .mutiple-highlighted > .tab.highlighted.${Constants.kREADY_TO_SELECT}::after {
-          opacity: calc(var(--multiselected-color-opacity) + 0.15);
-        }
+    const [TSTVersion] = await Promise.all([
+      browser.runtime.sendMessage(Constants.kTST_ID, { type: 'vet-version' }).catch(handleMissingReceiverError),
+      browser.runtime.sendMessage(Constants.kTST_ID, {
+        type:  Constants.kTSTAPI_REGISTER_SELF,
+        name:  browser.i18n.getMessage('extensionName'),
+        icons: browser.runtime.getManifest().icons,
+        listeningTypes,
+        allowBulkMessaging: true,
+        lightTree: true,
+        style: `
+          .tab.${Constants.kSELECTED}::after,
+          .tab.${Constants.kREADY_TO_SELECT}::after {
+            background: var(--multiselected-color);
+            bottom: 0;
+            content: " ";
+            display: block;
+            left: 0;
+            opacity: var(--multiselected-color-opacity);
+            pointer-events: none;
+            position: absolute;
+            right: 0;
+            top: 0;
+            z-index: 10;
+          }
+          .tab.${Constants.kREADY_TO_SELECT}::after,
+          .mutiple-highlighted > .tab.highlighted.${Constants.kREADY_TO_SELECT}::after {
+            opacity: calc(var(--multiselected-color-opacity) + 0.15);
+          }
 
-        /* ::after pseudo element prevents firing of dragstart event */
-        .tab.${Constants.kREADY_TO_CLOSE} tab-closebox,
-        .tab.${Constants.kREADY_TO_CLOSE} .closebox /* for TST 3.1.8 or older */ {
-          background: Highlight;
-        }
-      `
-    }).catch(handleMissingReceiverError);
+          /* ::after pseudo element prevents firing of dragstart event */
+          .tab.${Constants.kREADY_TO_CLOSE} tab-closebox,
+          .tab.${Constants.kREADY_TO_CLOSE} .closebox /* for TST 3.1.8 or older */ {
+            background: Highlight;
+          }
+        `
+      }).catch(handleMissingReceiverError),
+    ]);
+    if (TSTVersion && parseInt(TSTVersion.split('.')[0]) >= 4) {
+      configs.getTreeType = Constants.kTSTAPI_GET_LIGHT_TREE;
+    }
+    else {
+      configs.getTreeType = Constants.kTSTAPI_GET_TREE;
+    }
 
     const allWindows = await browser.windows.getAll({ populate: false });
     for (const window of allWindows) {
