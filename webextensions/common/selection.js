@@ -198,30 +198,12 @@ export async function invert(windowId, { includeHidden } = {}) {
 }
 
 export async function clearTabStateFromTST(windowId, state, value = false) {
-  const tstTabs = await browser.runtime.sendMessage(Constants.kTST_ID, {
-    type:   'get-tree',
-    window: windowId,
-    tabs:   '*',
+  return browser.runtime.sendMessage(Constants.kTST_ID, {
+    type:  value ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
+    windowId,
+    tabs:  '*',
+    state: state
   }).catch(handleMissingReceiverError);
-  if (!tstTabs)
-    return; // TST not found/ready.
-
-  const affectedStates = Array.isArray(state) ? state : [state];
-  const affectedTabs = tstTabs.filter(tab => {
-    for (const state of affectedStates) {
-      const states = mTabStates.get(tab.id);
-      const hasState = states && states.has(state);
-      if (value) {
-        if (!hasState) // Add state => Only need to update tab if the tab doesn't have a wanted state.
-          return true;
-      }
-      else if (hasState) { // Remove state => Only need to update tab if it has an affected state.
-        return true;
-      }
-    }
-  });
-
-  return notifyTabStateToTST(affectedTabs, state, value);
 }
 
 export async function notifyTabStateToTST(tabIds, state, value) {
@@ -243,7 +225,7 @@ export async function notifyTabStateToTST(tabIds, state, value) {
       mTabStates.delete(id);
   }
 
-  browser.runtime.sendMessage(Constants.kTST_ID, {
+  return browser.runtime.sendMessage(Constants.kTST_ID, {
     type:  value ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
     tabs:  tabIds,
     state: state
