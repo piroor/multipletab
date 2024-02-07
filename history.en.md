@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 3.1.12 (2024.2.8)
+   * Optimize for future releases of Tree Style Tab.
+   * Use icon color same to Firefox 120.
  - 3.1.11 (2022.11.3)
    * Reduce memory allocation ([by nirvdrum, thanks!](https://github.com/piroor/webextensions-lib-event-listener-manager/pull/1))
  - 3.1.10 (2021.10.1)

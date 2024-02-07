@@ -1,6 +1,9 @@
 # 更新履歴
 
  - master/HEAD
+ - 3.1.12 (2024.2.8)
+   * 将来のリリースのTST向けに処理を最適化
+   * アイコンの表示色をFirefox 120自身の配色に合わせた
  - 3.1.11 (2022.11.3)
    * メモリ消費を削減（[by nirvdrum, thanks!](https://github.com/piroor/webextensions-lib-event-listener-manager/pull/1)）
  - 3.1.10 (2021.10.1)
