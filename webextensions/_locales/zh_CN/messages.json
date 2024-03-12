@@ -51,6 +51,30 @@
         "message": "未能获取将数据写入到剪贴板的权限。请通过 Multiple Tab Handler 的配置文件来授予权限。",
         "hash": "3acf34ebd388e9bf0bf26ae5d9da06c6"
     },
+    "startup_notification_title_legacy": {
+        "message": "关于全新的 Multiple Tab Handler",
+        "hash": "7bc4f546aa538ded982fa6c74d7a244d"
+    },
+    "startup_notification_message_legacy": {
+        "message": "选取标签页的操作已经被完全改变。请点击此处查看详细说明。",
+        "hash": "681ec9e3d881da4f81f7b998ea4c5e40"
+    },
+    "startup_notification_title_installed": {
+        "message": "Multiple Tab Handler 新手说明",
+        "hash": "15b29f04c148968ae994131762916291"
+    },
+    "startup_notification_message_installed": {
+        "message": "为了让用户的体验更加自然，需要某些额外权限。请点击此处进行授予。",
+        "hash": "55686c122b40726fb3a13a8142445ab8"
+    },
+    "startup_notification_title_updated": {
+        "message": "Multiple Tab Handler 的重大变化",
+        "hash": "49806dbd3532955024f37ac87931188b"
+    },
+    "startup_notification_message_updated": {
+        "message": "某些变化可能会影响到您的使用情境。请点击此处查看详细说明。",
+        "hash": "f362da350ebd2a398c129a0139908f93"
+    },
     "panelTitle": {
         "message": "通过拖动来选择多个标签页",
         "hash": "9ea2711ee2002a97843caf1128d69afd"
@@ -62,6 +86,10 @@
     "panelCaptionBottom": {
         "message": "然后右键点击来选择动作",
         "hash": "90fea16a7d96253b2826ce2181ca22ee"
+    },
+    "closeTabLabel": {
+        "message": "关闭标签页",
+        "hash": "c30667b4c0fdd7d986e7f2efc81fc4e4"
     },
     "panelDisabledBy_treestyletab": {
         "message": "选择和执行面板已被禁用，请改为查看 Tree Style Tab 在侧栏提供的垂直标签栏。您可以通过拖动（长按超过 0.5 秒以上才能开始拖动操作）来选中多个标签页。此外，按住 Ctrl 键后再点击可以切换单个标签页的选择状态，按住 Shift 键后再点击可以选中位于点击项和活动项之间的所有标签页。",
@@ -286,6 +314,10 @@
     "config_applyThemeColorToIcon_label": {
         "message": "将主题颜色应用到工具栏按钮（ * 在 Firefox 62 或更高版本中，您需要通过 “about:config” 将 “svg.context-properties.content.enabled” 设置为 “true” ）",
         "hash": "ed5f019ba1ec52dfefab380adadf3bd4"
+    },
+    "config_includeHidden_label": {
+        "message": "同时列出被其它附加组件隐藏的标签页",
+        "hash": "36b4b15d26f4c858c91bc36aabd59fd6"
     },
     "config_enableDragSelection_label": {
         "message": "通过在条目上拖动来选中多个标签页",
