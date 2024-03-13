@@ -53,16 +53,22 @@
     "message": "未能获取将数据写入到剪贴板的权限。请通过 Multiple Tab Handler 的配置文件来授予权限。"
   },
   "startup_notification_title_legacy": {
+    "message": "关于全新的 Multiple Tab Handler"
   },
   "startup_notification_message_legacy": {
+    "message": "选取标签页的操作已经被完全改变。请点击此处查看详细说明。"
   },
   "startup_notification_title_installed": {
+    "message": "Multiple Tab Handler 新手说明"
   },
   "startup_notification_message_installed": {
+    "message": "为了让用户的体验更加自然，需要某些额外权限。请点击此处进行授予。"
   },
   "startup_notification_title_updated": {
+    "message": "Multiple Tab Handler 的重大变化"
   },
   "startup_notification_message_updated": {
+    "message": "某些变化可能会影响到您的使用情境。请点击此处查看详细说明。"
   },
   "panelTitle": {
     "message": "通过拖动来选择多个标签页"
@@ -245,6 +251,7 @@
     "message": "将主题颜色应用到工具栏按钮（ * 在 Firefox 62 或更高版本中，您需要通过 “about:config” 将 “svg.context-properties.content.enabled” 设置为 “true” ）"
   },
   "config_includeHidden_label": {
+    "message": "同时列出被其它附加组件隐藏的标签页"
   },
   "config_enableDragSelection_label": {
     "message": "通过在条目上拖动来选中多个标签页"
