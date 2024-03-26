@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 3.1.13 (2024.3.27)
+   * Add support for "Tabs Sidebar" of Watefox G6.0.10 and later.
+   * Update `zh_CN` locale by [NightSharp](https://github.com/NightSharp). Thanks!
  - 3.1.12 (2024.2.8)
    * Optimize for future releases of Tree Style Tab.
    * Use icon color same to Firefox 120.
