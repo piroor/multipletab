@@ -10,7 +10,8 @@ import {
   wait,
   configs,
   shouldIncludeHidden,
-  handleMissingReceiverError
+  handleMissingReceiverError,
+  callTSTAPI,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import DragSelection from '/common/drag-selection.js';
@@ -155,7 +156,7 @@ async function updateUIForTST() {
 
   if (configs.disablePanelWhenAlternativeTabBarIsAvailable) {
     try {
-      const responded = await browser.runtime.sendMessage(Constants.kTST_ID, {
+      const responded = await callTSTAPI({
         type: Constants.kTSTAPI_PING
       }).catch(handleMissingReceiverError);
       if (responded) {

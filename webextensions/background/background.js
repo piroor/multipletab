@@ -9,7 +9,11 @@ import {
   log,
   configs,
   notify,
-  handleMissingReceiverError
+  handleMissingReceiverError,
+  TST_ID,
+  WS_ID,
+  callTSTAPI,
+  getTSTVersion,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import * as Selection from '/common/selection.js';
@@ -148,7 +152,7 @@ function onTSTAPIMessage(message) {
             const window = await browser.windows.get(message.window, { populate: true });
             if (window.tabs.filter(tab => tab.highlighted).length > 1)
               return; // don't clear existing multiselection
-            browser.runtime.sendMessage(Constants.kTST_ID, {
+            callTSTAPI({
               type:     Constants.kTSTAPI_START_CUSTOM_DRAG,
               windowId: message.windowId
             }).catch(handleMissingReceiverError);
@@ -231,7 +235,9 @@ function onMessageExternal(message, sender) {
   //log('onMessageExternal: ', message, sender);
 
   switch (sender.id) {
-    case Constants.kTST_ID: { // Tree Style Tab API
+    // Tree Style Tab API
+    case TST_ID:
+    case WS_ID: {
       const result = onTSTAPIMessage(message);
       if (result !== undefined)
         return result;
@@ -343,8 +349,8 @@ async function registerToTST() {
     baseListeningTypes;
   try {
     const [TSTVersion] = await Promise.all([
-      browser.runtime.sendMessage(Constants.kTST_ID, { type: 'get-version' }).catch(handleMissingReceiverError),
-      browser.runtime.sendMessage(Constants.kTST_ID, {
+      getTSTVersion().catch(handleMissingReceiverError),
+      callTSTAPI({
         type:  Constants.kTSTAPI_REGISTER_SELF,
         name:  browser.i18n.getMessage('extensionName'),
         icons: browser.runtime.getManifest().icons,
@@ -402,10 +408,10 @@ async function registerToTST() {
 
 function unregisterFromTST() {
   try {
-    browser.runtime.sendMessage(Constants.kTST_ID, {
+    callTSTAPI({
       type: Constants.kTSTAPI_CONTEXT_MENU_REMOVE_ALL
     }).catch(handleMissingReceiverError);
-    browser.runtime.sendMessage(Constants.kTST_ID, {
+    callTSTAPI({
       type: Constants.kTSTAPI_UNREGISTER_SELF
     }).catch(handleMissingReceiverError);
   }

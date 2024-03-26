@@ -9,7 +9,8 @@ import {
   log,
   wait,
   notify,
-  handleMissingReceiverError
+  handleMissingReceiverError,
+  callTSTAPI,
 } from './common.js';
 import * as Constants from './constants.js';
 import * as Permissions from './permissions.js';
@@ -59,7 +60,7 @@ export async function bookmarkTabs(ids, options = {}) {
 }
 
 export async function moveToWindow(ids, windowId) {
-  const structure = (await browser.runtime.sendMessage(Constants.kTST_ID, {
+  const structure = (await callTSTAPI({
     type: Constants.kTSTAPI_GET_TREE_STRUCTURE,
     tabs: ids
   }).catch(handleMissingReceiverError));
@@ -76,7 +77,7 @@ export async function moveToWindow(ids, windowId) {
     ids = ids.slice(1);
   }
   if (structure)
-    await browser.runtime.sendMessage(Constants.kTST_ID, {
+    await callTSTAPI({
       type:   Constants.kTSTAPI_BLOCK_GROUPING,
       window: window.id
     }).catch(handleMissingReceiverError);
@@ -101,12 +102,12 @@ export async function moveToWindow(ids, windowId) {
   await browser.tabs.update(firstTab, { active: true });
   if (structure) {
     await wait(500); // wait until TST's initialization is finished
-    await browser.runtime.sendMessage(Constants.kTST_ID, {
+    await callTSTAPI({
       type: Constants.kTSTAPI_SET_TREE_STRUCTURE,
       tabs: ids,
       structure
     }).catch(handleMissingReceiverError);
-    await browser.runtime.sendMessage(Constants.kTST_ID, {
+    await callTSTAPI({
       type:   Constants.kTSTAPI_UNBLOCK_GROUPING,
       window: window.id
     }).catch(handleMissingReceiverError);

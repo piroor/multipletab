@@ -9,7 +9,10 @@ import {
   log,
   configs,
   shouldIncludeHidden,
-  handleMissingReceiverError
+  handleMissingReceiverError,
+  TST_ID,
+  WS_ID,
+  callTSTAPI,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import * as Selection from '/common/selection.js';
@@ -236,7 +239,7 @@ export function init() {
     browser.menus.create(info);
 
     if (item.TST)
-      browser.runtime.sendMessage(Constants.kTST_ID, {
+      callTSTAPI({
         type:   Constants.kTSTAPI_CONTEXT_MENU_CREATE,
         params: info
       }).catch(handleMissingReceiverError);
@@ -331,7 +334,7 @@ function updateItem(id, state = {}) {
   if (modified) {
     browser.menus.update(id, updateInfo);
     if (item.TST)
-      browser.runtime.sendMessage(Constants.kTST_ID, {
+      callTSTAPI({
         type:   Constants.kTSTAPI_CONTEXT_MENU_UPDATE,
         params: [id, updateInfo]
       }).catch(handleMissingReceiverError);
@@ -589,7 +592,7 @@ async function onClick(info, contextTab) {
     case 'context_moveTabToStart': {
       const movedTabs   = isMultiselected ? multiselectedTabs : [contextTab];
       const movedTabIds = movedTabs.map(tab => tab.id);
-      const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
+      const doneByTST = await callTSTAPI({
         type: Constants.kTSTAPI_MOVE_TO_START,
         tabs: movedTabIds
       }).catch(handleMissingReceiverError);
@@ -603,7 +606,7 @@ async function onClick(info, contextTab) {
     case 'context_moveTabToEnd': {
       const movedTabs   = isMultiselected ? multiselectedTabs : [contextTab];
       const movedTabIds = movedTabs.map(tab => tab.id);
-      const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
+      const doneByTST = await callTSTAPI({
         type: Constants.kTSTAPI_MOVE_TO_END,
         tabs: movedTabIds
       }).catch(handleMissingReceiverError);
@@ -615,7 +618,7 @@ async function onClick(info, contextTab) {
         await browser.tabs.move(movedTabs.map(tab => tab.id), { index: window.tabs.length - 1 });
     }; break;
     case 'context_openTabInWindow': {
-      const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
+      const doneByTST = await callTSTAPI({
         type: Constants.kTSTAPI_OPEN_IN_NEW_WINDOW,
         tabs: (isMultiselected ? multiselectedTabs : [contextTab]).map(tab => tab.id)
       }).catch(handleMissingReceiverError);
@@ -735,7 +738,7 @@ async function onClick(info, contextTab) {
       if (contextualIdentityMatch) {
         const sourceTabs = isMultiselected ? multiselectedTabs : [contextTab];
         const containerId = contextualIdentityMatch[1];
-        const doneByTST = await browser.runtime.sendMessage(Constants.kTST_ID, {
+        const doneByTST = await callTSTAPI({
           type: Constants.kTSTAPI_REOPEN_IN_CONTAINER,
           tabs: sourceTabs.map(tab => tab.id),
           containerId
@@ -807,7 +810,9 @@ function onMessageExternal(message, sender) {
     return;
 
   switch (sender.id) {
-    case Constants.kTST_ID: { // Tree Style Tab API
+    // Tree Style Tab API
+    case TST_ID:
+    case WS_ID: {
       const result = onTSTAPIMessage(message);
       if (result !== undefined)
         return result;
@@ -860,7 +865,7 @@ DragSelectionManager.onDragSelectionEnd.addListener(async (message, selectionInf
     if (configs.autoOpenMenuOnDragEnd) {
       mLastSelection = selectionInfo.selection;
       await onShown({}, selectionInfo.dragStartTab, mLastSelection);
-      await browser.runtime.sendMessage(Constants.kTST_ID, {
+      await callTSTAPI({
         type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
         window: (message.window || message.windowId || (await browser.windows.getLastFocused()).id),
         tab:  selectionInfo.dragStartTab.id,

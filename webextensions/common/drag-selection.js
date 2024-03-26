@@ -9,7 +9,8 @@ import {
   configs,
   shouldIncludeHidden,
   log,
-  handleMissingReceiverError
+  handleMissingReceiverError,
+  callTSTAPI,
 } from './common.js';
 import * as Constants from './constants.js';
 import * as Selection from './selection.js';
@@ -407,7 +408,7 @@ export default class DragSelection {
     return Constants.kCLICK_ACTION_NONE;
   }
   async setSelectedStateToCollapsedDescendants(tab, selected, { includeHidden } = {}) {
-    const tree = await browser.runtime.sendMessage(Constants.kTST_ID, {
+    const tree = await callTSTAPI({
       type: configs.getTreeType,
       tab:  tab.id
     }).catch(handleMissingReceiverError);

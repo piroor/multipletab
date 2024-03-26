@@ -8,7 +8,8 @@
 import {
   shouldIncludeHidden,
   log,
-  handleMissingReceiverError
+  handleMissingReceiverError,
+  callTSTAPI,
 } from './common.js';
 import * as Constants from './constants.js';
 
@@ -198,7 +199,7 @@ export async function invert(windowId, { includeHidden } = {}) {
 }
 
 export async function clearTabStateFromTST(windowId, state, value = false) {
-  return browser.runtime.sendMessage(Constants.kTST_ID, {
+  return callTSTAPI({
     type:  value ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
     windowId,
     tabs:  '*',
@@ -225,7 +226,7 @@ export async function notifyTabStateToTST(tabIds, state, value) {
       mTabStates.delete(id);
   }
 
-  return browser.runtime.sendMessage(Constants.kTST_ID, {
+  return callTSTAPI({
     type:  value ? Constants.kTSTAPI_ADD_TAB_STATE : Constants.kTSTAPI_REMOVE_TAB_STATE,
     tabs:  tabIds,
     state: state
