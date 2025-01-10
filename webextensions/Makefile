@@ -9,11 +9,11 @@ install_dependency:
 	[ -e "$(NPM_BIN_DIR)/eslint" -a -e "$(NPM_BIN_DIR)/jsonlint-cli" ] || npm install
 
 lint: install_dependency
-	"$(NPM_BIN_DIR)/eslint" . --ext=.js --report-unused-disable-directives
+	"$(NPM_BIN_DIR)/eslint" . --report-unused-disable-directives
 	find . -type d -name node_modules -prune -o -type f -name '*.json' -print | xargs "$(NPM_BIN_DIR)/jsonlint-cli"
 
 format: install_dependency
-	"$(NPM_BIN_DIR)/eslint" . --ext=.js --report-unused-disable-directives --fix
+	"$(NPM_BIN_DIR)/eslint" . --report-unused-disable-directives --fix
 
 xpi: init_extlib install_extlib lint
 	rm -f ./*.xpi
