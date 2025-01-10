@@ -7,7 +7,8 @@
 
 import {
   log,
-  configs
+  configs,
+  isRTL,
 } from '/common/common.js';
 import * as Permissions from '/common/permissions.js';
 import Options from '/extlib/Options.js';
@@ -37,6 +38,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   for (const label of document.querySelectorAll('#menu-items label, #bookmarksPermissionCheck')) {
     label.lastChild.nodeValue = label.lastChild.nodeValue.replace(/\(&[a-z]\)|&([a-z])/i, '$1');
   }
+  document.documentElement.classList.toggle('rtl', isRTL());
 
   await configs.$loaded;
 

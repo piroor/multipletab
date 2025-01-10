@@ -12,6 +12,7 @@ import {
   shouldIncludeHidden,
   handleMissingReceiverError,
   callTSTAPI,
+  isRTL,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import DragSelection from '/common/drag-selection.js';
@@ -37,6 +38,8 @@ const gTabItems = new Map();
 const gHighlightedTabs = new Map();
 
 window.addEventListener('DOMContentLoaded', async () => {
+  document.documentElement.classList.toggle('rtl', isRTL());
+
   gTabBar = document.querySelector('#tabs');
   gMenu = document.querySelector('#menu');
   gMenu.ui = new MenuUI({

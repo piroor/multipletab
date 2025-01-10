@@ -40,6 +40,10 @@
   }
 }
 
+:root.rtl {
+  direction: rtl;
+}
+
 body {
   background: var(--bg-color);
   color: var(--text-color);
@@ -109,14 +113,15 @@ body {
 }
 
 #tabs li .checkbox-container {
-  margin-left: 0.5em;
+  margin-inline-start: 0.5em;
   padding: var(--item-vertical-padding) 0;
 }
 
 #tabs li label {
   flex-grow: 1;
   overflow: hidden;
-  padding: var(--item-vertical-padding) 1em var(--item-vertical-padding) 0;
+  padding-block: var(--item-vertical-padding);
+  padding-inline: 0 1em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -212,11 +217,11 @@ body {
   bottom: 0;
   color: var(--text-color);
   display: none;
-  left: 0;
+  inset-inline-start: 0;
+  inset-inline-end: 0;
   line-height: 1.5;
   padding: 1.5em;
   position: fixed;
-  right: 0;
   text-shadow: 0 0 0.5em var(--bg-color),
                0 0 0.5em var(--bg-color),
                0 0 0.5em var(--bg-color),

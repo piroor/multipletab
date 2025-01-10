@@ -11,6 +11,10 @@
   opacity: 0;
 }
 
+:root.rtl {
+  direction: rtl;
+}
+
 body {
   background: var(--bg-color);
   color: var(--text-color);
