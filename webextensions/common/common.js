@@ -210,6 +210,31 @@ export async function getTSTVersion() {
   return '0.0';
 }
 
+export async function fixupTSTTreeItemKeys(object, keys) {
+  if (!Array.isArray(keys))
+    keys = [keys];
+  await Promise.all(keys.map(async key => {
+    const value = object[key];
+    if (!value)
+      return;
+    object[key] = await fixupTSTTreeItem(value);
+  }));
+  return object;
+}
+
+export async function fixupTSTTreeItem(treeItem) {
+  if (Array.isArray(treeItem))
+    return Promise.all(treeItem.map(fixupTSTTreeItem));
+
+  if ('index' in treeItem ||
+      'then' in treeItem)
+    return treeItem;
+
+  const tab = await browser.tabs.get(treeItem.id);
+  return { ...tab, ...treeItem };
+}
+
+
 const RTL_LANGUAGES = new Set([
   'ar',
   'he',

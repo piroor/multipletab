@@ -11,6 +11,7 @@ import {
   log,
   handleMissingReceiverError,
   callTSTAPI,
+  fixupTSTTreeItem,
 } from './common.js';
 import * as Constants from './constants.js';
 import * as Selection from './selection.js';
@@ -337,7 +338,7 @@ export default class DragSelection {
             windowId: this.windowId
           }).then(tabs => tabs[0]));
 
-    let tabs = this.retrieveTargetTabs(tab, { includeHidden });
+    let tabs = await Promise.all(this.retrieveTargetTabs(tab, { includeHidden }).map(fixupTSTTreeItem));
     if (message.shiftKey) {
       const window = await browser.windows.get(windowId, { populate: true });
       const betweenTabs = this.getTabsBetween(
@@ -495,7 +496,7 @@ export default class DragSelection {
     this.firstHoverTargets.set(message.tab.id, message.tab);
     this.lastHoverTargets.set(message.tab.id, message.tab);
 
-    const startTabs = this.retrieveTargetTabs(message.tab, { includeHidden });
+    const startTabs = await Promise.all(this.retrieveTargetTabs(message.tab, { includeHidden }).map(fixupTSTTreeItem));
     for (const tab of startTabs) {
       this.add(tab);
       this.undeterminedRange.set(tab.id, tab);
@@ -545,7 +546,7 @@ export default class DragSelection {
     /*
     if (this.willCloseSelectedTabs || tabDragMode == TAB_DRAG_MODE_SELECT) {
     */
-    const targetTabs = this.retrieveTargetTabs(message.tab, { includeHidden });
+    const targetTabs = await Promise.all(this.retrieveTargetTabs(message.tab, { includeHidden }).map(fixupTSTTreeItem));
     this.toggleStateOfDragOverTabs(targetTabs, { includeHidden });
     if (this.dragStartTarget &&
         message.tab.id == this.dragStartTarget.id &&
