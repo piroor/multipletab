@@ -1,6 +1,9 @@
 # 更新履歴
 
  - master/HEAD
+ - 3.2.0 (2025.3.13)
+   * RTLの環境（アラビア語など、書字方向が右から左の言語の環境）でUIの方向を切り替えるようにした
+   * Tree Style Tabのサイドバー上でShift-クリックでタブを上から下へ選択できなくなっていたのを修正
  - 3.1.13 (2024.3.27)
    * Waterfox G6.0.10以降に含まれる「タブサイドバー」に対応
    * `zh_CN`言語リソース更新（by [NightSharp](https://github.com/NightSharp), thanks!）

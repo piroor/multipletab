@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 3.2.0 (2025.3.13)
+   * Switch UI direction on RTL environments (using language with right-to-left direction, like Arabian.)
+   * Fix inability to select multiple tabs from top to bottom with Shift-click on Tree Style Tab's sidebar panel.
  - 3.1.13 (2024.3.27)
    * Add support for "Tabs Sidebar" of Watefox G6.0.10 and later.
    * Update `zh_CN` locale by [NightSharp](https://github.com/NightSharp). Thanks!
