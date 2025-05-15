@@ -396,6 +396,11 @@ async function registerToTST() {
           .tab.${Constants.kREADY_TO_CLOSE} .closebox /* for TST 3.1.8 or older */ {
             background: Highlight;
           }
+
+          /* show closebox on non-active tabs while dragging */
+          tab-item:not(.active):not(#dummy-tab).${Constants.kREADY_TO_CLOSE} tab-item-substance:not(:hover) tab-closebox {
+            display: inline;
+          }
         `
       }).catch(handleMissingReceiverError),
     ]);
