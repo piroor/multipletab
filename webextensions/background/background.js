@@ -372,23 +372,12 @@ async function registerToTST() {
         allowBulkMessaging: true,
         lightTree: false, // We need to use "index". We can listen full tree item because lisning events are limited.
         style: `
-          .tab.${Constants.kSELECTED}::after,
-          .tab.${Constants.kREADY_TO_SELECT}::after {
-            background: var(--multiselected-color);
-            bottom: 0;
-            content: " ";
-            display: block;
-            left: 0;
-            opacity: var(--multiselected-color-opacity);
-            pointer-events: none;
-            position: absolute;
-            right: 0;
-            top: 0;
-            z-index: 10;
-          }
-          .tab.${Constants.kREADY_TO_SELECT}::after,
-          .mutiple-highlighted > .tab.highlighted.${Constants.kREADY_TO_SELECT}::after {
-            opacity: calc(var(--multiselected-color-opacity) + 0.15);
+          .tab.${Constants.kSELECTED}:not(.highlighted) tab-item-substance,
+          .tab.${Constants.kSELECTED}.active tab-item-substance,
+          .tab.${Constants.kREADY_TO_SELECT}:not(.highlighted) tab-item-substance,
+          .tab.${Constants.kREADY_TO_SELECT}.active tab-item-substance {
+            outline: thin solid Highlight;
+            outline-radius: 0.2em;
           }
 
           /* ::after pseudo element prevents firing of dragstart event */
