@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 3.2.1 (2025.5.24)
+   * Fix incompatibility with TST 4.1.7 and later: dragging of closeboxes after long press works correctly again.
+   * Fix incompatibility with some versions of Firefox: dragging of tabs after long press works correctly again. (Reduce using of dynamically added pseudo elements to avoid unexpected canceling of dragstart events.)
  - 3.2.0 (2025.3.13)
    * Switch UI direction on RTL environments (using language with right-to-left direction, like Arabian.)
    * Fix inability to select multiple tabs from top to bottom with Shift-click on Tree Style Tab's sidebar panel.
