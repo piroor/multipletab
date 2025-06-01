@@ -300,7 +300,8 @@ export default class DragSelection {
 
   async onMouseDown(message, { includeHidden } = {}) {
     log('onMouseDown ', message);
-    if (message.button != 0)
+    if (message.button != 0 ||
+        !message.tab)
       return Constants.kCLICK_ACTION_NONE;
 
     const tab      = message.tab;
@@ -445,7 +446,8 @@ export default class DragSelection {
     const tab = message.nearestVisibleAncestor || message.tab;
 
     // mouseup after long-press on the same target doesn't notify "dragend", so simulate dragexit.
-    if (this.dragStartTarget &&
+    if (tab &&
+        this.dragStartTarget &&
         this.dragStartTarget.id == tab.id)
       this.onDragEnd(message, { includeHidden });
 
@@ -478,6 +480,9 @@ export default class DragSelection {
   }
   async onDragReadyInternal(message, { includeHidden } = {}) {
     log('onDragReady', message);
+    if (!message.tab) { // group
+      return false;
+    }
     const allTabs = await Selection.getAllTabs(this.windowId, { includeHidden });
     if (message.tab.highlighted &&
         allTabs.filter(tab => tab.highlighted).length > 1)
@@ -530,6 +535,9 @@ export default class DragSelection {
   async onDragEnter(message, { includeHidden } = {}) {
     await this.lastDragReady;
     //console.log('onDragEnter', message, { tab: message.tab, lastHover: this.lastHoverTargets });
+    if (!message.tab) { // group
+      return;
+    }
     this.dragEnteredCount++;
     // processAutoScroll(event);
 
@@ -573,8 +581,11 @@ export default class DragSelection {
       this.firstHoverTargets = new Map(this.lastHoverTargets.entries());
   }
 
-  async onDragExit(_message, _options = {}) {
+  async onDragExit(message, _options = {}) {
     await this.lastDragReady;
+    if (!message.tab) { // group
+      return false;
+    }
     this.dragEnteredCount--;
     this.reserveDragExitAllWithDelay();
   }

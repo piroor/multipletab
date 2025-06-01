@@ -230,6 +230,9 @@ export async function fixupTSTTreeItem(treeItem) {
       'then' in treeItem)
     return treeItem;
 
+  if (treeItem.type == 'group')
+    return null;
+
   const tab = await browser.tabs.get(treeItem.id);
   return { ...tab, ...treeItem };
 }
