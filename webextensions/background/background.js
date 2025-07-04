@@ -372,23 +372,30 @@ async function registerToTST() {
         allowBulkMessaging: true,
         lightTree: false, // We need to use "index". We can listen full tree item because lisning events are limited.
         style: `
-          .tab.${Constants.kSELECTED}:not(.highlighted) tab-item-substance,
-          .tab.${Constants.kSELECTED}.active tab-item-substance,
-          .tab.${Constants.kREADY_TO_SELECT}:not(.highlighted) tab-item-substance,
-          .tab.${Constants.kREADY_TO_SELECT}.active tab-item-substance {
-            outline: thin solid Highlight;
-            outline-radius: 0.2em;
-          }
+          :root.left,
+          :root.right {
+            tab-item.${Constants.kSELECTED},
+            tab-item.${Constants.kREADY_TO_SELECT} {
+              &:not(.highlighted),
+              &.active {
+                tab-item-substance {
+                  outline: thin solid Highlight;
+                  outline-radius: 0.2em;
+                }
+              }
+            }
 
-          /* ::after pseudo element prevents firing of dragstart event */
-          .tab.${Constants.kREADY_TO_CLOSE} tab-closebox,
-          .tab.${Constants.kREADY_TO_CLOSE} .closebox /* for TST 3.1.8 or older */ {
-            background: Highlight;
-          }
+            tab-item.${Constants.kREADY_TO_CLOSE} {
+              /* ::after pseudo element prevents firing of dragstart event */
+              tab-closebox {
+                background: Highlight;
+              }
 
-          /* show closebox on non-active tabs while dragging */
-          tab-item:not(.active):not(#dummy-tab).${Constants.kREADY_TO_CLOSE} tab-item-substance:not(:hover) tab-closebox {
-            display: inline;
+              /* show closebox on non-active tabs while dragging */
+              &:not(.active):not(#dummy-tab) tab-item-substance:not(:hover) tab-closebox {
+                display: inline;
+              }
+            }
           }
         `
       }).catch(handleMissingReceiverError),
@@ -429,7 +436,7 @@ function unregisterFromTST() {
 
 
 async function notifyReady() {
-  const addons   = configs.cachedExternalAddons;
+  const addons = configs.cachedExternalAddons;
   let modified = false;
   for (const id of Object.keys(addons)) {
     try {
