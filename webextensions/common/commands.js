@@ -53,7 +53,7 @@ export async function bookmarkTabs(ids, options = {}) {
         tabs.length,
         folders[0].title
       ]),
-      icon:    Constants.kNOTIFICATION_DEFAULT_ICON
+      icon: Constants.kNOTIFICATION_DEFAULT_ICON
     });
   });
   return folder;

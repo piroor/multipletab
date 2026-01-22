@@ -365,13 +365,13 @@ async function registerToTST() {
     const [TSTVersion] = await Promise.all([
       getTSTVersion().catch(handleMissingReceiverError),
       callTSTAPI({
-        type:  Constants.kTSTAPI_REGISTER_SELF,
-        name:  browser.i18n.getMessage('extensionName'),
-        icons: browser.runtime.getManifest().icons,
+        type:               Constants.kTSTAPI_REGISTER_SELF,
+        name:               browser.i18n.getMessage('extensionName'),
+        icons:              browser.runtime.getManifest().icons,
         listeningTypes,
         allowBulkMessaging: true,
-        lightTree: false, // We need to use "index". We can listen full tree item because lisning events are limited.
-        style: `
+        lightTree:          false, // We need to use "index". We can listen full tree item because lisning events are limited.
+        style:              `
           :root.left,
           :root.right {
             tab-item.${Constants.kSELECTED},
@@ -532,7 +532,7 @@ browser.tabs.onUpdated.addListener(
     initNotifyFeaturesTab(tab);
   },
   { properties: ['status'],
-    urls: [browser.extension.getURL(`resources/notify-features.html*`)] }
+    urls:       [browser.extension.getURL(`resources/notify-features.html*`)] }
 );
 browser.tabs.query({ url: browser.extension.getURL(`resources/notify-features.html*`) })
   .then(tabs => tabs.forEach(initNotifyFeaturesTab));

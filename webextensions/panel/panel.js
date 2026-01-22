@@ -589,8 +589,8 @@ async function onMenuCommand(item, event) {
   if (id) {
     const contextTab = gLastClickedItem && gLastClickedItem.tab || (await browser.tabs.query({ currentWindow: true, active: true }))[0];
     browser.runtime.sendMessage({
-      type: Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK,
-      id:   id,
+      type:       Constants.kCOMMAND_SELECTION_MENU_ITEM_CLICK,
+      id:         id,
       contextTab: TabSanitizer.sanitize(contextTab)
     });
   }

@@ -655,8 +655,8 @@ export default class DragSelection {
     if (selectedIds.sort().join(',') == highlightInfo.tabIds.sort().join(','))
       return;
     log('DragSelection.onHighlighted: ', {
-      selectedIds: selectedIds.join(','),
-      highlighted: highlightInfo.tabIds.join(','),
+      selectedIds:     selectedIds.join(','),
+      highlighted:     highlightInfo.tabIds.join(','),
       dragStartTarget: this.dragStartTarget
     });
     this.onSelectionChange.dispatch({

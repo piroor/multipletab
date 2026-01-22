@@ -87,10 +87,10 @@ const mItemsById = {
     type: 'separator'
   },
   'context_closeTabsToTheEnd': {
-    title:    browser.i18n.getMessage('tabContextMenu_closeTabsToBottom_label')
+    title: browser.i18n.getMessage('tabContextMenu_closeTabsToBottom_label')
   },
   'context_closeOtherTabs': {
-    title:    browser.i18n.getMessage('tabContextMenu_closeOther_label')
+    title: browser.i18n.getMessage('tabContextMenu_closeOther_label')
   },
   'context_undoCloseTab': {
     title: browser.i18n.getMessage('tabContextMenu_undoClose_label')
@@ -101,7 +101,7 @@ const mItemsById = {
   },
 
   'noContextTab:context_reloadTab': {
-    title:              browser.i18n.getMessage('tabContextMenu_reload_label_multiselected')
+    title: browser.i18n.getMessage('tabContextMenu_reload_label_multiselected')
   },
   'noContextTab:context_bookmarkSelected': {
     title: browser.i18n.getMessage('tabContextMenu_bookmarkSelected_label')
@@ -130,24 +130,24 @@ const mItemsById = {
   // parameter of menus.onShown listeners.
 
   'global_invertSelection': {
-    title: browser.i18n.getMessage('context_invertSelection_label'),
-    viewTypes: null,
+    title:               browser.i18n.getMessage('context_invertSelection_label'),
+    viewTypes:           null,
     documentUrlPatterns: null,
-    TST: true
+    TST:                 true
   },
 
   'selection': {
-    title: browser.i18n.getMessage('context_selection_label'),
-    viewTypes: null,
+    title:               browser.i18n.getMessage('context_selection_label'),
+    viewTypes:           null,
     documentUrlPatterns: null,
-    TST: true
+    TST:                 true
   },
   'selection_invertSelection': {
-    title: browser.i18n.getMessage('context_invertSelection_label'),
-    viewTypes: null,
+    title:               browser.i18n.getMessage('context_invertSelection_label'),
+    viewTypes:           null,
     documentUrlPatterns: null,
-    parentId: 'selection',
-    TST: true
+    parentId:            'selection',
+    TST:                 true
   }
 };
 
@@ -215,9 +215,9 @@ export function init() {
     }
     const info = {
       id,
-      title:     item.title,
-      type:      item.type || 'normal',
-      contexts:  ['tab']
+      title:    item.title,
+      type:     item.type || 'normal',
+      contexts: ['tab']
     };
     if ('viewTypes' in item) {
       if (item.viewTypes)
@@ -265,22 +265,22 @@ async function updateContextualIdentities() {
   mContextualIdentityItems.clear();
 
   const defaultItem = {
-    parentId:  'context_reopenInContainer',
-    id:        'context_reopenInContainer:firefox-default',
-    title:     browser.i18n.getMessage('tabContextMenu_reopenInContainer_noContainer_label'),
-    contexts:  ['tab'],
-    viewTypes: ['popup'],
+    parentId:            'context_reopenInContainer',
+    id:                  'context_reopenInContainer:firefox-default',
+    title:               browser.i18n.getMessage('tabContextMenu_reopenInContainer_noContainer_label'),
+    contexts:            ['tab'],
+    viewTypes:           ['popup'],
     documentUrlPatterns: POPUP_URL_PATTERN
   };
   browser.menus.create(defaultItem);
   mContextualIdentityItems.add(defaultItem);
 
   const defaultSeparator = {
-    parentId:  'context_reopenInContainer',
-    id:        'context_reopenInContainer_separator',
-    type:      'separator',
-    contexts:  ['tab'],
-    viewTypes: ['popup'],
+    parentId:            'context_reopenInContainer',
+    id:                  'context_reopenInContainer_separator',
+    type:                'separator',
+    contexts:            ['tab'],
+    viewTypes:           ['popup'],
     documentUrlPatterns: POPUP_URL_PATTERN
   };
   browser.menus.create(defaultSeparator);
@@ -293,11 +293,11 @@ async function updateContextualIdentities() {
       `/resources/icons/contextual-identities/${identity.icon}.svg#${identity.color}` :
       identity.iconUrl;
     const item = {
-      parentId: 'context_reopenInContainer',
-      id:       id,
-      title:    identity.name.replace(/^([a-z0-9])/i, '&$1'),
-      contexts: ['tab'],
-      viewTypes: ['popup'],
+      parentId:            'context_reopenInContainer',
+      id:                  id,
+      title:               identity.name.replace(/^([a-z0-9])/i, '&$1'),
+      contexts:            ['tab'],
+      viewTypes:           ['popup'],
       documentUrlPatterns: POPUP_URL_PATTERN
     };
     if (icon)
@@ -385,7 +385,7 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
   /* eslint-disable no-unused-expressions */
 
   updateItem('context_reloadTab', {
-    visible: contextTab,
+    visible:       contextTab,
     multiselected: multiselected
   }) && modifiedItemsCount++;
   updateItem('context_toggleMuteTab-mute', {
@@ -415,7 +415,7 @@ async function onShown(info, contextTab, givenSelectedTabs = null) {
     multiselected
   }) && modifiedItemsCount++;
   updateItem('context_bookmarkTab', {
-    visible: contextTab,
+    visible:       contextTab,
     multiselected: multiselected || !contextTab
   }) && modifiedItemsCount++;
 
@@ -745,7 +745,7 @@ async function onClick(info, contextTab) {
         }).catch(handleMissingReceiverError);
         if (doneByTST)
           break;
-        let index = sourceTabs[sourceTabs.length-1].index + 1;
+        let index = sourceTabs[sourceTabs.length - 1].index + 1;
         for (const sourceTab of sourceTabs) {
           await browser.tabs.create({
             windowId:      sourceTab.windowId,
@@ -763,7 +763,7 @@ async function onClick(info, contextTab) {
         const id        = idMatch[2];
         const selection = await Selection.getSelectionAndOthers(contextWindowId);
         browser.runtime.sendMessage(owner, {
-          type: Constants.kMTHAPI_INVOKE_SELECTED_TAB_COMMAND,
+          type:      Constants.kMTHAPI_INVOKE_SELECTED_TAB_COMMAND,
           id,
           windowId:  contextWindowId,
           selection: {
@@ -866,11 +866,11 @@ DragSelectionManager.onDragSelectionEnd.addListener(async (message, selectionInf
       mLastSelection = selectionInfo.selection;
       await onShown({}, selectionInfo.dragStartTab, mLastSelection);
       await callTSTAPI({
-        type: Constants.kTSTAPI_CONTEXT_MENU_OPEN,
+        type:   Constants.kTSTAPI_CONTEXT_MENU_OPEN,
         window: (message.window || message.windowId || (await browser.windows.getLastFocused()).id),
-        tab:  selectionInfo.dragStartTab.id,
-        left: message.clientX,
-        top:  message.clientY
+        tab:    selectionInfo.dragStartTab.id,
+        left:   message.clientX,
+        top:    message.clientY
       }).catch(handleMissingReceiverError);
       mLastSelection = null;
     }

@@ -14,29 +14,29 @@ export const configs = new Configs({
 
   context_invertSelection: true,
 
-  autoOpenMenuOnDragEnd: true,
-  theme: 'default',
-  useCRLF: false,
+  autoOpenMenuOnDragEnd:      true,
+  theme:                      'default',
+  useCRLF:                    false,
   useWorkaroundForBug1272869: true,
-  includeHidden: false,
+  includeHidden:              false,
 
-  panelMinWidth: '25em',
-  panelMaxWidth: '30em',
+  panelMinWidth:  '25em',
+  panelMaxWidth:  '30em',
   panelMinHeight: '20em',
   panelMaxHeight: '25em',
-  panelFontSize: 'medium',
+  panelFontSize:  'medium',
 
   disablePanelWhenAlternativeTabBarIsAvailable: true,
 
   cachedExternalAddons: {},
 
-  enableDragSelection: true,
+  enableDragSelection:            true,
   enableDragSelectionByLongPress: true,
-  longPressDuration: 400,
+  longPressDuration:              400,
 
   notificationTimeout: 10 * 1000,
 
-  requestingPermissions: null,
+  requestingPermissions:         null,
   requestingPermissionsNatively: null,
 
   applyThemeColorToIcon: false,
@@ -45,9 +45,9 @@ export const configs = new Configs({
 
   TSTID: null,
 
-  notifiedFeaturesVersion: 0,
+  notifiedFeaturesVersion:              0,
   shouldNotifyUpdatedFromLegacyVersion: false,
-  debug: false
+  debug:                                false
 }, {
   localKeys: `
     optionsExpandedSections
@@ -68,8 +68,7 @@ export function shouldIncludeHidden(givenValue) {
 }
 
 
-export function log(message, ...args)
-{
+export function log(message, ...args) {
   if (!configs || !configs.debug)
     return;
 
