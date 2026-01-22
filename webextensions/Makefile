@@ -6,7 +6,7 @@ NPM_BIN_DIR := $(NPM_MOD_DIR)/.bin
 all: xpi
 
 install_dependency:
-	[ -e "$(NPM_BIN_DIR)/eslint" -a -e "$(NPM_BIN_DIR)/jsonlint-cli" ] || npm install
+	[ -e "$(NPM_BIN_DIR)/eslint" -a -e "$(NPM_BIN_DIR)/jsonlint-cli" ] || npm install --save-dev
 
 lint: install_dependency
 	"$(NPM_BIN_DIR)/eslint" . --report-unused-disable-directives
