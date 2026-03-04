@@ -1,5 +1,9 @@
 # Multiple Tab Handler
 
+[![Discord](https://img.shields.io/badge/Discord-Zovo-blueviolet.svg?logo=discord)](https://discord.gg/zovo)
+[![Website](https://img.shields.io/badge/Website-zovo.one-blue)](https://zovo.one)
+[![GitHub Stars](https://img.shields.io/github/stars/theluckystrike/multipletab?style=social)](https://github.com/theluckystrike/multipletab)
+
 ![Build Status](https://github.com/piroor/multipletab/actions/workflows/main.yml/badge.svg?branch=trunk)
 
 * [Signed package on AMO](https://addons.mozilla.org/firefox/addon/multiple-tab-handler/)
@@ -12,3 +16,9 @@ Any data you input to options may be sent to Mozilla's Sync server, if you confi
 
 このソフトウェアはいかなるプライバシー情報も自動的に収集しませんが、Firefox Syncを介して自動的に設定情報をデバイス間で同期する機能を含みます。
 Firefox Syncを有効化している場合、設定画面に入力されたデータは、Mozillaが運用するSyncサーバーに送信される場合があります。
+
+---
+
+Built by [Zovo](https://zovo.one)
+
+Visit [zovo.one](https://zovo.one) for more information.
