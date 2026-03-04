@@ -147,13 +147,13 @@
  - 2.0.10 (2018.3.7)
    * Make compatible to Tree Style Tab 2.4.17 and later.
  - 2.0.9 (2018.2.11)
-   * Reformat keys of localized messages matching to the [spec](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n/Locale-Specific_Message_reference#Member_details).
+   * Reformat keys of localized messages matching to the [spec](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/i18n/Locale-Specific_Message_reference#Member_details).
  - 2.0.8 (2018.2.11)
    * Implement "suspend" and "resume" for selected tabs. ("suspend" is available only on Firefox 59 and later.)
    * Keyboard shortcuts for commands are now customizable on Firefox 60 and later. (No keyboard shortcut is defined by default.)
    * Better behavior and keyboard operation handling of fake context menu.
    * Don't apply indent for `%TST_INDENT(...)%` when tree of tabs are partially selected.
-   * Reformat keys of localized messages matching to the [spec](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/i18n/Locale-Specific_Message_reference#Member_details).
+   * Reformat keys of localized messages matching to the [spec](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/i18n/Locale-Specific_Message_reference#Member_details).
  - 2.0.7 (2018.2.1)
    * Add [`%TST_INDENT(...)%` placeholder for the "Copy to Clipboard" command](https://github.com/piroor/multipletab/issues/185#issuecomment-361820213).
    * Add ability to restore default items for "Copy to Clipboard" keeping user-defined items.
