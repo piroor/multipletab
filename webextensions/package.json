@@ -19,7 +19,7 @@
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-indent-in-parens": "^1.0.0",
     "globals": "^15.14.0",
-    "lodash": ">=4.17.23",
+    "lodash": ">=4.18.1",
     "minimist": ">=1.2.6",
     "morphdom": "^2.5.12",
     "node-fetch": ">=3.2.10",
