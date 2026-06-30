@@ -1,6 +1,10 @@
 # History
 
  - master/HEAD
+ - 3.2.2 (2026.6.30)
+   * Show favicon of tabs correctly.
+   * Shift closebox of tab items to avoid being covered by the auto-hidden scrollbar.
+   * Prevent possible message storm around sync and reset of configs.
  - 3.2.1 (2025.5.24)
    * Fix incompatibility with TST 4.1.7 and later: dragging of closeboxes after long press works correctly again.
    * Fix incompatibility with some versions of Firefox: dragging of tabs after long press works correctly again. (Reduce using of dynamically added pseudo elements to avoid unexpected canceling of dragstart events.)
