@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 3.2.3 (2026.7.3)
+   * Behave as settings correctly after they are back to their default values. (regression on 3.2.2)
  - 3.2.2 (2026.6.30)
    * Show favicon of tabs correctly.
    * Shift closebox of tab items to avoid being covered by the auto-hidden scrollbar.
