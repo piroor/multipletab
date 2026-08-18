@@ -372,17 +372,12 @@ async function registerToTST() {
         allowBulkMessaging: true,
         lightTree:          false, // We need to use "index". We can listen full tree item because lisning events are limited.
         style:              `
-          :root.left,
-          :root.right {
-            tab-item.${Constants.kSELECTED},
-            tab-item.${Constants.kREADY_TO_SELECT} {
-              &:not(.highlighted),
-              &.active {
-                tab-item-substance {
-                  outline: thin solid Highlight;
-                  outline-radius: 0.2em;
-                }
-              }
+          :root:is(.left, .right) {
+            tab-item:is(.${Constants.kSELECTED}, .${Constants.kREADY_TO_SELECT})
+              :is(:not(.highlighted), .active)
+              tab-item-substance {
+              outline: thin solid Highlight;
+              outline-radius: 0.2em;
             }
 
             tab-item.${Constants.kREADY_TO_CLOSE} {
@@ -393,8 +388,14 @@ async function registerToTST() {
 
               /* show closebox on non-active tabs while dragging */
               &:not(.active):not(#dummy-tab) tab-item-substance:not(:hover) tab-closebox {
-                display: inline;
+                display: block;
               }
+            }
+
+            &[data-style="nova"]
+              tab-item.${Constants.kREADY_TO_CLOSE}
+              tab-closebox {
+              border-radius: 100%;
             }
           }
         `
