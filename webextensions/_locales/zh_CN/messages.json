@@ -311,10 +311,6 @@
         "message": "* 您可以使用任何 CSS font-size 数值。",
         "hash": "c8a9e09704138baa86d1666120f98453"
     },
-    "config_applyThemeColorToIcon_label": {
-        "message": "将主题颜色应用到工具栏按钮（ * 在 Firefox 62 或更高版本中，您需要通过 “about:config” 将 “svg.context-properties.content.enabled” 设置为 “true” ）",
-        "hash": "ed5f019ba1ec52dfefab380adadf3bd4"
-    },
     "config_includeHidden_label": {
         "message": "同时列出被其它附加组件隐藏的标签页",
         "hash": "36b4b15d26f4c858c91bc36aabd59fd6"

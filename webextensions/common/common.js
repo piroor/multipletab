@@ -39,8 +39,6 @@ export const configs = new Configs({
   requestingPermissions:         null,
   requestingPermissionsNatively: null,
 
-  applyThemeColorToIcon: false,
-
   getTreeType: Constants.kTSTAPI_GET_TREE,
 
   TSTID: null,
@@ -156,6 +154,15 @@ export function handleMissingReceiverError(error) {
     throw error;
   // otherwise, this error is caused from missing receiver.
   // we just ignore it.
+}
+
+
+export function getCurrentIconTheme() {
+  const matched = navigator.userAgent.match(/Firefox\/(\d+)\.\d+/);
+  const version = matched ? parseInt(matched[1]) : 0;
+  if (version >= 155)
+    return 'nova';
+  return 'proton';
 }
 
 

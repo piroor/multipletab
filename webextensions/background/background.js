@@ -15,6 +15,7 @@ import {
   callTSTAPI,
   getTSTVersion,
   fixupTSTTreeItemKeys,
+  getCurrentIconTheme,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import * as Selection from '/common/selection.js';
@@ -539,17 +540,64 @@ browser.tabs.query({ url: browser.extension.getURL(`resources/notify-features.ht
   .then(tabs => tabs.forEach(initNotifyFeaturesTab));
 
 
-// This section should be removed and define those context-fill icons
-// statically on manifest.json after Firefox ESR66 (or 67) is released.
-// See also: https://github.com/piroor/multipletab/issues/215
-async function applyThemeColorToIcon() {
-  const browserInfo = await browser.runtime.getBrowserInfo();
-  if (configs.applyThemeColorToIcon &&
-      parseInt(browserInfo.version.split('.')[0]) >= 62)
-    browser.browserAction.setIcon({ path: browser.runtime.getManifest().icons });
+const BASE_ICONS = {
+  '16': '/resources/16x16.svg',
+  '20': '/resources/20x20.svg',
+  '24': '/resources/24x24.svg',
+  '64': '/resources/64x64.svg',
+};
+async function updateIconForBrowserTheme(theme) {
+  // generate icons with theme specific color
+  const toolbarIcons = {};
+
+  if (!theme) {
+    const win = await browser.windows.getLastFocused();
+    theme = await browser.theme.getCurrent(win.id);
+  }
+
+  log('updateIconForBrowserTheme: ', theme);
+  if (theme.colors) {
+    const isNativeVerticalTabs = 'verticalTabs' in browser.browserSettings ? (await browser.browserSettings.verticalTabs.get({})).value : false;
+    const toolbarIconColor = theme.colors.icons || (
+      isNativeVerticalTabs ?
+        'CanvasText' : // --toolbarbutton-icon-fill in https://searchfox.org/firefox-main/rev/91c8ca3faa6ccbb72d65d89401fd31fd3313afc4/toolkit/themes/shared/design-system/dist/tokens-platform.css#225
+        theme.colors.toolbar_text || theme.colors.tab_text || theme.colors.tab_background_text || theme.colors.bookmark_text || theme.colors.textcolor
+    );
+    log(' => ', { toolbarIconColor }, theme.colors);
+    await Promise.all(Array.from(Object.entries(BASE_ICONS), async ([size, url]) => {
+      const response = await fetch(url);
+      const body = await response.text();
+      const toolbarIconSource = body.replace(/transparent\s*\/\*\s*TO BE REPLACED WITH THEME COLOR\s*\*\//g, toolbarIconColor);
+      toolbarIcons[size] = `data:image/svg+xml,${escape(toolbarIconSource)}#toolbar-theme`;
+    }));
+  }
+  else {
+    const themeSuffix = getCurrentIconTheme();
+    for (const [size, url] of Object.entries(BASE_ICONS)) {
+      toolbarIcons[size] = `${url}#toolbar-${themeSuffix}`;
+    }
+  }
+
+  log('updateIconForBrowserTheme: applying icons: ', {
+    toolbarIcons,
+  });
+
+  await Promise.all([
+    browser.action?.setIcon({ path: toolbarIcons }), // Manifest v3
+    browser.browserAction?.setIcon({ path: toolbarIcons }), // Manifest v2
+  ]);
 }
-configs.$addObserver(key => {
-  if (key == 'applyThemeColorToIcon')
-    applyThemeColorToIcon();
+
+browser.theme.onUpdated.addListener(updateInfo => {
+  updateIconForBrowserTheme(updateInfo.theme);
 });
-configs.$loaded.then(applyThemeColorToIcon);
+
+const mDarkModeMatchMedia = window.matchMedia('(prefers-color-scheme: dark)');
+mDarkModeMatchMedia.addListener(async _event => {
+  updateIconForBrowserTheme();
+});
+
+
+configs.$loaded.then(() => {
+  updateIconForBrowserTheme();
+});

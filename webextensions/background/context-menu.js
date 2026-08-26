@@ -13,6 +13,7 @@ import {
   TST_ID,
   WS_ID,
   callTSTAPI,
+  getCurrentIconTheme,
 } from '/common/common.js';
 import * as Constants from '/common/constants.js';
 import * as Selection from '/common/selection.js';
@@ -287,10 +288,14 @@ async function updateContextualIdentities() {
   mContextualIdentityItems.add(defaultSeparator);
 
   const identities = await browser.contextualIdentities.query({});
+  const themeSuffix = (() => {
+    const theme = getCurrentIconTheme();
+    return theme == 'nova' ? 'nova-with-bg' : 'proton';
+  });
   for (const identity of identities) {
     const id = `context_reopenInContainer:${identity.cookieStoreId}`;
     const icon = identity.icon && identity.color ?
-      `/resources/icons/contextual-identities/${identity.icon}.svg#${identity.color}` :
+      `/resources/icons/contextual-identities/${identity.icon}.svg#${identity.color}-${themeSuffix}` :
       identity.iconUrl;
     const item = {
       parentId:            'context_reopenInContainer',
