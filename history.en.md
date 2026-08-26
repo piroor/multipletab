@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 3.2.4 (2026.8.26)
+   * Add support for "Nova" theme of Firefox 155 and later.
  - 3.2.3 (2026.7.3)
    * Behave as settings correctly after they are back to their default values. (regression on 3.2.2)
  - 3.2.2 (2026.6.30)
