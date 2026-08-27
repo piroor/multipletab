@@ -14,6 +14,7 @@ import * as Constants from './constants.js';
 
 export const ALL_URLS        = { origins: ['<all_urls>'] };
 export const BOOKMARKS       = { permissions: ['bookmarks'] };
+export const BROWSER_SETTINGS = { permissions: ['browserSettings'] };
 
 export function clearRequest() {
   configs.requestingPermissions = null;
@@ -56,17 +57,17 @@ export function bindToCheckbox(permissions, checkbox, options = {}) {
     checkbox.checked = true;
   });
 
-  /*
-    // These events are not available yet on Firefox...
-    browser.permissions.onAdded.addListener(addedPermissions => {
-      if (addedPermissions.permissions.indexOf('...') > -1)
-        checkbox.checked = true;
-    });
-    browser.permissions.onRemoved.addListener(removedPermissions => {
-      if (removedPermissions.permissions.indexOf('...') > -1)
-        checkbox.checked = false;
-    });
-    */
+  const allPermissions = [...(permissions.permissions || []), ...(permissions.origins || [])];
+  browser.permissions.onAdded?.addListener(addedPermissions => {
+    const added = [...(addedPermissions.permissions || []), ...(addedPermissions.origins || [])];
+    if (new Set([...added, ...allPermissions]).size == allPermissions.length)
+      checkbox.checked = true;
+  });
+  browser.permissions.onRemoved?.addListener(removedPermissions => {
+    const removed = [...(removedPermissions.permissions || []), ...(removedPermissions.origins || [])];
+    if (new Set([...removed, ...allPermissions]).size == allPermissions.length)
+      checkbox.checked = false;
+  });
 
   checkbox.requestPermissions = async () => {
     try {

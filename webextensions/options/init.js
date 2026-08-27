@@ -47,6 +47,11 @@ window.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('#bookmarksPermissionGranted')
   );
 
+  Permissions.bindToCheckbox(
+    Permissions.BROWSER_SETTINGS,
+    document.querySelector('#browserSettingsPermissionGranted')
+  );
+
   options.buildUIForAllConfigs(document.querySelector('#debug-configs'));
   onConfigChanged('debug');
   initCollapsibleSections();

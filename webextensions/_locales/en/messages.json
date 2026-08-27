@@ -115,6 +115,7 @@
   "config_fontSize_label": { "message": "Panel Font Size:" },
   "config_fontSize_description": { "message": "*You can use any CSS font-size value." },
   "config_includeHidden_label": { "message": "List tabs hidden by other addons also" },
+  "config_browserSettingsPermission_label": { "message": "Apply more suitable color to the toolbar icon, based on the status of the native vertical tabs (*You need to allow reading browser settings)" },
 
 
   "config_enableDragSelection_label": { "message": "Select tabs by dragging on items" },

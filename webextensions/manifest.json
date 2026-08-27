@@ -6,7 +6,6 @@
   "description": "__MSG_extensionDescription__",
   "permissions": [
     "activeTab",
-    "browserSettings",
     "contextualIdentities",
     "cookies",
     "menus",
@@ -17,7 +16,8 @@
   ],
   "optional_permissions": [
     "<all_urls>",
-    "bookmarks"
+    "bookmarks",
+    "browserSettings"
   ],
   "icons": {
     "16": "/resources/16x16.svg#default-proton",
