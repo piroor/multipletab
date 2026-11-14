@@ -389,7 +389,7 @@ async function registerToTST() {
 
               /* show closebox on non-active tabs while dragging */
               &:not(.active):not(#dummy-tab) tab-item-substance:not(:hover) tab-closebox {
-                display: block;
+                display: flex;
               }
             }
 
