@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 3.2.6 (2026.11.18)
+   * Fix wrongly shifted close box icons in ready-to-close tabs on Tree Style Tab.
  - 3.2.5 (2026.8.27)
    * Apply colors defined in browser's themes more correctly.
    * Make "browserSettings" permission optional.
